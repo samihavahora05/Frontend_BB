@@ -1,94 +1,82 @@
-<div align="center">
-  <img src="public/logoblue.png" alt="BlueBoxx DA Logo" width="300" />
-  <h1>BlueBoxx DA - Enterprise EdTech Platform</h1>
-  <p>The Learn-Work-Earn Platform connecting Students, Colleges, and Companies.</p>
-</div>
+# 🚀 Blueboxx DA - Frontend Platform
+
+A state-of-the-art, high-performance Web Application built with **Next.js**, **React**, **TypeScript**, and **Tailwind CSS**. **Blueboxx DA** provides an all-in-one edtech and career ecosystem offering interactive learning courses, 1:1 mentorship booking with industry experts, virtual live classes, job & internship application tracking, college placement drives, and real-time dashboard analytics.
 
 ---
 
-##  Project Overview
-BlueBoxx DA is a production-ready, enterprise-grade EdTech and Placement platform built with **Next.js 14** and **Laravel 12**. 
-It orchestrates a complex multi-sided marketplace handling Course enrollments, Job & Internship applications, Mentor bookings, and automated B2B Campus Placements.
+## ✨ Key Features
 
-##  Features
-- **Multi-Role Sanctum Auth:** 7 strictly isolated portals (Admin, Student, Intern, Job Seeker, Expert, Company, College).
-- **Payment Gateway Integration:** Razorpay integration wrapped in ACID-compliant Database Transactions.
-- **E-Commerce Learning System:** Courses, quizzes, automated certificate generation, and dashboard tracking.
-- **Career Pipeline:** Automated cascading workflows for Job & Internship applications directly to B2B Company portals.
-- **Advanced SEO Engine:** Programmatic dynamic meta tags, Open Graph, Twitter Cards, and deep Schema.org JSON-LD injections.
-- **High-Performance Architecture:** Rate limiting, N+1 query elimination, query caching, and React Concurrent rendering.
+- 🎓 **Course Catalog & LMS Engine**: Interactive course browsing, video lessons, quiz module evaluations, downloadable resources, and auto-generated certificates.
+- 👨‍🏫 **1:1 Expert Mentorship Booking**: Dynamic calendar date selector, time slot booking, and Razorpay payment checkout integration.
+- 💳 **Billing & Payment Management**: Real-time order tracking, total spent calculation, and instant 1-page printable tax invoices (`@media print` optimized).
+- 📊 **Multi-Role Dashboard Portals**:
+  - **Student Portal**: Dashboard analytics, registered virtual classes, MCQ quiz results, application status tracking, referral rewards, and support ticketing.
+  - **College & Placement Portal**: Manage campus placement drives, company invitations, student rosters, and drive status.
+  - **Company & Employer Portal**: Post job/internship openings, evaluate applicants, schedule interview rounds, and manage offers.
+  - **Admin Control Center**: Content management (CMS), user role approvals, log monitoring, and platform settings.
+- 🔔 **Real-Time Notifications & Modals**: Interactive notification bell dropdowns, preloader animations, custom glassmorphism overlays, and onboarding tour guides.
 
-##  Tech Stack
-- **Frontend:** Next.js 14 (Pages Router), React 18, TypeScript, Tailwind CSS, Framer Motion, Zustand.
-- **Backend:** Laravel 12, PHP 8.2+, MySQL 8, Sanctum API Auth.
-- **Tools:** Pest/PHPUnit, ESLint, Prettier, SWR.
+---
 
-##  Architecture Diagram
-```mermaid
-graph TD
-    User([End User]) -->|HTTPS Request| NextJS[Next.js Frontend]
-    NextJS -->|REST API + Bearer Token| Laravel[Laravel API Backend]
-    
-    subgraph Laravel Backend
-        Sanctum[Sanctum Auth Guards]
-        Controllers[Role-Based Controllers]
-        DB[(MySQL Database)]
-        Razorpay[Razorpay Webhooks]
-        
-        Sanctum --> Controllers
-        Controllers --> DB
-        Razorpay --> Controllers
-    end
+## 🛠️ Technology Stack
+
+- **Framework**: [Next.js](https://nextjs.org/) (Pages Router) & [React](https://reactjs.org/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: Vanilla CSS tokens & [Tailwind CSS](https://tailwindcss.com/)
+- **State Management & Data Fetching**: [SWR](https://swr.vercel.app/) & React Context API
+- **Icons & UI Utilities**: [Lucide React](https://lucide.dev/), [Framer Motion](https://www.framer.com/motion/)
+- **HTTP Client**: Axios (configured with token interceptors and automatic fallback)
+- **Payment Gateway**: [Razorpay Checkout SDK Integration](https://razorpay.com/)
+
+---
+
+## 📁 Directory Structure
+
+```text
+├── pages/                   # Next.js Pages & Route Handlers
+│   ├── student/             # Student Dashboard, Courses, Virtual Classes, Payments
+│   ├── experts/             # Expert Profiles & 1:1 Booking Calendar
+│   ├── college/             # College Placement & Student Management
+│   ├── company/             # Employer Portal & Job Openings
+│   ├── payment-success.tsx  # Printable Tax Invoice & Confirmation View
+│   └── payment-failed.tsx   # Transaction Failure & Retry View
+├── src/
+│   ├── components/          # Reusable UI Components, Modals, Filters, & Notifications
+│   ├── context/             # Global Auth, Theme, & Tour Providers
+│   ├── layout/              # Multi-Role Dashboard & Page Layout Containers
+│   └── lib/                 # Axios Client & API Helper Utilities
+└── public/                  # Media Assets, Logos, and Testimonial Photos
 ```
 
-##  Project Structure
-The repository contains the frontend application:
-- `/` - Next.js Frontend application.
-- `/docs` - Comprehensive Technical Documentation.
+---
 
-*See [`/docs/PROJECT_STRUCTURE.md`](docs/PROJECT_STRUCTURE.md) for the complete directory tree.*
+## ⚡ Getting Started
 
-##  Installation & Requirements
-**Requirements:**
-- Node.js >= 18.17.0
-- PHP >= 8.2
-- Composer
-- MySQL >= 8.0
+### 1. Prerequisites
+- Node.js (v18.x or higher)
+- npm or yarn
 
-**1. Clone the repository**
+### 2. Installation
 ```bash
-git clone https://github.com/your-org/blueboxx-da.git
-cd blueboxx-da
-```
-
-**2. Backend Setup**
-Please refer to the separate backend repository for instructions on setting up the Laravel API.
-
-**3. Frontend Setup**
-Open a new terminal at the root directory:
-```bash
+git clone https://github.com/samihavahora05/Frontend_BB.git
+cd Frontend_BB
 npm install
+```
+
+### 3. Environment Setup
+Create a `.env.local` file in the root directory:
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
+NEXT_PUBLIC_RAZORPAY_KEY_ID=your_razorpay_key_id
+```
+
+### 4. Run Development Server
+```bash
 npm run dev
 ```
-
-##  Environment Variables
-You will need to configure environment variables for both the frontend and backend. See [`/docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md) for the complete required keys (Razorpay, SMTP, DB credentials).
-
-##  Deployment Guide
-The platform is optimized for VPS, Ubuntu, Nginx, or Docker deployments.
-- Run `npm run build` and `npm run start` for the Next.js production server.
-- Run `php artisan optimize:clear` and configure Nginx to point to `backend/public`.
-- See the complete [Deployment Guide](docs/DEPLOYMENT.md).
-
-##  Technical Documentation
-For deep technical integrations, refer to the `/docs` directory:
-- [System Architecture](docs/ARCHITECTURE.md)
-- [Database Schema & Integrity](docs/DATABASE.md)
-- [API Reference](docs/API.md)
-- [Security Matrix](docs/SECURITY.md)
-
-## 🤝 Contributing & Support
-Please read [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) for details on our code of conduct, branching strategy, and the process for submitting Pull Requests.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
-**License:** MIT License. See [LICENSE](LICENSE) for details.
+
+## 📜 License
+Privately developed for **Blueboxx DA Pvt. Ltd.** All rights reserved.
