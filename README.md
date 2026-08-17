@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/Boxxlogo.png" alt="Blueboxx DA Logo" width="260" />
+  <img src="public/Boxxlogo.png" alt="Blueboxx DA Logo" width="160" />
   <h2>🚀 Blueboxx DA — Frontend Web Platform</h2>
   <p><b>Empowering Students, Mentors, Colleges, and Employers</b></p>
 
