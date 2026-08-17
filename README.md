@@ -1,7 +1,15 @@
-<div align="center">
-  <img src="public/Boxxlogo.png" alt="Blueboxx DA Logo" width="160" />
-  <h2>🚀 Blueboxx DA — Frontend Web Platform</h2>
-  <p><b>Empowering Students, Mentors, Colleges, and Employers</b></p>
+<div align="left">
+  <table>
+    <tr>
+      <td valign="center">
+        <img src="public/Boxxlogo.png" alt="Blueboxx DA Logo" width="130" />
+      </td>
+      <td valign="center">
+        <h1 style="border-bottom: none; margin-bottom: 0;">Blueboxx DA Pvt. Ltd.</h1>
+        <p><b>Frontend Web Platform — Empowering Students, Mentors, Colleges, & Employers</b></p>
+      </td>
+    </tr>
+  </table>
 
   <p>
     <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-14.x-black?style=for-the-badge&logo=next.js" alt="Next.js" /></a>
