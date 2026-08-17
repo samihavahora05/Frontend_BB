@@ -1,6 +1,21 @@
-# 🚀 Blueboxx DA - Frontend Platform
+<div align="center">
+  <img src="public/Boxxlogo.png" alt="Blueboxx DA Logo" width="260" />
+  <h2>🚀 Blueboxx DA — Frontend Web Platform</h2>
+  <p><b>Empowering Students, Mentors, Colleges, and Employers</b></p>
 
-A state-of-the-art, high-performance Web Application built with **Next.js**, **React**, **TypeScript**, and **Tailwind CSS**. **Blueboxx DA** provides an all-in-one edtech and career ecosystem offering interactive learning courses, 1:1 mentorship booking with industry experts, virtual live classes, job & internship application tracking, college placement drives, and real-time dashboard analytics.
+  <p>
+    <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-14.x-black?style=for-the-badge&logo=next.js" alt="Next.js" /></a>
+    <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-18.x-61DAFB?style=for-the-badge&logo=react" alt="React" /></a>
+    <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript" /></a>
+    <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS" /></a>
+  </p>
+</div>
+
+---
+
+## 📖 Overview
+
+**Blueboxx DA** is an all-in-one edtech and career portal providing interactive learning courses, 1:1 mentorship bookings with industry experts, virtual live classes, job & internship application tracking, college placement drives, and real-time dashboard analytics.
 
 ---
 
