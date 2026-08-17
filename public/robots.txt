@@ -1,0 +1,18 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /student
+Disallow: /expert
+Disallow: /company
+Disallow: /jobseeker
+Disallow: /intern
+Disallow: /college
+Disallow: /cart
+Disallow: /checkout
+
+# Host
+Host: https://blueboxx.in
+
+# Sitemaps
+Sitemap: https://blueboxx.in/sitemap.xml
