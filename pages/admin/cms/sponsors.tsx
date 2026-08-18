@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
-import { ChevronRight, Search, Plus, Trash2, Check, Image as ImageIcon } from "lucide-react";
+import { ChevronRight, Search, Trash2, Check, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
@@ -79,6 +79,16 @@ export default function AdminSponsorsPage() {
 
         <div className="flex-1">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-4 border-b border-slate-100 relative">
+              <Search size={16} className="absolute left-7 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search sponsors..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-[#1B2A6B]"
+              />
+            </div>
             <table className="w-full text-left">
               <thead className="bg-slate-50 border-b border-slate-100">
                 <tr>

@@ -14,7 +14,7 @@ const fetcher = async (url: string) => {
 
 export default function PaymentsPage() {
   const { isAuthenticated } = useAuth();
-  const { data, isLoading } = useSWR("/student/payments", fetcher, {
+  const { data, isLoading } = useSWR(isAuthenticated ? "/student/payments" : null, fetcher, {
     revalidateOnFocus: true,
   });
 

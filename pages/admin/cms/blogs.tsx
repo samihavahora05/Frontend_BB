@@ -1,6 +1,6 @@
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
-import { Plus, Search, Filter, Edit3, Trash2, Eye, MessageCircle, Heart, Share2, MoreHorizontal } from "lucide-react";
+import { Plus, Search, Edit3, Trash2, Eye, MessageCircle, Heart, MoreHorizontal } from "lucide-react";
 import { Button } from "../../../src/components/ui/Button";
 import { Badge } from "../../../src/components/ui/Badge";
 import { useState } from "react";
@@ -92,7 +92,7 @@ export default function AdminBlogsPage() {
                <div className="flex-1 flex flex-col justify-between">
                    <div>
                     <div className="flex items-center gap-3 mb-1">
-                      <Badge variant={blog.status === 'published' ? 'success' : 'secondary'}>{blog.status}</Badge>
+                      <Badge variant={blog.status === 'published' ? 'emerald' : 'secondary'}>{blog.status}</Badge>
                       <span className="text-xs font-semibold text-slate-400">{new Date(blog.created_at).toLocaleDateString()}</span>
                     </div>
                     <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#1B2A6B] transition-colors mb-1 cursor-pointer">

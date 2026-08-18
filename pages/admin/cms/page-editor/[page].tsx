@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { ArrowLeft, Save, Loader2, CheckCircle2, Layout, Type, Image as ImageIcon, Plus, Settings2, Trash2, Eye } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { SEO } from "../../../../src/components/seo/SEO";
 
 import { useEditor, EditorContent } from '@tiptap/react';
@@ -290,13 +288,12 @@ export default function AdminPageEditor() {
   }, [pageId]);
 
   const editor = useEditor({
-    key: editorKey,
     extensions: [StarterKit],
     content: pageData.contentHtml,
     onUpdate: ({ editor }) => {
-      setPageData(prev => ({ ...prev, contentHtml: editor.getHTML() }));
+      setPageData((prev: any) => ({ ...prev, contentHtml: editor.getHTML() }));
     },
-  });
+  }, [editorKey]);
 
   const handleSave = () => {
     setIsSaving(true);
@@ -308,30 +305,30 @@ export default function AdminPageEditor() {
   };
 
   const updateHero = (field: string, value: string) => {
-    setPageData(prev => ({
+    setPageData((prev: any) => ({
       ...prev,
       hero: { ...prev.hero, [field]: value }
     }));
   };
 
   const addFeature = () => {
-    setPageData(prev => ({
+    setPageData((prev: any) => ({
       ...prev,
       features: [...prev.features, { id: Date.now(), title: "New Feature", description: "Feature description" }]
     }));
   };
 
   const removeFeature = (id: number) => {
-    setPageData(prev => ({
+    setPageData((prev: any) => ({
       ...prev,
-      features: prev.features.filter(f => f.id !== id)
+      features: prev.features.filter((f: any) => f.id !== id)
     }));
   };
 
   const updateFeature = (id: number, field: string, value: string) => {
-    setPageData(prev => ({
+    setPageData((prev: any) => ({
       ...prev,
-      features: prev.features.map(f => f.id === id ? { ...f, [field]: value } : f)
+      features: prev.features.map((f: any) => f.id === id ? { ...f, [field]: value } : f)
     }));
   };
 
@@ -473,7 +470,7 @@ export default function AdminPageEditor() {
                     </h3>
                   </div>
                   <div className="p-4 space-y-3">
-                    {pageData.features.map((feature, idx) => (
+                    {pageData.features.map((feature: any, idx: number) => (
                       <div key={feature.id} className="p-3 bg-white border border-slate-200 rounded-lg relative group">
                         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button onClick={() => removeFeature(feature.id)} className="text-rose-500 hover:bg-rose-50 p-1 rounded"><Trash2 size={12} /></button>
@@ -539,7 +536,7 @@ export default function AdminPageEditor() {
                   <input 
                     type="text" 
                     value={pageData.seoTitle} 
-                    onChange={(e) => setPageData(prev => ({ ...prev, seoTitle: e.target.value }))}
+                    onChange={(e) => setPageData((prev: any) => ({ ...prev, seoTitle: e.target.value }))}
                     className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold outline-none" 
                   />
                 </div>
@@ -548,7 +545,7 @@ export default function AdminPageEditor() {
                   <textarea 
                     rows={3} 
                     value={pageData.seoDescription}
-                    onChange={(e) => setPageData(prev => ({ ...prev, seoDescription: e.target.value }))}
+                    onChange={(e) => setPageData((prev: any) => ({ ...prev, seoDescription: e.target.value }))}
                     className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold outline-none resize-none" 
                   />
                 </div>
@@ -609,7 +606,7 @@ export default function AdminPageEditor() {
                 </div>
                 
                 <div className="grid md:grid-cols-2 gap-8">
-                  {pageData.features.map(feature => (
+                  {pageData.features.map((feature: any) => (
                     <div key={feature.id} className="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:shadow-lg transition-shadow">
                       <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
                         <CheckCircle2 size={24} />

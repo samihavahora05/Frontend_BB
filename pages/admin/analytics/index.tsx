@@ -4,8 +4,8 @@ import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
 import {
   Users, GraduationCap, BookOpen, Briefcase, Award, Building2,
   FileText, TrendingUp, TrendingDown, Download, Printer,
-  Star, ChevronRight, Filter,
-  CheckCircle2, Clock, Activity, Target, Zap, Medal,
+  Filter,
+  Activity, Target, Medal,
   BarChart2, ChevronDown, RefreshCw
 } from 'lucide-react';
 import toast from 'react-hot-toast';

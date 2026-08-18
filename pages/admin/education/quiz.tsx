@@ -1,6 +1,6 @@
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
-import { HelpCircle, Plus, Search, Filter, MoreHorizontal, Clock, Users, BookOpenCheck, Edit3, Trash2, X, CheckCircle2 } from "lucide-react";
+import { HelpCircle, Plus, Search, Filter, MoreHorizontal, Clock, Users, BookOpenCheck, Edit3, Trash2, X } from "lucide-react";
 import { Button } from "../../../src/components/ui/Button";
 import { Badge } from "../../../src/components/ui/Badge";
 import { Card, CardContent } from "../../../src/components/ui/Card";
@@ -89,7 +89,7 @@ export default function AdminQuizPage() {
                     <div className="flex items-center gap-3 mb-2">
                       <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><HelpCircle size={18}/></div>
                       <h3 className="text-lg font-bold text-slate-900">{quiz.title}</h3>
-                      <Badge variant={quiz.status === 'Active' ? 'success' : 'secondary'}>{quiz.status}</Badge>
+                      <Badge variant={quiz.status === 'Active' ? 'emerald' : 'secondary'}>{quiz.status}</Badge>
                     </div>
                     <p className="text-sm text-slate-500 font-medium mb-4 pl-12">Linked Course: <strong className="text-slate-800">{quiz.course}</strong></p>
                     

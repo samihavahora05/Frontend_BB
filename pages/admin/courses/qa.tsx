@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
 import { 
-  MessageSquare, HelpCircle, CheckCircle2, Clock, AlertTriangle, MessageCircle, 
-  Search, Filter, Download, MoreVertical, Eye, Reply, Pin, XCircle, 
-  Trash2, ShieldAlert, FileText, ArrowUpDown, CornerDownRight, ThumbsUp, RefreshCw, X, Loader2, ChevronDown
+  MessageSquare, HelpCircle, CheckCircle2, Clock, MessageCircle, 
+  Search, Download, MoreVertical, Eye, Reply, Pin, XCircle, 
+  Trash2, ShieldAlert, FileText, CornerDownRight, RefreshCw, X, Loader2, ChevronDown
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { CourseQAService, CourseQuestion } from '../../../src/lib/api/admin/CourseQAService';

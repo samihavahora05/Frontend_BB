@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
-import { CourseService, Course } from '../../../src/lib/api/admin/CourseService';
-import { Plus, ListTree, Search, Filter, Download, MoreVertical, Edit, Trash2, Copy, Archive, CheckCircle, XCircle, Globe, Lock, Loader2 } from 'lucide-react';
+import { CourseService } from '../../../src/lib/api/admin/CourseService';
+import { Plus, ListTree, Search, Download, MoreVertical, Edit, Trash2, Copy, Archive, Globe, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { CourseCategoryService } from '../../../src/lib/api/admin/CourseCategoryService';
 
@@ -207,7 +207,7 @@ export default function CourseList() {
               )}
               <select value={categoryFilter} onChange={e => { setCategoryFilter(e.target.value); setPage(1); }} className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-[#1B2A6B]">
                 <option value="">All Categories</option>
-                {categories?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                {categories?.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
               <div className="relative">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />

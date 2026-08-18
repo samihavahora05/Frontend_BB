@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
-import { ChevronRight, Search, Plus, Trash2, Edit3, Check, ChevronDown } from "lucide-react";
+import { ChevronRight, Search, Trash2, Check, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
@@ -39,7 +39,7 @@ export default function AdminHeaderMenuPage() {
     ];
     setMenus(updated);
     localStorage.setItem('bb_header_menus', JSON.stringify(updated));
-    setForm({ title: "", type: "Custom Link", value: "", position: prev => prev.length + 1 });
+    setForm({ title: "", type: "Custom Link", value: "", position: updated.length + 1 });
     toast.success("Header Menu saved!");
   };
 
@@ -97,7 +97,7 @@ export default function AdminHeaderMenuPage() {
               </div>
               <div>
                 <label className="text-[11px] font-black text-slate-500 uppercase tracking-wider mb-1.5 block">POSITION ORDER</label>
-                <input type="number" min={1} value={form.position} onChange={e => setForm(p => ({ ...p, position: e.target.value }))}
+                <input type="number" min={1} value={form.position} onChange={e => setForm(p => ({ ...p, position: Number(e.target.value) }))}
                   className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-[#1B2A6B]" />
               </div>
               <button type="submit" className="flex items-center gap-2 px-5 py-2.5 bg-[#1B2A6B] hover:bg-[#1B2A6B]/90 text-white text-sm font-black rounded-xl shadow-sm transition-all">

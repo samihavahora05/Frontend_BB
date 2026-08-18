@@ -4,7 +4,6 @@ import { ChevronRight, ChevronDown, Check } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { CourseSettingService } from "../../../src/lib/api/admin/CourseSettingService";
-import { useAuth } from "../../../src/lib/auth"; // Assume some auth context if exists, or just gracefully handle 403.
 
 const DropField = ({ label, value, options, onChange, purpose }: { label: string; value: string; options: string[]; onChange: (v: string) => void; purpose?: string }) => (
   <div>

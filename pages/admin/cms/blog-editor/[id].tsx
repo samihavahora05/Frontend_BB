@@ -2,7 +2,7 @@ import { AdminDashboardLayout } from "../../../../src/layout/AdminDashboardLayou
 import { AnimatedContent } from "../../../../src/components/reactbits/AnimatedContent";
 import { RichTextEditor } from "../../../../src/components/ui/RichTextEditor";
 import { Button } from "../../../../src/components/ui/Button";
-import { ArrowLeft, Save, Eye, Image as ImageIcon, Send, Settings, Hash, Layout, Calendar, Video, ToggleLeft, Link2 } from "lucide-react";
+import { ArrowLeft, Save, Image as ImageIcon, Send, Settings, Hash, Layout, Calendar, Video, ToggleLeft, Link2 } from "lucide-react";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
@@ -27,6 +27,9 @@ export default function BlogEditorPage() {
   const [isTrending, setIsTrending] = useState(false);
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
+  const [metaKeywords, setMetaKeywords] = useState("");
+  const [status, setStatus] = useState("draft");
+  const [visibility, setVisibility] = useState("public");
   const [canonicalUrl, setCanonicalUrl] = useState("");
   const [scheduledAt, setScheduledAt] = useState("");
 
@@ -75,7 +78,7 @@ export default function BlogEditorPage() {
     }
   };
 
-  const handleSave = async (status: 'Published' | 'Draft' | 'Scheduled') => {
+  const handleSave = async (targetPublishStatus: 'Published' | 'Draft' | 'Scheduled') => {
     if (!title) return toast.error("Title is required");
     if (!categoryId) return toast.error("Category is required");
     
@@ -86,11 +89,12 @@ export default function BlogEditorPage() {
     formData.append("category_id", categoryId);
     
     // Format status to match Laravel validation: draft, published, archived
-    let finalStatus = status.toLowerCase();
+    let finalStatus = targetPublishStatus.toLowerCase();
     if (finalStatus === 'scheduled') {
       finalStatus = 'draft';
     }
-    formData.append("status", finalStatus);
+    formData.append("status", finalStatus || status);
+    formData.append("visibility", visibility);
     
     if (tags) {
       tags.split(",").map(t => t.trim()).filter(Boolean).forEach(t => formData.append("tags[]", t));
@@ -103,8 +107,9 @@ export default function BlogEditorPage() {
     formData.append("is_trending", isTrending ? "1" : "0");
     if (metaTitle) formData.append("meta_title", metaTitle);
     if (metaDescription) formData.append("meta_description", metaDescription);
+    if (metaKeywords) formData.append("meta_keywords", metaKeywords);
     if (canonicalUrl) formData.append("canonical_url", canonicalUrl);
-    if (status === 'Scheduled' && scheduledAt) {
+    if (targetPublishStatus === 'Scheduled' && scheduledAt) {
       formData.append("scheduled_at", scheduledAt);
     }
 
@@ -333,6 +338,28 @@ export default function BlogEditorPage() {
                         placeholder="SEO Description..."
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-[#1B2A6B]/20 focus:border-[#1B2A6B] outline-none transition-all resize-none"
                       />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-700">Meta Keywords</label>
+                      <input 
+                        type="text" 
+                        value={metaKeywords}
+                        onChange={(e) => setMetaKeywords(e.target.value)}
+                        placeholder="Keyword 1, Keyword 2..."
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-[#1B2A6B]/20 focus:border-[#1B2A6B] outline-none transition-all"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-700">Visibility</label>
+                      <select 
+                        value={visibility}
+                        onChange={(e) => setVisibility(e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-[#1B2A6B]/20 focus:border-[#1B2A6B] outline-none transition-all"
+                      >
+                        <option value="public">Public</option>
+                        <option value="private">Private</option>
+                        <option value="unlisted">Unlisted</option>
+                      </select>
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-slate-700">Short Excerpt</label>

@@ -1,5 +1,5 @@
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
-import { Tags, Plus, Search, MoreHorizontal, Trash, X } from "lucide-react";
+import { Tags, Plus, Trash, X } from "lucide-react";
 import { Badge } from "../../../src/components/ui/Badge";
 import { useState, useEffect } from "react";
 

@@ -23,6 +23,7 @@ export default function AdminCourseCategoriesPage() {
     page: page
   });
 
+
   const [form, setForm] = useState({ id: 0, name: "", description: "", parent_id: "", order: "1", status: "active" });
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -90,7 +91,7 @@ export default function AdminCourseCategoriesPage() {
       description: cat.description || "",
       parent_id: cat.parent_id ? String(cat.parent_id) : "",
       order: String(cat.position || 1),
-      status: cat.status
+      status: cat.status || "active"
     });
     setIconFile(null);
     setIsEditing(true);
@@ -166,8 +167,8 @@ export default function AdminCourseCategoriesPage() {
     }
   };
 
-  const getImageUrl = (path: string | undefined) => {
-    if (!path) return null;
+  const getImageUrl = (path?: string | null) => {
+    if (!path) return undefined;
     if (path.startsWith('http')) return path;
     const baseUrl = process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL.replace('/api', '') : 'https://backend.blueboxx.in';
     return `${baseUrl}/storage/${path}`;
@@ -212,7 +213,7 @@ export default function AdminCourseCategoriesPage() {
                   <select value={form.parent_id} onChange={e => setForm(p => ({ ...p, parent_id: e.target.value }))}
                     className="w-full appearance-none px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-[#1B2A6B]">
                     <option value="">None</option>
-                    {categories.filter(c => c.id !== form.id).map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    {categories.filter((c: any) => c.id !== form.id).map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                   <ChevronDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                 </div>

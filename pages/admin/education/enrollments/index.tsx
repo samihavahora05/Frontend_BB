@@ -407,7 +407,7 @@ function StatCard({ title, value, icon: Icon, color }: { title: string, value: n
   );
 }
 
-function StatusBadge({ status, type }: { status: string, type: 'payment' | 'enrollment' }) {
+function StatusBadge({ status, type: _type }: { status: string, type?: 'payment' | 'enrollment' }) {
   let colors = 'bg-slate-100 text-slate-600';
   
   if (status === 'Active' || status === 'Completed' || status === 'Paid') {

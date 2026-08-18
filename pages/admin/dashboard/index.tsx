@@ -1,45 +1,22 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import Head from 'next/head';
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
 import {
   Users, GraduationCap, BookOpen, UserCheck,
-  TrendingUp, TrendingDown, DollarSign, Activity,
-  Calendar, Plus, Download, ChevronRight,
-  MoreHorizontal, Star, Briefcase, Award, ArrowUpRight, Zap,
-  RefreshCw, BarChart2, LineChart, Filter, Bell, X, Eye,
-  Printer, Share2, FileText, Maximize2, ChevronDown, CheckCircle2, Circle
+  TrendingUp, TrendingDown, Activity,
+  Calendar, Briefcase, Award, ArrowUpRight, Zap,
+  RefreshCw, BarChart2, Bell, X
 } from "lucide-react";
 import toast from 'react-hot-toast';
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import api from '../../../src/lib/axios';
+import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 import { DashboardService } from "../../../src/lib/api/admin/DashboardService";
 import { useGlobalSettings } from "../../../src/contexts/SettingsContext";
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const AVATARS_COLORS = ['bg-blue-600', 'bg-purple-600', 'bg-emerald-600', 'bg-rose-600', 'bg-orange-500'];
-
-// Dropdown menu component
-function DropdownMenu({ items, onClose }: { items: { label: string; icon: any; action: () => void; danger?: boolean }[]; onClose: () => void }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) onClose(); };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [onClose]);
-  return (
-    <div ref={ref} className="absolute right-0 top-full mt-1 z-50 bg-white rounded-xl shadow-xl border border-slate-200 py-1 w-48 animate-in zoom-in-95 duration-150">
-      {items.map((item, i) => (
-        <button key={i} onClick={() => { item.action(); onClose(); }} className={`w-full text-left flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold transition-colors ${item.danger ? 'text-red-600 hover:bg-red-50' : 'text-slate-700 hover:bg-slate-50'}`}>
-          <item.icon size={13} className={item.danger ? 'text-red-400' : 'text-slate-400'} />
-          {item.label}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 // Quick Action Modal
 function QuickActionModal({ onClose }: { onClose: () => void }) {
@@ -80,16 +57,12 @@ function QuickActionModal({ onClose }: { onClose: () => void }) {
 
 export default function SuperAdminDashboard() {
   const router = useRouter();
-  const [dateRange, setDateRange] = useState("This Month");
-  const [chartType, setChartType] = useState<'bar' | 'line'>('bar');
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [showQuickAction, setShowQuickAction] = useState(false);
-  const [activityFilter, setActivityFilter] = useState('all');
   const { settings } = useGlobalSettings();
 
   // Use SWR for clean data fetching
   const { data: summaryRes, isLoading: isSummaryLoading, mutate: mutateSummary } = DashboardService.useDashboardSummary();
-  const { data: chartsRes, isLoading: isChartsLoading, mutate: mutateCharts } = DashboardService.useDashboardCharts();
+  const { data: chartsRes, mutate: mutateCharts } = DashboardService.useDashboardCharts();
   const { data: feedRes, mutate: mutateFeed } = DashboardService.useActivityFeed();
   const { data: topCoursesRes, mutate: mutateTopCourses } = DashboardService.useTopCourses();
   const { data: recentEnrollsRes, mutate: mutateRecentEnrolls } = DashboardService.useRecentEnrollments();
@@ -110,11 +83,6 @@ export default function SuperAdminDashboard() {
       mutateRecentEnrolls()
     ]);
     toast.success('Dashboard data refreshed!', { id: 'refresh' });
-  };
-
-  const handleExport = (format: string) => {
-    toast.success(`Exporting as ${format}...`);
-    setTimeout(() => toast.success(`${format} downloaded successfully!`), 1200);
   };
 
   const formatNumber = (num: number) => {
@@ -263,7 +231,7 @@ export default function SuperAdminDashboard() {
                   <Activity size={24} className="mb-2 opacity-40" />
                   <p className="text-xs font-bold">No activity found</p>
                 </div>
-              ) : feedData.slice(0, 5).map((act, i) => (
+              ) : feedData.slice(0, 5).map((act: any, i: number) => (
                 <div key={i} className="flex items-start gap-3 px-5 py-3.5 hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => toast.success(`Action: ${act.action}`)}>
                   <div className="mt-0.5 w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
                     <Activity size={14} />
@@ -295,7 +263,7 @@ export default function SuperAdminDashboard() {
             <div className="divide-y divide-slate-50">
               {topCourses.length === 0 ? (
                 <div className="p-8 text-center text-sm text-gray-500">No courses available.</div>
-              ) : topCourses.map((course, idx) => (
+              ) : topCourses.map((course: any, idx: number) => (
                 <div key={course.id} onClick={() => router.push('/admin/courses')} className="flex items-center gap-5 px-6 py-4 hover:bg-slate-50/50 transition-colors group cursor-pointer">
                   <span className="text-[13px] font-black text-slate-300 w-4 shrink-0">#{idx + 1}</span>
                   <div className="flex-1 min-w-0">
@@ -328,7 +296,7 @@ export default function SuperAdminDashboard() {
             <div className="divide-y divide-slate-50">
               {recentEnrolls.length === 0 ? (
                 <div className="p-8 text-center text-sm text-gray-500">No enrollments yet.</div>
-              ) : recentEnrolls.map((enroll, idx) => (
+              ) : recentEnrolls.map((enroll: any, idx: number) => (
                 <div key={enroll.id} onClick={() => router.push('/admin/education/enrollments')} className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50/50 transition-colors cursor-pointer group">
                   <div className={`w-10 h-10 rounded-full ${AVATARS_COLORS[idx % AVATARS_COLORS.length]} text-white flex items-center justify-center text-[13px] font-black shrink-0 shadow-sm uppercase`}>
                     {enroll.user?.first_name?.[0]}{enroll.user?.last_name?.[0]}

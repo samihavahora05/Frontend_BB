@@ -1,6 +1,6 @@
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
-import { MessageSquare, Shield, ShieldAlert, Search, Filter, CheckCircle2, Trash2, X, Save } from "lucide-react";
+import { Shield, ShieldAlert, Search, CheckCircle2, Trash2, X, Save } from "lucide-react";
 import { Button } from "../../../src/components/ui/Button";
 import { Badge } from "../../../src/components/ui/Badge";
 import { useState } from "react";

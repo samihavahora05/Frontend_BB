@@ -1,5 +1,5 @@
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
-import { Building, Search, Plus, ShieldCheck, X, Check, ShieldAlert, Trash2, Edit, MonitorPlay, ExternalLink, Image as ImageIcon } from "lucide-react";
+import { Building, Search, Plus, ShieldCheck, X, Check, ShieldAlert, Trash2, Edit, ExternalLink } from "lucide-react";
 import { Badge } from "../../../src/components/ui/Badge";
 import { MediaUploader } from "../../../src/components/ui/MediaUploader";
 import { useState, useEffect } from "react";
@@ -9,22 +9,7 @@ import useSWR from "swr";
 import { fetcher } from "../../../src/lib/fetcher"; // Standard fetcher
 import api from "../../../src/lib/axios";
 
-// MOCK data removed, replaced with SWR
 
-const MOCK_PROJECTS = [
-  {
-    id: 1,
-    title: "Brand Identity & 3D Promo Film",
-    studio: "Anibrain Studios",
-    category: "3D ANIMATION",
-    description: "End-to-end brand film featuring photorealistic 3D product animation and motion graphics for theatrical release.",
-    tags: ["3D Modeling", "VFX", "Motion Graphics"],
-    duration: "8 WEEKS",
-    deliverables: "BRAND FILM + 3 TEASERS",
-    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
-    link: "#"
-  }
-];
 
 export default function AdminCompaniesPage() {
   const [activeTab, setActiveTab] = useState<"companies" | "projects" | "partners" | "colleges">("companies");
@@ -478,7 +463,7 @@ export default function AdminCompaniesPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {projects.map((project) => (
+            {projects.map((project: any) => (
               <div key={project.id} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm relative group flex flex-col">
                 <div className="absolute top-3 right-3 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button 

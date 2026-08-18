@@ -1,6 +1,6 @@
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
-import { HelpCircle, Search, Filter, CheckCircle2, MessageSquare, Trash2, ArrowRight } from "lucide-react";
+import { HelpCircle, Search, MessageSquare, Trash2, ArrowRight } from "lucide-react";
 import { Button } from "../../../src/components/ui/Button";
 import { Badge } from "../../../src/components/ui/Badge";
 import { useState } from "react";
@@ -68,7 +68,7 @@ export default function AdminQnAPage() {
                  {questions.map((q) => (
                    <div key={q.id} onClick={() => setActiveQuestionId(q.id)} className={`p-4 border-b border-slate-100 cursor-pointer transition-colors ${q.id === activeQuestionId ? 'bg-white border-l-4 border-l-[#1B2A6B]' : 'hover:bg-white border-l-4 border-l-transparent'}`}>
                       <div className="flex justify-between items-start mb-2">
-                         <Badge variant={q.status === 'Answered' ? 'success' : 'warning'} className="text-[10px] px-1.5 py-0">{q.status}</Badge>
+                         <Badge variant={q.status === 'Answered' ? 'emerald' : 'gold'} className="text-[10px] px-1.5 py-0">{q.status}</Badge>
                          <span className="text-[10px] font-semibold text-slate-400">{q.date}</span>
                       </div>
                       <h4 className="font-bold text-slate-900 text-sm mb-1 line-clamp-2">{q.question}</h4>

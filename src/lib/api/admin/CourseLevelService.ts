@@ -3,6 +3,18 @@ import useSWR from 'swr';
 
 const fetcher = (url: string) => api.get(url).then((res) => res.data);
 
+export interface CourseLevel {
+  id: number;
+  name: string;
+  title?: string;
+  slug: string;
+  description?: string | null;
+  is_active?: boolean;
+  position?: number;
+  courses_count?: number;
+  status?: 'active' | 'inactive' | string;
+}
+
 export const CourseLevelService = {
   useLevels: (params: Record<string, any> = {}) => {
     const query = new URLSearchParams(

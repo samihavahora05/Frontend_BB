@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
 import { 
-  Mail, Users, Settings, Plus, Search, Send, BarChart2, Trash2, Edit, Save, Globe
+  Mail, Search, Trash2, Save, Globe
 } from "lucide-react";
 import toast from "react-hot-toast";
 

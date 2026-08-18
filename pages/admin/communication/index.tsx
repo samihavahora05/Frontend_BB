@@ -3,11 +3,10 @@ import Head from 'next/head';
 import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
 import { 
   MessageSquare, Mail, Send, Radio, MessageCircle, 
-  Megaphone, HelpCircle, Inbox, User, Search, Paperclip, CheckCircle, Trash2, Edit2, X, Phone, Clock
+  Megaphone, HelpCircle, Inbox, User, Search, CheckCircle, Trash2, Edit2, X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { CommunicationService } from '../../../src/lib/api/admin/CommunicationService';
-import { LeadService } from '../../../src/lib/api/admin/LeadService';
 import useSWR from 'swr';
 import api from '../../../src/lib/axios';
 
@@ -557,7 +556,7 @@ export default function CommunicationCenter() {
                 if (!input.value.trim()) return;
                 
                 try {
-                  const data = await CommunicationService.sendMessage({
+                  await CommunicationService.sendMessage({
                     thread_id: selectedThread.id,
                     body: input.value,
                     recipient_ids: selectedThread.recipients?.map((r:any) => r.user?.id) || []

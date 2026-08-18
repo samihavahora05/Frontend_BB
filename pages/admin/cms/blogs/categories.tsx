@@ -176,7 +176,7 @@ export default function AdminBlogCategoriesPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {filtered.map((cat) => (
+                  {filtered.map((cat: any) => (
                     <tr key={cat.id} className="hover:bg-slate-50 transition-colors">
                       <td className="px-6 py-4 font-bold text-slate-800 flex items-center gap-2">
                         <Tag size={14} className="text-slate-400" /> {cat.name}

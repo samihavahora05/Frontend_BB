@@ -1,8 +1,8 @@
 import { AdminDashboardLayout } from "../../src/layout/AdminDashboardLayout";
-import { Search, Plus, X, Trash2, Edit, Star, Briefcase } from "lucide-react";
+import { Search, Plus, X, Trash2, Star } from "lucide-react";
 import { Badge } from "../../src/components/ui/Badge";
 import { MediaUploader } from "../../src/components/ui/MediaUploader";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const MOCK_PARTNERS = [
   { id: 1, name: "Netflix India", website: "https://netflix.com", category: "Entertainment", status: "Active", featured: true, order: 1, logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" },
@@ -11,7 +11,22 @@ const MOCK_PARTNERS = [
 ];
 
 export default function AdminClientsPage() {
-  const [partners, setPartners] = useState(MOCK_PARTNERS);
+  const [partners, setPartners] = useState<any[]>([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('bb_clients_partners');
+    if (saved) {
+      try { setPartners(JSON.parse(saved)); } catch (e) { setPartners(MOCK_PARTNERS); }
+    } else {
+      setPartners(MOCK_PARTNERS);
+      localStorage.setItem('bb_clients_partners', JSON.stringify(MOCK_PARTNERS));
+    }
+  }, []);
+
+  const savePartners = (items: any[]) => {
+    setPartners(items);
+    localStorage.setItem('bb_clients_partners', JSON.stringify(items));
+  };
 
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -27,7 +42,8 @@ export default function AdminClientsPage() {
 
   const handleDeletePartner = (id: number) => {
     if (confirm("Are you sure you want to delete this partner?")) {
-      setPartners(prev => prev.filter(p => p.id !== id));
+      const updated = partners.filter(p => p.id !== id);
+      savePartners(updated);
     }
   };
 
@@ -44,7 +60,7 @@ export default function AdminClientsPage() {
         featured,
         order: parseInt(order) || 99
       };
-      setPartners(prev => [...prev, newPartner]);
+      savePartners([...partners, newPartner]);
       
       // Reset & close
       setName("");

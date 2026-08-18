@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
 import {
-  Plus, Edit2, Trash2, Eye, Download, Search, Filter,
-  Video, Calendar, Users, Clock, Globe, Wifi, WifiOff,
-  CheckCircle, XCircle, PlayCircle, StopCircle, RefreshCw,
-  BookOpen, Link as LinkIcon, ChevronRight
+  Plus, Edit2, Trash2, Eye, Download, Search,
+  Video, Calendar, Users, Wifi, WifiOff,
+  CheckCircle, PlayCircle, StopCircle, RefreshCw,
+  Link as LinkIcon
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useSWR from 'swr';

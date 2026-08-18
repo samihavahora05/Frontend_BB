@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
 import { 
-  FileText, Search, Edit3, Eye, Check, ChevronRight 
+  FileText, Search, Check, ChevronRight 
 } from "lucide-react";
 import toast from "react-hot-toast";
 

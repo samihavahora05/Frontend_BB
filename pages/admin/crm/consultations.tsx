@@ -1,7 +1,6 @@
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
-import { Search, Phone, Mail, Calendar, Trash2, CheckCircle, RefreshCcw } from "lucide-react";
-import { Button } from "../../../src/components/ui/Button";
+import { Search, Phone, Mail, Calendar, Trash2, RefreshCcw } from "lucide-react";
 import { Badge } from "../../../src/components/ui/Badge";
 import { useState } from "react";
 import useSWR from "swr";
@@ -127,7 +126,7 @@ export default function AdminConsultationsPage() {
                         <p className="text-sm text-slate-600 max-w-xs truncate" title={c.query}>{c.query || 'No query provided'}</p>
                       </td>
                       <td className="p-4">
-                         <Badge variant={c.status === 'resolved' ? 'success' : c.status === 'contacted' ? 'primary' : 'warning'}>
+                         <Badge variant={c.status === 'resolved' ? 'emerald' : c.status === 'contacted' ? 'blue' : 'gold'}>
                            {c.status || 'pending'}
                          </Badge>
                       </td>

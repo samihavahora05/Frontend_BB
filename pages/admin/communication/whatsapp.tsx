@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
 import { 
-  PhoneCall, Save, MessageSquare, Check, Power, Send
+  PhoneCall, Save, MessageSquare, Power, Send
 } from "lucide-react";
 import toast from "react-hot-toast";
 

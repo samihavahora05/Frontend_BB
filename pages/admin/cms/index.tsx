@@ -1,6 +1,6 @@
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
 import { FileText, Image as ImageIcon, Search, Filter, Edit3, Eye, MoreVertical, Layout, Type, Globe, CheckCircle2, X, Plus, Copy, Trash2 } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";

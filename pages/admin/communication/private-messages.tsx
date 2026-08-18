@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
-import { Search, Send } from 'lucide-react';
+import { Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const USERS = [

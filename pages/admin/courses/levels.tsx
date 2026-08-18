@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
-import { ChevronRight, ChevronDown, Search, Check, Trash2, Edit3, X, FileText, Download, Printer, Loader2, MoreVertical, Eye } from "lucide-react";
+import { ChevronRight, ChevronDown, Search, Check, Trash2, Edit3, X, FileText, Download, Printer, Loader2, Eye } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { CourseLevelService, CourseLevel } from "../../../src/lib/api/admin/CourseLevelService";
@@ -81,10 +81,10 @@ export default function AdminCourseLevelsPage() {
   const handleEdit = (lvl: CourseLevel) => {
     setForm({
       id: lvl.id,
-      title: lvl.title,
+      title: lvl.title || lvl.name || "",
       description: lvl.description || "",
       position: String(lvl.position || 0),
-      status: lvl.status
+      status: (lvl.status as "active" | "inactive") || "active"
     });
     setIsEditing(true);
     setActiveDropdown(null);
@@ -105,9 +105,9 @@ export default function AdminCourseLevelsPage() {
   const toggleStatus = async (lvl: CourseLevel) => {
     const newStatus = lvl.status === 'active' ? 'inactive' : 'active';
     // Optimistic UI
-    mutate(levels.map(l => l.id === lvl.id ? { ...l, status: newStatus } : l), false);
+    mutate(levels.map((l: any) => l.id === lvl.id ? { ...l, status: newStatus } : l), false);
     try {
-      await CourseLevelService.update(lvl.id, { title: lvl.title, status: newStatus });
+      await CourseLevelService.update(lvl.id, { title: lvl.title || lvl.name, status: newStatus });
       toast.success(`Status updated to ${newStatus}`);
       mutate(); // Revalidate
     } catch (e: any) {

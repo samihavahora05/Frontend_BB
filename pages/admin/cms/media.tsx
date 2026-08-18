@@ -255,7 +255,11 @@ export default function AdminMediaLibrary() {
 
       {/* Grid */}
       <div className="bg-white rounded-b-2xl border border-slate-200 shadow-sm p-6 min-h-[400px]">
-        {filteredItems.length === 0 ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center h-64 text-slate-400 font-bold text-sm">
+            Loading media files...
+          </div>
+        ) : filteredItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-slate-400">
             <ImageIcon size={48} className="mb-4 opacity-50" />
             <p className="text-lg font-bold">No media files found</p>
@@ -356,7 +360,7 @@ export default function AdminMediaLibrary() {
                   </a>
                   <button 
                     onClick={() => {
-                      navigator.clipboard.writeText(previewImage.url);
+                      if (previewImage) navigator.clipboard.writeText(previewImage.url);
                       const btn = document.getElementById('copy-url-btn');
                       if(btn) {
                         const originalHtml = btn.innerHTML;
@@ -376,7 +380,7 @@ export default function AdminMediaLibrary() {
                     Copy Public URL
                   </button>
                   <button 
-                    onClick={() => handleSingleDelete(previewImage.id)}
+                    onClick={() => previewImage && handleSingleDelete(previewImage.id)}
                     className="w-full py-2.5 bg-rose-50 text-rose-600 rounded-xl text-sm font-bold hover:bg-rose-100 transition-colors flex items-center justify-center gap-2 mt-4"
                   >
                     <Trash2 size={16} /> Delete Permanently
@@ -387,7 +391,6 @@ export default function AdminMediaLibrary() {
           </div>
         )}
       </AnimatePresence>
-
     </AdminDashboardLayout>
   );
 }

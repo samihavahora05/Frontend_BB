@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
-import { ChevronRight, Search, Plus, Trash2, Check, Bell } from "lucide-react";
+import { ChevronRight, Trash2, Check, Bell } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 

@@ -6,7 +6,7 @@ import useSWR from 'swr';
 import api from '../../../src/lib/axios';
 import {
   Video, Shield, Settings, CheckCircle, XCircle,
-  Eye, EyeOff, Wifi, WifiOff, RefreshCw, Save, TestTube
+  Eye, EyeOff, RefreshCw, Save, TestTube
 } from 'lucide-react';
 
 const fetcher = (url: string) => api.get(url).then(r => r.data);

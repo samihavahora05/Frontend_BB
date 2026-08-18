@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
-import { ChevronRight, ChevronDown, Search, Check, Trash2, Edit2, Loader2 } from "lucide-react";
+import { ChevronRight, Search, Check, Trash2, Edit2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { CourseSubjectService, CourseSubject } from "../../../src/lib/api/admin/CourseSubjectService";

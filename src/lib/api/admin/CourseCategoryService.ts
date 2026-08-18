@@ -3,6 +3,20 @@ import useSWR from 'swr';
 
 const fetcher = (url: string) => api.get(url).then((res) => res.data);
 
+export interface CourseCategory {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string | null;
+  parent_id?: number | null;
+  icon?: string | null;
+  image?: string | null;
+  is_active?: boolean;
+  position?: number;
+  courses_count?: number;
+  status?: string;
+}
+
 export const CourseCategoryService = {
   useCategories: (params: Record<string, any> = {}) => {
     const query = new URLSearchParams(
