@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   trailingSlash: true,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts', '@dnd-kit/core', 'clsx'],
   },

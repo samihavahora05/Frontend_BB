@@ -57,7 +57,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           <TourProvider>
             <SettingsProvider>
               <MockDataProvider>
-                <Toaster position="bottom-right" />
+                <Toaster position="bottom-right" containerStyle={{ zIndex: 100000 }} toastOptions={{ style: { zIndex: 100000 } }} />
                 <OnboardingTour />
                 <SEO title={generateDynamicTitle(router.asPath)} useDynamic={true} />
                 {/* Only show ScholarshipPopup on non-auth pages */}

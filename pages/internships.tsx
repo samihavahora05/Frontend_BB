@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { MainLayout } from "../src/layout/MainLayout";
-import { Filter, Briefcase, Clock, ArrowRight, Building, Loader2, Search, MapPin, CheckCircle2, Sparkles, Play, X, Star, ShieldCheck, Award, Check } from "lucide-react";
+import { Filter, Briefcase, Clock, ArrowRight, Building, Loader2, Search, MapPin, CheckCircle2, Play, X, Star, ShieldCheck } from "lucide-react";
 import { SidebarFilter } from "../src/components/ui/SidebarFilter";
 import { Pagination } from "../src/components/ui/Pagination";
 import { Card, CardContent } from "../src/components/ui/Card";
@@ -13,6 +13,7 @@ import { useAuth } from "../src/context/AuthContext";
 import useSWR, { mutate } from "swr";
 import toast from "react-hot-toast";
 import { ApplyModal } from "../src/components/internship/ApplyModal";
+import { PartnersSection } from "../src/sections/PartnersSection";
 
 export default function InternshipsPage() {
   const router = useRouter();
@@ -729,102 +730,11 @@ export default function InternshipsPage() {
           </div>
         </div>
 
-        {/* ========================================================
-            SECTION 4: AI & INDUSTRY TOOLS YOU WILL MASTER
-            ======================================================== */}
-        <div className="py-16 bg-white border-t border-slate-200">
-          <div className="container mx-auto px-4 max-w-6xl">
-            
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-[#C9A227]/15 text-[#C9A227] inline-block mb-3">
-                Cutting-Edge Curriculum
-              </span>
-              <h2 className="text-3xl font-black text-[#0d1635]">Tools You Will Master & Learn</h2>
-              <p className="text-xs text-slate-500 font-semibold mt-2">Get hands-on experience with modern AI tools and software used by leading design & engineering teams.</p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {[
-                { name: "Figma & UI Prototyping", desc: "Design systems, auto-layout, wireframes" },
-                { name: "React & Next.js Framework", desc: "Full-stack web application development" },
-                { name: "ChatGPT-4o & AI Prompting", desc: "AI-assisted coding and automated workflows" },
-                { name: "Python & Data Science", desc: "Data analytics, Pandas, automated reporting" },
-                { name: "Adobe Photoshop & Illustrator", desc: "Graphic design, brand identity & motion" },
-                { name: "Flutter & Cross-Platform Apps", desc: "Mobile app development for iOS & Android" }
-              ].map((tool, idx) => (
-                <div key={idx} className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-[#1B2A6B]/30 hover:bg-white hover:shadow-lg transition-all flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#1B2A6B] text-white flex items-center justify-center shrink-0 mt-0.5">
-                    <Check size={16} />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-extrabold text-[#0d1635]">{tool.name}</h4>
-                    <p className="text-xs text-slate-500 font-medium mt-0.5">{tool.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-          </div>
-        </div>
-
-        {/* ========================================================
-            SECTION 5: TOP COMPANIES HIRING MARQUEE
-            ======================================================== */}
-        <div className="py-14 bg-slate-900 text-white overflow-hidden relative">
-          <div className="container mx-auto px-4 max-w-6xl text-center mb-8">
-            <h3 className="text-xl font-extrabold text-white">Top Companies Hiring Blueboxx Interns</h3>
-            <p className="text-xs text-slate-400 font-medium mt-1">Our learners get hired across tech labs, media houses, and international agencies.</p>
-          </div>
-
-          <div className="flex gap-8 items-center justify-center flex-wrap opacity-70">
-            {["Essar Group", "Framestore", "Vistaprint", "Sawariya Solution", "Speedline Taxis", "Jash Packaging", "AATAPI Wonderland", "Cizzara"].map((comp, idx) => (
-              <span key={idx} className="px-5 py-2.5 rounded-xl bg-white/10 border border-white/10 text-xs font-extrabold text-slate-200 hover:opacity-100 transition-opacity">
-                {comp}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* ========================================================
-            SECTION 6: EXCLUSIVE BENEFITS FOR YOU
-            ======================================================== */}
-        <div className="py-16 bg-white border-t border-slate-200">
-          <div className="container mx-auto px-4 max-w-6xl">
-            
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-3xl font-black text-[#0d1635]">Exclusive <span className="text-[#C9A227]">Benefits</span> for You</h2>
-              <p className="text-xs text-slate-500 font-semibold mt-2">Everything you need to step confidently into your tech & design career.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
-              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:shadow-xl transition-all text-center">
-                <div className="w-12 h-12 rounded-2xl bg-[#1B2A6B]/10 text-[#1B2A6B] flex items-center justify-center mx-auto mb-4">
-                  <Award size={24} />
-                </div>
-                <h3 className="text-base font-extrabold text-[#0d1635] mb-1">Structured Courses</h3>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed">Step-by-step learning with practical assignments for real-world knowledge.</p>
-              </div>
-
-              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:shadow-xl transition-all text-center">
-                <div className="w-12 h-12 rounded-2xl bg-[#C9A227]/10 text-[#C9A227] flex items-center justify-center mx-auto mb-4">
-                  <Sparkles size={24} />
-                </div>
-                <h3 className="text-base font-extrabold text-[#0d1635] mb-1">1-on-1 Mentorship</h3>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed">Personal sessions with industry mentors to guide your career growth.</p>
-              </div>
-
-              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:shadow-xl transition-all text-center">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto mb-4">
-                  <Briefcase size={24} />
-                </div>
-                <h3 className="text-base font-extrabold text-[#0d1635] mb-1">Live Projects</h3>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed">Work on real company projects and build a professional portfolio.</p>
-              </div>
-
-            </div>
-          </div>
-        </div>
+        <PartnersSection 
+          titlePrefix="Companies Hiring " 
+          highlightText="Top Talent" 
+          subtitle="We are proud to work with leading corporate hiring partners and clients worldwide" 
+        />
 
         {/* Application Modal */}
         <ApplyModal 

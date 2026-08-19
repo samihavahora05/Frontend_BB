@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Head from 'next/head';
 import Link from 'next/link';
 import { AdminDashboardLayout } from '@/layout/AdminDashboardLayout';
@@ -8,6 +9,11 @@ import { Award, CheckCircle, Clock, XCircle, Download, FileCheck, Search, FileTe
 import toast from 'react-hot-toast';
 
 export default function CertificateListPage() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [activeTab, setActiveTab] = useState<'templates' | 'issued'>('templates');
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
@@ -34,36 +40,14 @@ export default function CertificateListPage() {
     status: statusFilter !== 'All' ? statusFilter : undefined,
   });
 
-  // Derived display templates merging local & API templates
+  // Derived display templates prioritizing database templates from API
   const displayTemplates = useMemo(() => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('bb_cert_templates_v1') : null;
-    const localList = stored ? JSON.parse(stored) : [];
-    
-    const combinedMap = new Map();
-
-    // 1. Add local templates
-    localList.forEach((item: any) => {
-      if (item.title) combinedMap.set(item.title.trim().toLowerCase(), item);
-    });
-
-    // 2. Add API templates
-    if (templates && Array.isArray(templates)) {
-      templates.forEach((apiTpl: any) => {
-        const bg = apiTpl.bg_image || apiTpl.background_image;
-        const key = apiTpl.title ? apiTpl.title.trim().toLowerCase() : apiTpl.id;
-        
-        if (!combinedMap.has(key)) {
-          if (bg) combinedMap.set(key, apiTpl);
-        } else {
-          const existing = combinedMap.get(key);
-          if (!existing.bg_image && !existing.background_image && bg) {
-            combinedMap.set(key, apiTpl);
-          }
-        }
-      });
+    const apiTemplates = Array.isArray(templates) ? templates : [];
+    if (apiTemplates.length > 0) {
+      return apiTemplates;
     }
-
-    return Array.from(combinedMap.values());
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('bb_cert_templates_v1') : null;
+    return stored ? JSON.parse(stored) : [];
   }, [JSON.stringify(templates)]);
 
   const handleDeleteTemplate = async (id: number | string) => {
@@ -86,8 +70,8 @@ export default function CertificateListPage() {
     }
   };
 
-  const handleDownloadTemplateImage = async (template: any, customStudentName?: string) => {
-    const bgSrc = template.bg_image || template.background_image;
+  const handleDownloadTemplateImage = async (template: any, customStudentName?: string, customCourseTitle?: string) => {
+    const bgSrc = template?.bg_image || template?.background_image;
     if (!bgSrc) {
       return toast.error('No background image available for this template');
     }
@@ -98,7 +82,7 @@ export default function CertificateListPage() {
 
       const canvas = document.createElement('canvas');
       await renderCertificateToCanvas(canvas, bgSrc, {
-        title: template.title || layout.title,
+        title: customCourseTitle || template.title || layout.title,
         showTitle: template.show_title || layout.showTitle,
         elements,
         studentName: customStudentName || '[Student Name]',
@@ -106,7 +90,7 @@ export default function CertificateListPage() {
 
       const a = document.createElement('a');
       a.href = canvas.toDataURL('image/png');
-      a.download = `${template.title || 'Certificate'}-${customStudentName || 'Template'}.png`;
+      a.download = `${customCourseTitle || template.title || 'Certificate'}_${customStudentName || 'Student'}.png`;
       a.click();
       toast.success('Certificate image downloaded!');
     } catch (e) {
@@ -138,24 +122,43 @@ export default function CertificateListPage() {
 
   const handleIssueSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!issueForm.student_name || !issueForm.course_title) {
-      return toast.error('Student Name and Course Title are required');
+    if (!issueForm.student_name) {
+      return toast.error('Student Name is required');
     }
+    const finalCourseTitle = issueForm.course_title.trim() || 'Certificate of Completion';
     try {
+      const parsedTemplateId = selectedTemplateId 
+        ? Number(selectedTemplateId) 
+        : (displayTemplates?.[0]?.id ? Number(displayTemplates[0].id) : null);
+
       await CertificateApiService.issueCertificate({
-        template_id: selectedTemplateId,
+        template_id: parsedTemplateId,
         student_name: issueForm.student_name,
         student_email: issueForm.student_email,
-        course_title: issueForm.course_title,
+        course_title: finalCourseTitle,
       });
       toast.success('Certificate issued successfully!');
       setIsIssueModalOpen(false);
       setIssueForm({ student_name: '', student_email: '', course_title: '' });
+      setSelectedTemplateId('');
       mutateCerts();
       setActiveTab('issued');
-    } catch (e) {
-      toast.error('Failed to issue certificate');
+    } catch (e: any) {
+      const errs = e?.response?.data?.errors;
+      let errMsg = e?.response?.data?.message || 'Failed to issue certificate';
+      if (errs && typeof errs === 'object') {
+        const firstErr = Object.values(errs).flat()[0];
+        if (firstErr) errMsg = String(firstErr);
+      }
+      toast.error(errMsg);
     }
+  };
+
+  const openIssueModal = (templateId?: string | number) => {
+    setIssueForm({ student_name: '', student_email: '', course_title: '' });
+    const defaultId = templateId ?? (displayTemplates?.[0]?.id ?? '');
+    setSelectedTemplateId(defaultId);
+    setIsIssueModalOpen(true);
   };
 
   return (
@@ -163,7 +166,7 @@ export default function CertificateListPage() {
       <Head>
         <title>Certificates | BlueBoxx DA</title>
       </Head>
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <div className="space-y-6">
         
         {/* Top Header & Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -173,7 +176,7 @@ export default function CertificateListPage() {
           </div>
           <div className="flex items-center gap-3">
             <button 
-              onClick={() => setIsIssueModalOpen(true)}
+              onClick={() => openIssueModal()}
               className="bg-[#C9A227] hover:bg-[#b08d22] text-slate-900 px-4 py-2.5 rounded-xl font-bold text-xs shadow-sm transition-all flex items-center gap-2"
             >
               <Send size={15} /> Issue Certificate
@@ -334,11 +337,7 @@ export default function CertificateListPage() {
                             <Download size={13} /> Download
                           </button>
                           <button
-                            onClick={() => {
-                              setSelectedTemplateId(tpl.id);
-                              if (tpl.title) setIssueForm(prev => ({ ...prev, course_title: tpl.title }));
-                              setIsIssueModalOpen(true);
-                            }}
+                            onClick={() => openIssueModal(tpl.id)}
                             className="w-full py-2 bg-[#1B2A6B] hover:bg-[#121c47] text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5"
                           >
                             <Send size={13} /> Issue This
@@ -418,7 +417,8 @@ export default function CertificateListPage() {
                     </tr>
                   ) : (
                     certificates.map((cert: any) => {
-                      const studentName = cert.student_name || (cert.user ? `${cert.user.first_name || ''} ${cert.user.last_name || ''}`.trim() : 'Student');
+                      const studentName = cert.student_name || (cert.user ? (cert.user.name || `${cert.user.first_name || ''} ${cert.user.last_name || ''}`.trim()) : 'Student');
+                      const courseTitle = cert.course_title || cert.course?.title || 'Certificate of Completion';
                       const matchedTemplate = templates?.find((t: any) => String(t.id) === String(cert.template_id)) || templates?.[0];
 
                       return (
@@ -428,7 +428,7 @@ export default function CertificateListPage() {
                             <div className="text-sm font-bold text-gray-800">{studentName}</div>
                             <div className="text-xs text-gray-500">{cert.student_email || cert.user?.email || '-'}</div>
                           </td>
-                          <td className="py-4 px-6 text-sm font-medium text-gray-600">{cert.course_title || cert.course?.title || '-'}</td>
+                          <td className="py-4 px-6 text-sm font-medium text-gray-600">{courseTitle}</td>
                           <td className="py-4 px-6">
                             <span className={`px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider
                               ${cert.status === 'Issued' ? 'bg-emerald-100 text-emerald-700' : 
@@ -446,7 +446,7 @@ export default function CertificateListPage() {
                             <div className="flex items-center gap-3">
                               {matchedTemplate ? (
                                 <button 
-                                  onClick={() => handleDownloadTemplateImage(matchedTemplate, studentName)}
+                                  onClick={() => handleDownloadTemplateImage(matchedTemplate, studentName, courseTitle)}
                                   className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
                                 >
                                   <Download size={12} /> Download Image
@@ -455,7 +455,7 @@ export default function CertificateListPage() {
                                 <a href={`/storage/${cert.pdf_path}`} target="_blank" rel="noreferrer" className="text-xs font-bold text-blue-600 hover:underline">Download PDF</a>
                               ) : (
                                 <button 
-                                  onClick={() => templates?.[0] ? handleDownloadTemplateImage(templates[0], studentName) : toast.error('No template found')}
+                                  onClick={() => templates?.[0] ? handleDownloadTemplateImage(templates[0], studentName, courseTitle) : toast.error('No template found')}
                                   className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
                                 >
                                   <Download size={12} /> Download
@@ -497,9 +497,9 @@ export default function CertificateListPage() {
         )}
 
         {/* ISSUE CERTIFICATE MODAL */}
-        {isIssueModalOpen && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative animate-in zoom-in-95">
+        {isIssueModalOpen && mounted && createPortal(
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative animate-in zoom-in-95 my-auto">
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
                 <h3 className="text-lg font-black text-slate-800 flex items-center gap-2">
                   <Send size={18} className="text-[#C9A227]" /> Issue New Certificate
@@ -509,20 +509,16 @@ export default function CertificateListPage() {
 
               <form onSubmit={handleIssueSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1">Select Template *</label>
+                  <label className="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1">
+                    Select Template <span className="text-slate-400 font-normal lowercase">(optional)</span>
+                  </label>
                   <select
                     value={selectedTemplateId}
-                    onChange={(e) => {
-                      const id = e.target.value;
-                      setSelectedTemplateId(id);
-                      const t = templates?.find((x: any) => String(x.id) === String(id));
-                      if (t?.title) setIssueForm(prev => ({ ...prev, course_title: t.title }));
-                    }}
-                    required
+                    onChange={(e) => setSelectedTemplateId(e.target.value)}
                     className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1B2A6B]"
                   >
-                    <option value="">Select Certificate Template...</option>
-                    {templates?.map((t: any) => (
+                    <option value="">Default Certificate Template</option>
+                    {displayTemplates?.map((t: any) => (
                       <option key={t.id} value={t.id}>{t.title || 'Untitled Template'}</option>
                     ))}
                   </select>
@@ -533,6 +529,7 @@ export default function CertificateListPage() {
                   <input
                     type="text"
                     required
+                    autoComplete="off"
                     value={issueForm.student_name}
                     onChange={(e) => setIssueForm({ ...issueForm, student_name: e.target.value })}
                     placeholder="e.g. Sarah Jenkins"
@@ -544,6 +541,7 @@ export default function CertificateListPage() {
                   <label className="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1">Student Email</label>
                   <input
                     type="email"
+                    autoComplete="off"
                     value={issueForm.student_email}
                     onChange={(e) => setIssueForm({ ...issueForm, student_email: e.target.value })}
                     placeholder="e.g. sarah@example.com"
@@ -552,10 +550,10 @@ export default function CertificateListPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1">Course / Certificate Title *</label>
+                  <label className="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1">Course / Certificate Title</label>
                   <input
                     type="text"
-                    required
+                    autoComplete="off"
                     value={issueForm.course_title}
                     onChange={(e) => setIssueForm({ ...issueForm, course_title: e.target.value })}
                     placeholder="e.g. AI-Based Problem Solving"
@@ -580,7 +578,8 @@ export default function CertificateListPage() {
                 </div>
               </form>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
 
       </div>

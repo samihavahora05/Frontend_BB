@@ -38,4 +38,12 @@ export const ContestService = {
     const response = await api.delete(`/admin/contests/${id}`);
     return response.data;
   },
+
+  useRegistrations: () => {
+    return useSWR('/admin/contests/registrations', fetcher, { revalidateOnFocus: true });
+  },
+
+  useSubmissions: () => {
+    return useSWR('/admin/contests/submissions', fetcher, { revalidateOnFocus: true });
+  },
 };

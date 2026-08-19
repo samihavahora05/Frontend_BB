@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CompanyDashboardLayout } from "../../../src/layout/CompanyDashboardLayout";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
-import { Calendar, Video, Search, User, X, CalendarDays, ArrowRight, Loader2 } from "lucide-react";
+import { Calendar, Video, Search, X, Loader2 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import useSWR from "swr";
@@ -22,13 +22,11 @@ export default function CompanyInterviewsPage() {
   const filtered = interviews.filter(
     (i: any) =>
       (activeTab === "Past" ? i.recommendation !== "pending" : i.recommendation === "pending") &&
-      (i.name.toLowerCase().includes(search.toLowerCase()) || i.role.toLowerCase().includes(search.toLowerCase()))
+      (i.name?.toLowerCase().includes(search.toLowerCase()) || i.role?.toLowerCase().includes(search.toLowerCase()))
   );
 
   const handleReschedule = async (e: React.FormEvent) => {
     e.preventDefault();
-    // This requires an endpoint to update schedule. For now, since we only have update(marks/recommendation), we will just mock it or if backend supports it, send it. Our update method in CompanyInterviewController doesn't process date/time currently.
-    // I'll leave the modal but note it.
     if (rescheduleModal) {
       toast.error("Rescheduling not supported in current schema");
       setRescheduleModal(null);
@@ -43,9 +41,12 @@ export default function CompanyInterviewsPage() {
           feedback: feedbackText,
           recommendation: feedbackRecommendation 
         });
+        toast.success("Feedback submitted!");
+        setFeedbackModal(null);
         mutate();
-    } catch (err) {
-      toast.error("Failed to reschedule interview");
+      } catch (err) {
+        toast.error("Failed to submit feedback");
+      }
     }
   };
 
@@ -56,16 +57,6 @@ export default function CompanyInterviewsPage() {
       mutate();
     } catch (err) {
       toast.error("Failed to cancel interview");
-    }
-  };
-
-  const handleComplete = async (id: string) => {
-    try {
-      await api.put(`/company/interviews/${id}/status`, { status: "completed" });
-      toast.success("Interview marked as completed");
-      mutate();
-    } catch (err) {
-      toast.error("Failed to update status");
     }
   };
 
@@ -147,7 +138,7 @@ export default function CompanyInterviewsPage() {
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-black text-slate-600 text-sm">
-                      {interview.name.split(" ").map((n: string) => n[0]).join("")}
+                      {interview.name?.split(" ").map((n: string) => n[0]).join("") || "U"}
                     </div>
                     <div>
                       <h3 className="text-base font-black text-slate-800 leading-tight">{interview.name}</h3>
@@ -158,10 +149,10 @@ export default function CompanyInterviewsPage() {
               </div>
 
               <div className="flex-shrink-0 w-full sm:w-auto flex sm:flex-col gap-2 border-t sm:border-t-0 sm:border-l border-slate-100 pt-4 sm:pt-0 sm:pl-6">
-                {activeTab === "Upcoming" && (
+                {activeTab === "Upcoming" ? (
                   <>
                     <button
-                      onClick={() => window.open(interview.link, "_blank")}
+                      onClick={() => window.open(interview.link || "#", "_blank")}
                       className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-[#1B2A6B] text-white font-bold text-xs rounded-lg hover:bg-[#0d1635] transition-colors shadow-sm"
                     >
                       <Video size={14} /> Join
@@ -169,7 +160,6 @@ export default function CompanyInterviewsPage() {
                     <button
                       onClick={() => {
                         setRescheduleModal(interview);
-                        setRescheduleForm({ date: interview.date, time: interview.time });
                       }}
                       className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 font-bold text-xs rounded-lg hover:bg-slate-50 transition-colors"
                     >
@@ -182,80 +172,18 @@ export default function CompanyInterviewsPage() {
                       Cancel
                     </button>
                   </>
+                ) : (
+                  <button
+                    onClick={() => setFeedbackModal(interview.id)}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 font-bold text-xs rounded-lg hover:bg-slate-50 transition-colors"
+                  >
+                    Submit Feedback
+                  </button>
                 )}
               </div>
-                      <span className={`px-2 py-0.5 text-[10px] font-black uppercase tracking-wider rounded ${interview.match >= 90 || interview.match === 'High' ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
-                        {interview.score || interview.match}% Match
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs font-semibold text-slate-500 ml-13">
-                      <span className="flex items-center gap-1.5">
-                        <Calendar size={14} className="text-slate-400" /> {interview.round || "Round 1"} • {interview.mode}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex-shrink-0 w-full sm:w-auto flex sm:flex-col gap-2 border-t sm:border-t-0 sm:border-l border-slate-100 pt-4 sm:pt-0 sm:pl-6">
-                    {activeTab === "Upcoming" ? (
-                      <>
-                        <button
-                          onClick={() => toast.success(`Starting video call with ${interview.name}...`)}
-                          className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-[#1B2A6B] text-white font-bold text-xs rounded-lg hover:bg-[#0d1635] transition-colors shadow-sm"
-                        >
-                          <Video size={14} /> Join Call
-                        </button>
-                        <button
-                          onClick={() => setRescheduleModal({ id: interview.id, date: interview.date, time: interview.time })}
-                          className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 font-bold text-xs rounded-lg hover:bg-slate-50 transition-colors"
-                        >
-                          Reschedule
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        onClick={() => setFeedbackModal(interview.id)}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 font-bold text-xs rounded-lg hover:bg-slate-50 transition-colors"
-                      >
-                        Submit Feedback
-                      </button>
-                    )}
-                  </div>
-                </AnimatedContent>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* Sidebar */}
-        <div className="lg:col-span-1 space-y-6">
-          <AnimatedContent direction="up" delay={0.2} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-            <h3 className="text-sm font-black text-slate-800 mb-4 border-b border-slate-100 pb-3">Interview Stats</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between text-xs font-bold">
-                <span className="text-slate-500">Total Scheduled</span>
-                <span className="text-slate-800">{interviews.length}</span>
-              </div>
-              <div className="flex justify-between text-xs font-bold">
-                <span className="text-slate-500">Upcoming</span>
-                <span className="text-amber-600">{interviews.filter((i: any) => i.recommendation === "pending").length}</span>
-              </div>
-              <div className="flex justify-between text-xs font-bold">
-                <span className="text-slate-500">Completed</span>
-                <span className="text-emerald-600">{interviews.filter((i: any) => i.recommendation !== "pending").length}</span>
-              </div>
-            </div>
-          </AnimatedContent>
-
-          <AnimatedContent direction="up" delay={0.3} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-            <h3 className="text-sm font-black text-slate-800 mb-4 border-b border-slate-100 pb-3">Quick Actions</h3>
-            <div className="space-y-2">
-              <Link href="/company/applicants" className="w-full flex items-center justify-between p-3 text-xs font-bold text-slate-600 hover:text-[#1B2A6B] hover:bg-blue-50 rounded-xl transition-colors">
-                <span>Schedule from Applicants</span>
-                <ArrowRight size={14} />
-              </Link>
-            </div>
-          </AnimatedContent>
-        </div>
+            </AnimatedContent>
+          ))
+        )}
       </div>
 
       {/* Reschedule Modal */}

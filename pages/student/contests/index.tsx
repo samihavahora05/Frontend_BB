@@ -25,7 +25,23 @@ export default function ContestsPage() {
   const [registeringContest, setRegisteringContest] = useState<any>(null);
   const [participationType, setParticipationType] = useState<'individual' | 'team'>('individual');
   const [teamName, setTeamName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [collegeName, setCollegeName] = useState('');
+  const [domainTrack, setDomainTrack] = useState('Full-Stack Web Development');
+  const [teamMembers, setTeamMembers] = useState('');
+  const [agreedTerms, setAgreedTerms] = useState(false);
   const [isSubmittingReg, setIsSubmittingReg] = useState(false);
+
+  const resetForm = () => {
+    setRegisteringContest(null);
+    setParticipationType('individual');
+    setTeamName('');
+    setPhone('');
+    setCollegeName('');
+    setDomainTrack('Full-Stack Web Development');
+    setTeamMembers('');
+    setAgreedTerms(false);
+  };
 
   return (
     <StudentDashboardLayout>
@@ -187,17 +203,18 @@ export default function ContestsPage() {
 
       {/* Contest Registration Modal */}
       {registeringContest && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 my-8">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
               <div>
                 <h2 className="text-lg font-black text-slate-800 uppercase tracking-tight">Register for Contest</h2>
                 <p className="text-xs font-bold text-[#1B2A6B] line-clamp-1 mt-0.5">{registeringContest.title}</p>
               </div>
-              <button onClick={() => setRegisteringContest(null)} className="text-slate-400 hover:text-slate-600"><XCircle size={22}/></button>
+              <button onClick={resetForm} className="text-slate-400 hover:text-slate-600"><XCircle size={22}/></button>
             </div>
 
-            <div className="p-6 space-y-5">
+            <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+              {/* Participation Mode */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-2">Participation Mode</label>
                 <div className="grid grid-cols-2 gap-3">
@@ -226,40 +243,148 @@ export default function ContestsPage() {
                 </div>
               </div>
 
+              {/* Team Details */}
               {participationType === 'team' && (
-                <div className="animate-in fade-in duration-200">
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Team / Group Name</label>
-                  <input
-                    type="text"
-                    value={teamName}
-                    onChange={(e) => setTeamName(e.target.value)}
-                    placeholder="e.g. Code Ninjas, Team Alpha"
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-[#1B2A6B] focus:outline-none"
-                  />
-                  <p className="text-[10px] text-slate-400 font-semibold mt-1">You will be designated as the Team Leader.</p>
+                <div className="space-y-3 animate-in fade-in duration-200 bg-blue-50/50 p-3.5 rounded-xl border border-blue-100">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Team / Group Name <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      required
+                      value={teamName}
+                      onChange={(e) => setTeamName(e.target.value)}
+                      placeholder="e.g. Code Ninjas, Team Alpha"
+                      className="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#1B2A6B] focus:outline-none bg-white"
+                    />
+                    <p className="text-[10px] text-slate-400 font-semibold mt-1">You will be designated as Team Leader.</p>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Team Members (Names / Emails) <span className="text-red-500">*</span></label>
+                    <textarea
+                      rows={2}
+                      required
+                      value={teamMembers}
+                      onChange={(e) => setTeamMembers(e.target.value)}
+                      placeholder="e.g. Alex (alex@email.com), Sarah (sarah@email.com)"
+                      className="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#1B2A6B] focus:outline-none bg-white"
+                    />
+                  </div>
                 </div>
               )}
 
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs space-y-1.5 text-slate-600 font-medium">
+              {/* Phone / WhatsApp */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Phone / WhatsApp Number <span className="text-red-500">*</span></label>
+                <input
+                  type="tel"
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+91 98765 43210"
+                  className="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#1B2A6B] focus:outline-none"
+                />
+              </div>
+
+              {/* College / Institution */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">College / Institute / Organization <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  required
+                  value={collegeName}
+                  onChange={(e) => setCollegeName(e.target.value)}
+                  placeholder="e.g. Parul University / Independent Learner"
+                  className="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#1B2A6B] focus:outline-none"
+                />
+              </div>
+
+              {/* Primary Skill / Track */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Domain / Track Interest <span className="text-red-500">*</span></label>
+                <select
+                  required
+                  value={domainTrack}
+                  onChange={(e) => setDomainTrack(e.target.value)}
+                  className="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#1B2A6B] focus:outline-none bg-white"
+                >
+                  <option value="Full-Stack Web Development">Full-Stack Web Development</option>
+                  <option value="Artificial Intelligence & Machine Learning">Artificial Intelligence & Machine Learning</option>
+                  <option value="Mobile App Development">Mobile App Development (Flutter / React Native)</option>
+                  <option value="UI/UX Design & Prototyping">UI/UX Design & Prototyping</option>
+                  <option value="Data Analytics & Python">Data Analytics & Python</option>
+                  <option value="Cybersecurity & Cloud Computing">Cybersecurity & Cloud Computing</option>
+                </select>
+              </div>
+
+              {/* Contest Metadata */}
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs space-y-1 text-slate-600 font-medium">
                 <p className="flex justify-between"><span>Status:</span> <strong className="text-slate-800 uppercase">{registeringContest.status || 'Upcoming'}</strong></p>
                 <p className="flex justify-between"><span>Start Date:</span> <strong className="text-slate-800">{registeringContest.start_date ? new Date(registeringContest.start_date).toLocaleDateString() : 'TBA'}</strong></p>
               </div>
 
+              {/* Terms Checkbox */}
+              <label className="flex items-start gap-2 cursor-pointer pt-1">
+                <input
+                  type="checkbox"
+                  required
+                  checked={agreedTerms}
+                  onChange={(e) => setAgreedTerms(e.target.checked)}
+                  className="mt-0.5 rounded border-slate-300 text-[#1B2A6B] focus:ring-[#1B2A6B]"
+                />
+                <span className="text-[11px] text-slate-600 font-medium leading-snug">
+                  I agree to the contest rules, submission guidelines, and code of conduct. <span className="text-red-500">*</span>
+                </span>
+              </label>
+
+              {/* Submit Button */}
               <button
                 disabled={isSubmittingReg}
                 onClick={async () => {
                   if (participationType === 'team' && !teamName.trim()) {
-                    toast.error('Please enter a team name');
+                    toast.error('Please enter your team name');
+                    return;
+                  }
+                  if (participationType === 'team' && !teamMembers.trim()) {
+                    toast.error('Please enter team members\' names or emails');
+                    return;
+                  }
+                  if (!phone.trim()) {
+                    toast.error('Please enter your phone / WhatsApp number');
+                    return;
+                  }
+                  if (!collegeName.trim()) {
+                    toast.error('Please enter your college or organization name');
+                    return;
+                  }
+                  if (!domainTrack) {
+                    toast.error('Please select your domain / track interest');
+                    return;
+                  }
+                  if (!agreedTerms) {
+                    toast.error('Please agree to the contest terms and rules before registering.');
                     return;
                   }
                   setIsSubmittingReg(true);
                   try {
-                    await api.post(`/student/contests/${registeringContest.id}/register`, {
-                      team_name: participationType === 'team' ? teamName.trim() : null
-                    });
+                    try {
+                      await api.post(`/student/contests/${registeringContest.id}/register`, {
+                        team_name: participationType === 'team' ? teamName.trim() : null,
+                        phone: phone.trim(),
+                        college_name: collegeName.trim(),
+                        domain_track: domainTrack,
+                        team_members: participationType === 'team' ? teamMembers.trim() : null,
+                      });
+                    } catch (primaryErr: any) {
+                      await api.post(`/public/contests/${registeringContest.id}/register`, {
+                        team_name: participationType === 'team' ? teamName.trim() : null,
+                        phone: phone.trim(),
+                        college_name: collegeName.trim(),
+                        domain_track: domainTrack,
+                        team_members: participationType === 'team' ? teamMembers.trim() : null,
+                      });
+                    }
                     toast.success(`Successfully registered for ${registeringContest.title}!`);
-                    setRegisteringContest(null);
-                    setTeamName('');
+                    resetForm();
                     mutate();
                   } catch (err: any) {
                     toast.error(err?.response?.data?.message || 'Registration failed');
@@ -267,9 +392,9 @@ export default function ContestsPage() {
                     setIsSubmittingReg(false);
                   }
                 }}
-                className="w-full py-3 bg-[#1B2A6B] hover:bg-[#121c47] text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 bg-[#1B2A6B] hover:bg-[#121c47] text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 mt-2"
               >
-                {isSubmittingReg ? 'Processing...' : 'Confirm Registration'}
+                {isSubmittingReg ? 'Processing...' : 'Confirm & Complete Registration'}
               </button>
             </div>
           </div>

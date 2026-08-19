@@ -135,7 +135,14 @@ export default function AdminUsersPage() {
     
     const toastId = toast.loading('Exporting users...');
     try {
-      await UserManagerService.exportUsers(params);
+      const res = await api.get('/admin/users/export', { params, responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'users_export.csv');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
       toast.success('Export successful', { id: toastId });
     } catch (e) {
       toast.error('Export failed', { id: toastId });

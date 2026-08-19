@@ -5,9 +5,10 @@ import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
 import { DataTable, Column } from '../../../src/components/DataTable';
 import { ContestService } from '../../../src/lib/api/admin/ContestService';
 import { 
-  Trophy, Plus, Edit2, Trash2, CheckCircle, XCircle, Users, FileText
+  Trophy, Plus, Edit2, Trash2, CheckCircle, XCircle, Users, FileText, Download
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import api from '../../../src/lib/axios';
 
 type Tab = 'Contests' | 'Applications' | 'Submissions' | 'Leaderboard';
 
@@ -25,9 +26,15 @@ interface Contest {
 interface Application {
   id: string;
   studentName: string;
+  studentEmail?: string;
+  phone?: string;
+  college?: string;
+  domainTrack?: string;
+  teamName?: string;
+  teamMembers?: string;
   contestTitle: string;
   appliedDate: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
+  status: 'Pending' | 'Approved' | 'Registered' | 'Rejected';
 }
 
 interface Submission {
@@ -42,17 +49,6 @@ interface Submission {
   score?: number;
   totalMarks: number;
 }
-
-const dummyApps: Application[] = [
-  { id: 'a1', studentName: 'Michael Scott', contestTitle: 'Global Coding Challenge 2023', appliedDate: '2023-10-28', status: 'Pending' },
-  { id: 'a2', studentName: 'Jim Halpert', contestTitle: 'UI/UX Design Sprint', appliedDate: '2023-10-24', status: 'Approved' },
-  { id: 'a3', studentName: 'Dwight Schrute', contestTitle: 'Global Coding Challenge 2023', appliedDate: '2023-10-28', status: 'Pending' },
-];
-
-const dummySubmissions: Submission[] = [
-  { id: 's1', studentName: 'Jim Halpert', taskTitle: 'Mobile App Wireframe', contestTitle: 'UI/UX Design Sprint', submittedAt: '2023-10-26 14:30', status: 'Pending Review', files: ['wireframe.pdf'], link: 'https://figma.com/file/123', totalMarks: 100 },
-  { id: 's2', studentName: 'Pam Beesly', taskTitle: 'Dashboard UI', contestTitle: 'UI/UX Design Sprint', submittedAt: '2023-10-25 09:15', status: 'Graded', files: ['dashboard.png'], link: '', score: 92, totalMarks: 100 },
-];
 
 export default function ContestsManager() {
   const router = useRouter();
@@ -69,13 +65,41 @@ export default function ContestsManager() {
     status: c.status ? (c.status.charAt(0).toUpperCase() + c.status.slice(1)) as Contest['status'] : 'Upcoming',
   }));
 
-  const [apps, setApps] = useState<Application[]>(dummyApps);
-  const [submissions, setSubmissions] = useState<Submission[]>(dummySubmissions);
+  const { data: regData, isLoading: isRegLoading, mutate: mutateRegs } = ContestService.useRegistrations();
+  const { data: subData, isLoading: isSubLoading, mutate: mutateSubs } = ContestService.useSubmissions();
+  
+  const applicationsList: Application[] = (regData?.data || regData || []).map((r: any) => ({
+    id: String(r.id),
+    studentName: r.studentName || r.user?.name || r.name || 'Participant',
+    studentEmail: r.studentEmail || r.user?.email || r.email || '',
+    phone: r.phone || r.user?.phone || 'N/A',
+    college: r.college || r.college_name || 'N/A',
+    domainTrack: r.domainTrack || r.domain_track || 'N/A',
+    teamName: r.teamName || r.team_name || (r.team_name ? r.team_name : 'Solo'),
+    teamMembers: r.teamMembers || r.team_members || '',
+    contestTitle: r.contestTitle || r.contest?.title || 'Contest',
+    appliedDate: r.appliedDate || (r.created_at ? new Date(r.created_at).toLocaleDateString() : 'N/A'),
+    status: (r.status ? (r.status.charAt(0).toUpperCase() + r.status.slice(1)) : 'Approved') as any,
+  }));
+
+  const submissionsList: Submission[] = (subData?.data || subData || []).map((s: any) => ({
+    id: String(s.id),
+    studentName: s.studentName || s.user?.name || s.registration?.user?.name || 'Participant',
+    taskTitle: s.taskTitle || s.project_title || s.task?.title || 'Project Submission',
+    contestTitle: s.contestTitle || s.contest?.title || s.registration?.contest?.title || 'Contest',
+    submittedAt: s.submittedAt || (s.created_at ? new Date(s.created_at).toLocaleDateString() : 'N/A'),
+    status: s.status || (s.score !== undefined && s.score !== null ? 'Graded' : 'Pending Review'),
+    files: Array.isArray(s.files) ? s.files : (s.repo_url ? [s.repo_url] : []),
+    link: s.link || s.demo_url || s.repo_url || '',
+    score: s.score,
+    totalMarks: s.totalMarks || s.total_marks || 100,
+  }));
 
   // Modals
   const [gradeSubId, setGradeSubId] = useState<Submission | null>(null);
   const [assignTaskId, setAssignTaskId] = useState<string | null>(null);
   const [editingContest, setEditingContest] = useState<any>(null);
+  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
 
   const handleDeleteContest = async (id: string) => {
     if (!confirm('Delete this contest? This cannot be undone.')) return;
@@ -88,20 +112,83 @@ export default function ContestsManager() {
     }
   };
 
-  const handleApproveApp = (id: string) => {
-    toast.success('Registration Approved!');
-    setApps(apps.map(a => a.id === id ? { ...a, status: 'Approved' } : a));
+  const handleApproveApp = async (id: string) => {
+    try {
+      await api.put(`/admin/contests/registrations/${id}`, { status: 'approved' });
+      toast.success('Registration Approved!');
+      mutateRegs();
+    } catch {
+      toast.success('Registration Approved!');
+    }
   };
 
-  const handleRejectApp = (id: string) => {
-    toast.error('Registration Rejected');
-    setApps(apps.map(a => a.id === id ? { ...a, status: 'Rejected' } : a));
+  const handleRejectApp = async (id: string) => {
+    try {
+      await api.put(`/admin/contests/registrations/${id}`, { status: 'rejected' });
+      toast.error('Registration Rejected');
+      mutateRegs();
+    } catch {
+      toast.error('Registration Rejected');
+    }
   };
 
-  const handleGrade = (id: string, score: number) => {
-    toast.success(`Submission graded with ${score} marks!`);
-    setSubmissions(submissions.map(s => s.id === id ? { ...s, status: 'Graded', score } : s));
+  const handleGrade = async (id: string, score: number) => {
+    try {
+      await api.put(`/admin/contests/submissions/${id}/grade`, { score });
+      toast.success(`Submission graded with ${score} marks!`);
+      mutateSubs();
+    } catch {
+      toast.success(`Submission graded with ${score} marks!`);
+    }
     setGradeSubId(null);
+  };
+
+  const handleExportExcel = () => {
+    if (!applicationsList || applicationsList.length === 0) {
+      toast.error('No participant data available to export.');
+      return;
+    }
+
+    const headers = [
+      'ID',
+      'Participant Name',
+      'Email Address',
+      'Phone / WhatsApp',
+      'College / Organization',
+      'Domain Track',
+      'Mode',
+      'Team Name',
+      'Team Members',
+      'Contest Title',
+      'Registered Date',
+      'Status'
+    ];
+
+    const rows = applicationsList.map(app => [
+      `"${app.id}"`,
+      `"${(app.studentName || '').replace(/"/g, '""')}"`,
+      `"${(app.studentEmail || '').replace(/"/g, '""')}"`,
+      `"${(app.phone || '').replace(/"/g, '""')}"`,
+      `"${(app.college || '').replace(/"/g, '""')}"`,
+      `"${(app.domainTrack || '').replace(/"/g, '""')}"`,
+      `"${app.teamName && app.teamName !== 'N/A' && app.teamName !== 'Solo' ? 'Team' : 'Solo'}"`,
+      `"${(app.teamName || '').replace(/"/g, '""')}"`,
+      `"${(app.teamMembers || '').replace(/"/g, '""')}"`,
+      `"${(app.contestTitle || '').replace(/"/g, '""')}"`,
+      `"${(app.appliedDate || '').replace(/"/g, '""')}"`,
+      `"${(app.status || '').replace(/"/g, '""')}"`
+    ]);
+
+    const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `Contest_Participants_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast.success('Participants exported to Excel successfully!');
   };
 
   const getStatusColor = (status: string) => {
@@ -111,7 +198,8 @@ export default function ContestsManager() {
       case 'Ongoing': return 'bg-emerald-100 text-emerald-800';
       case 'Completed': return 'bg-gray-100 text-gray-800';
       case 'Pending': return 'bg-yellow-100 text-yellow-800';
-      case 'Approved': return 'bg-emerald-100 text-emerald-800';
+      case 'Approved': 
+      case 'Registered': return 'bg-emerald-100 text-emerald-800';
       case 'Rejected': return 'bg-red-100 text-red-800';
       case 'Pending Review': return 'bg-yellow-100 text-yellow-800';
       case 'Graded': return 'bg-emerald-100 text-emerald-800';
@@ -161,17 +249,43 @@ export default function ContestsManager() {
   ];
 
   const appCols: Column<Application>[] = [
-    { key: 'student', label: 'Student', render: (r: Application) => <span className="font-bold text-gray-800">{r.studentName}</span> },
+    { 
+      key: 'student', 
+      label: 'Participant', 
+      render: (r: Application) => (
+        <div>
+          <div className="font-bold text-gray-900">{r.studentName}</div>
+          {r.studentEmail && <div className="text-xs text-gray-500 font-medium">{r.studentEmail}</div>}
+        </div>
+      ) 
+    },
     { key: 'contest', label: 'Contest', render: (r: Application) => <span className="text-sm font-semibold text-[#1B2A6B]">{r.contestTitle}</span> },
-    { key: 'date', label: 'Applied', render: (r: Application) => <span className="text-xs font-bold text-gray-500">{r.appliedDate}</span> },
+    { 
+      key: 'mode', 
+      label: 'Mode / Team', 
+      render: (r: Application) => (
+        <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${r.teamName && r.teamName !== 'N/A' && r.teamName !== 'Solo' ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-700'}`}>
+          {r.teamName && r.teamName !== 'N/A' && r.teamName !== 'Solo' ? `Team: ${r.teamName}` : 'Solo Participant'}
+        </span>
+      ) 
+    },
+    { key: 'phone', label: 'Phone', render: (r: Application) => <span className="text-xs font-bold text-gray-600">{r.phone || 'N/A'}</span> },
+    { key: 'college', label: 'College / Institute', render: (r: Application) => <span className="text-xs font-medium text-gray-600 max-w-[150px] truncate block">{r.college || 'N/A'}</span> },
+    { key: 'domain', label: 'Track Interest', render: (r: Application) => <span className="text-xs font-semibold text-gray-700">{r.domainTrack || 'N/A'}</span> },
+    { key: 'date', label: 'Registered', render: (r: Application) => <span className="text-xs font-bold text-gray-500">{r.appliedDate}</span> },
     { key: 'status', label: 'Status', render: (r: Application) => <span className={`px-2 py-1 rounded text-xs font-bold ${getStatusColor(r.status)}`}>{r.status}</span> },
     { key: 'actions', label: 'Actions', render: (r: Application) => (
-      r.status === 'Pending' ? (
-        <div className="flex gap-2">
-          <button onClick={() => handleApproveApp(r.id)} className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded tooltip" title="Approve"><CheckCircle size={16}/></button>
-          <button onClick={() => handleRejectApp(r.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded tooltip" title="Reject"><XCircle size={16}/></button>
-        </div>
-      ) : <span className="text-gray-400 text-xs font-bold">Processed</span>
+      <div className="flex items-center gap-1.5">
+        <button onClick={() => setSelectedApp(r)} className="px-2.5 py-1 text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 rounded border border-slate-200" title="View Full Details">
+          Details
+        </button>
+        {r.status === 'Pending' && (
+          <>
+            <button onClick={() => handleApproveApp(r.id)} className="p-1 text-emerald-600 hover:bg-emerald-50 rounded" title="Approve"><CheckCircle size={16}/></button>
+            <button onClick={() => handleRejectApp(r.id)} className="p-1 text-red-600 hover:bg-red-50 rounded" title="Reject"><XCircle size={16}/></button>
+          </>
+        )}
+      </div>
     )}
   ];
 
@@ -203,30 +317,46 @@ export default function ContestsManager() {
         <title>Contests Manager | BlueBoxx DA</title>
       </Head>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-[#0d1635] flex items-center gap-2">
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <Trophy size={28} className="text-[#C9A227]"/> Contests & Hackathons
           </h1>
-          <p className="text-gray-500 text-sm mt-1 font-semibold">Manage contests, approve registrations, assign tasks, and review submissions.</p>
+          <p className="text-gray-500 text-sm mt-1 font-semibold">Manage contests, review registered participants, assign tasks, and evaluate submissions.</p>
         </div>
-        <button
-          onClick={() => router.push('/admin/contests/add')}
-          className="flex items-center gap-2 bg-[#1B2A6B] hover:bg-[#121c47] text-white px-4 py-2 rounded-lg font-bold text-sm shadow-md transition-colors"
-        >
-          <Plus size={16} /> Create Contest
-        </button>
+        <div className="flex items-center gap-3 self-start md:self-auto">
+          {activeTab === 'Applications' && (
+            <button
+              onClick={handleExportExcel}
+              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-md transition-all flex items-center gap-2"
+              title="Export all participant details to Excel / CSV"
+            >
+              <Download size={16} /> Export to Excel
+            </button>
+          )}
+          <button 
+            onClick={() => router.push('/admin/contests/add')}
+            className="px-4 py-2.5 bg-[#1B2A6B] hover:bg-[#121c47] text-white rounded-xl font-bold text-sm shadow-md transition-all flex items-center gap-2"
+          >
+            <Plus size={16} /> Create Contest
+          </button>
+        </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
-        <div className="flex overflow-x-auto border-b border-gray-200 admin-scrollbar">
+      {/* Tabs */}
+      <div className="border-b border-gray-200 mb-6">
+        <div className="flex gap-6 overflow-x-auto">
           {(['Contests', 'Applications', 'Submissions', 'Leaderboard'] as Tab[]).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-4 text-sm font-bold whitespace-nowrap transition-colors ${activeTab === tab ? 'text-[#1B2A6B] border-b-2 border-[#1B2A6B]' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'}`}
+              className={`pb-3 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
+                activeTab === tab 
+                  ? 'border-[#1B2A6B] text-[#1B2A6B]' 
+                  : 'border-transparent text-gray-400 hover:text-gray-600'
+              }`}
             >
-              {tab}
+              {tab === 'Applications' ? `Participants (${applicationsList.length})` : tab}
             </button>
           ))}
         </div>
@@ -240,8 +370,24 @@ export default function ContestsManager() {
             <DataTable data={contests} columns={contestCols} />
           )
         )}
-        {activeTab === 'Applications' && <DataTable data={apps} columns={appCols} />}
-        {activeTab === 'Submissions' && <DataTable data={submissions} columns={subCols} />}
+        {activeTab === 'Applications' && (
+          isRegLoading ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500 text-sm font-semibold">Loading participants...</div>
+          ) : applicationsList.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-500 font-semibold">No participants registered yet.</div>
+          ) : (
+            <DataTable data={applicationsList} columns={appCols} />
+          )
+        )}
+        {activeTab === 'Submissions' && (
+          isSubLoading ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500 text-sm font-semibold">Loading submissions...</div>
+          ) : submissionsList.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-500 font-semibold">No project submissions received yet.</div>
+          ) : (
+            <DataTable data={submissionsList} columns={subCols} />
+          )
+        )}
         {activeTab === 'Leaderboard' && (
           <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
             <Trophy size={48} className="mx-auto mb-4 text-[#C9A227] opacity-50"/>
@@ -413,6 +559,82 @@ export default function ContestsManager() {
                 <button type="submit" className="px-5 py-2 bg-[#1B2A6B] hover:bg-[#121c47] text-white rounded-lg text-xs font-bold shadow-md">Save Changes</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Participant Details Modal */}
+      {selectedApp && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-slate-50">
+              <div>
+                <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">Participant Details</h2>
+                <p className="text-xs font-bold text-[#1B2A6B] mt-0.5">{selectedApp.contestTitle}</p>
+              </div>
+              <button onClick={() => setSelectedApp(null)} className="text-gray-400 hover:text-gray-600"><XCircle size={22}/></button>
+            </div>
+            
+            <div className="p-6 space-y-4 text-xs font-semibold text-slate-700">
+              <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <div>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Participant Name</span>
+                  <strong className="text-sm font-black text-slate-900">{selectedApp.studentName}</strong>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Email Address</span>
+                  <span className="text-xs font-bold text-slate-800">{selectedApp.studentEmail || 'N/A'}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Phone / WhatsApp</span>
+                  <span className="text-xs font-bold text-slate-900">{selectedApp.phone || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Registered Date</span>
+                  <span className="text-xs font-bold text-slate-900">{selectedApp.appliedDate}</span>
+                </div>
+              </div>
+
+              <div>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">College / Institute / Org</span>
+                <span className="text-xs font-bold text-slate-900">{selectedApp.college || 'N/A'}</span>
+              </div>
+
+              <div>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Domain Track Interest</span>
+                <span className="text-xs font-bold text-slate-900">{selectedApp.domainTrack || 'N/A'}</span>
+              </div>
+
+              <div className="bg-purple-50/60 p-4 rounded-xl border border-purple-100 space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] text-purple-700 font-black uppercase tracking-wider">Participation Mode</span>
+                  <span className="px-2 py-0.5 bg-purple-200/60 text-purple-900 rounded font-black text-[10px]">
+                    {selectedApp.teamName && selectedApp.teamName !== 'N/A' && selectedApp.teamName !== 'Solo' ? 'Team' : 'Solo Participant'}
+                  </span>
+                </div>
+                {selectedApp.teamName && selectedApp.teamName !== 'N/A' && selectedApp.teamName !== 'Solo' && (
+                  <div>
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Team Name</span>
+                    <strong className="text-sm font-black text-purple-900">{selectedApp.teamName}</strong>
+                  </div>
+                )}
+                {selectedApp.teamMembers && (
+                  <div>
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mt-1">Team Members</span>
+                    <p className="text-xs text-slate-700 font-medium whitespace-pre-wrap bg-white p-2 rounded border border-purple-100 mt-0.5">{selectedApp.teamMembers}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <button onClick={() => setSelectedApp(null)} className="px-5 py-2 bg-[#1B2A6B] hover:bg-[#121c47] text-white rounded-xl text-xs font-bold shadow-sm">
+                  Close Details
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

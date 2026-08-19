@@ -23,21 +23,25 @@ export default function CertificatesPage() {
   const [shareModal, setShareModal] = useState<CertificateItem | null>(null);
   const { data: responseData, isLoading } = useSWR("/student/certificates", fetcher);
   
-  const rawEarned = responseData?.data?.earned || [];
+  const rawEarned = Array.isArray(responseData?.data) ? responseData.data : (responseData?.data?.earned || []);
   const inProgress = responseData?.data?.in_progress || [];
 
   const earnedCertificates = rawEarned.map((c: any) => ({
     id: c.id,
-    title: c.course?.title || "Course Certificate",
+    title: c.title || c.course_title || (typeof c.course === 'string' ? c.course : c.course?.title) || "Certificate of Completion",
+    studentName: c.student_name,
     issuer: "BlueBoxx DA",
-    date: c.issued_at ? new Date(c.issued_at).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' }) : "Just now",
-    credentialId: c.credential_id || "BB-PENDING",
-    grade: c.grade || "A",
-    skills: c.course?.skills || ["Web Dev", "LMS"]
+    date: c.issued_at ? (typeof c.issued_at === 'string' ? c.issued_at : new Date(c.issued_at).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })) : "Just now",
+    credentialId: c.certificate_number || c.credential_id || "BB-PENDING",
+    grade: c.grade || "A+",
+    skills: c.course?.skills || ["Certification", "Completion"]
   }));
 
   const handleDownload = (cert: CertificateItem) => {
     toast.success(`Downloading "${cert.title}" certificate...`);
+    if (cert.credentialId && cert.credentialId !== 'BB-PENDING') {
+      window.open(`/api/public/certificates/${cert.credentialId}/download`, '_blank');
+    }
   };
 
   const handleCopyLink = (cert: CertificateItem) => {
