@@ -14,6 +14,8 @@ import useSWR, { mutate } from "swr";
 import toast from "react-hot-toast";
 import { ApplyModal } from "../src/components/internship/ApplyModal";
 import { PartnersSection } from "../src/sections/PartnersSection";
+import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
+import { getCurrentBatchCycle, BatchCycle } from "../src/lib/dateUtils";
 
 export default function InternshipsPage() {
   const router = useRouter();
@@ -43,6 +45,14 @@ export default function InternshipsPage() {
   // Quick Apply Modal State
   const [selectedInternshipForApply, setSelectedInternshipForApply] = useState<any>(null);
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+
+  const [card50Days, setCard50Days] = useState<BatchCycle>(() => getCurrentBatchCycle('days', 50));
+  const [card3Months, setCard3Months] = useState<BatchCycle>(() => getCurrentBatchCycle('months', 3));
+
+  useEffect(() => {
+    setCard50Days(getCurrentBatchCycle('days', 50));
+    setCard3Months(getCurrentBatchCycle('months', 3));
+  }, []);
 
   const [internships, setInternships] = useState<any[]>([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -229,19 +239,12 @@ export default function InternshipsPage() {
                   </div>
                   
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xs font-bold text-slate-300">Batch starts: <strong className="text-white">1st August 2026</strong></span>
+                    <span className="text-xs font-bold text-slate-300">Batch starts: <strong className="text-white">{card50Days.batchStartFormatted}</strong></span>
                     <span className="bg-amber-400 text-slate-900 text-[10px] font-black uppercase px-2 py-0.5 rounded-md shadow-xs">Limited seats only</span>
                   </div>
 
-                  <div className="flex items-baseline gap-3 mb-2">
-                    <span className="text-xs text-slate-300 font-bold">Program Fee:</span>
-                    <span className="text-2xl font-black text-[#C9A227]">₹4,999</span>
-                    <span className="text-sm font-bold text-slate-400 line-through">₹9,999</span>
-                    <span className="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-bold px-2 py-0.5 rounded-md">Save ₹5,000</span>
-                  </div>
-
                   <p className="text-[11px] text-slate-400 font-semibold italic">
-                    Valid till 31st August 2026 registrations only
+                    Next Batch starts: {card50Days.nextBatchStartFormatted}
                   </p>
                 </div>
 
@@ -254,19 +257,12 @@ export default function InternshipsPage() {
                   </div>
 
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xs font-bold text-slate-300">Batch starts: <strong className="text-white">1st August 2026</strong></span>
+                    <span className="text-xs font-bold text-slate-300">Batch starts: <strong className="text-white">{card3Months.batchStartFormatted}</strong></span>
                     <span className="bg-amber-400 text-slate-900 text-[10px] font-black uppercase px-2 py-0.5 rounded-md shadow-xs">Limited seats only</span>
                   </div>
 
-                  <div className="flex items-baseline gap-3 mb-2">
-                    <span className="text-xs text-slate-300 font-bold">Program Fee:</span>
-                    <span className="text-2xl font-black text-[#C9A227]">₹14,999</span>
-                    <span className="text-sm font-bold text-slate-400 line-through">₹34,999</span>
-                    <span className="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-bold px-2 py-0.5 rounded-md">Save ₹20,000</span>
-                  </div>
-
                   <p className="text-[11px] text-slate-400 font-semibold italic">
-                    Next Batch starts: 1st November 2026
+                    Next Batch starts: {card3Months.nextBatchStartFormatted}
                   </p>
                 </div>
 
@@ -729,6 +725,8 @@ export default function InternshipsPage() {
             </div>
           </div>
         </div>
+
+        <WhyChooseBlueboxxSection />
 
         <PartnersSection 
           titlePrefix="Companies Hiring " 

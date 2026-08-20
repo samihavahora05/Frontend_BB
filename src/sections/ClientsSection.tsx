@@ -56,11 +56,14 @@ const CompanyLogo = ({ name, logo }: { name: string; logo?: string }) => {
   return (
     <div className="w-[190px] h-24 shrink-0 rounded-2xl bg-white border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.04)] p-3.5 flex items-center justify-center relative overflow-hidden group hover:border-[#1B2A6B]/30 hover:shadow-[0_12px_30px_rgba(27,42,107,0.12)] hover:-translate-y-1 transition-all duration-300 cursor-pointer">
       <div className="absolute inset-0 bg-gradient-to-b from-white via-slate-50/50 to-slate-100/30 pointer-events-none" />
+      {/* Ambient background glow ring behind logo */}
+      <div className="absolute inset-2 rounded-xl bg-gradient-to-br from-slate-200/60 via-slate-100/40 to-amber-100/30 blur-md group-hover:from-amber-200/60 group-hover:via-indigo-100/50 group-hover:to-blue-100/40 transition-all duration-500 pointer-events-none z-0" />
+
       {logo && !imgError ? (
         <img
           src={logo}
           alt={name}
-          className="max-w-full max-h-full object-contain filter group-hover:scale-105 transition-transform duration-300 relative z-10 drop-shadow-[0_2px_5px_rgba(0,0,0,0.08)]"
+          className="max-w-full max-h-full object-contain filter group-hover:scale-105 transition-transform duration-300 relative z-10 [filter:drop-shadow(0_4px_10px_rgba(15,23,42,0.55))_drop-shadow(0_0_1.5px_rgba(15,23,42,0.75))]"
           onError={() => setImgError(true)}
         />
       ) : (

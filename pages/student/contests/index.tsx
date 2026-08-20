@@ -53,7 +53,7 @@ export default function ContestsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
-          
+
           {/* Active Contests */}
           <div>
             <h2 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-4">Active & Upcoming</h2>
@@ -89,7 +89,7 @@ export default function ContestsPage() {
                           <Trophy size={20} className="text-[#C9A227]" />
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-wrap gap-4 text-xs font-semibold text-slate-500 mb-5">
                         <div className="flex items-center gap-1.5">
                           <Calendar size={14} className="text-slate-400" />
@@ -103,9 +103,9 @@ export default function ContestsPage() {
 
                       <div className="flex justify-end pt-4 border-t border-slate-100">
                         {reg.contest?.status === "active" ? (
-                           <Link href={`/contests/${reg.contest?.id}/arena`} className="bg-[#C9A227] text-[#0d1635] px-6 py-2 rounded-xl text-xs font-black hover:bg-[#d8b02c] transition-colors">
-                             Enter Arena
-                           </Link>
+                          <Link href={`/contests/${reg.contest?.id}/arena`} className="bg-[#C9A227] text-[#0d1635] px-6 py-2 rounded-xl text-xs font-black hover:bg-[#d8b02c] transition-colors">
+                            Enter Arena
+                          </Link>
                         ) : (
                           <button disabled className="bg-slate-100 text-slate-400 px-6 py-2 rounded-xl text-xs font-black cursor-not-allowed">
                             Starts Soon
@@ -136,12 +136,8 @@ export default function ContestsPage() {
                       </div>
                       <div>
                         <h3 className="font-bold text-slate-800 text-sm mb-0.5">{reg.contest?.title || "Completed Contest"}</h3>
-                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Score: {reg.score ?? 0} | Rank: {reg.rank ?? 'N/A'}</p>
                       </div>
                     </div>
-                    <Link href={`/contests/${reg.contest?.id}/results`} className="text-[#1B2A6B] text-xs font-bold hover:underline">
-                      View Results
-                    </Link>
                   </AnimatedContent>
                 ))
               )}
@@ -153,13 +149,13 @@ export default function ContestsPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           <AnimatedContent direction="up" delay={0.1} className="bg-[#0d1635] rounded-2xl p-6 text-white relative overflow-hidden shadow-lg">
-             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
-             <Trophy size={28} className="text-[#C9A227] mb-4" />
-             <h3 className="text-lg font-black mb-1">Total Participated</h3>
-             <p className="text-4xl font-black mb-4">{data?.total_participated || 0}</p>
-             <p className="text-xs text-white/50 font-medium">Keep participating to improve your rank on the global leaderboard!</p>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
+            <Trophy size={28} className="text-[#C9A227] mb-4" />
+            <h3 className="text-lg font-black mb-1">Total Participated</h3>
+            <p className="text-4xl font-black mb-4">{data?.total_participated || 0}</p>
+            <p className="text-xs text-white/50 font-medium">Keep participating to improve your rank on the global leaderboard!</p>
           </AnimatedContent>
-          
+
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
             <h3 className="text-sm font-black text-slate-800 mb-4">Available Global Contests</h3>
             <div className="space-y-3">
@@ -181,7 +177,7 @@ export default function ContestsPage() {
                       </div>
                       {isRegistered ? (
                         <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-black rounded-lg flex items-center gap-1 border border-emerald-200 shrink-0">
-                          <CheckCircle2 size={12}/> Registered
+                          <CheckCircle2 size={12} /> Registered
                         </span>
                       ) : (
                         <button
@@ -210,7 +206,7 @@ export default function ContestsPage() {
                 <h2 className="text-lg font-black text-slate-800 uppercase tracking-tight">Register for Contest</h2>
                 <p className="text-xs font-bold text-[#1B2A6B] line-clamp-1 mt-0.5">{registeringContest.title}</p>
               </div>
-              <button onClick={resetForm} className="text-slate-400 hover:text-slate-600"><XCircle size={22}/></button>
+              <button onClick={resetForm} className="text-slate-400 hover:text-slate-600"><XCircle size={22} /></button>
             </div>
 
             <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
@@ -221,22 +217,20 @@ export default function ContestsPage() {
                   <button
                     type="button"
                     onClick={() => setParticipationType('individual')}
-                    className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
-                      participationType === 'individual'
+                    className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${participationType === 'individual'
                         ? 'border-[#1B2A6B] bg-[#1B2A6B]/5 text-[#1B2A6B]'
                         : 'border-slate-200 text-slate-600 hover:bg-slate-50'
-                    }`}
+                      }`}
                   >
                     <User size={18} /> Solo Participant
                   </button>
                   <button
                     type="button"
                     onClick={() => setParticipationType('team')}
-                    className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
-                      participationType === 'team'
+                    className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${participationType === 'team'
                         ? 'border-[#1B2A6B] bg-[#1B2A6B]/5 text-[#1B2A6B]'
                         : 'border-slate-200 text-slate-600 hover:bg-slate-50'
-                    }`}
+                      }`}
                   >
                     <Users size={18} /> Team / Group
                   </button>

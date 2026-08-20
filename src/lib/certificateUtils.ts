@@ -387,6 +387,76 @@ export function renderCertificateToCanvas(
   });
 }
 
+export const DEFAULT_CERTIFICATE_BG_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080"><defs><linearGradient id="navyGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%231B2A6B"/><stop offset="100%" stop-color="%230B133B"/></linearGradient><linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23F3E5AB"/><stop offset="30%" stop-color="%23D4AF37"/><stop offset="70%" stop-color="%23AA7C11"/><stop offset="100%" stop-color="%23F3E5AB"/></linearGradient></defs><rect x="0" y="0" width="1920" height="1080" fill="%23FFFFFF"/><rect x="30" y="30" width="1860" height="1020" fill="none" stroke="url(%23navyGrad)" stroke-width="28" rx="8"/><rect x="68" y="68" width="1784" height="944" fill="none" stroke="url(%23goldGrad)" stroke-width="6" rx="4"/><rect x="80" y="80" width="1760" height="920" fill="none" stroke="%231B2A6B" stroke-width="2" rx="2"/><polygon points="860,68 1060,68 960,118" fill="url(%23goldGrad)"/><polygon points="30,30 150,30 30,150" fill="url(%23goldGrad)"/><polygon points="30,30 110,30 30,110" fill="url(%23navyGrad)"/><polygon points="1890,30 1890,150 1770,30" fill="url(%23goldGrad)"/><polygon points="1890,30 1890,110 1810,30" fill="url(%23navyGrad)"/><polygon points="30,1050 30,930 150,1050" fill="url(%23goldGrad)"/><polygon points="30,1050 30,970 110,1050" fill="url(%23navyGrad)"/><polygon points="1890,1050 1770,1050 1890,930" fill="url(%23goldGrad)"/><polygon points="1890,1050 1810,1050 1890,970" fill="url(%23navyGrad)"/></svg>`;
+
+export async function generateCertificateDownloadImage(options: {
+  template?: any;
+  templateId?: string | number;
+  templatesList?: any[];
+  studentName: string;
+  courseTitle: string;
+  issueDate?: string;
+  certificateId?: string;
+  bgSrc?: string;
+}) {
+  let template = options.template;
+  if (!template || Object.keys(template).length === 0) {
+    if (options.templatesList && Array.isArray(options.templatesList)) {
+      template = options.templatesList.find((t: any) => String(t.id) === String(options.templateId)) || options.templatesList[0];
+    }
+  }
+
+  if (!template || Object.keys(template).length === 0) {
+    try {
+      const stored = typeof window !== 'undefined' ? localStorage.getItem('bb_cert_templates_v1') : null;
+      if (stored) {
+        const list = JSON.parse(stored);
+        if (Array.isArray(list) && list.length > 0) {
+          template = list.find((t: any) => String(t.id) === String(options.templateId)) || list[0];
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  template = template || {};
+  const bgSrc = options.bgSrc || template.bg_image || template.background_image || template.background_image_path || DEFAULT_CERTIFICATE_BG_SVG;
+  const layout = template.layout_settings || template || {};
+  const elements = normalizeCertificateElements(template);
+
+  const cleanStudentName = (options.studentName && options.studentName !== 'Student Name' && options.studentName !== 'Student') 
+    ? options.studentName 
+    : (typeof window !== 'undefined' ? (localStorage.getItem('user_name') || 'Student') : 'Student');
+
+  const cleanCourseTitle = (options.courseTitle && options.courseTitle !== 'Course Title') 
+    ? options.courseTitle 
+    : 'Certificate of Completion';
+
+  const canvas = document.createElement('canvas');
+  await renderCertificateToCanvas(canvas, bgSrc, {
+    title: cleanCourseTitle || template.title || layout.title || 'Certificate of Completion',
+    showTitle: template.show_title ?? layout.showTitle ?? true,
+    elements,
+    studentName: cleanStudentName,
+    courseTitle: cleanCourseTitle,
+    issueDate: options.issueDate || new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    certificateId: options.certificateId || 'CERT-XXXXXX',
+  });
+
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = `Certificate_${options.certificateId || cleanCourseTitle}.png`;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    if (a.parentNode) {
+      a.parentNode.removeChild(a);
+    }
+  }, 200);
+}
+
 export function exportCanvasToPDF(canvas: HTMLCanvasElement, filename: string) {
   const dataUrl = canvas.toDataURL('image/png', 1.0);
   const printWindow = window.open('', '_blank');

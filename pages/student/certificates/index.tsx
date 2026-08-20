@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import useSWR from "swr";
 import { StudentDashboardLayout } from "../../../src/layout/StudentDashboardLayout";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
 import { Award, Download, Share2, Calendar, CheckCircle2, ExternalLink, Copy, X, Linkedin, Twitter } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../../../src/lib/axios";
+import { renderCertificateToCanvas, normalizeCertificateElements, generateCertificateDownloadImage, DEFAULT_CERTIFICATE_BG_SVG } from "../../../src/lib/certificateUtils";
 
 interface CertificateItem {
   id: number;
@@ -15,8 +17,6 @@ interface CertificateItem {
   skills: string[];
 }
 
-import useSWR from "swr";
-
 const fetcher = (url: string) => api.get(url).then(res => res.data);
 
 export default function CertificatesPage() {
@@ -26,21 +26,77 @@ export default function CertificatesPage() {
   const rawEarned = Array.isArray(responseData?.data) ? responseData.data : (responseData?.data?.earned || []);
   const inProgress = responseData?.data?.in_progress || [];
 
-  const earnedCertificates = rawEarned.map((c: any) => ({
-    id: c.id,
-    title: c.title || c.course_title || (typeof c.course === 'string' ? c.course : c.course?.title) || "Certificate of Completion",
-    studentName: c.student_name,
-    issuer: "BlueBoxx DA",
-    date: c.issued_at ? (typeof c.issued_at === 'string' ? c.issued_at : new Date(c.issued_at).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })) : "Just now",
-    credentialId: c.certificate_number || c.credential_id || "BB-PENDING",
-    grade: c.grade || "A+",
-    skills: c.course?.skills || ["Certification", "Completion"]
-  }));
+  // TASK 3: Only display genuine issued certificates matching Admin side (status: ISSUED)
+  const validEarned = rawEarned.filter((c: any) => {
+    if (!c) return false;
+    if (c.status && String(c.status).toLowerCase() !== 'issued') return false;
+    return true;
+  });
 
-  const handleDownload = (cert: CertificateItem) => {
-    toast.success(`Downloading "${cert.title}" certificate...`);
-    if (cert.credentialId && cert.credentialId !== 'BB-PENDING') {
-      window.open(`/api/public/certificates/${cert.credentialId}/download`, '_blank');
+  const getCleanTitle = (c: any) => {
+    const candidates = [
+      c.course_title,
+      c.title,
+      typeof c.course === 'object' ? c.course?.title : c.course
+    ];
+    for (const t of candidates) {
+      if (t && typeof t === 'string' && t.trim() !== '' && t.trim().toUpperCase() !== 'N/A' && t.trim().toLowerCase() !== 'null' && t.trim().toLowerCase() !== 'undefined') {
+        return t.trim();
+      }
+    }
+    return "Certificate of Completion";
+  };
+
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const earnedCertificates = validEarned.map((c: any) => {
+    const resolvedStudentName = c.student_name || c.user?.name || (c.user?.first_name ? `${c.user.first_name} ${c.user.last_name || ''}`.trim() : null) || responseData?.user_name || responseData?.user?.name || (typeof window !== 'undefined' ? localStorage.getItem('user_name') : null) || 'Student';
+    const resolvedCourseTitle = getCleanTitle(c);
+
+    return {
+      id: c.id,
+      title: resolvedCourseTitle,
+      studentName: resolvedStudentName,
+      templateId: c.template_id || c.template?.id,
+      template: c.template || c.template_details || {},
+      issuer: "BlueBoxx DA",
+      date: c.issued_at ? new Date(c.issued_at).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' }),
+      credentialId: c.certificate_number || c.credential_id || "BB-PENDING",
+      grade: c.grade || "A+",
+      skills: (Array.isArray(c.course?.skills) && c.course.skills.length > 0) ? c.course.skills : ["Certification", "Completion"]
+    };
+  });
+
+  // TASK 1: Use the exact same shared generation logic that Admin side uses
+  const handleDownload = async (cert: any, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (isDownloading) return;
+    setIsDownloading(true);
+
+    toast.loading(`Preparing certificate for download...`, { id: "cert_dl" });
+    try {
+      const studentName = cert.studentName || cert.student_name || "Student Name";
+      const courseTitle = cert.title || cert.course_title || "Certificate of Completion";
+      const issueDate = cert.date;
+      const certificateId = cert.credentialId || cert.certificate_number || "CERT-XXXXXX";
+
+      await generateCertificateDownloadImage({
+        template: cert.template,
+        templateId: cert.templateId,
+        studentName,
+        courseTitle,
+        issueDate,
+        certificateId,
+      });
+
+      toast.success(`Downloaded "${courseTitle}" certificate!`, { id: "cert_dl" });
+    } catch (err) {
+      toast.error("Failed to render certificate image", { id: "cert_dl" });
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -136,8 +192,9 @@ export default function CertificatesPage() {
 
                   <div className="flex gap-2">
                     <button
-                      onClick={() => handleDownload(cert)}
-                      className="flex-1 flex items-center justify-center gap-1.5 h-9 bg-[#1B2A6B] text-white text-xs font-bold rounded-xl hover:bg-[#0d1635] transition-colors"
+                      onClick={(e) => handleDownload(cert, e)}
+                      disabled={isDownloading}
+                      className="flex-1 flex items-center justify-center gap-1.5 h-9 bg-[#1B2A6B] text-white text-xs font-bold rounded-xl hover:bg-[#0d1635] transition-colors disabled:opacity-50"
                     >
                       <Download size={13} /> Download
                     </button>

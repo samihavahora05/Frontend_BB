@@ -33,11 +33,12 @@ const CompanyLogo = ({ company }: { company: any }) => {
   }
 
   return (
-    <div className="w-16 h-16 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center p-2 overflow-hidden">
+    <div className="w-16 h-16 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center p-2 overflow-hidden relative">
+      <div className="absolute inset-1 rounded-lg bg-gradient-to-br from-slate-200/50 via-slate-100/30 to-amber-100/20 blur-sm pointer-events-none" />
       <img 
         src={company.logoUrl} 
         alt={company.name} 
-        className="max-w-full max-h-full object-contain"
+        className="max-w-full max-h-full object-contain relative z-10 [filter:drop-shadow(0_4px_8px_rgba(15,23,42,0.55))_drop-shadow(0_0_1.5px_rgba(15,23,42,0.75))]"
         onError={() => setImgError(true)}
       />
     </div>

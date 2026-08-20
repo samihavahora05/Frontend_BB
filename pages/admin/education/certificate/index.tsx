@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { AdminDashboardLayout } from '@/layout/AdminDashboardLayout';
 import { CertificateApiService } from '@/lib/api/admin/CertificateApiService';
-import { renderCertificateToCanvas, normalizeCertificateElements, interpolateVariables } from '@/lib/certificateUtils';
+import { renderCertificateToCanvas, normalizeCertificateElements, interpolateVariables, generateCertificateDownloadImage } from '@/lib/certificateUtils';
 import { Award, CheckCircle, Clock, XCircle, Download, FileCheck, Search, FileText, Plus, Trash2, Send, X, Edit } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -70,28 +70,15 @@ export default function CertificateListPage() {
     }
   };
 
-  const handleDownloadTemplateImage = async (template: any, customStudentName?: string, customCourseTitle?: string) => {
-    const bgSrc = template?.bg_image || template?.background_image;
-    if (!bgSrc) {
-      return toast.error('No background image available for this template');
-    }
-
+  const handleDownloadTemplateImage = async (template: any, customStudentName?: string, customCourseTitle?: string, issueDate?: string, certificateId?: string) => {
     try {
-      const layout = template.layout_settings || template;
-      const elements = normalizeCertificateElements(template);
-
-      const canvas = document.createElement('canvas');
-      await renderCertificateToCanvas(canvas, bgSrc, {
-        title: customCourseTitle || template.title || layout.title,
-        showTitle: template.show_title || layout.showTitle,
-        elements,
+      await generateCertificateDownloadImage({
+        template,
         studentName: customStudentName || '[Student Name]',
+        courseTitle: customCourseTitle || '[Course Title]',
+        issueDate,
+        certificateId,
       });
-
-      const a = document.createElement('a');
-      a.href = canvas.toDataURL('image/png');
-      a.download = `${customCourseTitle || template.title || 'Certificate'}_${customStudentName || 'Student'}.png`;
-      a.click();
       toast.success('Certificate image downloaded!');
     } catch (e) {
       toast.error('Failed to generate certificate download');
@@ -122,8 +109,15 @@ export default function CertificateListPage() {
 
   const handleIssueSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!issueForm.student_name) {
-      return toast.error('Student Name is required');
+    if (!issueForm.student_name.trim()) {
+      return toast.error('Please fill out this field (Student Full Name)');
+    }
+    if (!issueForm.student_email.trim()) {
+      return toast.error('Please fill out this field (Student Email)');
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(issueForm.student_email.trim())) {
+      return toast.error('Please enter a valid email address');
     }
     const finalCourseTitle = issueForm.course_title.trim() || 'Certificate of Completion';
     try {
@@ -133,8 +127,8 @@ export default function CertificateListPage() {
 
       await CertificateApiService.issueCertificate({
         template_id: parsedTemplateId,
-        student_name: issueForm.student_name,
-        student_email: issueForm.student_email,
+        student_name: issueForm.student_name.trim(),
+        student_email: issueForm.student_email.trim(),
         course_title: finalCourseTitle,
       });
       toast.success('Certificate issued successfully!');
@@ -446,7 +440,7 @@ export default function CertificateListPage() {
                             <div className="flex items-center gap-3">
                               {matchedTemplate ? (
                                 <button 
-                                  onClick={() => handleDownloadTemplateImage(matchedTemplate, studentName, courseTitle)}
+                                  onClick={() => handleDownloadTemplateImage(matchedTemplate, studentName, courseTitle, cert.issued_at ? new Date(cert.issued_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : undefined, cert.certificate_number || cert.cert_id || `CERT-${cert.id}`)}
                                   className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
                                 >
                                   <Download size={12} /> Download Image
@@ -455,7 +449,7 @@ export default function CertificateListPage() {
                                 <a href={`/storage/${cert.pdf_path}`} target="_blank" rel="noreferrer" className="text-xs font-bold text-blue-600 hover:underline">Download PDF</a>
                               ) : (
                                 <button 
-                                  onClick={() => templates?.[0] ? handleDownloadTemplateImage(templates[0], studentName, courseTitle) : toast.error('No template found')}
+                                  onClick={() => templates?.[0] ? handleDownloadTemplateImage(templates[0], studentName, courseTitle, cert.issued_at ? new Date(cert.issued_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : undefined, cert.certificate_number || cert.cert_id || `CERT-${cert.id}`) : toast.error('No template found')}
                                   className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
                                 >
                                   <Download size={12} /> Download
@@ -538,9 +532,10 @@ export default function CertificateListPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1">Student Email</label>
+                  <label className="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1">Student Email *</label>
                   <input
                     type="email"
+                    required
                     autoComplete="off"
                     value={issueForm.student_email}
                     onChange={(e) => setIssueForm({ ...issueForm, student_email: e.target.value })}

@@ -46,7 +46,7 @@ export default function CertificatesPage() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <a href={`/public/certificates/${cert.certificate_number}/download`} target="_blank" rel="noreferrer" className="flex-1">
+                    <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}/public/certificates/${cert.certificate_number}/download`} target="_blank" rel="noreferrer" className="flex-1">
                       <Button variant="outline" className="w-full text-xs h-9 px-2 gap-1.5"><Download size={14}/> PDF</Button>
                     </a>
                     <Button variant="outline" className="flex-1 text-xs h-9 px-2 gap-1.5"><Share2 size={14}/> Share</Button>
