@@ -19,274 +19,6 @@ interface StudentsShowcaseSectionProps {
   type?: "all" | "interns" | "job_seekers" | "recent";
 }
 
-// Complete Roster of Active Real Students
-const DEFAULT_STUDENTS: StudentItem[] = [
-  {
-    id: 1,
-    name: "Yuvraj Parmar",
-    role: "Graphic design",
-    image: "/students/yuvraj_parmar.png"
-  },
-  {
-    id: 2,
-    name: "Vikas",
-    role: "Graphic design",
-    image: "/students/vikas.png"
-  },
-  {
-    id: 3,
-    name: "Vaidehi",
-    role: "Graphic design, digital marketing",
-    image: "/students/vaidehi.png"
-  },
-  {
-    id: 4,
-    name: "Tushar",
-    role: "Graphic design",
-    image: "/students/tushar.png"
-  },
-  {
-    id: 5,
-    name: "Tisha Padhiyar",
-    role: "web development",
-    image: "/students/tisha_padhiyar.png"
-  },
-  {
-    id: 6,
-    name: "Tax Patel",
-    role: "Digital Marketing",
-    image: "/students/tax_patel.png"
-  },
-  {
-    id: 7,
-    name: "Swapnesh",
-    role: "web development",
-    image: "/students/swapnesh.png"
-  },
-  {
-    id: 8,
-    name: "Suhani Dhuri",
-    role: "web development",
-    image: "/students/suhani_dhuri.png"
-  },
-  {
-    id: 9,
-    name: "Shruti Jadhav",
-    role: "Graphic design",
-    image: "/students/shruti_jadhav.png"
-  },
-  {
-    id: 10,
-    name: "Shivam",
-    role: "Graphic design",
-    image: "/students/shivam.png"
-  },
-  {
-    id: 11,
-    name: "Samuel Gabi",
-    role: "Graphic design, digital marketing",
-    image: "/students/samuel_gabi.png"
-  },
-  {
-    id: 12,
-    name: "Rehan Bavla",
-    role: "Graphic design",
-    image: "/students/rehan_bavla.png"
-  },
-  {
-    id: 13,
-    name: "Priyal Chauhan",
-    role: "web development",
-    image: "/students/priyal_chauhan.png"
-  },
-  {
-    id: 14,
-    name: "Prem",
-    role: "Graphic design, digital marketing",
-    image: "/students/prem.png"
-  },
-  {
-    id: 15,
-    name: "Pratik Sirsath",
-    role: "Graphic design, digital marketing",
-    image: "/students/pratik_sirsath.png"
-  },
-  {
-    id: 16,
-    name: "Parul",
-    role: "Graphic design",
-    image: "/students/parul.png"
-  },
-  {
-    id: 17,
-    name: "Nishant Prajapati",
-    role: "web development",
-    image: "/students/nishant_prajapati.png"
-  },
-  {
-    id: 18,
-    name: "Nancy Shah",
-    role: "web development",
-    image: "/students/nancy_shah.png"
-  },
-  {
-    id: 19,
-    name: "Namrata Spakal",
-    role: "Graphic design",
-    image: "/students/namrata_spakal.png"
-  },
-  {
-    id: 20,
-    name: "Mitansh Solanki",
-    role: "Graphic design, digital marketing",
-    image: "/students/mitansh_solanki.png"
-  },
-  {
-    id: 21,
-    name: "Mayuri Thakre",
-    role: "Graphic design",
-    image: "/students/mayuri_thakre.png"
-  },
-  {
-    id: 22,
-    name: "Manthan Parmar",
-    role: "Graphic design",
-    image: "/students/manthan_parmar.png"
-  },
-  {
-    id: 23,
-    name: "Manoj Patil",
-    role: "Graphic design",
-    image: "/students/manoj_patil.png"
-  },
-  {
-    id: 24,
-    name: "Manav Kharva",
-    role: "Digital Marketing",
-    image: "/students/manav_kharva.png"
-  },
-  {
-    id: 25,
-    name: "Manasvi Yadav",
-    role: "web development",
-    image: "/students/manasvi_yadav.png"
-  },
-  {
-    id: 26,
-    name: "Mahir Dipoti",
-    role: "web development",
-    image: "/students/mahir_dipoti.png"
-  },
-  {
-    id: 27,
-    name: "Lata Bhambani",
-    role: "Graphic design",
-    image: "/students/lata_bhambani.png"
-  },
-  {
-    id: 28,
-    name: "Krish Bhuvela",
-    role: "web development",
-    image: "/students/krish_bhuvela.png"
-  },
-  {
-    id: 29,
-    name: "Ketan Parmar",
-    role: "web development",
-    image: "/students/ketan_parmar.png"
-  },
-  {
-    id: 30,
-    name: "Kamlesh Singh",
-    role: "Digital Marketing",
-    image: "/students/kamlesh_singh.png"
-  },
-  {
-    id: 31,
-    name: "Kamal",
-    role: "Graphic design, digital marketing",
-    image: "/students/kamal.png"
-  },
-  {
-    id: 32,
-    name: "Kailash Rathva",
-    role: "Graphic design",
-    image: "/students/kailash_rathva.png"
-  },
-  {
-    id: 33,
-    name: "Jaanvi Parmar",
-    role: "web development",
-    image: "/students/jaanvi_parmar.png"
-  },
-  {
-    id: 34,
-    name: "Himanshu Parmar",
-    role: "Graphic design",
-    image: "/students/himanshu_parmar.png"
-  },
-  {
-    id: 35,
-    name: "Hemlata Pahan",
-    role: "Graphic design",
-    image: "/students/hemlata_pahan.png"
-  },
-  {
-    id: 36,
-    name: "Heena Prajapati",
-    role: "Graphic design",
-    image: "/students/heena_prajapati.png"
-  },
-  {
-    id: 37,
-    name: "Harsh Padhiyar",
-    role: "Graphic design",
-    image: "/students/harsh_padhiyar.png"
-  },
-  {
-    id: 38,
-    name: "Hardik Patel",
-    role: "Graphic design",
-    image: "/students/hardik_patel.png"
-  },
-  {
-    id: 39,
-    name: "Drashti",
-    role: "Graphic design",
-    image: "/students/drashti.png"
-  },
-  {
-    id: 40,
-    name: "Chavda Mayur",
-    role: "Graphic design",
-    image: "/students/chavda_mayur.png"
-  },
-  {
-    id: 41,
-    name: "Arch",
-    role: "Graphic design",
-    image: "/students/arch.png"
-  },
-  {
-    id: 42,
-    name: "Dipak Rawat",
-    role: "Graphic design",
-    image: "/students/dipak_rawat.png"
-  },
-  {
-    id: 43,
-    name: "Dhara",
-    role: "Graphic design",
-    image: "/students/dhara.png"
-  },
-  {
-    id: 44,
-    name: "Bhumika Rathod",
-    role: "Digital Marketing",
-    image: "/students/bhumika_rathod.png"
-  }
-];
-
 export const StudentsShowcaseSection = ({
   title = "OUR STUDENTS",
   subtitle = "Celebrating our talented learners and placed alumni across top technology & design programs.",
@@ -296,28 +28,24 @@ export const StudentsShowcaseSection = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Dynamic API Fetching from Backend Database
-  const { data: apiJobOffers } = useSWR("/public/cms/job-offers", fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
-  });
-  const { data: apiTestimonials } = useSWR("/public/cms/testimonials", fetcher, {
+  // Dynamic API Fetching from MySQL Database table student_job_offers
+  const { data: apiJobOffers, isLoading } = useSWR("/public/cms/job-offers", fetcher, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false
   });
 
   const studentsList: StudentItem[] = useMemo(() => {
-    if (apiJobOffers && Array.isArray(apiJobOffers) && apiJobOffers.length > 0) {
+    if (apiJobOffers && Array.isArray(apiJobOffers)) {
       return apiJobOffers.map((item: any, idx: number) => ({
         id: item.id || `student-${idx}`,
         name: item.student_name || item.name || "Student",
         role: item.role || item.designation || "Graduate",
         company: item.company_name || item.company || "",
-        image: item.image_url || item.avatar_url || item.photo_url || DEFAULT_STUDENTS[idx % DEFAULT_STUDENTS.length]?.image || ""
+        image: item.image_url || item.avatar_url || item.photo_url || ""
       }));
     }
-    return DEFAULT_STUDENTS;
-  }, [apiJobOffers, apiTestimonials]);
+    return [];
+  }, [apiJobOffers]);
 
   const [activeIndex, setActiveIndex] = useState(0);
 
