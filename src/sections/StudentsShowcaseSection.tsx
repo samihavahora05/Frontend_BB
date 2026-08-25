@@ -183,6 +183,30 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     name: "Lata Bhambani",
     role: "Graphic design",
     image: "/students/lata_bhambani.png"
+  },
+  {
+    id: 28,
+    name: "Krish Bhuvela",
+    role: "web development",
+    image: "/students/krish_bhuvela.png"
+  },
+  {
+    id: 29,
+    name: "Ketan Parmar",
+    role: "web development",
+    image: "/students/ketan_parmar.png"
+  },
+  {
+    id: 30,
+    name: "Kamlesh Singh",
+    role: "Digital Marketing",
+    image: "/students/kamlesh_singh.png"
+  },
+  {
+    id: 31,
+    name: "Kamal",
+    role: "Graphic design, digital marketing",
+    image: "/students/kamal.png"
   }
 ];
 
