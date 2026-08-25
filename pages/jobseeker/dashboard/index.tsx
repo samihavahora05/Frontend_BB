@@ -1,5 +1,5 @@
 import { JobseekerDashboardLayout } from "../../../src/layout/JobseekerDashboardLayout";
-import { Target, Eye, Calendar, FileText, CheckCircle, ChevronRight, Briefcase, Zap, Upload, X } from "lucide-react";
+import { Target, Eye, Calendar, FileText, CheckCircle, ChevronRight, Briefcase, Zap, Upload, X, MapPin, DollarSign, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
 import { useState } from "react";
@@ -14,10 +14,12 @@ export default function JobseekerDashboard() {
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
   
   const { data, isLoading } = useSWR("/jobseeker/dashboard", fetcher);
+  const { data: latestJobsRes, isLoading: isJobsLoading } = useSWR("/jobs?per_page=4", fetcher);
   
   const stats = data?.data?.stats || { jobs_applied: 0, saved_jobs: 0, interviews: 0, offers: 0 };
   const recentApps = data?.data?.recent_applications || [];
   const profileCompletion = data?.data?.profile_completion ?? 0;
+  const recommendedJobs = Array.isArray(latestJobsRes?.data) ? latestJobsRes.data : (Array.isArray(latestJobsRes) ? latestJobsRes : []);
 
   const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -48,7 +50,7 @@ export default function JobseekerDashboard() {
           <button onClick={() => setIsResumeModalOpen(true)} className="px-5 py-2.5 bg-white border border-slate-200 text-[#0d1635] rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2">
             <Upload size={16} /> Upload Resume
           </button>
-          <Link href="/jobs" className="px-5 py-2.5 bg-[#1B2A6B] text-white rounded-xl text-sm font-bold shadow-md hover:bg-[#0d1635] transition-all flex items-center gap-2">
+          <Link href="/jobseeker/jobs" className="px-5 py-2.5 bg-[#1B2A6B] text-white rounded-xl text-sm font-bold shadow-md hover:bg-[#0d1635] transition-all flex items-center gap-2">
             <Briefcase size={16} /> Find Jobs
           </Link>
         </div>
@@ -75,6 +77,64 @@ export default function JobseekerDashboard() {
             ))}
           </div>
 
+          {/* Recommended Jobs For You */}
+          <AnimatedContent direction="up" delay={0.2} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <div>
+                <h2 className="text-lg font-black text-[#0d1635] flex items-center gap-2">
+                  <Sparkles size={18} className="text-[#C9A227]" /> Recommended Jobs For You
+                </h2>
+                <p className="text-xs text-slate-500 font-semibold mt-0.5">Top openings matching your skills</p>
+              </div>
+              <Link href="/jobseeker/jobs" className="text-xs font-bold text-[#1B2A6B] hover:underline flex items-center gap-1">
+                Explore All Jobs <ChevronRight size={14}/>
+              </Link>
+            </div>
+
+            <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {isJobsLoading ? (
+                <div className="col-span-2 p-8 text-center text-slate-400 font-semibold">Loading available jobs...</div>
+              ) : recommendedJobs.length === 0 ? (
+                <div className="col-span-2 p-8 text-center text-slate-400 font-semibold">No open positions currently available.</div>
+              ) : (
+                recommendedJobs.map((job: any) => {
+                  const companyName = job.company?.name || job.company || "Enterprise Tech";
+                  const salary = job.salary_range || (job.min_salary && job.max_salary ? `₹${job.min_salary} - ₹${job.max_salary} LPA` : (job.salary ? `₹${job.salary}` : "Competitive"));
+
+                  return (
+                    <div key={job.id} className="p-4 rounded-xl border border-slate-200 bg-white hover:border-[#1B2A6B]/30 hover:shadow-sm transition-all flex flex-col justify-between group">
+                      <div>
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <div>
+                            <h3 className="text-sm font-black text-slate-800 line-clamp-1 group-hover:text-[#1B2A6B] transition-colors">{job.title || job.role}</h3>
+                            <p className="text-xs font-semibold text-slate-500">{companyName}</p>
+                          </div>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-[#1B2A6B] shrink-0">
+                            {job.employment_type || job.type || "Full-time"}
+                          </span>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 text-[11px] font-semibold text-slate-400 mb-3">
+                          <span className="flex items-center gap-1"><MapPin size={11} /> {job.location || "Multiple"}</span>
+                          <span className="flex items-center gap-1 text-emerald-600 font-bold"><DollarSign size={11} /> {salary}</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <Link href={`/jobs/${job.id}`} className="text-xs font-bold text-slate-600 hover:text-[#1B2A6B]">
+                          Details
+                        </Link>
+                        <Link href={`/apply/job/${job.id}`} className="px-3 py-1 bg-[#1B2A6B] hover:bg-[#0d1635] text-white text-xs font-bold rounded-lg transition-all">
+                          Apply Now
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </AnimatedContent>
+
           {/* Recent Activity / Applications */}
           <AnimatedContent direction="up" delay={0.3} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
@@ -96,7 +156,7 @@ export default function JobseekerDashboard() {
                   </div>
                   <p className="text-base font-bold text-slate-700">No job applications yet.</p>
                   <p className="text-sm text-slate-500 mt-1">Start exploring jobs and applying to see your progress here.</p>
-                  <Link href="/jobs" className="mt-4 px-6 py-2 bg-[#1B2A6B] text-white rounded-lg text-sm font-bold shadow-md hover:bg-[#0d1635] transition-all">
+                  <Link href="/jobseeker/jobs" className="mt-4 px-6 py-2 bg-[#1B2A6B] text-white rounded-lg text-sm font-bold shadow-md hover:bg-[#0d1635] transition-all">
                     Explore Jobs
                   </Link>
                 </div>

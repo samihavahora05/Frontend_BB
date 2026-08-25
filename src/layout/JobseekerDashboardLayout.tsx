@@ -4,17 +4,19 @@ import { useRouter } from "next/router";
 import { useAuth } from "../context/AuthContext";
 import { AuthGuard } from "../components/auth/AuthGuard";
 import { SEO } from "../components/seo/SEO";
-import { LayoutDashboard, Target, Settings, LogOut, Menu, X, Search, Calendar, Gift, User } from "lucide-react";
+import { LayoutDashboard, Target, Settings, LogOut, Menu, X, Search, Calendar, Gift, User, Briefcase, FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NotificationDropdown } from "../components/NotificationDropdown";
 
 const SIDEBAR_LINKS = [
-  { name: "Dashboard",    href: "/jobseeker/dashboard",    icon: LayoutDashboard },
-  { name: "Jobs Applied", href: "/jobseeker/applications", icon: Target },
-  { name: "Interviews",   href: "/jobseeker/interviews",   icon: Calendar },
-  { name: "Offers",       href: "/jobseeker/offers",       icon: Gift },
-  { name: "My Profile",   href: "/jobseeker/profile",      icon: User },
-  { name: "Settings",     href: "/jobseeker/settings",     icon: Settings },
+  { name: "Dashboard",    href: "/jobseeker/dashboard",      icon: LayoutDashboard },
+  { name: "Find Jobs",    href: "/jobseeker/jobs",           icon: Briefcase },
+  { name: "Jobs Applied", href: "/jobseeker/applications",   icon: Target },
+  { name: "Interviews",   href: "/jobseeker/interviews",     icon: Calendar },
+  { name: "Offers",       href: "/jobseeker/offers",         icon: Gift },
+  { name: "AI Resume",    href: "/jobseeker/resume-builder", icon: FileText },
+  { name: "My Profile",   href: "/jobseeker/profile",        icon: User },
+  { name: "Settings",     href: "/jobseeker/settings",       icon: Settings },
 ];
 
 export const JobseekerDashboardLayout = ({ children }: { children: React.ReactNode }) => {
