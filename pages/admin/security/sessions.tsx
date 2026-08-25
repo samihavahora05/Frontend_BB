@@ -16,10 +16,10 @@ export default function SessionManagementPage() {
   const [selectedSession, setSelectedSession] = useState<any>(null);
   const [isRevoking, setIsRevoking] = useState(false);
 
-  let filtered = sessions.filter(s => 
-    s.user.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    s.ip.includes(searchQuery) ||
-    s.location.toLowerCase().includes(searchQuery.toLowerCase())
+  let filtered = sessions.filter((s: any) => 
+    s.user?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    s.ip?.includes(searchQuery) ||
+    s.location?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleRevoke = async () => {
@@ -50,9 +50,9 @@ export default function SessionManagementPage() {
 
   const stats = {
     total: sessions.length,
-    desktop: sessions.filter(s => s.device === 'Desktop').length,
-    mobile: sessions.filter(s => s.device === 'Mobile' || s.device === 'Tablet').length,
-    suspicious: sessions.filter(s => s.isSuspicious).length
+    desktop: sessions.filter((s: any) => s.device === 'Desktop').length,
+    mobile: sessions.filter((s: any) => s.device === 'Mobile' || s.device === 'Tablet').length,
+    suspicious: sessions.filter((s: any) => s.isSuspicious).length
   };
 
   return (
@@ -134,7 +134,7 @@ export default function SessionManagementPage() {
                   </td>
                 </tr>
               ) : (
-                filtered.map(session => (
+                filtered.map((session: any) => (
                   <tr key={session.id} className="hover:bg-slate-50 transition-colors group">
                     <td className="p-4 pl-6">
                       <div className="flex items-center gap-3">

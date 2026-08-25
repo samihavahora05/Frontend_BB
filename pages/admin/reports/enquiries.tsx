@@ -68,7 +68,7 @@ export default function AdminEnquiriesPage() {
                     </td>
                     <td className="px-6 py-4 text-sm font-medium text-slate-500">{enq.date}</td>
                     <td className="px-6 py-4">
-                       <Badge variant={enq.status === 'Approved' ? 'success' : enq.status === 'Rejected' ? 'danger' : 'warning'}>{enq.status}</Badge>
+                        <Badge variant={enq.status === 'Approved' ? 'emerald' : enq.status === 'Rejected' ? 'destructive' : 'gold'}>{enq.status}</Badge>
                     </td>
                     <td className="px-6 py-4 text-right">
                        {enq.status === 'Pending' ? (

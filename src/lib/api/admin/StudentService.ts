@@ -58,6 +58,11 @@ export const StudentService = {
     return response.data;
   },
 
+  resetPassword: async (id: string | number) => {
+    const response = await api.post(`/admin/students/${id}/reset-password`);
+    return response.data;
+  },
+
   bulkDelete: async (ids: number[]) => {
     const response = await api.post(`/admin/students/bulk-delete`, { ids });
     return response.data;

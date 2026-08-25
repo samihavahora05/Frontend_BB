@@ -152,7 +152,7 @@ export default function JobApplications() {
           <div className="flex-1 overflow-y-auto admin-scrollbar">
             {filteredApplicants.length > 0 ? (
               <div className="divide-y divide-gray-100">
-                {filteredApplicants.map(app => (
+                {filteredApplicants.map((app: any) => (
                   <div 
                     key={app.id} 
                     onClick={() => setSelectedApp(app)}

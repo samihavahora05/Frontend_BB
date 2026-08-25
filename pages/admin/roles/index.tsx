@@ -214,8 +214,9 @@ export default function AdminRolesPage() {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    let toastId: string | undefined;
     try {
-      const toastId = toast.loading('Importing roles...');
+      toastId = toast.loading('Importing roles...');
       await UserManagerService.importRoles(file);
       toast.success('Roles imported successfully!', { id: toastId });
       mutateRoles();

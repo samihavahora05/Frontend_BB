@@ -20,6 +20,7 @@ interface MediaItem {
   mime_type: string;
   type: FileType; // Extracted locally based on mime
   size: number;
+  size_bytes?: number;
   url: string;
   folder_id: number | null;
   created_at: string;
@@ -557,7 +558,7 @@ export default function MediaManager() {
                               <p className="text-sm font-bold text-gray-800 truncate" title={item.original_name}>{item.original_name}</p>
                             </div>
                             <div className="flex items-center justify-between mt-2">
-                              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider bg-gray-100 px-2 py-0.5 rounded">{formatSize(item.size_bytes)}</p>
+                              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider bg-gray-100 px-2 py-0.5 rounded">{formatSize(item.size_bytes ?? item.size ?? 0)}</p>
                               <p className="text-[11px] font-bold text-gray-400">{new Date(item.created_at).toLocaleDateString()}</p>
                             </div>
                           </div>

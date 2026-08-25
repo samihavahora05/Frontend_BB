@@ -25,7 +25,14 @@ const LIVE_PREVIEW_ITEMS = [
   { label: "Post New Job", icon: Plus, standalone: true },
 ];
 
-const MENU_LIST_ITEMS = [
+interface MenuItemType {
+  id: number;
+  label: string;
+  expanded?: boolean;
+  children: string[];
+}
+
+const MENU_LIST_ITEMS: MenuItemType[] = [
   {
     id: 1, label: "Dashboard", children: []
   },
@@ -46,7 +53,7 @@ const AVAILABLE_ITEMS = [
 ];
 
 export default function AdminSidebarManagerPage() {
-  const [menuItems, setMenuItems] = useState(MENU_LIST_ITEMS);
+  const [menuItems, setMenuItems] = useState<MenuItemType[]>(MENU_LIST_ITEMS);
   const [expandedMenuItems, setExpandedMenuItems] = useState<Record<number, boolean>>({ 2: true });
   const [liveExpandedItems, setLiveExpandedItems] = useState<Record<string, boolean>>({ "My Panel": true });
   const confirmAction = useConfirm();

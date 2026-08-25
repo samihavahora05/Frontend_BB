@@ -25,7 +25,7 @@ export const LeadService = {
     return response.data;
   },
 
-  updateLead: async (id: number, data: { status?: string; assigned_admin_id?: number | null }) => {
+  updateLead: async (id: number, data: { status?: string; assigned_admin_id?: number | null; internal_notes?: string }) => {
     const response = await api.put(`/admin/leads/${id}`, data);
     return response.data;
   },

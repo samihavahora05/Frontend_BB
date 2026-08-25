@@ -66,8 +66,8 @@ export default function AdminContestPage() {
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-bold text-slate-900">{contest.title}</h3>
                       <Badge variant={
-                        contest.status === 'Active' ? 'success' : 
-                        contest.status === 'Upcoming' ? 'warning' : 'secondary'
+                        contest.status === 'Active' ? 'emerald' : 
+                        contest.status === 'Upcoming' ? 'gold' : 'secondary'
                       }>{contest.status}</Badge>
                       <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700">{contest.type}</span>
                     </div>

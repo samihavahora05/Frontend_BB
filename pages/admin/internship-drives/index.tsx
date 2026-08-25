@@ -41,10 +41,10 @@ export default function InternshipDrivesManager() {
     }
   };
 
-  const updateStatus = async (id: number, action: 'approve' | 'reject') => {
+  const updateStatus = async (id: number, action: 'approve' | 'reject' | 'close') => {
     try {
       await api.put(`/admin/internship-drives/${id}/${action}`);
-      toast.success(`Drive ${action}d successfully`);
+      toast.success(`Drive ${action === 'close' ? 'closed' : action + 'd'} successfully`);
       mutate();
     } catch {
       toast.error(`Failed to ${action} drive`);
