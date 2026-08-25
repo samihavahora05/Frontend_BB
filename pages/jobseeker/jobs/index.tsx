@@ -21,8 +21,8 @@ export default function JobseekerJobsPage() {
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [savingId, setSavingId] = useState<number | null>(null);
 
-  // Fetch all jobs
-  const { data: jobsRes, isLoading } = useSWR("/jobs?per_page=50", fetcher);
+  // Fetch all active jobs (same API that students see)
+  const { data: jobsRes, isLoading } = useSWR("/public/jobs", fetcher);
   // Fetch user applications to know what they already applied to
   const { data: appsRes } = useSWR("/jobseeker/applications", fetcher);
   // Fetch saved jobs
@@ -56,12 +56,11 @@ export default function JobseekerJobsPage() {
   };
 
   const filteredJobs = rawJobs.filter((job: any) => {
-    const titleMatch = (job.title || job.role || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-                       (job.company?.name || job.company || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const titleMatch = (job.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+                       (job.company_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
                        (job.location || "").toLowerCase().includes(searchTerm.toLowerCase());
-    const typeMatch = selectedType === "All" || (job.employment_type || job.type || "").toLowerCase().includes(selectedType.toLowerCase());
-    const locationMatch = selectedLocation === "All" || (job.work_model || job.location || "").toLowerCase().includes(selectedLocation.toLowerCase());
-    return titleMatch && typeMatch && locationMatch;
+    const typeMatch = selectedType === "All" || (job.job_type || job.employment_type || "").toLowerCase().includes(selectedType.toLowerCase());
+    return titleMatch && typeMatch;
   });
 
   return (
@@ -73,11 +72,11 @@ export default function JobseekerJobsPage() {
         <div className="absolute top-0 right-0 w-80 h-80 bg-[#C9A227]/15 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 max-w-2xl">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-[#C9A227] text-xs font-bold mb-3 backdrop-blur-sm">
-            <Sparkles size={14} /> Direct Hire Opportunities
+            <Sparkles size={14} /> Active Career Openings
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black mb-2 tracking-tight">Explore Top Tech & Business Jobs</h1>
+          <h1 className="text-2xl sm:text-3xl font-black mb-2 tracking-tight">Explore Corporate Tech & Business Jobs</h1>
           <p className="text-slate-300 text-xs sm:text-sm font-medium leading-relaxed">
-            Apply with 1-click using your verified Job Seeker profile and track your applications in real-time.
+            Browse all live positions, view requirements, and apply directly to companies hiring right now.
           </p>
         </div>
       </div>
@@ -92,14 +91,14 @@ export default function JobseekerJobsPage() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by job title, company, or skills..."
+              placeholder="Search by job title, company, or location..."
               className="w-full h-11 pl-10 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-[#1B2A6B]/20 focus:border-[#1B2A6B] transition-all"
             />
           </div>
 
           {/* Job Type Filter */}
           <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0">
-            {["All", "Full-time", "Part-time", "Remote", "Internship"].map((type) => (
+            {["All", "Full-time", "Part-time", "Remote", "Internship", "Contract"].map((type) => (
               <button
                 key={type}
                 onClick={() => setSelectedType(type)}
@@ -139,7 +138,7 @@ export default function JobseekerJobsPage() {
               We couldn't find any positions matching your current search criteria. Try clearing filters.
             </p>
             <button
-              onClick={() => { setSearchTerm(""); setSelectedType("All"); setSelectedLocation("All"); }}
+              onClick={() => { setSearchTerm(""); setSelectedType("All"); }}
               className="px-5 py-2 bg-[#1B2A6B] text-white rounded-xl text-xs font-bold hover:bg-[#0d1635] transition-colors"
             >
               Reset Filters
@@ -150,8 +149,12 @@ export default function JobseekerJobsPage() {
             {filteredJobs.map((job: any) => {
               const isApplied = appliedJobIds.has(String(job.id));
               const isSaved = savedJobIds.has(Number(job.id));
-              const companyName = job.company?.name || job.company || "Enterprise Partner";
-              const salaryText = job.salary_range || (job.min_salary && job.max_salary ? `₹${job.min_salary} - ₹${job.max_salary} LPA` : (job.salary ? `₹${job.salary}` : "Competitive / Best in Industry"));
+              const companyName = job.company_name || "Enterprise Partner";
+              const salaryText = job.hide_salary
+                ? "Salary Undisclosed"
+                : (job.salary_min && job.salary_max
+                    ? `₹${job.salary_min} - ₹${job.salary_max} LPA`
+                    : (job.salary_min ? `₹${job.salary_min} LPA+` : "Best in Industry"));
 
               return (
                 <motion.div
@@ -164,12 +167,16 @@ export default function JobseekerJobsPage() {
                     {/* Top Row: Company & Bookmark */}
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 text-[#1B2A6B] flex items-center justify-center font-black text-base shrink-0">
-                          {companyName.charAt(0)}
-                        </div>
+                        {job.company_logo ? (
+                          <img src={job.company_logo} alt={companyName} className="w-11 h-11 rounded-xl object-contain border border-slate-100 p-1 shrink-0" />
+                        ) : (
+                          <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 text-[#1B2A6B] flex items-center justify-center font-black text-base shrink-0">
+                            {companyName.charAt(0)}
+                          </div>
+                        )}
                         <div>
                           <h3 className="text-base font-black text-slate-800 line-clamp-1 group-hover:text-[#1B2A6B] transition-colors">
-                            {job.title || job.role || "Software Engineer"}
+                            {job.title || "Software Engineer"}
                           </h3>
                           <p className="text-xs font-semibold text-slate-500 flex items-center gap-1">
                             <Building2 size={12} className="text-slate-400" /> {companyName}
@@ -194,26 +201,26 @@ export default function JobseekerJobsPage() {
                     {/* Tags & Badges */}
                     <div className="flex flex-wrap gap-2 mb-4">
                       <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-[11px] font-bold flex items-center gap-1">
-                        <MapPin size={12} className="text-slate-400" /> {job.location || job.work_model || "Multiple Locations"}
+                        <MapPin size={12} className="text-slate-400" /> {job.location || "Multiple Locations"}
                       </span>
                       <span className="px-2.5 py-1 bg-blue-50 text-[#1B2A6B] rounded-lg text-[11px] font-bold flex items-center gap-1">
-                        <Briefcase size={12} className="text-blue-500" /> {job.employment_type || job.type || "Full-time"}
+                        <Briefcase size={12} className="text-blue-500" /> {job.job_type || "Full-time"}
                       </span>
+                      {job.experience_level && (
+                        <span className="px-2.5 py-1 bg-purple-50 text-purple-700 rounded-lg text-[11px] font-bold">
+                          {job.experience_level}
+                        </span>
+                      )}
                       <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold flex items-center gap-1">
                         <DollarSign size={12} className="text-emerald-500" /> {salaryText}
                       </span>
                     </div>
-
-                    {/* Short Description */}
-                    <p className="text-xs font-medium text-slate-500 line-clamp-2 mb-4 leading-relaxed">
-                      {job.description || job.short_description || "Join our fast-growing engineering team building state-of-the-art software solutions."}
-                    </p>
                   </div>
 
                   {/* Bottom Action Footer */}
                   <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
                     <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1">
-                      <Clock size={12} /> {job.created_at ? new Date(job.created_at).toLocaleDateString() : "Active"}
+                      <Clock size={12} /> {job.posted_at || "Recently Posted"}
                     </span>
 
                     <div className="flex items-center gap-2">
