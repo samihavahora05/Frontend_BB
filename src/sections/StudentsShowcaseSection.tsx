@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState } from "react";
+import React, { useRef, useMemo, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Briefcase, Award, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import useSWR from "swr";
@@ -8,19 +8,18 @@ export interface StudentItem {
   id: number | string;
   name: string;
   role: string;
-  image: string;
   company?: string;
-  offered_on?: string;
+  image: string;
 }
 
 interface StudentsShowcaseSectionProps {
   title?: string;
   subtitle?: string;
   tag?: string;
-  type?: "all" | "internship" | "job";
+  type?: "all" | "interns" | "job_seekers" | "recent";
 }
 
-// Built-in list with real student photos
+// Complete Roster of Active Real Students
 const DEFAULT_STUDENTS: StudentItem[] = [
   {
     id: 1,
@@ -279,6 +278,12 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     name: "Dhara",
     role: "Graphic design",
     image: "/students/dhara.png"
+  },
+  {
+    id: 44,
+    name: "Bhumika Rathod",
+    role: "Digital Marketing",
+    image: "/students/bhumika_rathod.png"
   }
 ];
 
@@ -289,6 +294,7 @@ export const StudentsShowcaseSection = ({
   type = "all"
 }: StudentsShowcaseSectionProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Dynamic API Fetching from Backend Database
   const { data: apiJobOffers } = useSWR("/public/cms/job-offers", fetcher, {
@@ -301,7 +307,6 @@ export const StudentsShowcaseSection = ({
   });
 
   const studentsList: StudentItem[] = useMemo(() => {
-    // If backend database returns student records from student_job_offers table
     if (apiJobOffers && Array.isArray(apiJobOffers) && apiJobOffers.length > 0) {
       return apiJobOffers.map((item: any, idx: number) => ({
         id: item.id || `student-${idx}`,
@@ -311,11 +316,33 @@ export const StudentsShowcaseSection = ({
         image: item.image_url || item.avatar_url || item.photo_url || DEFAULT_STUDENTS[idx % DEFAULT_STUDENTS.length]?.image || ""
       }));
     }
-
     return DEFAULT_STUDENTS;
   }, [apiJobOffers, apiTestimonials]);
 
   const [activeIndex, setActiveIndex] = useState(0);
+
+  // Auto-scroll effect: advances every 2.8s when user is not hovering/interacting
+  useEffect(() => {
+    if (isHovered) return;
+
+    const interval = setInterval(() => {
+      if (scrollContainerRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+        const maxScroll = scrollWidth - clientWidth;
+        
+        if (scrollLeft >= maxScroll - 20) {
+          // Reached end, loop back smoothly
+          scrollContainerRef.current.scrollTo({ left: 0, behavior: "smooth" });
+          setActiveIndex(0);
+        } else {
+          // Scroll forward by one card step (~300px)
+          scrollContainerRef.current.scrollBy({ left: 300, behavior: "smooth" });
+        }
+      }
+    }, 2800);
+
+    return () => clearInterval(interval);
+  }, [isHovered, studentsList.length]);
 
   const handleScroll = () => {
     if (scrollContainerRef.current) {
@@ -351,7 +378,6 @@ export const StudentsShowcaseSection = ({
 
   return (
     <section className="py-20 bg-white relative overflow-hidden border-t border-slate-200/80">
-      {/* Background Subtle Gradient & Grid */}
       <div 
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
@@ -362,7 +388,6 @@ export const StudentsShowcaseSection = ({
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#1B2A6B]/5 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        {/* Section Heading */}
         <div className="text-center mb-12">
           {tag && (
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1B2A6B]/5 text-[#1B2A6B] border border-[#1B2A6B]/15 text-xs font-black uppercase tracking-wider mb-3">
@@ -370,19 +395,21 @@ export const StudentsShowcaseSection = ({
               <span>{tag}</span>
             </div>
           )}
-          <h2 className="text-3xl md:text-5xl font-black text-[#0d1635] tracking-tight uppercase font-sora">
+          <h2 className="text-3xl md:text-5xl font-black text-[#0d1635] tracking-tight uppercase">
             {title}
           </h2>
-          {subtitle && (
-            <p className="text-slate-500 text-xs md:text-sm font-semibold max-w-2xl mx-auto mt-2">
-              {subtitle}
-            </p>
-          )}
+          <p className="text-slate-500 text-sm md:text-base font-semibold max-w-2xl mx-auto mt-3">
+            {subtitle}
+          </p>
         </div>
 
-        {/* Carousel Container with Left/Right Navigation */}
-        <div className="relative group px-2 sm:px-4">
-          {/* Left Arrow Button */}
+        <div 
+          className="relative group px-2 sm:px-4"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onTouchStart={() => setIsHovered(true)}
+          onTouchEnd={() => setIsHovered(false)}
+        >
           <button
             onClick={scrollLeft}
             aria-label="Previous Students"
@@ -391,7 +418,14 @@ export const StudentsShowcaseSection = ({
             <ChevronLeft size={22} />
           </button>
 
-          {/* Scrollable Track */}
+          <button
+            onClick={scrollRight}
+            aria-label="Next Students"
+            className="absolute -right-2 md:-right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 md:w-12 md:h-12 rounded-full bg-[#0d1635] text-white flex items-center justify-center shadow-xl hover:bg-[#1B2A6B] hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none border-2 border-white cursor-pointer"
+          >
+            <ChevronRight size={22} />
+          </button>
+
           <div
             ref={scrollContainerRef}
             onScroll={handleScroll}

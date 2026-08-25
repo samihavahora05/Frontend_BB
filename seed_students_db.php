@@ -510,6 +510,17 @@ $students = [
         'created_at'   => now(),
         'updated_at'   => now(),
     ],
+    [
+        'student_name' => 'Bhumika Rathod',
+        'role'         => 'Digital Marketing',
+        'company_name' => 'Growth Media',
+        'image_url'    => '/students/bhumika_rathod.png',
+        'avatar_url'   => '/students/bhumika_rathod.png',
+        'display_order'=> 44,
+        'is_active'    => true,
+        'created_at'   => now(),
+        'updated_at'   => now(),
+    ],
 ];
 
 DB::table('student_job_offers')->insert($students);
