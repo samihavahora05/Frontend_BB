@@ -87,31 +87,7 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     name: "Samuel Gabi",
     role: "Graphic design, digital marketing",
     image: "/students/samuel_gabi.png"
-  },
-  {
-    id: 12,
-    name: "Aastha Soni",
-    role: "web development",
-    image: "/testimonials photos/Aastha Soni.png"
-  },
-  {
-    id: 13,
-    name: "Ketan Parmar",
-    role: "React & Node.js Developer",
-    image: "/testimonials photos/Ketan Parmar.png"
-  },
-  {
-    id: 14,
-    name: "Krupa Patel",
-    role: "UI/UX Design",
-    image: "/testimonials photos/Krupa Patel.png"
-  },
-  {
-    id: 15,
-    name: "Manav Vithani",
-    role: "Python & AI Development",
-    image: "/testimonials photos/Manav Vithani.png"
-  },
+  }
 ];
 
 export const StudentsShowcaseSection = ({

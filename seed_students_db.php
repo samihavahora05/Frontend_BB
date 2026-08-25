@@ -158,50 +158,9 @@ $students = [
         'created_at'   => now(),
         'updated_at'   => now(),
     ],
-    [
-        'student_name' => 'Aastha Soni',
-        'role'         => 'web development',
-        'company_name' => 'Wipro',
-        'image_url'    => '/testimonials photos/Aastha Soni.png',
-        'avatar_url'   => '/testimonials photos/Aastha Soni.png',
-        'display_order'=> 12,
-        'is_active'    => true,
-        'created_at'   => now(),
-        'updated_at'   => now(),
-    ],
-    [
-        'student_name' => 'Ketan Parmar',
-        'role'         => 'React & Node.js Developer',
-        'company_name' => 'TCS',
-        'image_url'    => '/testimonials photos/Ketan Parmar.png',
-        'avatar_url'   => '/testimonials photos/Ketan Parmar.png',
-        'display_order'=> 13,
-        'is_active'    => true,
-        'created_at'   => now(),
-        'updated_at'   => now(),
-    ],
-    [
-        'student_name' => 'Krupa Patel',
-        'role'         => 'UI/UX Design',
-        'company_name' => 'Accenture',
-        'image_url'    => '/testimonials photos/Krupa Patel.png',
-        'avatar_url'   => '/testimonials photos/Krupa Patel.png',
-        'display_order'=> 14,
-        'is_active'    => true,
-        'created_at'   => now(),
-        'updated_at'   => now(),
-    ],
-    [
-        'student_name' => 'Manav Vithani',
-        'role'         => 'Python & AI Development',
-        'company_name' => 'HDFC Bank',
-        'image_url'    => '/testimonials photos/Manav Vithani.png',
-        'avatar_url'   => '/testimonials photos/Manav Vithani.png',
-        'display_order'=> 15,
-        'is_active'    => true,
-        'created_at'   => now(),
-        'updated_at'   => now(),
-    ]
+    
+    
+   
 ];
 
 DB::table('student_job_offers')->insert($students);
