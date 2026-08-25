@@ -11,7 +11,6 @@ export interface StudentItem {
   image: string;
   company?: string;
   offered_on?: string;
-  degree?: string;
 }
 
 interface StudentsShowcaseSectionProps {
@@ -26,122 +25,92 @@ const DEFAULT_STUDENTS: StudentItem[] = [
   {
     id: 1,
     name: "Yuvraj Parmar",
-    role: "Graphic Design",
-    company: "Blueboxx Media",
-    image: "/students/yuvraj_parmar.png",
-    degree: "B.Des"
+    role: "Graphic design",
+    image: "/students/yuvraj_parmar.png"
   },
   {
     id: 2,
     name: "Vikas",
-    role: "Graphic Design",
-    company: "Creative Labs",
-    image: "/students/vikas.png",
-    degree: "Diploma - UI"
+    role: "Graphic design",
+    image: "/students/vikas.png"
   },
   {
     id: 3,
     name: "Vaidehi",
-    role: "Graphic Design & Digital Marketing",
-    company: "Digital Spark",
-    image: "/students/vaidehi.png",
-    degree: "BCA"
+    role: "Graphic design, digital marketing",
+    image: "/students/vaidehi.png"
   },
   {
     id: 4,
     name: "Tushar",
-    role: "Graphic Design",
-    company: "Studio 9",
-    image: "/students/tushar.png",
-    degree: "B.A. Multimedia"
+    role: "Graphic design",
+    image: "/students/tushar.png"
   },
   {
     id: 5,
     name: "Tisha Padhiyar",
-    role: "Web Development",
-    company: "TechNova Solutions",
-    image: "/students/tisha_padhiyar.png",
-    degree: "B.Tech CSE"
+    role: "web development",
+    image: "/students/tisha_padhiyar.png"
   },
   {
     id: 6,
     name: "Tax Patel",
     role: "Digital Marketing",
-    company: "Growth Media",
-    image: "/students/tax_patel.png",
-    degree: "BBA Marketing"
+    image: "/students/tax_patel.png"
   },
   {
     id: 7,
     name: "Swapnesh",
-    role: "Web Development",
-    company: "Cognizant",
-    image: "/students/swapnesh.png",
-    degree: "B.Tech IT"
+    role: "web development",
+    image: "/students/swapnesh.png"
   },
   {
     id: 8,
     name: "Suhani Dhuri",
-    role: "Web Development",
-    company: "Infosys",
-    image: "/students/suhani_dhuri.png",
-    degree: "MCA"
+    role: "web development",
+    image: "/students/suhani_dhuri.png"
   },
   {
     id: 9,
     name: "Shruti Jadhav",
-    role: "Graphic Design",
-    company: "DesignHub",
-    image: "/students/shruti_jadhav.png",
-    degree: "B.Des"
+    role: "Graphic design",
+    image: "/students/shruti_jadhav.png"
   },
   {
     id: 10,
     name: "Shivam",
-    role: "Graphic Design",
-    company: "Pixel Studio",
-    image: "/students/shivam.png",
-    degree: "Diploma - Graphics"
+    role: "Graphic design",
+    image: "/students/shivam.png"
   },
   {
     id: 11,
     name: "Samuel Gabi",
-    role: "Graphic Design & Digital Marketing",
-    company: "Global Matrix",
-    image: "/students/samuel_gabi.png",
-    degree: "B.A. Mass Comm"
+    role: "Graphic design, digital marketing",
+    image: "/students/samuel_gabi.png"
   },
   {
     id: 12,
     name: "Aastha Soni",
-    role: "Full Stack Web Development",
-    company: "Wipro",
-    image: "/testimonials photos/Aastha Soni.png",
-    degree: "B.Tech CSE"
+    role: "web development",
+    image: "/testimonials photos/Aastha Soni.png"
   },
   {
     id: 13,
     name: "Ketan Parmar",
     role: "React & Node.js Developer",
-    company: "TCS",
-    image: "/testimonials photos/Ketan Parmar.png",
-    degree: "B.Tech IT"
+    image: "/testimonials photos/Ketan Parmar.png"
   },
   {
     id: 14,
     name: "Krupa Patel",
-    role: "UI/UX Design Specialist",
-    company: "Accenture",
-    image: "/testimonials photos/Krupa Patel.png",
-    degree: "B.Des"
+    role: "UI/UX Design",
+    image: "/testimonials photos/Krupa Patel.png"
   },
   {
     id: 15,
     name: "Manav Vithani",
-    role: "Python & AI Engineering",
-    company: "HDFC Bank",
-    image: "/testimonials photos/Manav Vithani.png",
-    degree: "M.Tech AI"
+    role: "Python & AI Development",
+    image: "/testimonials photos/Manav Vithani.png"
   },
 ];
 
@@ -174,7 +143,6 @@ export const StudentsShowcaseSection = ({
           name: item.student_name || item.name || "Alumni",
           role: item.role || item.degree || "Placed Trainee",
           company: item.company_name || item.company || "Hiring Partner",
-          degree: item.degree || "Graduate",
           offered_on: item.offered_on || "",
           image: item.photo_url || item.image_url || DEFAULT_STUDENTS[idx % DEFAULT_STUDENTS.length].image
         });
@@ -268,30 +236,16 @@ export const StudentsShowcaseSection = ({
                       (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`;
                     }}
                   />
-                  {student.company && (
-                    <div className="absolute top-3 left-3 bg-[#0d1635]/90 backdrop-blur-sm text-white px-2.5 py-1 rounded-lg text-[10px] font-bold shadow-sm flex items-center gap-1 border border-white/10">
-                      <Award size={11} className="text-[#C9A227]" />
-                      <span>{student.company}</span>
-                    </div>
-                  )}
                 </div>
 
                 {/* Student Info Card Body */}
-                <div className="p-4 text-center flex-1 flex flex-col justify-between bg-white">
-                  <div>
-                    <h3 className="font-bold text-base md:text-lg text-slate-800 tracking-tight group-hover/card:text-[#1B2A6B] transition-colors line-clamp-1">
-                      {student.name}
-                    </h3>
-                    <p className="text-xs font-semibold text-slate-500 capitalize mt-1 line-clamp-2 leading-snug">
-                      {student.role}
-                    </p>
-                  </div>
-
-                  {student.degree && (
-                    <div className="mt-3 pt-2.5 border-t border-slate-100 text-[11px] font-bold text-[#1B2A6B] uppercase tracking-wider">
-                      {student.degree}
-                    </div>
-                  )}
+                <div className="p-4 text-center bg-white flex flex-col justify-center min-h-[75px]">
+                  <h3 className="font-bold text-base md:text-lg text-slate-800 tracking-tight group-hover/card:text-[#1B2A6B] transition-colors line-clamp-1">
+                    {student.name}
+                  </h3>
+                  <p className="text-xs font-semibold text-slate-500 mt-1 line-clamp-2 leading-snug">
+                    {student.role}
+                  </p>
                 </div>
               </motion.div>
             ))}
