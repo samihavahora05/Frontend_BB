@@ -28,7 +28,7 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     name: "Yuvraj Parmar",
     role: "Graphic Design",
     company: "Blueboxx Media",
-    image: "/testimonials photos/Hemangini Parmar.png",
+    image: "/students/yuvraj_parmar.png",
     degree: "B.Des"
   },
   {
@@ -36,7 +36,7 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     name: "Vikas",
     role: "Graphic Design",
     company: "Creative Labs",
-    image: "/testimonials photos/Akshay Raval.png",
+    image: "/students/vikas.png",
     degree: "Diploma - UI"
   },
   {
@@ -44,7 +44,7 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     name: "Vaidehi",
     role: "Graphic Design & Digital Marketing",
     company: "Digital Spark",
-    image: "/testimonials photos/Disha Padhiyar.png",
+    image: "/students/vaidehi.png",
     degree: "BCA"
   },
   {
