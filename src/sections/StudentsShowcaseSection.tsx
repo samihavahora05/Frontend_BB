@@ -52,19 +52,51 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     name: "Tushar",
     role: "Graphic Design",
     company: "Studio 9",
-    image: "/testimonials photos/Harsh Padhiyar.png",
+    image: "/students/tushar.png",
     degree: "B.A. Multimedia"
   },
   {
     id: 5,
-    name: "Aastha Soni",
-    role: "Full Stack Web Development",
-    company: "Infosys",
-    image: "/testimonials photos/Aastha Soni.png",
+    name: "Tisha Padhiyar",
+    role: "Web Development",
+    company: "TechNova Solutions",
+    image: "/students/tisha_padhiyar.png",
     degree: "B.Tech CSE"
   },
   {
     id: 6,
+    name: "Tax Patel",
+    role: "Digital Marketing",
+    company: "Growth Media",
+    image: "/students/tax_patel.png",
+    degree: "BBA Marketing"
+  },
+  {
+    id: 7,
+    name: "Swapnesh",
+    role: "Web Development",
+    company: "Cognizant",
+    image: "/students/swapnesh.png",
+    degree: "B.Tech IT"
+  },
+  {
+    id: 8,
+    name: "Suhani Dhuri",
+    role: "Web Development",
+    company: "Infosys",
+    image: "/students/suhani_dhuri.png",
+    degree: "MCA"
+  },
+  {
+    id: 9,
+    name: "Aastha Soni",
+    role: "Full Stack Web Development",
+    company: "Wipro",
+    image: "/testimonials photos/Aastha Soni.png",
+    degree: "B.Tech CSE"
+  },
+  {
+    id: 10,
     name: "Ketan Parmar",
     role: "React & Node.js Developer",
     company: "TCS",
@@ -72,52 +104,20 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     degree: "B.Tech IT"
   },
   {
-    id: 7,
+    id: 11,
     name: "Krupa Patel",
     role: "UI/UX Design Specialist",
-    company: "Wipro",
+    company: "Accenture",
     image: "/testimonials photos/Krupa Patel.png",
     degree: "B.Des"
   },
   {
-    id: 8,
+    id: 12,
     name: "Manav Vithani",
     role: "Python & AI Engineering",
-    company: "Cognizant",
+    company: "HDFC Bank",
     image: "/testimonials photos/Manav Vithani.png",
     degree: "M.Tech AI"
-  },
-  {
-    id: 9,
-    name: "Nency Shah",
-    role: "Data Analytics & Python",
-    company: "Accenture",
-    image: "/testimonials photos/Nency Shah.png",
-    degree: "B.Sc Data Science"
-  },
-  {
-    id: 10,
-    name: "Nishant Prajapati",
-    role: "Backend Developer (Laravel)",
-    company: "HDFC Bank",
-    image: "/testimonials photos/Nishant Prajapati.png",
-    degree: "MCA"
-  },
-  {
-    id: 11,
-    name: "Priyal Chauhan",
-    role: "Digital Marketing & SEO",
-    company: "Growth Media",
-    image: "/testimonials photos/Priyal Chauhan.png",
-    degree: "BBA"
-  },
-  {
-    id: 12,
-    name: "Tax Patel",
-    role: "Frontend Engineer",
-    company: "Tech Mahindra",
-    image: "/testimonials photos/Tax Patel.png",
-    degree: "B.Tech CSE"
   },
 ];
 
