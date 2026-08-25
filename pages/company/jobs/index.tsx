@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import Link from "next/link";
 import { CompanyDashboardLayout } from "../../../src/layout/CompanyDashboardLayout";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
@@ -261,3 +261,4 @@ export default function CompanyJobsPage() {
     </CompanyDashboardLayout>
   );
 }
+

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { CompanyDashboardLayout } from "../../../src/layout/CompanyDashboardLayout";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
@@ -69,10 +69,10 @@ export default function PostJobPage() {
         salary_max: salaryMax,
         description: form.description,
         required_skills: skills,
-        status: "active" // Or draft if we want
+        status: "pending_approval"
       });
       setSubmitted(true);
-      toast.success("Job posted successfully!");
+      toast.success("Job submitted for Admin review!");
     } catch (err: any) {
       console.error(err.response?.data);
       toast.error("Failed to post job: " + (err.response?.data?.message || err.message));
@@ -85,7 +85,7 @@ export default function PostJobPage() {
     "w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-[#1B2A6B] outline-none transition-all";
   const labelCls = "block text-xs font-bold text-slate-600 uppercase mb-2";
 
-  // ── Success Screen ──
+  // â”€â”€ Success Screen â”€â”€
   if (submitted) {
     return (
       <CompanyDashboardLayout>
@@ -192,7 +192,7 @@ export default function PostJobPage() {
                   <input
                     value={form.salary}
                     onChange={(e) => setForm({ ...form, salary: e.target.value })}
-                    placeholder={category === "Internship" ? "e.g. ₹15,000/month" : "e.g. ₹15LPA"}
+                    placeholder={category === "Internship" ? "e.g. â‚¹15,000/month" : "e.g. â‚¹15LPA"}
                     className={inputCls}
                   />
                 </div>
@@ -343,3 +343,4 @@ export default function PostJobPage() {
     </CompanyDashboardLayout>
   );
 }
+
