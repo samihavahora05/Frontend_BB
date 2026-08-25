@@ -76,7 +76,7 @@ export default function CollegeSettingsPage() {
     );
   }
 
-  // If logged in as admin â€” show info notice, don't show college profile form
+  // If logged in as admin — show info notice, don't show college profile form
   if (isAdmin) {
     return (
       <CollegeDashboardLayout>
@@ -134,7 +134,7 @@ export default function CollegeSettingsPage() {
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-2.5 text-xs font-semibold text-slate-500">
                 <item.icon size={13} className="text-slate-400 shrink-0" />
-                <span className="truncate">{item.val || 'â€”'}</span>
+                <span className="truncate">{item.val || '—'}</span>
               </div>
             ))}
           </div>
