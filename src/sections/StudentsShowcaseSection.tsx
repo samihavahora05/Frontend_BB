@@ -51,17 +51,6 @@ export const StudentsShowcaseSection = ({
     return [...studentsList, ...studentsList];
   }, [studentsList]);
 
-  const getRoleBadgeStyle = (role: string) => {
-    const lower = role.toLowerCase();
-    if (lower.includes("web") || lower.includes("dev") || lower.includes("react") || lower.includes("python")) {
-      return "bg-blue-50/90 text-[#1B2A6B] border-blue-200/70";
-    }
-    if (lower.includes("market") || lower.includes("digital")) {
-      return "bg-emerald-50/90 text-emerald-800 border-emerald-200/70";
-    }
-    return "bg-amber-50/90 text-amber-800 border-amber-200/70";
-  };
-
   return (
     <section className="py-24 bg-gradient-to-b from-white via-slate-50/50 to-white relative overflow-hidden border-t border-slate-200/70">
       {/* Dynamic Keyframes for Ultra-Smooth Continuous Hardware-Accelerated Marquee */}
@@ -144,15 +133,15 @@ export const StudentsShowcaseSection = ({
                 </div>
 
                 {/* Student Info Card Body */}
-                <div className="p-4 text-center bg-white flex flex-col justify-between items-center grow gap-2">
-                  <h3 className="font-black text-sm md:text-base text-slate-800 tracking-tight group-hover/card:text-[#1B2A6B] transition-colors line-clamp-1">
+                <div className="p-4 text-center bg-white flex flex-col justify-center items-center grow gap-1">
+                  <h3 className="font-bold text-base text-slate-800 tracking-tight group-hover/card:text-[#1B2A6B] transition-colors line-clamp-1">
                     {student.name}
                   </h3>
 
-                  {/* Clean Role Badge Pill */}
-                  <span className={`inline-block px-3 py-1 rounded-full text-[10.5px] font-bold border capitalize tracking-wide ${getRoleBadgeStyle(student.role)}`}>
+                  {/* Simple Clean Role Text */}
+                  <p className="text-xs font-medium text-slate-500 capitalize line-clamp-1">
                     {student.role}
-                  </span>
+                  </p>
                 </div>
               </div>
             ))}
