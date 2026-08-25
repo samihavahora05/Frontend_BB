@@ -1,4 +1,4 @@
-import { UserRole } from "../context/AuthContext";
+﻿import { UserRole } from "../context/AuthContext";
 
 export const getActiveRoleFromUrl = (path: string): UserRole | 'public' | 'auth' => {
   if (path.startsWith('/admin') || path.startsWith('/super_admin')) return 'admin';
@@ -98,3 +98,4 @@ export const migrateLegacyToken = () => {
   localStorage.removeItem('auth_token');
   localStorage.removeItem('blueboxx_user');
 };
+

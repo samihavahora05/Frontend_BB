@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Button } from "../src/components/ui/Button";
@@ -203,7 +203,7 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••" 
+                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" 
                 className={`w-full h-11 pl-10 pr-10 rounded-xl border focus:ring-2 outline-none transition-all text-xs font-semibold text-slate-800 tracking-wider bg-slate-50/20 ${
                   failedAttempts > 0 
                     ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500/15' 
@@ -270,3 +270,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

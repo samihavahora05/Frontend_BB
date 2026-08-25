@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+﻿import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "../../context/AuthContext";
 import { LoadingScreen } from "../LoadingScreen";
@@ -49,3 +49,4 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children, allowedRoles }) 
 
   return <>{children}</>;
 };
+

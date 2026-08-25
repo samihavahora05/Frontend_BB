@@ -1,11 +1,11 @@
-import { JobseekerDashboardLayout } from "../../../src/layout/JobseekerDashboardLayout";
+﻿import { JobseekerDashboardLayout } from "../../../src/layout/JobseekerDashboardLayout";
 import { Target, Eye, Calendar, FileText, CheckCircle, ChevronRight, Briefcase, Zap, Upload, X, MapPin, DollarSign, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import api from "../../../src/lib/axios";
 
 const fetcher = (url: string) => api.get(url).then(res => res.data);
@@ -99,7 +99,7 @@ export default function JobseekerDashboard() {
               ) : (
                 recommendedJobs.map((job: any) => {
                   const companyName = job.company?.name || job.company || "Enterprise Tech";
-                  const salary = job.salary_range || (job.min_salary && job.max_salary ? `₹${job.min_salary} - ₹${job.max_salary} LPA` : (job.salary ? `₹${job.salary}` : "Competitive"));
+                  const salary = job.salary_range || (job.min_salary && job.max_salary ? `â‚¹${job.min_salary} - â‚¹${job.max_salary} LPA` : (job.salary ? `â‚¹${job.salary}` : "Competitive"));
 
                   return (
                     <div key={job.id} className="p-4 rounded-xl border border-slate-200 bg-white hover:border-[#1B2A6B]/30 hover:shadow-sm transition-all flex flex-col justify-between group">
@@ -262,3 +262,4 @@ export default function JobseekerDashboard() {
     </JobseekerDashboardLayout>
   );
 }
+
