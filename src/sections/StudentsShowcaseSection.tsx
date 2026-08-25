@@ -231,6 +231,30 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     name: "Hemlata Pahan",
     role: "Graphic design",
     image: "/students/hemlata_pahan.png"
+  },
+  {
+    id: 36,
+    name: "Heena Prajapati",
+    role: "Graphic design",
+    image: "/students/heena_prajapati.png"
+  },
+  {
+    id: 37,
+    name: "Harsh Padhiyar",
+    role: "Graphic design",
+    image: "/students/harsh_padhiyar.png"
+  },
+  {
+    id: 38,
+    name: "Hardik Patel",
+    role: "Graphic design",
+    image: "/students/hardik_patel.png"
+  },
+  {
+    id: 39,
+    name: "Drashti",
+    role: "Graphic design",
+    image: "/students/drashti.png"
   }
 ];
 
