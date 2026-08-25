@@ -159,6 +159,30 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     name: "Manoj Patil",
     role: "Graphic design",
     image: "/students/manoj_patil.png"
+  },
+  {
+    id: 24,
+    name: "Manav Kharva",
+    role: "Digital Marketing",
+    image: "/students/manav_kharva.png"
+  },
+  {
+    id: 25,
+    name: "Manasvi Yadav",
+    role: "web development",
+    image: "/students/manasvi_yadav.png"
+  },
+  {
+    id: 26,
+    name: "Mahir Dipoti",
+    role: "web development",
+    image: "/students/mahir_dipoti.png"
+  },
+  {
+    id: 27,
+    name: "Lata Bhambani",
+    role: "Graphic design",
+    image: "/students/lata_bhambani.png"
   }
 ];
 
