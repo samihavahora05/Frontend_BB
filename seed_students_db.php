@@ -158,9 +158,50 @@ $students = [
         'created_at'   => now(),
         'updated_at'   => now(),
     ],
-    
-    
-   
+    [
+        'student_name' => 'Rehan Bavla',
+        'role'         => 'Graphic design',
+        'company_name' => 'Design Studio',
+        'image_url'    => '/students/rehan_bavla.png',
+        'avatar_url'   => '/students/rehan_bavla.png',
+        'display_order'=> 12,
+        'is_active'    => true,
+        'created_at'   => now(),
+        'updated_at'   => now(),
+    ],
+    [
+        'student_name' => 'Priyal Chauhan',
+        'role'         => 'web development',
+        'company_name' => 'WebTech Corp',
+        'image_url'    => '/students/priyal_chauhan.png',
+        'avatar_url'   => '/students/priyal_chauhan.png',
+        'display_order'=> 13,
+        'is_active'    => true,
+        'created_at'   => now(),
+        'updated_at'   => now(),
+    ],
+    [
+        'student_name' => 'Prem',
+        'role'         => 'Graphic design, digital marketing',
+        'company_name' => 'Media Matrix',
+        'image_url'    => '/students/prem.png',
+        'avatar_url'   => '/students/prem.png',
+        'display_order'=> 14,
+        'is_active'    => true,
+        'created_at'   => now(),
+        'updated_at'   => now(),
+    ],
+    [
+        'student_name' => 'Pratik Sirsath',
+        'role'         => 'Graphic design, digital marketing',
+        'company_name' => 'Digital Spark',
+        'image_url'    => '/students/pratik_sirsath.png',
+        'avatar_url'   => '/students/pratik_sirsath.png',
+        'display_order'=> 15,
+        'is_active'    => true,
+        'created_at'   => now(),
+        'updated_at'   => now(),
+    ],
 ];
 
 DB::table('student_job_offers')->insert($students);

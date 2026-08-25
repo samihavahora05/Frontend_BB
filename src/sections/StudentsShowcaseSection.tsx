@@ -87,6 +87,30 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     name: "Samuel Gabi",
     role: "Graphic design, digital marketing",
     image: "/students/samuel_gabi.png"
+  },
+  {
+    id: 12,
+    name: "Rehan Bavla",
+    role: "Graphic design",
+    image: "/students/rehan_bavla.png"
+  },
+  {
+    id: 13,
+    name: "Priyal Chauhan",
+    role: "web development",
+    image: "/students/priyal_chauhan.png"
+  },
+  {
+    id: 14,
+    name: "Prem",
+    role: "Graphic design, digital marketing",
+    image: "/students/prem.png"
+  },
+  {
+    id: 15,
+    name: "Pratik Sirsath",
+    role: "Graphic design, digital marketing",
+    image: "/students/pratik_sirsath.png"
   }
 ];
 
