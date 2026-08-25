@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, Briefcase, Award, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import useSWR from "swr";
@@ -147,6 +147,28 @@ export const StudentsShowcaseSection = ({
     return DEFAULT_STUDENTS;
   }, [apiJobOffers, apiTestimonials]);
 
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      const totalScrollable = scrollWidth - clientWidth;
+      if (totalScrollable > 0) {
+        const progress = scrollLeft / totalScrollable;
+        const index = Math.round(progress * (studentsList.length - 1));
+        setActiveIndex(index);
+      }
+    }
+  };
+
+  const scrollToIndex = (index: number) => {
+    if (scrollContainerRef.current) {
+      const cardWidth = 290;
+      scrollContainerRef.current.scrollTo({ left: index * cardWidth, behavior: "smooth" });
+      setActiveIndex(index);
+    }
+  };
+
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({ left: -320, behavior: "smooth" });
@@ -191,12 +213,12 @@ export const StudentsShowcaseSection = ({
         </div>
 
         {/* Carousel Container with Left/Right Navigation */}
-        <div className="relative group">
+        <div className="relative group px-2 sm:px-4">
           {/* Left Arrow Button */}
           <button
             onClick={scrollLeft}
             aria-label="Previous Students"
-            className="absolute -left-3 md:-left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 md:w-12 md:h-12 rounded-full bg-[#0d1635] text-white flex items-center justify-center shadow-xl hover:bg-[#1B2A6B] hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none border-2 border-white"
+            className="absolute -left-2 md:-left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 md:w-12 md:h-12 rounded-full bg-[#0d1635] text-white flex items-center justify-center shadow-xl hover:bg-[#1B2A6B] hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none border-2 border-white cursor-pointer"
           >
             <ChevronLeft size={22} />
           </button>
@@ -204,7 +226,8 @@ export const StudentsShowcaseSection = ({
           {/* Scrollable Track */}
           <div
             ref={scrollContainerRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth no-scrollbar py-4 px-2 -mx-2 select-none"
+            onScroll={handleScroll}
+            className="flex gap-6 overflow-x-auto scroll-smooth no-scrollbar py-4 px-2 -mx-2 select-none cursor-grab active:cursor-grabbing"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {studentsList.map((student, idx) => (
@@ -246,10 +269,24 @@ export const StudentsShowcaseSection = ({
           <button
             onClick={scrollRight}
             aria-label="Next Students"
-            className="absolute -right-3 md:-right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 md:w-12 md:h-12 rounded-full bg-[#0d1635] text-white flex items-center justify-center shadow-xl hover:bg-[#1B2A6B] hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none border-2 border-white"
+            className="absolute -right-2 md:-right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 md:w-12 md:h-12 rounded-full bg-[#0d1635] text-white flex items-center justify-center shadow-xl hover:bg-[#1B2A6B] hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none border-2 border-white cursor-pointer"
           >
             <ChevronRight size={22} />
           </button>
+        </div>
+
+        {/* Carousel Dots Indicator */}
+        <div className="flex items-center justify-center gap-2 mt-6">
+          {studentsList.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => scrollToIndex(i)}
+              aria-label={`Go to student slide ${i + 1}`}
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                activeIndex === i ? "w-6 bg-[#1B2A6B]" : "w-2 bg-slate-200 hover:bg-slate-300"
+              }`}
+            />
+          ))}
         </div>
       </div>
     </section>
