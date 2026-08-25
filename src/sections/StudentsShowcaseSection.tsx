@@ -89,6 +89,30 @@ const DEFAULT_STUDENTS: StudentItem[] = [
   },
   {
     id: 9,
+    name: "Shruti Jadhav",
+    role: "Graphic Design",
+    company: "DesignHub",
+    image: "/students/shruti_jadhav.png",
+    degree: "B.Des"
+  },
+  {
+    id: 10,
+    name: "Shivam",
+    role: "Graphic Design",
+    company: "Pixel Studio",
+    image: "/students/shivam.png",
+    degree: "Diploma - Graphics"
+  },
+  {
+    id: 11,
+    name: "Samuel Gabi",
+    role: "Graphic Design & Digital Marketing",
+    company: "Global Matrix",
+    image: "/students/samuel_gabi.png",
+    degree: "B.A. Mass Comm"
+  },
+  {
+    id: 12,
     name: "Aastha Soni",
     role: "Full Stack Web Development",
     company: "Wipro",
@@ -96,7 +120,7 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     degree: "B.Tech CSE"
   },
   {
-    id: 10,
+    id: 13,
     name: "Ketan Parmar",
     role: "React & Node.js Developer",
     company: "TCS",
@@ -104,7 +128,7 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     degree: "B.Tech IT"
   },
   {
-    id: 11,
+    id: 14,
     name: "Krupa Patel",
     role: "UI/UX Design Specialist",
     company: "Accenture",
@@ -112,7 +136,7 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     degree: "B.Des"
   },
   {
-    id: 12,
+    id: 15,
     name: "Manav Vithani",
     role: "Python & AI Engineering",
     company: "HDFC Bank",
