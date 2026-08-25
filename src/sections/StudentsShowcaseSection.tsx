@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Sparkles } from "lucide-react";
 import useSWR from "swr";
 import { fetcher } from "../lib/fetcher";
@@ -25,6 +25,11 @@ export const StudentsShowcaseSection = ({
   type = "all"
 }: StudentsShowcaseSectionProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Dynamic API Fetching from MySQL Database table student_job_offers
   const { data: apiJobOffers } = useSWR("/public/cms/job-offers", fetcher, {
@@ -112,39 +117,55 @@ export const StudentsShowcaseSection = ({
         >
           {/* Single Row Glide Track */}
           <div className={`continuous-glide-track gap-6 px-2 ${isHovered ? "continuous-glide-paused" : ""}`}>
-            {duplicatedList.map((student, idx) => (
-              <div
-                key={`${student.id}-${idx}`}
-                className="w-[230px] sm:w-[245px] md:w-[260px] shrink-0 bg-white rounded-3xl border border-slate-200/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.18)] hover:-translate-y-2.5 transition-all duration-300 overflow-hidden flex flex-col group/card cursor-pointer"
-              >
-                {/* Student Photo Container */}
-                <div className="w-full aspect-[4/4.3] relative overflow-hidden bg-slate-100">
-                  <img
-                    src={student.image}
-                    alt={student.name}
-                    className="w-full h-full object-cover object-top group-hover/card:scale-108 transition-transform duration-500"
-                    loading="lazy"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`;
-                    }}
-                  />
-                  {/* Subtle top corner gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-300" />
-                </div>
+            {isMounted && duplicatedList.length > 0 ? (
+              duplicatedList.map((student, idx) => (
+                <div
+                  key={`${student.id}-${idx}`}
+                  className="w-[230px] sm:w-[245px] md:w-[260px] shrink-0 bg-white rounded-3xl border border-slate-200/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.18)] hover:-translate-y-2.5 transition-all duration-300 overflow-hidden flex flex-col group/card cursor-pointer"
+                >
+                  {/* Student Photo Container */}
+                  <div className="w-full aspect-[4/4.3] relative overflow-hidden bg-slate-100">
+                    <img
+                      src={student.image}
+                      alt={student.name}
+                      className="w-full h-full object-cover object-top group-hover/card:scale-108 transition-transform duration-500"
+                      loading="lazy"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`;
+                      }}
+                    />
+                    {/* Subtle top corner gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-300" />
+                  </div>
 
-                {/* Student Info Card Body */}
-                <div className="p-4 text-center bg-white flex flex-col justify-center items-center grow gap-1">
-                  <h3 className="font-bold text-base text-slate-800 tracking-tight group-hover/card:text-[#1B2A6B] transition-colors line-clamp-1">
-                    {student.name}
-                  </h3>
+                  {/* Student Info Card Body */}
+                  <div className="p-4 text-center bg-white flex flex-col justify-center items-center grow gap-1">
+                    <h3 className="font-bold text-base text-slate-800 tracking-tight group-hover/card:text-[#1B2A6B] transition-colors line-clamp-1">
+                      {student.name}
+                    </h3>
 
-                  {/* Simple Clean Role Text */}
-                  <p className="text-xs font-medium text-slate-500 capitalize line-clamp-1">
-                    {student.role}
-                  </p>
+                    {/* Simple Clean Role Text */}
+                    <p className="text-xs font-medium text-slate-500 capitalize line-clamp-1">
+                      {student.role}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              // Skeleton cards during initial SSR mount to prevent layout shift & hydration mismatch
+              Array.from({ length: 6 }).map((_, idx) => (
+                <div
+                  key={`skeleton-${idx}`}
+                  className="w-[230px] sm:w-[245px] md:w-[260px] shrink-0 bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col animate-pulse"
+                >
+                  <div className="w-full aspect-[4/4.3] bg-slate-100" />
+                  <div className="p-4 flex flex-col items-center gap-2">
+                    <div className="w-24 h-4 bg-slate-200 rounded" />
+                    <div className="w-16 h-3 bg-slate-100 rounded" />
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
