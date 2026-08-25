@@ -121,10 +121,6 @@ export const StudentsShowcaseSection = ({
           onTouchStart={() => setIsHovered(true)}
           onTouchEnd={() => setIsHovered(false)}
         >
-          {/* Left & Right Edge Soft Fades */}
-          <div className="absolute left-0 top-0 bottom-0 w-12 md:w-24 bg-gradient-to-r from-white via-white/80 to-transparent z-20 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-12 md:w-24 bg-gradient-to-l from-white via-white/80 to-transparent z-20 pointer-events-none" />
-
           {/* Single Row Glide Track */}
           <div className={`continuous-glide-track gap-6 px-2 ${isHovered ? "continuous-glide-paused" : ""}`}>
             {duplicatedList.map((student, idx) => (
