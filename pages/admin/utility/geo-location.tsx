@@ -28,14 +28,6 @@ interface LeadLocation {
   submittedTime: string;
 }
 
-const MOCK_LEADS: LeadLocation[] = [
-  { id: 'LD-001', name: 'Rajesh Kumar', email: 'rajesh@techcorp.in', phone: '+91 9876543210', company: 'TechCorp India', message: 'Looking for corporate training on Advanced React.', ip: '122.161.43.12', country: 'India', state: 'Maharashtra', city: 'Mumbai', lat: 19.0760, lng: 72.8777, browser: 'Chrome', device: 'Desktop', os: 'Windows 11', timezone: 'IST (UTC+5:30)', submittedTime: '2023-10-25 10:30 AM' },
-  { id: 'LD-002', name: 'Priya Sharma', email: 'priya.design@gmail.com', phone: '+91 8765432109', company: 'Freelance', message: 'Do you offer UI/UX certification for teams?', ip: '49.32.11.89', country: 'India', state: 'Delhi', city: 'New Delhi', lat: 28.6139, lng: 77.2090, browser: 'Safari', device: 'Mobile', os: 'iOS 16', timezone: 'IST (UTC+5:30)', submittedTime: '2023-10-25 11:15 AM' },
-  { id: 'LD-003', name: 'Amit Patel', email: 'amit@gujarattech.in', phone: '+91 7654321098', company: 'GujaratTech', message: 'Interested in partnering for student placements.', ip: '103.45.67.89', country: 'India', state: 'Gujarat', city: 'Ahmedabad', lat: 23.0225, lng: 72.5714, browser: 'Firefox', device: 'Desktop', os: 'macOS', timezone: 'IST (UTC+5:30)', submittedTime: '2023-10-25 01:45 PM' },
-  { id: 'LD-004', name: 'John Doe', email: 'john.doe@global.com', phone: '+1 202-555-0198', company: 'Global Ed', message: 'Can international students enroll in live classes?', ip: '104.28.33.19', country: 'United States', state: 'New York', city: 'New York', lat: 40.7128, lng: -74.0060, browser: 'Edge', device: 'Desktop', os: 'Windows 10', timezone: 'EST (UTC-5)', submittedTime: '2023-10-25 08:20 PM' },
-  { id: 'LD-005', name: 'Sneha Reddy', email: 'sneha@innovate.co.in', phone: '+91 6543210987', company: 'Innovate Solutions', message: 'Need pricing for bulk course purchases.', ip: '115.99.23.41', country: 'India', state: 'Karnataka', city: 'Bangalore', lat: 12.9716, lng: 77.5946, browser: 'Chrome', device: 'Tablet', os: 'Android', timezone: 'IST (UTC+5:30)', submittedTime: '2023-10-26 09:10 AM' },
-];
-
 export default function GeoLocationPage() {
   const [leads, setLeads] = useState<LeadLocation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -61,25 +53,24 @@ export default function GeoLocationPage() {
             phone: item.phone || '',
             company: item.company || item.institution || 'Individual',
             message: item.message || item.notes || 'Website enquiry',
-            ip: item.ip_address || item.ip || '122.161.43.12',
+            ip: item.ip_address || item.ip || '127.0.0.1',
             country: item.country || 'India',
-            state: item.state || 'Maharashtra',
-            city: item.city || 'Mumbai',
-            lat: parseFloat(item.lat || item.latitude) || 19.0760,
-            lng: parseFloat(item.lng || item.longitude) || 72.8777,
-            browser: item.browser || 'Chrome',
+            state: item.state || '',
+            city: item.city || '',
+            lat: parseFloat(item.lat || item.latitude) || 20.5937,
+            lng: parseFloat(item.lng || item.longitude) || 78.9629,
+            browser: item.browser || 'Browser',
             device: item.device || 'Desktop',
-            os: item.os || 'Windows',
+            os: item.os || 'OS',
             timezone: item.timezone || 'IST (UTC+5:30)',
-            submittedTime: item.created_at ? new Date(item.created_at).toLocaleString() : 'Just now'
+            submittedTime: item.created_at ? new Date(item.created_at).toLocaleString() : 'Recent'
           }));
           setLeads(formatted);
         } else {
-          setLeads(MOCK_LEADS);
+          setLeads([]);
         }
       } catch (e) {
-        // Fallback to sample leads if offline or backend has no leads table
-        setLeads(MOCK_LEADS);
+        setLeads([]);
       } finally {
         setIsLoading(false);
       }
@@ -100,13 +91,23 @@ export default function GeoLocationPage() {
     filtered = filtered.filter(l => l.country !== 'India');
   }
 
+  // Compute top city dynamically
+  const cityCounts: Record<string, number> = {};
+  leads.forEach(l => {
+    if (l.city) cityCounts[l.city] = (cityCounts[l.city] || 0) + 1;
+  });
+  const topCityEntry = Object.entries(cityCounts).sort((a, b) => b[1] - a[1])[0];
+
+  const todayStr = new Date().toDateString();
+  const todayCount = leads.filter(l => l.submittedTime && new Date(l.submittedTime).toDateString() === todayStr).length;
+
   const stats = {
     total: leads.length,
     india: leads.filter(l => l.country === 'India').length,
     intl: leads.filter(l => l.country !== 'India').length,
-    today: 2,
-    topCity: 'Mumbai',
-    conversion: '12.5%'
+    today: todayCount,
+    topCity: topCityEntry ? topCityEntry[0] : (leads.length > 0 ? 'N/A' : 'None'),
+    conversion: leads.length > 0 ? `${Math.round((leads.filter(l => l.phone).length / leads.length) * 100)}%` : '0%'
   };
 
   const handleExport = (type: string) => {
