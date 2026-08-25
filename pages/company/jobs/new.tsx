@@ -64,7 +64,7 @@ export default function PostJobPage() {
         employment_type: category === "Internship" ? "Internship" : form.type,
         experience_level: "Entry Level", // Fallback, could add to form
         remote_type: form.locationType,
-        location: form.locationType === "Remote" ? "Remote" : form.location,
+        location: form.locationType === "Remote" ? "Remote" : (form.location.trim() || form.locationType),
         salary_min: salaryMin,
         salary_max: salaryMax,
         description: form.description,
@@ -343,4 +343,5 @@ export default function PostJobPage() {
     </CompanyDashboardLayout>
   );
 }
+
 
