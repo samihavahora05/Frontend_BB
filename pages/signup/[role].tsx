@@ -118,7 +118,14 @@ export default function RoleSignupPage() {
         else router.push("/student/dashboard");
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "An error occurred during signup.");
+      let errMsg = err.response?.data?.message;
+      if (err.response?.data?.errors) {
+        const errorValues = Object.values(err.response.data.errors).flat();
+        if (errorValues.length > 0) {
+          errMsg = String(errorValues[0]);
+        }
+      }
+      setError(errMsg || (err.message === "Network Error" ? "Network error: Unable to reach backend server." : "An error occurred during signup."));
       setIsLoading(false);
     }
   };

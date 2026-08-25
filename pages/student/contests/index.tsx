@@ -129,13 +129,49 @@ export default function ContestsPage() {
                 </div>
               ) : (
                 pastContests.map((reg: any, i: number) => (
-                  <AnimatedContent key={reg.id} direction="up" delay={0.2 + (i * 0.1)} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center">
-                        <CheckCircle2 size={16} className="text-emerald-500" />
+                  <AnimatedContent key={reg.id} direction="up" delay={0.2 + (i * 0.1)} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 hover:shadow-md transition-shadow">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex items-start sm:items-center gap-4">
+                        <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+                          <CheckCircle2 size={20} className="text-emerald-500" />
+                        </div>
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600">
+                              {reg.contest?.difficulty_level || reg.domain_track || "Completed"}
+                            </span>
+                            {reg.participation_type && (
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600">
+                                {reg.participation_type === 'team' ? `Team (${reg.team_name || 'Group'})` : 'Solo'}
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="font-bold text-slate-800 text-sm mb-1">{reg.contest?.title || "Completed Contest"}</h3>
+                          <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-400">
+                            {reg.contest?.start_date && (
+                              <span className="flex items-center gap-1">
+                                <Calendar size={12} />
+                                {new Date(reg.contest.start_date).toLocaleDateString()}
+                              </span>
+                            )}
+                            {reg.score !== undefined && reg.score !== null && (
+                              <span className="text-slate-600 font-bold">
+                                Score: <span className="text-emerald-600 font-black">{reg.score}</span>
+                              </span>
+                            )}
+                            {reg.rank && (
+                              <span className="text-[#C9A227] font-bold">
+                                Rank: #{reg.rank}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-bold text-slate-800 text-sm mb-0.5">{reg.contest?.title || "Completed Contest"}</h3>
+
+                      <div className="flex items-center gap-2 self-end sm:self-center">
+                        <span className="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-xl border border-emerald-200 flex items-center gap-1.5">
+                          <CheckCircle2 size={13} /> Completed
+                        </span>
                       </div>
                     </div>
                   </AnimatedContent>

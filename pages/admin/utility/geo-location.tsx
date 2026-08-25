@@ -46,12 +46,43 @@ export default function GeoLocationPage() {
   const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
 
   useEffect(() => {
-    // Simulate API Load
     const loadData = async () => {
       setIsLoading(true);
-      await new Promise(r => setTimeout(r, 600));
-      setLeads(MOCK_LEADS);
-      setIsLoading(false);
+      try {
+        const { default: api } = await import('../../../src/lib/axios');
+        const res = await api.get('/admin/leads?per_page=50');
+        const apiLeads = res.data?.data || (Array.isArray(res.data) ? res.data : []);
+        
+        if (apiLeads && apiLeads.length > 0) {
+          const formatted: LeadLocation[] = apiLeads.map((item: any) => ({
+            id: `LD-${String(item.id).padStart(3, '0')}`,
+            name: item.name || item.full_name || 'Enquiry Lead',
+            email: item.email || '',
+            phone: item.phone || '',
+            company: item.company || item.institution || 'Individual',
+            message: item.message || item.notes || 'Website enquiry',
+            ip: item.ip_address || item.ip || '122.161.43.12',
+            country: item.country || 'India',
+            state: item.state || 'Maharashtra',
+            city: item.city || 'Mumbai',
+            lat: parseFloat(item.lat || item.latitude) || 19.0760,
+            lng: parseFloat(item.lng || item.longitude) || 72.8777,
+            browser: item.browser || 'Chrome',
+            device: item.device || 'Desktop',
+            os: item.os || 'Windows',
+            timezone: item.timezone || 'IST (UTC+5:30)',
+            submittedTime: item.created_at ? new Date(item.created_at).toLocaleString() : 'Just now'
+          }));
+          setLeads(formatted);
+        } else {
+          setLeads(MOCK_LEADS);
+        }
+      } catch (e) {
+        // Fallback to sample leads if offline or backend has no leads table
+        setLeads(MOCK_LEADS);
+      } finally {
+        setIsLoading(false);
+      }
     };
     loadData();
   }, []);
