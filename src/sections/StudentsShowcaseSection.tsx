@@ -98,7 +98,7 @@ export const StudentsShowcaseSection = ({
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
         {/* Section Heading with Brand Typography */}
-        <div className="text-center mb-14">
+        <div className="text-center mb-12">
           {tag && (
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1B2A6B]/5 text-[#1B2A6B] border border-[#1B2A6B]/15 text-xs font-black uppercase tracking-wider mb-3.5 shadow-sm">
               <Sparkles size={14} className="text-[#C9A227] animate-pulse" />
@@ -113,54 +113,54 @@ export const StudentsShowcaseSection = ({
             {subtitle}
           </p>
         </div>
-      </div>
 
-      {/* Full Width Continuous Scrolling Marquee Track with Edge Gradients */}
-      <div 
-        className="relative w-full overflow-hidden py-4"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onTouchStart={() => setIsHovered(true)}
-        onTouchEnd={() => setIsHovered(false)}
-      >
-        {/* Left & Right Edge Fades for Seamless Look */}
-        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-white via-white/80 to-transparent z-20 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-white via-white/80 to-transparent z-20 pointer-events-none" />
+        {/* Contained Continuous Scrolling Marquee Track */}
+        <div 
+          className="relative w-full overflow-hidden py-4 rounded-3xl"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onTouchStart={() => setIsHovered(true)}
+          onTouchEnd={() => setIsHovered(false)}
+        >
+          {/* Left & Right Edge Soft Fades */}
+          <div className="absolute left-0 top-0 bottom-0 w-12 md:w-20 bg-gradient-to-r from-white via-white/80 to-transparent z-20 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-12 md:w-20 bg-gradient-to-l from-white via-white/80 to-transparent z-20 pointer-events-none" />
 
-        <div className={`continuous-glide-track gap-6 px-4 ${isHovered ? "continuous-glide-paused" : ""}`}>
-          {duplicatedList.map((student, idx) => (
-            <div
-              key={`${student.id}-${idx}`}
-              className="w-[245px] sm:w-[265px] md:w-[280px] shrink-0 bg-white rounded-3xl border border-slate-200/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.18)] hover:-translate-y-2.5 transition-all duration-300 overflow-hidden flex flex-col group/card cursor-pointer"
-            >
-              {/* Student Photo Container */}
-              <div className="w-full aspect-[4/4.3] relative overflow-hidden bg-slate-100">
-                <img
-                  src={student.image}
-                  alt={student.name}
-                  className="w-full h-full object-cover object-top group-hover/card:scale-108 transition-transform duration-500"
-                  loading="lazy"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`;
-                  }}
-                />
-                {/* Subtle top corner gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-300" />
+          <div className={`continuous-glide-track gap-6 px-2 ${isHovered ? "continuous-glide-paused" : ""}`}>
+            {duplicatedList.map((student, idx) => (
+              <div
+                key={`${student.id}-${idx}`}
+                className="w-[235px] sm:w-[250px] md:w-[265px] shrink-0 bg-white rounded-3xl border border-slate-200/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.18)] hover:-translate-y-2.5 transition-all duration-300 overflow-hidden flex flex-col group/card cursor-pointer"
+              >
+                {/* Student Photo Container */}
+                <div className="w-full aspect-[4/4.3] relative overflow-hidden bg-slate-100">
+                  <img
+                    src={student.image}
+                    alt={student.name}
+                    className="w-full h-full object-cover object-top group-hover/card:scale-108 transition-transform duration-500"
+                    loading="lazy"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`;
+                    }}
+                  />
+                  {/* Subtle top corner gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-300" />
+                </div>
+
+                {/* Student Info Card Body */}
+                <div className="p-4 text-center bg-white flex flex-col justify-between items-center grow gap-2">
+                  <h3 className="font-black text-sm md:text-base text-slate-800 tracking-tight group-hover/card:text-[#1B2A6B] transition-colors line-clamp-1">
+                    {student.name}
+                  </h3>
+
+                  {/* Clean Role Badge Pill */}
+                  <span className={`inline-block px-3 py-1 rounded-full text-[10.5px] font-bold border capitalize tracking-wide ${getRoleBadgeStyle(student.role)}`}>
+                    {student.role}
+                  </span>
+                </div>
               </div>
-
-              {/* Student Info Card Body */}
-              <div className="p-5 text-center bg-white flex flex-col justify-between items-center grow gap-2.5">
-                <h3 className="font-black text-base md:text-lg text-slate-800 tracking-tight group-hover/card:text-[#1B2A6B] transition-colors line-clamp-1">
-                  {student.name}
-                </h3>
-
-                {/* Clean Role Badge Pill */}
-                <span className={`inline-block px-3 py-1 rounded-full text-[11px] font-bold border capitalize tracking-wide ${getRoleBadgeStyle(student.role)}`}>
-                  {student.role}
-                </span>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
