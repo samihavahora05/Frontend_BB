@@ -1,0 +1,288 @@
+import React, { useRef, useMemo } from "react";
+import { ChevronLeft, ChevronRight, Briefcase, Award, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import useSWR from "swr";
+import { fetcher } from "../lib/fetcher";
+
+export interface StudentItem {
+  id: number | string;
+  name: string;
+  role: string;
+  image: string;
+  company?: string;
+  offered_on?: string;
+  degree?: string;
+}
+
+interface StudentsShowcaseSectionProps {
+  title?: string;
+  subtitle?: string;
+  tag?: string;
+  type?: "all" | "internship" | "job";
+}
+
+// Built-in list with real student photos
+const DEFAULT_STUDENTS: StudentItem[] = [
+  {
+    id: 1,
+    name: "Yuvraj Parmar",
+    role: "Graphic Design",
+    company: "Blueboxx Media",
+    image: "/testimonials photos/Hemangini Parmar.png",
+    degree: "B.Des"
+  },
+  {
+    id: 2,
+    name: "Vikas",
+    role: "Graphic Design",
+    company: "Creative Labs",
+    image: "/testimonials photos/Akshay Raval.png",
+    degree: "Diploma - UI"
+  },
+  {
+    id: 3,
+    name: "Vaidehi",
+    role: "Graphic Design & Digital Marketing",
+    company: "Digital Spark",
+    image: "/testimonials photos/Disha Padhiyar.png",
+    degree: "BCA"
+  },
+  {
+    id: 4,
+    name: "Tushar",
+    role: "Graphic Design",
+    company: "Studio 9",
+    image: "/testimonials photos/Harsh Padhiyar.png",
+    degree: "B.A. Multimedia"
+  },
+  {
+    id: 5,
+    name: "Aastha Soni",
+    role: "Full Stack Web Development",
+    company: "Infosys",
+    image: "/testimonials photos/Aastha Soni.png",
+    degree: "B.Tech CSE"
+  },
+  {
+    id: 6,
+    name: "Ketan Parmar",
+    role: "React & Node.js Developer",
+    company: "TCS",
+    image: "/testimonials photos/Ketan Parmar.png",
+    degree: "B.Tech IT"
+  },
+  {
+    id: 7,
+    name: "Krupa Patel",
+    role: "UI/UX Design Specialist",
+    company: "Wipro",
+    image: "/testimonials photos/Krupa Patel.png",
+    degree: "B.Des"
+  },
+  {
+    id: 8,
+    name: "Manav Vithani",
+    role: "Python & AI Engineering",
+    company: "Cognizant",
+    image: "/testimonials photos/Manav Vithani.png",
+    degree: "M.Tech AI"
+  },
+  {
+    id: 9,
+    name: "Nency Shah",
+    role: "Data Analytics & Python",
+    company: "Accenture",
+    image: "/testimonials photos/Nency Shah.png",
+    degree: "B.Sc Data Science"
+  },
+  {
+    id: 10,
+    name: "Nishant Prajapati",
+    role: "Backend Developer (Laravel)",
+    company: "HDFC Bank",
+    image: "/testimonials photos/Nishant Prajapati.png",
+    degree: "MCA"
+  },
+  {
+    id: 11,
+    name: "Priyal Chauhan",
+    role: "Digital Marketing & SEO",
+    company: "Growth Media",
+    image: "/testimonials photos/Priyal Chauhan.png",
+    degree: "BBA"
+  },
+  {
+    id: 12,
+    name: "Tax Patel",
+    role: "Frontend Engineer",
+    company: "Tech Mahindra",
+    image: "/testimonials photos/Tax Patel.png",
+    degree: "B.Tech CSE"
+  },
+];
+
+export const StudentsShowcaseSection = ({
+  title = "OUR STUDENTS",
+  subtitle = "Celebrating our talented learners and placed alumni across top technology & design programs.",
+  tag = "Placement & Internship Network",
+  type = "all"
+}: StudentsShowcaseSectionProps) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Dynamic API Fetching from Backend Database
+  const { data: apiJobOffers } = useSWR("/public/cms/job-offers", fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false
+  });
+  const { data: apiTestimonials } = useSWR("/public/cms/testimonials", fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false
+  });
+
+  const studentsList: StudentItem[] = useMemo(() => {
+    // If backend has job offers / testimonials with photos, merge with our curated student list
+    const dynamicList: StudentItem[] = [];
+
+    if (apiJobOffers && Array.isArray(apiJobOffers) && apiJobOffers.length > 0) {
+      apiJobOffers.forEach((item: any, idx: number) => {
+        dynamicList.push({
+          id: `offer-${item.id || idx}`,
+          name: item.student_name || item.name || "Alumni",
+          role: item.role || item.degree || "Placed Trainee",
+          company: item.company_name || item.company || "Hiring Partner",
+          degree: item.degree || "Graduate",
+          offered_on: item.offered_on || "",
+          image: item.photo_url || item.image_url || DEFAULT_STUDENTS[idx % DEFAULT_STUDENTS.length].image
+        });
+      });
+    }
+
+    if (dynamicList.length > 0) {
+      return dynamicList;
+    }
+
+    return DEFAULT_STUDENTS;
+  }, [apiJobOffers, apiTestimonials]);
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -320, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 320, behavior: "smooth" });
+    }
+  };
+
+  return (
+    <section className="py-20 bg-white relative overflow-hidden border-t border-slate-200/80">
+      {/* Background Subtle Gradient & Grid */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: "linear-gradient(to right, #0d1635 1px, transparent 1px), linear-gradient(to bottom, #0d1635 1px, transparent 1px)",
+          backgroundSize: "32px 32px"
+        }}
+      />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#1B2A6B]/5 rounded-full blur-[140px] pointer-events-none" />
+
+      <div className="container mx-auto px-4 max-w-7xl relative z-10">
+        {/* Section Heading */}
+        <div className="text-center mb-12">
+          {tag && (
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1B2A6B]/5 text-[#1B2A6B] border border-[#1B2A6B]/15 text-xs font-black uppercase tracking-wider mb-3">
+              <Sparkles size={13} className="text-[#C9A227]" />
+              <span>{tag}</span>
+            </div>
+          )}
+          <h2 className="text-3xl md:text-5xl font-black text-[#0d1635] tracking-tight uppercase font-sora">
+            {title}
+          </h2>
+          {subtitle && (
+            <p className="text-slate-500 text-xs md:text-sm font-semibold max-w-2xl mx-auto mt-2">
+              {subtitle}
+            </p>
+          )}
+        </div>
+
+        {/* Carousel Container with Left/Right Navigation */}
+        <div className="relative group">
+          {/* Left Arrow Button */}
+          <button
+            onClick={scrollLeft}
+            aria-label="Previous Students"
+            className="absolute -left-3 md:-left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 md:w-12 md:h-12 rounded-full bg-[#0d1635] text-white flex items-center justify-center shadow-xl hover:bg-[#1B2A6B] hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none border-2 border-white"
+          >
+            <ChevronLeft size={22} />
+          </button>
+
+          {/* Scrollable Track */}
+          <div
+            ref={scrollContainerRef}
+            className="flex gap-6 overflow-x-auto scroll-smooth no-scrollbar py-4 px-2 -mx-2 select-none"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {studentsList.map((student, idx) => (
+              <motion.div
+                key={student.id || idx}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: (idx % 4) * 0.05 }}
+                className="w-[240px] sm:w-[260px] md:w-[275px] shrink-0 bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden flex flex-col group/card"
+              >
+                {/* Student Photo Container */}
+                <div className="w-full aspect-[4/4.2] relative overflow-hidden bg-slate-100">
+                  <img
+                    src={student.image}
+                    alt={student.name}
+                    className="w-full h-full object-cover object-top group-hover/card:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`;
+                    }}
+                  />
+                  {student.company && (
+                    <div className="absolute top-3 left-3 bg-[#0d1635]/90 backdrop-blur-sm text-white px-2.5 py-1 rounded-lg text-[10px] font-bold shadow-sm flex items-center gap-1 border border-white/10">
+                      <Award size={11} className="text-[#C9A227]" />
+                      <span>{student.company}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Student Info Card Body */}
+                <div className="p-4 text-center flex-1 flex flex-col justify-between bg-white">
+                  <div>
+                    <h3 className="font-bold text-base md:text-lg text-slate-800 tracking-tight group-hover/card:text-[#1B2A6B] transition-colors line-clamp-1">
+                      {student.name}
+                    </h3>
+                    <p className="text-xs font-semibold text-slate-500 capitalize mt-1 line-clamp-2 leading-snug">
+                      {student.role}
+                    </p>
+                  </div>
+
+                  {student.degree && (
+                    <div className="mt-3 pt-2.5 border-t border-slate-100 text-[11px] font-bold text-[#1B2A6B] uppercase tracking-wider">
+                      {student.degree}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Right Arrow Button */}
+          <button
+            onClick={scrollRight}
+            aria-label="Next Students"
+            className="absolute -right-3 md:-right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 md:w-12 md:h-12 rounded-full bg-[#0d1635] text-white flex items-center justify-center shadow-xl hover:bg-[#1B2A6B] hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none border-2 border-white"
+          >
+            <ChevronRight size={22} />
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};

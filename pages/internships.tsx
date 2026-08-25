@@ -13,6 +13,7 @@ import { useAuth } from "../src/context/AuthContext";
 import useSWR, { mutate } from "swr";
 import toast from "react-hot-toast";
 import { ApplyModal } from "../src/components/internship/ApplyModal";
+import { StudentsShowcaseSection } from "../src/sections/StudentsShowcaseSection";
 import { PartnersSection } from "../src/sections/PartnersSection";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
 import { getCurrentBatchCycle, BatchCycle } from "../src/lib/dateUtils";
@@ -725,6 +726,12 @@ export default function InternshipsPage() {
             </div>
           </div>
         </div>
+
+        <StudentsShowcaseSection 
+          title="OUR STUDENTS & INTERNS"
+          tag="Internship & Industry Training Alumni"
+          subtitle="Meet our dynamic learners who excelled in real-world industry internship projects."
+        />
 
         <WhyChooseBlueboxxSection />
 

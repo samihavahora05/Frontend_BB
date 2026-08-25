@@ -8,6 +8,7 @@ import { CoursesSection } from "../sections/CoursesSection";
 import { InternshipsSection } from "../sections/InternshipsSection";
 import { MentorsSection } from "../sections/MentorsSection";
 import { WhoAreYouSection } from "../sections/WhoAreYouSection";
+import { StudentsShowcaseSection } from "../sections/StudentsShowcaseSection";
 import { TestimonialsSection } from "../sections/TestimonialsSection";
 import { FAQSection } from "../sections/FAQSection";
 import { CTASection } from "../sections/CTASection";
@@ -24,6 +25,11 @@ export const HomePage = () => {
       <ServicesSection />
       <MentorsSection />
       <WhoAreYouSection />
+      <StudentsShowcaseSection 
+        title="OUR STUDENTS & ALUMNI"
+        tag="Success & Placement Network"
+        subtitle="Empowering thousands of students to learn, build projects, and secure top industry roles."
+      />
       <TestimonialsSection />
       <FAQSection />
       <CTASection />

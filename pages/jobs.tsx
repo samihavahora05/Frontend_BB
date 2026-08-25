@@ -10,6 +10,7 @@ import { Button } from "../src/components/ui/Button";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { TestimonialSection } from "../src/sections/TestimonialSection";
+import { StudentsShowcaseSection } from "../src/sections/StudentsShowcaseSection";
 import { PartnersSection } from "../src/sections/PartnersSection";
 import { SEO } from "../src/components/seo/SEO";
 import api from "../src/lib/axios";
@@ -288,7 +289,11 @@ export default function JobsPage() {
           </div>
         </div>
       </div>
-      <JobOffersSection />
+      <StudentsShowcaseSection 
+        title="STUDENTS WHO GOT JOB OFFERS"
+        tag="Recent Placements & Selections"
+        subtitle="Celebrating our learners who successfully cracked corporate selection rounds and secured high-growth job offers."
+      />
       <TestimonialSection 
         type="job" 
         titleHighlight="Alumni"
