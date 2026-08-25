@@ -97,7 +97,7 @@ export const StudentsShowcaseSection = ({
       <div className="absolute bottom-10 right-1/4 w-[500px] h-[250px] bg-[#C9A227]/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        {/* Section Heading with Brand Typography */}
+        {/* Section Heading matching reference typography */}
         <div className="text-center mb-12">
           {tag && (
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1B2A6B]/5 text-[#1B2A6B] border border-[#1B2A6B]/15 text-xs font-black uppercase tracking-wider mb-3.5 shadow-sm">
@@ -105,16 +105,15 @@ export const StudentsShowcaseSection = ({
               <span>{tag}</span>
             </div>
           )}
-          <h2 className="text-3xl md:text-5xl font-black text-[#0d1635] tracking-tight uppercase">
-            {title}
+          <h2 className="text-3xl md:text-5xl font-black text-[#0d1635] tracking-tight">
+            Our <span className="text-[#C9A227]">Students</span>
           </h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-transparent via-[#C9A227] to-transparent mx-auto mt-3 rounded-full" />
           <p className="text-slate-500 text-sm md:text-base font-semibold max-w-2xl mx-auto mt-3">
             {subtitle}
           </p>
         </div>
 
-        {/* Contained Continuous Scrolling Marquee Track */}
+        {/* Single Row Continuous Smooth Scrolling Marquee Track */}
         <div 
           className="relative w-full overflow-hidden py-4 rounded-3xl"
           onMouseEnter={() => setIsHovered(true)}
@@ -123,14 +122,15 @@ export const StudentsShowcaseSection = ({
           onTouchEnd={() => setIsHovered(false)}
         >
           {/* Left & Right Edge Soft Fades */}
-          <div className="absolute left-0 top-0 bottom-0 w-12 md:w-20 bg-gradient-to-r from-white via-white/80 to-transparent z-20 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-12 md:w-20 bg-gradient-to-l from-white via-white/80 to-transparent z-20 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-12 md:w-24 bg-gradient-to-r from-white via-white/80 to-transparent z-20 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-12 md:w-24 bg-gradient-to-l from-white via-white/80 to-transparent z-20 pointer-events-none" />
 
+          {/* Single Row Glide Track */}
           <div className={`continuous-glide-track gap-6 px-2 ${isHovered ? "continuous-glide-paused" : ""}`}>
             {duplicatedList.map((student, idx) => (
               <div
                 key={`${student.id}-${idx}`}
-                className="w-[235px] sm:w-[250px] md:w-[265px] shrink-0 bg-white rounded-3xl border border-slate-200/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.18)] hover:-translate-y-2.5 transition-all duration-300 overflow-hidden flex flex-col group/card cursor-pointer"
+                className="w-[230px] sm:w-[245px] md:w-[260px] shrink-0 bg-white rounded-3xl border border-slate-200/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.18)] hover:-translate-y-2.5 transition-all duration-300 overflow-hidden flex flex-col group/card cursor-pointer"
               >
                 {/* Student Photo Container */}
                 <div className="w-full aspect-[4/4.3] relative overflow-hidden bg-slate-100">
