@@ -255,6 +255,30 @@ const DEFAULT_STUDENTS: StudentItem[] = [
     name: "Drashti",
     role: "Graphic design",
     image: "/students/drashti.png"
+  },
+  {
+    id: 40,
+    name: "Chavda Mayur",
+    role: "Graphic design",
+    image: "/students/chavda_mayur.png"
+  },
+  {
+    id: 41,
+    name: "Arch",
+    role: "Graphic design",
+    image: "/students/arch.png"
+  },
+  {
+    id: 42,
+    name: "Dipak Rawat",
+    role: "Graphic design",
+    image: "/students/dipak_rawat.png"
+  },
+  {
+    id: 43,
+    name: "Dhara",
+    role: "Graphic design",
+    image: "/students/dhara.png"
   }
 ];
 
