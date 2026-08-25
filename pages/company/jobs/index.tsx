@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { CompanyDashboardLayout } from "../../../src/layout/CompanyDashboardLayout";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
@@ -10,10 +10,12 @@ import api from "../../../src/lib/axios";
 const fetcher = (url: string) => api.get(url).then(res => res.data);
 
 const STATUS_COLORS: Record<string, string> = {
-  Active: "bg-emerald-100 text-emerald-700",
-  Pending: "bg-amber-100 text-amber-700",
-  Rejected: "bg-red-100 text-red-600",
-  Closed: "bg-slate-100 text-slate-600",
+  Active: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  "Pending Approval": "bg-amber-50 text-amber-700 border border-amber-200",
+  Pending: "bg-amber-50 text-amber-700 border border-amber-200",
+  Rejected: "bg-rose-50 text-rose-700 border border-rose-200",
+  Closed: "bg-slate-100 text-slate-600 border border-slate-200",
+  Draft: "bg-slate-100 text-slate-600 border border-slate-200",
 };
 
 export default function CompanyJobsPage() {
@@ -46,16 +48,18 @@ export default function CompanyJobsPage() {
   };
 
   const filtered = companyJobs.filter((job: any) => {
+    const st = (job.status || "").toLowerCase();
     const matchesFilter =
       filter === "all" ||
-      (filter === "active" && (job.status === "Active" || job.status === "Pending")) ||
-      (filter === "closed" && (job.status === "Closed" || job.status === "Rejected"));
-    const matchesSearch = job.title.toLowerCase().includes(search.toLowerCase());
+      (filter === "active" && (st === "active" || st.includes("pending"))) ||
+      (filter === "closed" && (st === "closed" || st === "rejected"));
+    const matchesSearch = (job.title || "").toLowerCase().includes(search.toLowerCase()) ||
+                          (job.location || "").toLowerCase().includes(search.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
-  const activeCount = companyJobs.filter((j: any) => j.status === "Active").length;
-  const pendingCount = companyJobs.filter((j: any) => j.status === "Pending").length;
+  const activeCount = companyJobs.filter((j: any) => (j.status || "").toLowerCase() === "active").length;
+  const pendingCount = companyJobs.filter((j: any) => (j.status || "").toLowerCase().includes("pending")).length;
   const totalApplicants = companyJobs.reduce((acc: number, j: any) => acc + (j.applicants || 0), 0);
   const totalViews = companyJobs.reduce((acc: number, j: any) => acc + (j.views || 0), 0);
 
@@ -76,7 +80,7 @@ export default function CompanyJobsPage() {
         </Link>
       </div>
 
-      {/* Stats */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
           { label: "Active", value: activeCount, icon: Briefcase, color: "text-emerald-600 bg-emerald-50" },
@@ -87,179 +91,211 @@ export default function CompanyJobsPage() {
           <AnimatedContent
             key={i}
             direction="up"
-            delay={i * 0.1}
-            className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex items-center gap-4"
+            delay={i * 0.08}
+            className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex items-center gap-4"
           >
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
               <stat.icon size={20} />
             </div>
             <div>
-              <p className="text-2xl font-black text-slate-800 leading-none mb-1">{stat.value}</p>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{stat.label}</p>
+              <p className="text-2xl font-black text-slate-800 leading-none mb-1.5">{stat.value}</p>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{stat.label}</p>
             </div>
           </AnimatedContent>
         ))}
       </div>
 
-      {/* Search & Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="flex bg-white border border-slate-200 rounded-xl p-1 gap-1">
+      {/* Search & Tabs */}
+      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-6">
+        <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl w-fit">
           {[
             { id: "all", label: "All" },
             { id: "active", label: "Active / Pending" },
             { id: "closed", label: "Closed" },
-          ].map((t) => (
+          ].map((tab) => (
             <button
-              key={t.id}
-              onClick={() => setFilter(t.id)}
-              className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${
-                filter === t.id ? "bg-[#1B2A6B] text-white shadow" : "text-slate-500 hover:text-slate-800"
+              key={tab.id}
+              onClick={() => setFilter(tab.id)}
+              className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${
+                filter === tab.id
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-500 hover:text-slate-800"
               }`}
             >
-              {t.label}
+              {tab.label}
             </button>
           ))}
         </div>
         <div className="relative flex-1 max-w-md">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
-            placeholder="Search roles..."
+            placeholder="Search roles or location..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-[#1B2A6B] outline-none"
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-[#1B2A6B]/20 focus:border-[#1B2A6B] outline-none transition-all shadow-sm"
           />
         </div>
       </div>
 
-      {/* Jobs List */}
+      {/* Jobs Table Container */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-slate-100 bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-wider">
-          <div className="col-span-5">Role</div>
-          <div className="col-span-2 text-center">Status</div>
-          <div className="col-span-2 text-center">Performance</div>
-          <div className="col-span-2 text-center">Posted</div>
-          <div className="col-span-1 text-center">Actions</div>
-        </div>
-
-        <div className="divide-y divide-slate-100">
-          {filtered.map((job: any, i: number) => (
-            <AnimatedContent
-              key={job.id}
-              direction="up"
-              delay={i * 0.05}
-              className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 items-center hover:bg-slate-50 transition-colors"
-            >
-              {/* Role Info */}
-              <div className="col-span-5 flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[#1B2A6B]/10 flex items-center justify-center shrink-0">
-                  <Briefcase size={18} className="text-[#1B2A6B]" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-black text-slate-800 mb-1">{job.title}</h3>
-                  <div className="flex items-center gap-3 text-[11px] font-semibold text-slate-500">
-                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${job.category === "Internship" ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"}`}>
-                      {job.category}
-                    </span>
-                    <span>{job.type}</span>
-                    {job.location && (
-                      <span className="flex items-center gap-1">
-                        <MapPin size={10} /> {job.location}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Status */}
-              <div className="col-span-2 flex justify-center">
-                <span className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-wider rounded ${STATUS_COLORS[job.status]}`}>
-                  {job.status}
-                </span>
-              </div>
-
-              {/* Performance */}
-              <div className="col-span-2 flex flex-col items-center">
-                <p className="text-sm font-black text-slate-800">{job.applicants || 0}</p>
-                <p className="text-[10px] font-bold text-slate-400">Applicants</p>
-                <p className="text-[10px] font-semibold text-slate-400 mt-0.5">{job.views || 0} views</p>
-              </div>
-
-              {/* Posted */}
-              <div className="col-span-2 flex justify-center text-xs font-semibold text-slate-500">
-                {job.posted}
-              </div>
-
-              {/* Actions */}
-              <div className="col-span-1 flex justify-center relative">
-                <button
-                  onClick={() => setMenuOpen(menuOpen === job.id ? null : job.id)}
-                  className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-800 rounded-lg transition-colors"
-                >
-                  <MoreVertical size={16} />
-                </button>
-                {menuOpen === job.id && (
-                  <>
-                    <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(null)} />
-                    <div className="absolute right-0 top-10 w-44 bg-white border border-slate-200 rounded-xl shadow-xl z-20 py-1 overflow-hidden">
-                      {job.status === "Active" && (
-                        <button
-                          onClick={() => { updateJobStatus(job.id, "Closed"); setMenuOpen(null); }}
-                          className="flex items-center gap-2 w-full px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50"
-                        >
-                          <XCircle size={14} /> Close Posting
-                        </button>
-                      )}
-                      {job.status === "Closed" && (
-                        <button
-                          onClick={() => { updateJobStatus(job.id, "Pending"); setMenuOpen(null); }}
-                          className="flex items-center gap-2 w-full px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50"
-                        >
-                          <CheckCircle size={14} /> Re-submit for Approval
-                        </button>
-                      )}
-                      <button
-                        onClick={() => { toast.success(`Viewing applicants for "${job.title}"`); setMenuOpen(null); }}
-                        className="flex items-center gap-2 w-full px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50"
-                      >
-                        <Users size={14} /> View Applicants
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (confirm(`Are you sure you want to completely delete "${job.title}"?`)) {
-                            deleteJob(job.id);
-                          }
-                          setMenuOpen(null);
-                        }}
-                        className="flex items-center gap-2 w-full px-4 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50"
-                      >
-                        <Trash2 size={14} /> Delete
-                      </button>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-slate-100 bg-slate-50/70 text-[11px] font-black text-slate-400 uppercase tracking-wider">
+                <th className="py-4 px-6">Job Role</th>
+                <th className="py-4 px-6 text-center">Status</th>
+                <th className="py-4 px-6 text-center">Performance</th>
+                <th className="py-4 px-6 text-center">Posted</th>
+                <th className="py-4 px-6 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={5} className="py-16 text-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-[#1B2A6B] mx-auto mb-2" />
+                    <p className="text-xs font-bold text-slate-400">Loading your postings...</p>
+                  </td>
+                </tr>
+              ) : filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-16 text-center">
+                    <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto mb-3 text-slate-400 border border-slate-100">
+                      <Briefcase size={24} />
                     </div>
-                  </>
-                )}
-              </div>
-            </AnimatedContent>
-          ))}
-          {isLoading && (
-            <div className="p-12 text-center flex justify-center items-center">
-              <Loader2 className="w-8 h-8 animate-spin text-[#1B2A6B]" />
-            </div>
-          )}
-          {!isLoading && filtered.length === 0 && (
-            <div className="p-12 text-center">
-              <p className="text-slate-500 font-medium mb-4">No postings found.</p>
-              <Link
-                href="/company/jobs/new"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1B2A6B] text-white font-bold rounded-xl text-sm hover:bg-[#0d1635] transition-colors"
-              >
-                <Plus size={16} /> Create Your First Posting
-              </Link>
-            </div>
-          )}
+                    <p className="text-sm font-bold text-slate-700 mb-1">No postings found</p>
+                    <p className="text-xs text-slate-400 max-w-sm mx-auto mb-4">You have not posted any jobs under this filter yet.</p>
+                    <Link
+                      href="/company/jobs/new"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-[#1B2A6B] text-white text-xs font-bold rounded-xl shadow-sm hover:bg-[#0d1635] transition-colors"
+                    >
+                      <Plus size={14} /> Post Your First Job
+                    </Link>
+                  </td>
+                </tr>
+              ) : (
+                filtered.map((job: any) => {
+                  const empType = job.employment_type || job.category || "Full-Time";
+                  const isIntern = empType.toLowerCase() === "internship";
+                  const loc = job.location || job.remote_type || "On-site";
+                  const statusClass = STATUS_COLORS[job.status] || "bg-slate-100 text-slate-700 border border-slate-200";
+
+                  return (
+                    <tr key={job.id} className="hover:bg-slate-50/80 transition-colors group">
+                      {/* Role Column */}
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-11 h-11 rounded-xl bg-blue-50/80 border border-blue-100 text-[#1B2A6B] flex items-center justify-center shrink-0">
+                            <Briefcase size={18} />
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-black text-slate-800 group-hover:text-[#1B2A6B] transition-colors">
+                              {job.title}
+                            </h3>
+                            <div className="flex flex-wrap items-center gap-2 mt-1">
+                              <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${
+                                isIntern ? "bg-purple-50 text-purple-700 border border-purple-200" : "bg-blue-50 text-blue-700 border border-blue-200"
+                              }`}>
+                                {empType}
+                              </span>
+                              <span className="flex items-center gap-1 text-xs font-semibold text-slate-500">
+                                <MapPin size={12} className="text-slate-400" />
+                                {loc}
+                              </span>
+                              {job.salary && job.salary !== 'Competitive' && (
+                                <span className="text-xs font-bold text-emerald-600">
+                                  • {job.salary}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Status Column */}
+                      <td className="py-4 px-6 text-center">
+                        <span className={`inline-block px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-full ${statusClass}`}>
+                          {job.status}
+                        </span>
+                      </td>
+
+                      {/* Performance Column */}
+                      <td className="py-4 px-6 text-center">
+                        <div className="inline-flex flex-col items-center">
+                          <span className="text-sm font-black text-slate-800">{job.applicants || 0}</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Applicants</span>
+                          <span className="text-[10px] font-semibold text-slate-400 mt-0.5">{job.views || 0} views</span>
+                        </div>
+                      </td>
+
+                      {/* Posted Column */}
+                      <td className="py-4 px-6 text-center">
+                        <span className="text-xs font-bold text-slate-500 whitespace-nowrap">
+                          {job.posted}
+                        </span>
+                      </td>
+
+                      {/* Actions Column */}
+                      <td className="py-4 px-6 text-right relative">
+                        <button
+                          onClick={() => setMenuOpen(menuOpen === job.id ? null : job.id)}
+                          className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-xl transition-colors inline-flex items-center justify-center"
+                        >
+                          <MoreVertical size={16} />
+                        </button>
+
+                        {menuOpen === job.id && (
+                          <>
+                            <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(null)} />
+                            <div className="absolute right-6 top-12 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-20 py-1.5 text-left overflow-hidden">
+                              {job.status === "Active" && (
+                                <button
+                                  onClick={() => { updateJobStatus(job.id, "Closed"); setMenuOpen(null); }}
+                                  className="flex items-center gap-2.5 w-full px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50"
+                                >
+                                  <XCircle size={14} className="text-amber-500" /> Close Posting
+                                </button>
+                              )}
+                              {job.status === "Closed" && (
+                                <button
+                                  onClick={() => { updateJobStatus(job.id, "Pending"); setMenuOpen(null); }}
+                                  className="flex items-center gap-2.5 w-full px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50"
+                                >
+                                  <CheckCircle size={14} className="text-emerald-500" /> Re-submit for Review
+                                </button>
+                              )}
+                              <Link
+                                href="/company/applicants"
+                                onClick={() => setMenuOpen(null)}
+                                className="flex items-center gap-2.5 w-full px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50"
+                              >
+                                <Users size={14} className="text-blue-500" /> View Applicants ({job.applicants || 0})
+                              </Link>
+                              <div className="h-px bg-slate-100 my-1" />
+                              <button
+                                onClick={() => {
+                                  if (confirm(`Are you sure you want to delete "${job.title}"?`)) {
+                                    deleteJob(job.id);
+                                  }
+                                  setMenuOpen(null);
+                                }}
+                                className="flex items-center gap-2.5 w-full px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50"
+                              >
+                                <Trash2 size={14} /> Delete Job
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </CompanyDashboardLayout>
   );
 }
-
-
