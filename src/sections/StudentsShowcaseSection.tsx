@@ -133,24 +133,15 @@ export const StudentsShowcaseSection = ({
   });
 
   const studentsList: StudentItem[] = useMemo(() => {
-    // If backend has job offers / testimonials with photos, merge with our curated student list
-    const dynamicList: StudentItem[] = [];
-
+    // If backend database returns student records from student_job_offers table
     if (apiJobOffers && Array.isArray(apiJobOffers) && apiJobOffers.length > 0) {
-      apiJobOffers.forEach((item: any, idx: number) => {
-        dynamicList.push({
-          id: `offer-${item.id || idx}`,
-          name: item.student_name || item.name || "Alumni",
-          role: item.role || item.degree || "Placed Trainee",
-          company: item.company_name || item.company || "Hiring Partner",
-          offered_on: item.offered_on || "",
-          image: item.photo_url || item.image_url || DEFAULT_STUDENTS[idx % DEFAULT_STUDENTS.length].image
-        });
-      });
-    }
-
-    if (dynamicList.length > 0) {
-      return dynamicList;
+      return apiJobOffers.map((item: any, idx: number) => ({
+        id: item.id || `student-${idx}`,
+        name: item.student_name || item.name || "Student",
+        role: item.role || item.designation || "Graduate",
+        company: item.company_name || item.company || "",
+        image: item.image_url || item.avatar_url || item.photo_url || DEFAULT_STUDENTS[idx % DEFAULT_STUDENTS.length]?.image || ""
+      }));
     }
 
     return DEFAULT_STUDENTS;
