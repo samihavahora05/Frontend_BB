@@ -17,6 +17,8 @@ import { StudentsShowcaseSection } from "../src/sections/StudentsShowcaseSection
 import { PartnersSection } from "../src/sections/PartnersSection";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
 import { TestimonialsSection } from "../src/sections/TestimonialsSection";
+import { InternshipBenefitsSection } from "../src/sections/InternshipBenefitsSection";
+import { InternshipEarnSection } from "../src/sections/InternshipEarnSection";
 import { getCurrentBatchCycle, BatchCycle } from "../src/lib/dateUtils";
 
 export default function InternshipsPage() {
@@ -743,6 +745,12 @@ export default function InternshipsPage() {
           highlightText="Top Talent" 
           subtitle="We are proud to work with leading corporate hiring partners and clients worldwide" 
         />
+
+        {/* Exclusive Benefits for You */}
+        <InternshipBenefitsSection />
+
+        {/* How to Earn With Us */}
+        <InternshipEarnSection />
 
         {/* Application Modal */}
         <ApplyModal 
