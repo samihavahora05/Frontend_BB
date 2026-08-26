@@ -3,6 +3,7 @@ import { HeroSection } from "../sections/HeroSection";
 import { ClientsSection } from "../sections/ClientsSection";
 import { ServicesSection } from "../sections/ServicesSection";
 import { WhyChooseSection } from "../sections/WhyChooseSection";
+import { WhyChooseBlueboxxSection } from "../sections/WhyChooseBlueboxxSection";
 import { EcosystemSection } from "../sections/EcosystemSection";
 import { CoursesSection } from "../sections/CoursesSection";
 import { InternshipsSection } from "../sections/InternshipsSection";
@@ -25,6 +26,7 @@ export const HomePage = () => {
       <ServicesSection />
       <MentorsSection />
       <WhoAreYouSection />
+      <WhyChooseBlueboxxSection />
       <StudentsShowcaseSection 
         title="OUR STUDENTS & ALUMNI"
         tag="Success & Placement Network"
