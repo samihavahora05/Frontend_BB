@@ -2,6 +2,8 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Sparkles } from "lucide-react";
 import useSWR from "swr";
 import { fetcher } from "../lib/fetcher";
+import { defaultStudents, StudentShowcaseItem } from "../data/studentsData";
+import { getImageUrl } from "../lib/imageUtils";
 
 export interface StudentItem {
   id: number | string;
@@ -38,16 +40,31 @@ export const StudentsShowcaseSection = ({
   });
 
   const studentsList: StudentItem[] = useMemo(() => {
-    if (apiJobOffers && Array.isArray(apiJobOffers)) {
-      return apiJobOffers.map((item: any, idx: number) => ({
-        id: item.id || `student-${idx}`,
-        name: item.student_name || item.name || "Student",
-        role: item.role || item.designation || "Graduate",
-        company: item.company_name || item.company || "",
-        image: item.image_url || item.avatar_url || item.photo_url || ""
-      }));
+    if (apiJobOffers && Array.isArray(apiJobOffers) && apiJobOffers.length > 0) {
+      const mapped = apiJobOffers
+        .filter((item: any) => item && (item.student_name || item.name))
+        .map((item: any, idx: number) => {
+          const rawImg = item.image_url || item.avatar_url || item.photo_url || item.image || "";
+          return {
+            id: item.id || `student-${idx}`,
+            name: item.student_name || item.name || "Student",
+            role: item.role || item.designation || "Graduate",
+            company: item.company_name || item.company || "",
+            image: getImageUrl(rawImg)
+          };
+        });
+
+      // If backend returns items with valid images, use them
+      const itemsWithImages = mapped.filter(item => item.image && item.image.length > 0);
+      if (itemsWithImages.length >= 3) {
+        return mapped;
+      }
     }
-    return [];
+    // High-quality fallback containing all 44 real student photos
+    return defaultStudents.map(st => ({
+      ...st,
+      image: getImageUrl(st.image)
+    }));
   }, [apiJobOffers]);
 
   // Duplicate list for seamless infinite loop

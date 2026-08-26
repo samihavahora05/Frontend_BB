@@ -8,9 +8,8 @@ import {
   Send,
   Heart
 } from "lucide-react";
-// import useSWR from "swr";
-// import api from "../lib/axios";
 import { localTestimonials, LocalTestimonial } from "../data/testimonials";
+import { getImageUrl } from "../lib/imageUtils";
 
 const renderContent = (text: string, highlight: string) => {
   if (!highlight) return text;
@@ -185,8 +184,15 @@ export const TestimonialsSection = () => {
                     {/* Profile Block */}
                     <div className="flex items-center gap-4">
                       {currentTestimonials[current].image_url && (
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden border border-white/20">
-                          <img src={currentTestimonials[current].image_url} alt={currentTestimonials[current].name} className="w-full h-full object-cover" />
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden border border-white/20 shrink-0">
+                          <img
+                            src={getImageUrl(currentTestimonials[current].image_url)}
+                            alt={currentTestimonials[current].name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentTestimonials[current].name)}&background=1B2A6B&color=fff&size=200&bold=true`;
+                            }}
+                          />
                         </div>
                       )}
                       <div>

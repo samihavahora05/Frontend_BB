@@ -8,6 +8,8 @@ import {
 import toast from 'react-hot-toast';
 import useSWR, { mutate } from 'swr';
 import api from '../../../src/lib/axios';
+import { defaultStudents } from '../../../src/data/studentsData';
+import { getImageUrl } from '../../../src/lib/imageUtils';
 
 interface StudentRow {
   id?: number | string;
@@ -44,18 +46,35 @@ export default function StudentsShowcaseAdminPage() {
   );
 
   useEffect(() => {
-    if (dbData && Array.isArray(dbData)) {
-      setStudents(
-        dbData.map((item: any) => ({
+    if (dbData && Array.isArray(dbData) && dbData.length > 0) {
+      const mapped = dbData
+        .filter((item: any) => item && (item.student_name || item.name))
+        .map((item: any) => ({
           id: item.id,
           name: item.student_name || item.name || '',
           role: item.role || item.designation || 'Graphic design',
           company: item.company_name || item.company || '',
-          image: item.image_url || item.avatar_url || item.photo_url || '/students/yuvraj_parmar.png',
+          image: getImageUrl(item.image_url || item.avatar_url || item.photo_url || ''),
           isNew: false
-        }))
-      );
+        }));
+
+      const withImgs = mapped.filter(st => st.image);
+      if (withImgs.length >= 3) {
+        setStudents(mapped);
+        return;
+      }
     }
+    // Fallback to default 44 students if database records are empty or lack photos
+    setStudents(
+      defaultStudents.map(st => ({
+        id: st.id,
+        name: st.name,
+        role: st.role,
+        company: st.company || '',
+        image: getImageUrl(st.image),
+        isNew: false
+      }))
+    );
   }, [dbData]);
 
   // Handle Multi-file Drop or Select
