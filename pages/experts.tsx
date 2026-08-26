@@ -279,7 +279,7 @@ export default function ExpertsPage() {
 
       <BecomeMentorSection onBecomeMentor={() => setIsMentorModalOpen(true)} />
       <WhyChooseBlueboxxSection />
-      <TestimonialSection />
+      <TestimonialsSection />
       <PartnersSection 
         titlePrefix="Experts from " 
         highlightText="Top Companies" 
