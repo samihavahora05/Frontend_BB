@@ -77,8 +77,18 @@ export default function StudentsShowcaseAdminPage() {
       } catch (e) {}
     }
 
+    const baseDefaultStudents: StudentRow[] = defaultStudents.map(st => ({
+      id: st.id,
+      name: st.name,
+      role: st.role,
+      company: st.company || '',
+      image: getImageUrl(st.image),
+      isNew: false
+    }));
+
+    let customList: StudentRow[] = [];
     if (dbData && Array.isArray(dbData) && dbData.length > 0) {
-      const mapped = dbData
+      customList = dbData
         .filter((item: any) => item && (item.student_name || item.name))
         .map((item: any) => ({
           id: item.id,
@@ -88,24 +98,22 @@ export default function StudentsShowcaseAdminPage() {
           image: getImageUrl(item.image_url || item.avatar_url || item.photo_url || ''),
           isNew: false
         }));
-
-      const withImgs = mapped.filter(st => st.image);
-      if (withImgs.length >= 3) {
-        setStudents(mapped);
-        return;
-      }
     }
-    // Fallback to default 44 students if database records are empty or lack photos
-    setStudents(
-      defaultStudents.map(st => ({
-        id: st.id,
-        name: st.name,
-        role: st.role,
-        company: st.company || '',
-        image: getImageUrl(st.image),
-        isNew: false
-      }))
-    );
+
+    if (customList.length >= 40) {
+      setStudents(customList);
+      return;
+    }
+
+    if (customList.length > 0) {
+      const customNames = new Set(customList.map(s => s.name.toLowerCase().trim()));
+      const remainingDefaults = baseDefaultStudents.filter(s => !customNames.has(s.name.toLowerCase().trim()));
+      setStudents([...customList, ...remainingDefaults]);
+      return;
+    }
+
+    // Fallback to default 44 students
+    setStudents(baseDefaultStudents);
   }, [dbData]);
 
   // Handle Multi-file Drop or Select

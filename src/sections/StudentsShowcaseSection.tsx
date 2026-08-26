@@ -71,38 +71,46 @@ export const StudentsShowcaseSection = ({
   });
 
   const studentsList: StudentItem[] = useMemo(() => {
-    // 1. Prioritize freshly uploaded/edited students from admin if available
-    if (localStudents && localStudents.length > 0) {
-      return localStudents;
-    }
-
-    // 2. Database API records
-    if (apiJobOffers && Array.isArray(apiJobOffers) && apiJobOffers.length > 0) {
-      const mapped = apiJobOffers
-        .filter((item: any) => item && (item.student_name || item.name))
-        .map((item: any, idx: number) => {
-          const rawImg = item.image_url || item.avatar_url || item.photo_url || item.image || "";
-          const defaultPhoto = defaultStudents[idx % defaultStudents.length]?.image || '/students/yuvraj_parmar.png';
-          const resolvedImg = rawImg ? getImageUrl(rawImg) : getImageUrl(defaultPhoto);
-          return {
-            id: item.id || `student-${idx}`,
-            name: item.student_name || item.name || "Student",
-            role: item.role || item.designation || "Graduate",
-            company: item.company_name || item.company || "",
-            image: resolvedImg || getImageUrl(defaultPhoto)
-          };
-        });
-
-      if (mapped.length > 0) {
-        return mapped;
-      }
-    }
-
-    // 3. High-quality fallback containing all 44 real student photos
-    return defaultStudents.map(st => ({
+    // Baseline complete 44 students
+    const baseDefaultStudents: StudentItem[] = defaultStudents.map(st => ({
       ...st,
       image: getImageUrl(st.image)
     }));
+
+    // Determine custom/API students list
+    const customList = (localStudents && localStudents.length > 0 ? localStudents : (
+      apiJobOffers && Array.isArray(apiJobOffers) && apiJobOffers.length > 0
+        ? apiJobOffers
+            .filter((item: any) => item && (item.student_name || item.name))
+            .map((item: any, idx: number) => {
+              const rawImg = item.image_url || item.avatar_url || item.photo_url || item.image || "";
+              const defaultPhoto = defaultStudents[idx % defaultStudents.length]?.image || '/students/yuvraj_parmar.png';
+              const resolvedImg = rawImg ? getImageUrl(rawImg) : getImageUrl(defaultPhoto);
+              return {
+                id: item.id || `student-${idx}`,
+                name: item.student_name || item.name || "Student",
+                role: item.role || item.designation || "Graduate",
+                company: item.company_name || item.company || "",
+                image: resolvedImg || getImageUrl(defaultPhoto)
+              };
+            })
+        : []
+    ));
+
+    if (customList.length === 0) {
+      return baseDefaultStudents;
+    }
+
+    // If customList already has 40+ students (full uploaded list), return it directly
+    if (customList.length >= 40) {
+      return customList;
+    }
+
+    // If there are a few custom/DB records (e.g. 3 new students), prepend them to all 44 students without duplicates!
+    const customNames = new Set(customList.map(s => s.name.toLowerCase().trim()));
+    const remainingDefaults = baseDefaultStudents.filter(s => !customNames.has(s.name.toLowerCase().trim()));
+    
+    return [...customList, ...remainingDefaults];
   }, [localStudents, apiJobOffers]);
 
   // Duplicate list for seamless infinite loop
