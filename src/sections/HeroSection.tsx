@@ -17,8 +17,8 @@ const HUB_SIZE = 210;
 const ORBIT_CARDS = [
   { icon: Target, title: "Career Roadmap", sub: "Structured Paths" },
   { icon: GraduationCap, title: "1:1 Expert Guidance", sub: "Industry leaders" },
-  { icon: BookOpen, title: "Real Client Projects", sub: "850+ Built" },
-  { icon: CheckCircle2, title: "Company Tie-ups", sub: "100+ Partners" },
+  { icon: BookOpen, title: "Real Client Projects", sub: "3,000+ Built" },
+  { icon: CheckCircle2, title: "Company Tie-ups", sub: "250+ Partners" },
   { icon: Star, title: "Student Satisfaction", sub: "4.9/5 Average" },
 ] as const;
 
@@ -207,9 +207,9 @@ export const HeroSection = () => {
 
             <div className="grid grid-cols-2 gap-4 border-t border-white/10 pt-4 sm:grid-cols-4">
               <StatBlock end={5000} suffix="+" label="Students" />
-              <StatBlock end={stats.placed} suffix="+" label="Placed" />
-              <StatBlock end={stats.projects} suffix="+" label="Projects" />
-              <StatBlock end={stats.partners} suffix="+" label="Partners" />
+              <StatBlock end={stats?.placed ? Math.max(stats.placed, 4000) : 4000} suffix="+" label="Placed" />
+              <StatBlock end={stats?.projects ? Math.max(stats.projects, 3000) : 3000} suffix="+" label="Projects" />
+              <StatBlock end={stats?.partners ? Math.max(stats.partners, 250) : 250} suffix="+" label="Partners" />
             </div>
           </motion.div>
 

@@ -141,8 +141,8 @@ export const ClientsSection = ({
 
   const currentStats = [
     { value: 5000, suffix: "+", label: "Students Trained", icon: GraduationCap },
-    { value: statsData?.partners || 43, suffix: "+", label: "Hiring Partners", icon: Users },
-    { value: statsData?.projects || 850, suffix: "+", label: "Live Projects", icon: Briefcase },
+    { value: statsData?.partners ? Math.max(statsData.partners, 250) : 250, suffix: "+", label: "Hiring Partners", icon: Users },
+    { value: statsData?.projects ? Math.max(statsData.projects, 3000) : 3000, suffix: "+", label: "Live Projects", icon: Briefcase },
     { value: 98.4, suffix: "%", label: "Placement Rate", icon: Star },
   ];
 
