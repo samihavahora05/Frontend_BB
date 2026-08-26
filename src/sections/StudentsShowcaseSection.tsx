@@ -119,26 +119,32 @@ export const StudentsShowcaseSection = ({
     return [...studentsList, ...studentsList];
   }, [studentsList]);
 
+  // Dynamic animation duration based on items to ensure constant silky smooth glide velocity
+  const animationDuration = useMemo(() => {
+    return Math.max(35, Math.min(studentsList.length * 1.5, 75));
+  }, [studentsList.length]);
+
   return (
     <section className="py-24 bg-gradient-to-b from-white via-slate-50/50 to-white relative overflow-hidden border-t border-slate-200/70">
       {/* Dynamic Keyframes for Ultra-Smooth Continuous Hardware-Accelerated Marquee */}
       <style jsx global>{`
         @keyframes continuousGlide {
           0% {
-            transform: translateX(0%);
+            transform: translate3d(0, 0, 0);
           }
           100% {
-            transform: translateX(-50%);
+            transform: translate3d(-50%, 0, 0);
           }
         }
         .continuous-glide-track {
           display: flex;
           width: max-content;
-          animation: continuousGlide 75s linear infinite;
+          will-change: transform;
+          backface-visibility: hidden;
+          animation: continuousGlide ${animationDuration}s linear infinite;
         }
-        .continuous-glide-track:hover,
-        .continuous-glide-paused {
-          animation-play-state: paused !important;
+        .continuous-glide-track:hover {
+          animation-play-state: paused;
         }
       `}</style>
 
@@ -171,15 +177,9 @@ export const StudentsShowcaseSection = ({
         </div>
 
         {/* Single Row Continuous Smooth Scrolling Marquee Track */}
-        <div 
-          className="relative w-full overflow-hidden py-4 rounded-3xl"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onTouchStart={() => setIsHovered(true)}
-          onTouchEnd={() => setIsHovered(false)}
-        >
+        <div className="relative w-full overflow-hidden py-4 rounded-3xl">
           {/* Single Row Glide Track */}
-          <div className={`continuous-glide-track gap-6 px-2 ${isHovered ? "continuous-glide-paused" : ""}`}>
+          <div className="continuous-glide-track gap-6 px-2">
             {isMounted && duplicatedList.length > 0 ? (
               duplicatedList.map((student, idx) => (
                 <div

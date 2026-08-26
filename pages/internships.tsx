@@ -70,13 +70,13 @@ export default function InternshipsPage() {
   // Load wishlist
   useSWR(isAuthenticated ? "/student/wishlist" : null, (url) =>
     api.get(url).then(res => res.data.data)
-  , {
-    onSuccess: (data) => {
-      if (data?.saved_internship_ids) {
-        setSavedIds(new Set(data.saved_internship_ids.map(Number)));
+    , {
+      onSuccess: (data) => {
+        if (data?.saved_internship_ids) {
+          setSavedIds(new Set(data.saved_internship_ids.map(Number)));
+        }
       }
-    }
-  });
+    });
 
   const toggleSave = async (e: React.MouseEvent, id: number) => {
     e.preventDefault();
@@ -124,13 +124,13 @@ export default function InternshipsPage() {
         if (searchTerms.length > 0) params.search = searchTerms.join(' ');
 
         if (activeFilters.mode) {
-           params.type = activeFilters.mode === "On-Site" ? "Onsite" : activeFilters.mode;
+          params.type = activeFilters.mode === "On-Site" ? "Onsite" : activeFilters.mode;
         }
         if (activeFilters.duration) {
-           params.duration = activeFilters.duration;
+          params.duration = activeFilters.duration;
         }
         if (activeFilters.level) {
-           params.experience_level = activeFilters.level;
+          params.experience_level = activeFilters.level;
         }
 
         const res = await api.get("/public/internships", { params });
@@ -145,7 +145,7 @@ export default function InternshipsPage() {
         setIsLoading(false);
       }
     };
-    
+
     const delayDebounceFn = setTimeout(() => {
       fetchInternships();
     }, 300);
@@ -201,7 +201,7 @@ export default function InternshipsPage() {
 
   return (
     <>
-      <SEO 
+      <SEO
         title="Blueboxx Internship Program for Career Growth | Guaranteed Paid Internships"
         description="Join 50 Days LIVE Projects + Real Internship or 3 Months LIVE Training. Government certified, 100% placement assistance, real client projects, and monthly stipends."
         keywords="Blueboxx Internship Program, Live Projects, Paid Internship, Government Certified Internship, Vadodara IT Internship, Web Development, UI/UX Design"
@@ -218,10 +218,10 @@ export default function InternshipsPage() {
 
           <div className="container mx-auto px-4 max-w-7xl relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-              
+
               {/* Left Column: Program Info & Cards */}
               <div className="lg:col-span-7 space-y-6">
-                
+
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A227]/15 border border-[#C9A227]/30 text-[#C9A227] text-xs font-black uppercase tracking-wider shadow-xs">
                   <ShieldCheck size={16} /> Government-certified ⭐ 4.8 Rating
                 </div>
@@ -241,7 +241,7 @@ export default function InternshipsPage() {
                       50 Days <span className="text-[#C9A227]">Online LIVE Projects + Real Internship</span>
                     </h3>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-xs font-bold text-slate-300">Batch starts: <strong className="text-white">{card50Days.batchStartFormatted}</strong></span>
                     <span className="bg-amber-400 text-slate-900 text-[10px] font-black uppercase px-2 py-0.5 rounded-md shadow-xs">Limited seats only</span>
@@ -275,7 +275,7 @@ export default function InternshipsPage() {
               {/* Right Column: Interested? Apply Now Form */}
               <div className="lg:col-span-5">
                 <div className="bg-white text-slate-900 p-7 md:p-8 rounded-3xl shadow-2xl border border-slate-100 relative">
-                  
+
                   <div className="mb-6">
                     <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded bg-[#1B2A6B]/10 text-[#1B2A6B] inline-block mb-1.5">
                       Fast Track Admission
@@ -285,11 +285,11 @@ export default function InternshipsPage() {
                   </div>
 
                   <form onSubmit={handleHeroFormSubmit} className="space-y-4">
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
                         <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">First Name *</label>
-                        <input 
+                        <input
                           type="text"
                           required
                           value={heroForm.first_name}
@@ -300,7 +300,7 @@ export default function InternshipsPage() {
                       </div>
                       <div>
                         <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">Last Name</label>
-                        <input 
+                        <input
                           type="text"
                           value={heroForm.last_name}
                           onChange={(e) => setHeroForm({ ...heroForm, last_name: e.target.value })}
@@ -312,7 +312,7 @@ export default function InternshipsPage() {
 
                     <div>
                       <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">Email Address *</label>
-                      <input 
+                      <input
                         type="email"
                         required
                         value={heroForm.email}
@@ -324,7 +324,7 @@ export default function InternshipsPage() {
 
                     <div>
                       <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">Mobile Number *</label>
-                      <input 
+                      <input
                         type="tel"
                         required
                         value={heroForm.phone}
@@ -337,7 +337,7 @@ export default function InternshipsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
                         <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">Degree *</label>
-                        <select 
+                        <select
                           required
                           value={heroForm.degree}
                           onChange={(e) => setHeroForm({ ...heroForm, degree: e.target.value })}
@@ -356,7 +356,7 @@ export default function InternshipsPage() {
 
                       <div>
                         <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">Graduation Year *</label>
-                        <select 
+                        <select
                           required
                           value={heroForm.graduation_year}
                           onChange={(e) => setHeroForm({ ...heroForm, graduation_year: e.target.value })}
@@ -375,7 +375,7 @@ export default function InternshipsPage() {
 
                     <div>
                       <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">Message (Optional)</label>
-                      <textarea 
+                      <textarea
                         rows={2}
                         value={heroForm.message}
                         onChange={(e) => setHeroForm({ ...heroForm, message: e.target.value })}
@@ -384,7 +384,7 @@ export default function InternshipsPage() {
                       />
                     </div>
 
-                    <Button 
+                    <Button
                       type="submit"
                       disabled={isSubmittingHeroForm}
                       className="w-full h-12 bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg gap-2 mt-2"
@@ -410,7 +410,7 @@ export default function InternshipsPage() {
             ======================================================== */}
         <div className="py-16 bg-slate-50 border-b border-slate-200">
           <div className="container mx-auto px-4 max-w-6xl">
-            
+
             <div className="text-center max-w-2xl mx-auto mb-12">
               <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-[#1B2A6B]/10 text-[#1B2A6B] inline-block mb-3">
                 Student Testimonials
@@ -420,18 +420,18 @@ export default function InternshipsPage() {
             </div>
 
             <div className="bg-white rounded-3xl p-6 md:p-10 border border-slate-200 shadow-xl grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-              
+
               {/* Video Thumbnail & Player Box */}
               <div className="md:col-span-6 relative rounded-2xl overflow-hidden group shadow-lg aspect-video bg-slate-900 border border-slate-200">
-                <img 
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80" 
-                  alt="Student Video Testimonial" 
+                <img
+                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80"
+                  alt="Student Video Testimonial"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
-                
+
                 {/* Play Button Overlay */}
-                <button 
+                <button
                   onClick={() => setIsVideoModalOpen(true)}
                   className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-[#C9A227] hover:bg-[#1B2A6B] text-slate-950 hover:text-white transition-all duration-300 flex items-center justify-center shadow-2xl scale-100 group-hover:scale-110"
                 >
@@ -453,7 +453,7 @@ export default function InternshipsPage() {
                   <Star size={18} className="fill-current" />
                   <Star size={18} className="fill-current" />
                 </div>
-                
+
                 <blockquote className="text-slate-700 text-sm md:text-base font-semibold leading-relaxed italic">
                   “The course was very well structured, comprehensive, and gave me the flexibility of learning at my own pace. I was able to build real-world projects, attend mock viva sessions, and clear interviews confidently!”
                 </blockquote>
@@ -477,23 +477,23 @@ export default function InternshipsPage() {
         {/* Video Player Modal */}
         <AnimatePresence>
           {isVideoModalOpen && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md"
             >
               <div className="bg-slate-900 w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl relative border border-slate-800">
-                <button 
+                <button
                   onClick={() => setIsVideoModalOpen(false)}
                   className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-slate-800/80 hover:bg-slate-700 text-white flex items-center justify-center transition-colors"
                 >
                   <X size={20} />
                 </button>
                 <div className="aspect-video w-full">
-                  <video 
-                    controls 
-                    autoPlay 
+                  <video
+                    controls
+                    autoPlay
                     className="w-full h-full object-cover"
                     src="/api/video"
                   >
@@ -523,7 +523,7 @@ export default function InternshipsPage() {
             <div className="bg-white p-3 rounded-2xl md:rounded-full shadow-xl border border-slate-200 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-2 text-slate-800 mb-10">
               <div className="md:col-span-4 flex items-center px-4 py-2 bg-slate-50 md:bg-transparent rounded-xl md:rounded-none border-b md:border-b-0 md:border-r border-slate-200">
                 <Search size={18} className="text-[#1B2A6B] mr-3 shrink-0" />
-                <input 
+                <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -534,7 +534,7 @@ export default function InternshipsPage() {
 
               <div className="md:col-span-3 flex items-center px-4 py-2 bg-slate-50 md:bg-transparent rounded-xl md:rounded-none border-b md:border-b-0 md:border-r border-slate-200">
                 <Briefcase size={18} className="text-[#C9A227] mr-3 shrink-0" />
-                <select 
+                <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
                   className="w-full text-xs md:text-sm font-semibold bg-transparent focus:outline-none text-slate-700 cursor-pointer"
@@ -549,7 +549,7 @@ export default function InternshipsPage() {
 
               <div className="md:col-span-3 flex items-center px-4 py-2 bg-slate-50 md:bg-transparent rounded-xl md:rounded-none border-b md:border-b-0 md:border-r border-slate-200">
                 <MapPin size={18} className="text-[#1B2A6B] mr-3 shrink-0" />
-                <input 
+                <input
                   type="text"
                   value={locationQuery}
                   onChange={(e) => setLocationQuery(e.target.value)}
@@ -559,7 +559,7 @@ export default function InternshipsPage() {
               </div>
 
               <div className="md:col-span-2 flex items-center px-1">
-                <Button 
+                <Button
                   onClick={() => setCurrentPage(1)}
                   className="w-full h-11 bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-extrabold rounded-xl md:rounded-full text-xs uppercase tracking-wider shadow-md gap-1 px-2"
                 >
@@ -569,12 +569,12 @@ export default function InternshipsPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-              
+
               {/* Mobile Filter Toggle */}
               <div className="lg:hidden col-span-1">
-                <Button 
-                  onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)} 
-                  variant="outline" 
+                <Button
+                  onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
+                  variant="outline"
                   className="w-full border-slate-200 text-slate-700 bg-white hover:bg-slate-50 shadow-xs h-12 rounded-xl gap-2 font-extrabold text-sm uppercase tracking-wider"
                 >
                   <Filter size={16} /> Filters
@@ -613,12 +613,12 @@ export default function InternshipsPage() {
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                       {internships.map((internship) => (
-                        <Card 
-                          key={internship.id} 
+                        <Card
+                          key={internship.id}
                           className="group relative overflow-hidden bg-white border border-slate-200/90 hover:border-[#1B2A6B]/40 hover:shadow-[0_12px_35px_rgba(27,42,107,0.1)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full rounded-[1.25rem]"
                         >
                           <CardContent className="p-5 flex-1 flex flex-col relative z-10">
-                            
+
                             {/* Card Top Row */}
                             <div className="flex justify-between items-start mb-4">
                               <div className="w-12 h-12 rounded-xl border border-slate-100 bg-slate-50 shadow-xs shrink-0 overflow-hidden flex items-center justify-center font-black text-[#1B2A6B] text-lg">
@@ -630,11 +630,10 @@ export default function InternshipsPage() {
                               </div>
 
                               <div className="flex items-center gap-2">
-                                <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                                  internship.type === 'Remote' ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' :
-                                  internship.type === 'Hybrid' ? 'bg-amber-50 border border-amber-200 text-amber-700' :
-                                  'bg-blue-50 border border-blue-200 text-blue-700'
-                                }`}>
+                                <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${internship.type === 'Remote' ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' :
+                                    internship.type === 'Hybrid' ? 'bg-amber-50 border border-amber-200 text-amber-700' :
+                                      'bg-blue-50 border border-blue-200 text-blue-700'
+                                  }`}>
                                   {internship.type || 'Remote'}
                                 </span>
 
@@ -642,13 +641,12 @@ export default function InternshipsPage() {
                                   onClick={(e) => toggleSave(e, internship.id)}
                                   disabled={saving === internship.id}
                                   title={savedIds.has(internship.id) ? "Remove from saved" : "Save this internship"}
-                                  className={`p-1.5 rounded-lg border transition-all ${
-                                    savedIds.has(internship.id) 
-                                      ? "bg-amber-50 border-amber-200 text-[#C9A227]" 
+                                  className={`p-1.5 rounded-lg border transition-all ${savedIds.has(internship.id)
+                                      ? "bg-amber-50 border-amber-200 text-[#C9A227]"
                                       : "bg-white border-slate-200 text-slate-400 hover:text-slate-700 hover:bg-slate-50"
-                                  }`}
+                                    }`}
                                 >
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={savedIds.has(internship.id) ? "#C9A227" : "none"} stroke="currentColor" strokeWidth="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={savedIds.has(internship.id) ? "#C9A227" : "none"} stroke="currentColor" strokeWidth="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" /></svg>
                                 </button>
                               </div>
                             </div>
@@ -686,14 +684,13 @@ export default function InternshipsPage() {
                                 {internship.posted_at || 'RECENT'}
                               </span>
 
-                              <Button 
+                              <Button
                                 onClick={() => handleOpenApply(internship)}
                                 disabled={internship.has_applied}
-                                className={`h-9 px-4 text-xs font-black rounded-xl transition-all shadow-xs gap-1 ${
-                                  internship.has_applied 
-                                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200" 
+                                className={`h-9 px-4 text-xs font-black rounded-xl transition-all shadow-xs gap-1 ${internship.has_applied
+                                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                                     : "bg-[#1B2A6B] hover:bg-[#0d1635] text-white"
-                                }`}
+                                  }`}
                               >
                                 {internship.has_applied ? (
                                   <><CheckCircle2 size={13} /> Applied</>
@@ -730,7 +727,7 @@ export default function InternshipsPage() {
           </div>
         </div>
 
-        <StudentsShowcaseSection 
+        <StudentsShowcaseSection
           title="OUR STUDENTS & INTERNS"
           tag="Internship & Industry Training Alumni"
           subtitle="Meet our dynamic learners who excelled in real-world industry internship projects."
@@ -738,12 +735,12 @@ export default function InternshipsPage() {
 
         <WhyChooseBlueboxxSection />
 
-        <TestimonialsSection />
 
-        <PartnersSection 
-          titlePrefix="Companies Hiring " 
-          highlightText="Top Talent" 
-          subtitle="We are proud to work with leading corporate hiring partners and clients worldwide" 
+
+        <PartnersSection
+          titlePrefix="Companies Hiring "
+          highlightText="Top Talent"
+          subtitle="We are proud to work with leading corporate hiring partners and clients worldwide"
         />
 
         {/* Exclusive Benefits for You */}
@@ -751,9 +748,10 @@ export default function InternshipsPage() {
 
         {/* How to Earn With Us */}
         <InternshipEarnSection />
+        <TestimonialsSection />
 
         {/* Application Modal */}
-        <ApplyModal 
+        <ApplyModal
           internship={selectedInternshipForApply}
           isOpen={isApplyModalOpen}
           onClose={() => setIsApplyModalOpen(false)}
