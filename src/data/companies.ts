@@ -23,7 +23,7 @@ export const INDUSTRIES = [
 // List containing ONLY verified existing logo files in /public/logo/
 export const partnerCompanies: Company[] = [
   { id: "c1", name: "3D Studio", industry: "Game development services", logoUrl: "/logo/3D%20studio.png", location: "Mumbai, India" },
-  { id: "c2", name: "Asha Tours & Travels", industry: "Travel & Tourism", logoUrl: "/logo/Asha_tours&travels.jpeg", location: "Gujarat, India" },
+  { id: "c2", name: "Asha Tours & Travels", industry: "Travel & Tourism", logoUrl: "/logo/Asha_tours-travels.jpeg", location: "Gujarat, India" },
   { id: "c3", name: "Damyaa", industry: "SMEs & Startups", logoUrl: "/logo/Damyaa.png", location: "Vadodara, India" },
   { id: "c4", name: "Flammer Technologies", industry: "IT & Software Development", logoUrl: "/logo/Flammer-logo-horizontal.png", location: "Pune, India" },
   { id: "c5", name: "HS Structure", industry: "SMEs & Startups", logoUrl: "/logo/HS%20Structure.png", location: "Ahmedabad, India" },
@@ -53,7 +53,7 @@ export const partnerCompanies: Company[] = [
   { id: "c29", name: "Manavta Hospital", industry: "Healthcare & Medical", logoUrl: "/logo/manavta%20hospital.png", location: "Vadodara, India" },
   { id: "c30", name: "Mark Cafe", industry: "Food & Beverages", logoUrl: "/logo/mark%20cafe.jpg", location: "Vadodara, India" },
   { id: "c31", name: "Office24", industry: "Co-Working & Workspaces", logoUrl: "/logo/office24.webp", location: "Mumbai, India" },
-  { id: "c32", name: "Otto Valves & Rubers", industry: "Manufacturing & Industrial", logoUrl: "/logo/otto%20valves%20&%20rubers.png", location: "Gujarat, India" },
+  { id: "c32", name: "Otto Valves & Rubers", industry: "Manufacturing & Industrial", logoUrl: "/logo/otto-valves-rubers.png", location: "Gujarat, India" },
   { id: "c33", name: "Pandit Restaurant", industry: "Food & Hospitality", logoUrl: "/logo/pandit%20rasturant.jpg", location: "Vadodara, India" },
   { id: "c34", name: "Pranav Plastic", industry: "Manufacturing", logoUrl: "/logo/pranav%20plastic%20pvt.jpg", location: "Gujarat, India" },
   { id: "c35", name: "Primax Engineers", industry: "Engineering Services", logoUrl: "/logo/primax-engineers-private-limited-90x90.jpg", location: "Vadodara, India" },
@@ -66,3 +66,4 @@ export const partnerCompanies: Company[] = [
   { id: "c42", name: "Swasstik Enterprise", industry: "Trading & Logistics", logoUrl: "/logo/swasstik%20enterpris.webp", location: "Vadodara, India" },
   { id: "c43", name: "Tensile Structure", industry: "Architecture & Construction", logoUrl: "/logo/tensile%20staucchar.svg", location: "Gujarat, India" }
 ];
+
