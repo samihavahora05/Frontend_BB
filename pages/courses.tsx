@@ -9,7 +9,7 @@ import { TopSearchBar } from '../src/components/ui/TopSearchBar';
 import { SidebarFilter } from '../src/components/ui/SidebarFilter';
 import { Clock, Star, ArrowRight } from 'lucide-react';
 import { PartnersSection } from '../src/sections/PartnersSection';
-import { StudentsShowcaseSection } from '../src/sections/StudentsShowcaseSection';
+import { WhyChooseBlueboxxSection } from '../src/sections/WhyChooseBlueboxxSection';
 import { SEO } from '../src/components/seo/SEO';
 import Image from 'next/image';
 import useSWR, { mutate } from 'swr';
@@ -292,11 +292,7 @@ export default function CoursesPage() {
           </div>
         </div>
       </div>
-      <StudentsShowcaseSection 
-        title="OUR COURSE GRADUATES"
-        tag="Student Showcase"
-        subtitle="Learn from top courses and join hundreds of successfully placed graduates across leading tech companies."
-      />
+      <WhyChooseBlueboxxSection />
       <PartnersSection 
         titlePrefix="Instructors from " 
         highlightText="Top Companies" 

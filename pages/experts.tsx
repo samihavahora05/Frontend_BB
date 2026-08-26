@@ -4,9 +4,9 @@ import { TopSearchBar } from "../src/components/ui/TopSearchBar";
 import { SidebarFilter } from "../src/components/ui/SidebarFilter";
 import { Pagination } from "../src/components/ui/Pagination";
 import { BecomeMentorSection } from "../src/sections/BecomeMentorSection";
+import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
 import { TestimonialSection } from "../src/sections/TestimonialSection";
 import { PartnersSection } from "../src/sections/PartnersSection";
-import { StudentsShowcaseSection } from "../src/sections/StudentsShowcaseSection";
 import { Card, CardContent } from "../src/components/ui/Card";
 import { Button } from "../src/components/ui/Button";
 import { Star, Building, Video, X, Filter } from "lucide-react";
@@ -278,11 +278,7 @@ export default function ExpertsPage() {
       </div>
 
       <BecomeMentorSection onBecomeMentor={() => setIsMentorModalOpen(true)} />
-      <StudentsShowcaseSection 
-        title="MENTORED STUDENTS & ALUMNI"
-        tag="Mentorship Outcomes"
-        subtitle="Learners who leveled up their skills and secured top industry jobs through 1:1 expert guidance."
-      />
+      <WhyChooseBlueboxxSection />
       <TestimonialSection />
       <PartnersSection 
         titlePrefix="Experts from " 

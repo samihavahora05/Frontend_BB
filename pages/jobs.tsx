@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { TestimonialSection } from "../src/sections/TestimonialSection";
 import { StudentsShowcaseSection } from "../src/sections/StudentsShowcaseSection";
+import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
 import { PartnersSection } from "../src/sections/PartnersSection";
 import { SEO } from "../src/components/seo/SEO";
 import api from "../src/lib/axios";
@@ -294,6 +295,7 @@ export default function JobsPage() {
         tag="Recent Placements & Selections"
         subtitle="Celebrating our learners who successfully cracked corporate selection rounds and secured high-growth job offers."
       />
+      <WhyChooseBlueboxxSection />
       <TestimonialSection 
         type="job" 
         titleHighlight="Alumni"

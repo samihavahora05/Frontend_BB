@@ -12,7 +12,7 @@ import Image from "next/image";
 import useSWR from "swr";
 import api from "../src/lib/axios";
 import toast from "react-hot-toast";
-import { StudentsShowcaseSection } from "../src/sections/StudentsShowcaseSection";
+import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
 
 // Simple debounce hook for local use
 function useDebounce<T>(value: T, delay: number): T {
@@ -246,15 +246,6 @@ export default function BlogPage() {
             </>
           )}
 
-          {/* Student Showcase */}
-          <div className="mb-16">
-            <StudentsShowcaseSection 
-              title="OUR STUDENTS & READERS"
-              tag="Community Spotlight"
-              subtitle="Thousands of ambitious engineers and designers learn, read, and get placed through our platform."
-            />
-          </div>
-
           {/* Newsletter CTA */}
           <div className="bg-[#0d1635] rounded-3xl p-10 md:p-16 text-center text-white relative overflow-hidden border border-white/10 shadow-2xl">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#1B2A6B]/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
@@ -284,6 +275,7 @@ export default function BlogPage() {
 
         </div>
       </div>
+      <WhyChooseBlueboxxSection />
     </MainLayout>
   );
 }

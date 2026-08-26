@@ -7,6 +7,7 @@ import { Badge } from "../src/components/ui/Badge";
 import { Input } from "../src/components/ui/Input";
 import { partnerCompanies, INDUSTRIES } from "../src/data/companies";
 import { SEO } from "../src/components/seo/SEO";
+import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
 
 // Helper component for fallback company logos
 const CompanyLogo = ({ company }: { company: any }) => {
@@ -202,54 +203,7 @@ export default function CompaniesPage() {
       </div>
 
       {/* Why Choose Blueboxx Section */}
-      <div className="py-24 bg-white relative overflow-hidden border-t border-slate-100">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <div className="bg-[#f8f9fc] rounded-3xl p-8 md:p-16 border border-slate-200 relative">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#C9A227]/10 rounded-full blur-[80px] pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#1B2A6B]/10 rounded-full blur-[80px] pointer-events-none" />
-            
-            <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
-              <div className="flex-1">
-                <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6">
-                  Why Choose <span className="text-[#1B2A6B]">Blueboxx?</span>
-                </h2>
-                <p className="text-slate-600 text-lg mb-8 leading-relaxed">
-                  Blueboxx is more than just a learning platform – it's a career accelerator. With industry experts, live projects, and placement opportunities, we transform learners into professionals ready for tomorrow.
-                </p>
-                
-                <div className="space-y-4">
-                  {[
-                    { title: "Industry-Driven Learning", icon: Briefcase },
-                    { title: "Expert Guidance", icon: Award }, // Replaced Mentorship from Experts
-                    { title: "Proven Track Record", icon: CheckCircle2 }
-                  ].map((feature, i) => (
-                    <div key={i} className="flex items-center gap-4 p-4 rounded-xl bg-white shadow-sm border border-slate-100">
-                      <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-                        <feature.icon size={20} />
-                      </div>
-                      <span className="font-bold text-slate-800">{feature.title}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="flex-1 relative hidden md:block">
-                <img 
-                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop" 
-                  alt="Team collaboration" 
-                  className="rounded-2xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500"
-                />
-                <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 animate-bounce-slow">
-                  <div className="text-3xl font-black text-[#1B2A6B] mb-1">500+</div>
-                  <div className="text-sm font-bold text-slate-500 uppercase tracking-wide">Partner Companies</div>
-                </div>
-              </div>
-            </div>
-            
-          </div>
-        </div>
-      </div>
-
+      <WhyChooseBlueboxxSection />
     </MainLayout>
   );
 }

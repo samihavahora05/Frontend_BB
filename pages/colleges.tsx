@@ -6,7 +6,7 @@ import Link from "next/link";
 import useSWR from "swr";
 import api from "../src/lib/axios";
 import { SEO } from "../src/components/seo/SEO";
-import { StudentsShowcaseSection } from "../src/sections/StudentsShowcaseSection";
+import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
 
 const fetcher = (url: string) => api.get(url).then(res => res.data);
 
@@ -146,11 +146,7 @@ export default function CollegesPage() {
           </div>
         </div>
       </div>
-      <StudentsShowcaseSection 
-        title="OUR UNIVERSITY ALUMNI"
-        tag="Academic Network"
-        subtitle="Empowering learners from premier partner institutions to achieve high-paying careers in technology & design."
-      />
+      <WhyChooseBlueboxxSection />
     </MainLayout>
     </>
   );
