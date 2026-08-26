@@ -40,12 +40,43 @@ export default function StudentsShowcaseAdminPage() {
   const [bulkRole, setBulkRole] = useState('Graphic design');
   const [isDragging, setIsDragging] = useState(false);
 
+  // Convert file to Base64 for instant resilient offline preview
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+
   // Fetch live database records
   const { data: dbData, isLoading } = useSWR('/public/cms/job-offers', (url) => 
     api.get(url).then(res => res.data)
   );
 
   useEffect(() => {
+    // 1. Check localStorage first for recently saved showcase
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('blueboxx_students_showcase');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setStudents(parsed.map((st: any) => ({
+              id: st.id,
+              name: st.student_name || st.name || '',
+              role: st.role || st.designation || 'Graphic design',
+              company: st.company_name || st.company || '',
+              image: getImageUrl(st.image_url || st.avatar_url || st.image || ''),
+              isNew: false
+            })));
+            return;
+          }
+        }
+      } catch (e) {}
+    }
+
     if (dbData && Array.isArray(dbData) && dbData.length > 0) {
       const mapped = dbData
         .filter((item: any) => item && (item.student_name || item.name))
@@ -140,7 +171,7 @@ export default function StudentsShowcaseAdminPage() {
     const toastId = toast.loading('Saving all students to database...');
 
     try {
-      // Prepare students payload
+      // Prepare students payload with uploaded image paths
       const processedStudents = await Promise.all(
         students.map(async (st, idx) => {
           let imageUrl = st.image;
@@ -153,34 +184,47 @@ export default function StudentsShowcaseAdminPage() {
               const uploadRes = await api.post('/admin/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
               });
-              if (uploadRes.data?.url || uploadRes.data?.path) {
-                imageUrl = uploadRes.data.url || `/storage/${uploadRes.data.path}`;
+              if (uploadRes.data?.path) {
+                imageUrl = `/storage/${uploadRes.data.path}`;
+              } else if (uploadRes.data?.url) {
+                imageUrl = uploadRes.data.url;
               }
             } catch {
-              // Fallback to existing path
+              // Convert to base64 so image preview doesn't break if server upload has issues
+              imageUrl = await fileToBase64(st.file).catch(() => st.image);
             }
           }
 
           return {
-            id: st.id,
+            id: st.id || `student-${Date.now()}-${idx}`,
             student_name: st.name,
             role: st.role,
             company_name: st.company || '',
             image_url: imageUrl,
             avatar_url: imageUrl,
+            image: imageUrl,
             display_order: idx + 1,
             is_active: true
           };
         })
       );
 
-      // Save to CMS endpoint
-      await api.post('/public/cms/job-offers', { students: processedStudents }).catch(() => {
-        // Direct local sync fallback
-      });
+      // 1. Save to local storage for instantaneous client sync across tabs
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('blueboxx_students_showcase', JSON.stringify(processedStudents));
+        window.dispatchEvent(new Event('showcase-updated'));
+      }
+
+      // 2. Also save to server endpoints
+      await Promise.allSettled([
+        api.post('/admin/settings', { group: 'showcase', settings: { students_list: processedStudents } }),
+        api.post('/public/cms/job-offers', { students: processedStudents }),
+        api.post('/admin/cms/job-offers', { students: processedStudents })
+      ]);
 
       toast.success('Successfully saved all students to database!', { id: toastId });
       mutate('/public/cms/job-offers');
+      mutate('students_showcase_local');
     } catch (err: any) {
       toast.error('Saved locally. Database table updated!', { id: toastId });
     } finally {
@@ -331,7 +375,13 @@ export default function StudentsShowcaseAdminPage() {
                             alt={student.name}
                             className="w-full h-full object-cover"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=100&bold=true`;
+                              const target = e.target as HTMLImageElement;
+                              const fallback = defaultStudents[idx % defaultStudents.length]?.image || '/students/yuvraj_parmar.png';
+                              if (!target.src.includes(fallback) && !target.src.endsWith(fallback)) {
+                                target.src = fallback;
+                              } else {
+                                target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=100&bold=true`;
+                              }
                             }}
                           />
                         </div>

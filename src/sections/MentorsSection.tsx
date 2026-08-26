@@ -5,6 +5,7 @@ import { Star, Video, MessageSquare, Shield, ArrowRight, Sparkles } from "lucide
 import Link from "next/link";
 import useSWR from "swr";
 import api from "../lib/axios";
+import { getImageUrl } from "../lib/imageUtils";
 
 // Default fallback expert data matching top industry leaders
 const defaultFallbackMentors = [
@@ -76,9 +77,7 @@ export const ExpertCard = ({ mentor, variants }: ExpertCardProps) => {
   const [imageError, setImageError] = useState(false);
 
   const rawPhoto = mentor.profile_picture || mentor.avatar || mentor.photo || mentor.profile_photo;
-  const photoUrl = rawPhoto && !imageError
-    ? (rawPhoto.startsWith('http') ? rawPhoto : `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in'}/storage/${rawPhoto}`)
-    : null;
+  const photoUrl = rawPhoto && !imageError ? getImageUrl(rawPhoto) : null;
 
   const initials = getInitials(mentor.name);
   const designationText = mentor.role || mentor.designation || mentor.title || "Industry Expert";

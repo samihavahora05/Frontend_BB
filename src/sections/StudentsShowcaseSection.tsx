@@ -28,44 +28,82 @@ export const StudentsShowcaseSection = ({
 }: StudentsShowcaseSectionProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [localStudents, setLocalStudents] = useState<StudentItem[]>([]);
 
   useEffect(() => {
     setIsMounted(true);
+
+    const loadLocal = () => {
+      try {
+        if (typeof window !== 'undefined') {
+          const raw = localStorage.getItem('blueboxx_students_showcase');
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setLocalStudents(
+                parsed.map((item: any, idx: number) => ({
+                  id: item.id || `student-${idx}`,
+                  name: item.student_name || item.name || "Student",
+                  role: item.role || item.designation || "Graduate",
+                  company: item.company_name || item.company || "",
+                  image: getImageUrl(item.image_url || item.avatar_url || item.image || defaultStudents[idx % defaultStudents.length]?.image)
+                }))
+              );
+            }
+          }
+        }
+      } catch (e) {}
+    };
+
+    loadLocal();
+    window.addEventListener('showcase-updated', loadLocal);
+    window.addEventListener('storage', loadLocal);
+    return () => {
+      window.removeEventListener('showcase-updated', loadLocal);
+      window.removeEventListener('storage', loadLocal);
+    };
   }, []);
 
-  // Dynamic API Fetching from MySQL Database table student_job_offers
+  // Dynamic API Fetching from Database
   const { data: apiJobOffers } = useSWR("/public/cms/job-offers", fetcher, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false
   });
 
   const studentsList: StudentItem[] = useMemo(() => {
+    // 1. Prioritize freshly uploaded/edited students from admin if available
+    if (localStudents && localStudents.length > 0) {
+      return localStudents;
+    }
+
+    // 2. Database API records
     if (apiJobOffers && Array.isArray(apiJobOffers) && apiJobOffers.length > 0) {
       const mapped = apiJobOffers
         .filter((item: any) => item && (item.student_name || item.name))
         .map((item: any, idx: number) => {
           const rawImg = item.image_url || item.avatar_url || item.photo_url || item.image || "";
+          const defaultPhoto = defaultStudents[idx % defaultStudents.length]?.image || '/students/yuvraj_parmar.png';
+          const resolvedImg = rawImg ? getImageUrl(rawImg) : getImageUrl(defaultPhoto);
           return {
             id: item.id || `student-${idx}`,
             name: item.student_name || item.name || "Student",
             role: item.role || item.designation || "Graduate",
             company: item.company_name || item.company || "",
-            image: getImageUrl(rawImg)
+            image: resolvedImg || getImageUrl(defaultPhoto)
           };
         });
 
-      // If backend returns items with valid images, use them
-      const itemsWithImages = mapped.filter(item => item.image && item.image.length > 0);
-      if (itemsWithImages.length >= 3) {
+      if (mapped.length > 0) {
         return mapped;
       }
     }
-    // High-quality fallback containing all 44 real student photos
+
+    // 3. High-quality fallback containing all 44 real student photos
     return defaultStudents.map(st => ({
       ...st,
       image: getImageUrl(st.image)
     }));
-  }, [apiJobOffers]);
+  }, [localStudents, apiJobOffers]);
 
   // Duplicate list for seamless infinite loop
   const duplicatedList = useMemo(() => {
@@ -148,7 +186,13 @@ export const StudentsShowcaseSection = ({
                       className="w-full h-full object-cover object-top group-hover/card:scale-108 transition-transform duration-500"
                       loading="lazy"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`;
+                        const target = e.target as HTMLImageElement;
+                        const fallback = defaultStudents[idx % defaultStudents.length]?.image || '/students/yuvraj_parmar.png';
+                        if (!target.src.includes(fallback) && !target.src.endsWith(fallback)) {
+                          target.src = fallback;
+                        } else {
+                          target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`;
+                        }
                       }}
                     />
                     {/* Subtle top corner gradient */}

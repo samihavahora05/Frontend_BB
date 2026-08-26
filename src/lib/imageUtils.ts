@@ -4,17 +4,30 @@
  */
 export const getImageUrl = (path?: string | null): string => {
   if (!path) return '';
-  const trimmed = String(path).trim();
+  let trimmed = String(path).trim();
   if (!trimmed) return '';
 
-  // Already absolute or base64 / blob URL
-  if (
-    trimmed.startsWith('http://') ||
-    trimmed.startsWith('https://') ||
-    trimmed.startsWith('data:') ||
-    trimmed.startsWith('blob:')
-  ) {
+  // If path is a data URI or blob URI, return directly
+  if (trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
     return trimmed;
+  }
+
+  // Strip hardcoded localhost / 127.0.0.1 if saved from local DB
+  if (trimmed.includes('localhost:8000') || trimmed.includes('127.0.0.1:8000') || trimmed.includes('localhost:3000')) {
+    const storageIdx = trimmed.indexOf('/storage/');
+    if (storageIdx !== -1) {
+      trimmed = trimmed.substring(storageIdx);
+    } else {
+      const studentsIdx = trimmed.indexOf('/students/');
+      if (studentsIdx !== -1) {
+        trimmed = trimmed.substring(studentsIdx);
+      } else {
+        const slashIdx = trimmed.indexOf('/', trimmed.indexOf('://') + 3);
+        if (slashIdx !== -1) {
+          trimmed = trimmed.substring(slashIdx);
+        }
+      }
+    }
   }
 
   // Local static frontend assets stored in public/
@@ -26,16 +39,27 @@ export const getImageUrl = (path?: string | null): string => {
     trimmed.startsWith('/logo/') ||
     trimmed.startsWith('logo/') ||
     trimmed.startsWith('/testimonials photos/') ||
-    trimmed.startsWith('testimonials photos/')
+    trimmed.startsWith('testimonials photos/') ||
+    trimmed.startsWith('/assets/') ||
+    trimmed.startsWith('assets/')
   ) {
     return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  }
+
+  // If already an absolute HTTPS/HTTP external URL (e.g. dicebear, ui-avatars, unsplash)
+  if (
+    (trimmed.startsWith('https://') || trimmed.startsWith('http://')) &&
+    !trimmed.includes('localhost') &&
+    !trimmed.includes('127.0.0.1')
+  ) {
+    return trimmed;
   }
 
   // Backend storage URL resolution
   const backendBase = (
     process.env.NEXT_PUBLIC_BACKEND_URL ||
     process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') ||
-    'https://backend.blueboxx.in'
+    (typeof window !== 'undefined' ? window.location.origin : 'https://backend.blueboxx.in')
   ).replace(/\/+$/, '');
 
   const cleanPath = trimmed.replace(/^\/+/, '');
