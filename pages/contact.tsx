@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import api from "../src/lib/axios";
 import { useGlobalSettings } from "../src/contexts/SettingsContext";
 import { SEO } from "../src/components/seo/SEO";
+import { StudentsShowcaseSection } from "../src/sections/StudentsShowcaseSection";
 
 const contactSchema = z.object({
   firstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
@@ -260,6 +261,11 @@ export default function ContactPage() {
 
         </div>
       </div>
+      <StudentsShowcaseSection 
+        title="JOIN OUR SUCCESSFUL LEARNERS"
+        tag="Get in Touch"
+        subtitle="Connect with our career advisors to find the right training, internship, and placement path for you."
+      />
     </MainLayout>
   );
 }

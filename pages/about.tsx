@@ -6,6 +6,7 @@ import {
   Globe, Phone, MapPin, Calendar
 } from "lucide-react";
 import { ClientsSection } from "../src/sections/ClientsSection";
+import { StudentsShowcaseSection } from "../src/sections/StudentsShowcaseSection";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -483,6 +484,13 @@ export default function AboutPage() {
         </section>
 
 
+
+        {/* --- STUDENTS SHOWCASE --- */}
+        <StudentsShowcaseSection 
+          title="OUR TALENT NETWORK"
+          tag="Learners & Placed Alumni"
+          subtitle="Meet the dynamic learners and alumni shaped through Blueboxx DA's experiential training programs."
+        />
 
         {/* --- CLIENTS / PARTNERS --- */}
         <div className="bg-white">

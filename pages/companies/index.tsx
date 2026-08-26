@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import useSWR from "swr";
 import { fetcher } from "../../src/lib/fetcher";
 import { SEO } from "../../src/components/seo/SEO";
+import { StudentsShowcaseSection } from "../../src/sections/StudentsShowcaseSection";
 
 // Fallback seed projects for portfolios if database is empty/loading
 const mockProjects = [
@@ -549,6 +550,11 @@ export default function CompaniesPublicPage() {
             </motion.div>
           </div>
         </div>
+        <StudentsShowcaseSection 
+          title="OUR PLACED CANDIDATES"
+          tag="Talent Ready for Hire"
+          subtitle="Top companies recruit pre-vetted, industry-trained designers and developers from Blueboxx DA."
+        />
       </MainLayout>
     </>
   );

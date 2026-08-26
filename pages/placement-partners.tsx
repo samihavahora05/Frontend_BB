@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { fetcher } from "../src/lib/fetcher";
 import { partnerCompanies } from "../src/data/companies"; // fallback
 import { SEO } from "../src/components/seo/SEO";
+import { StudentsShowcaseSection } from "../src/sections/StudentsShowcaseSection";
 
 export default function PlacementPartnersPage() {
   const { data } = useSWR("/public/cms/placement-partners", fetcher);
@@ -96,6 +97,11 @@ export default function PlacementPartnersPage() {
           </div>
         </div>
       </div>
+      <StudentsShowcaseSection 
+        title="OUR PLACED LEARNERS"
+        tag="Hiring Success"
+        subtitle="Our alumni are thriving across India's leading tech companies, MNCs, and high-growth creative startups."
+      />
     </MainLayout>
     </>
   );
