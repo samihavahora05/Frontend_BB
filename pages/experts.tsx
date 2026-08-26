@@ -5,7 +5,7 @@ import { SidebarFilter } from "../src/components/ui/SidebarFilter";
 import { Pagination } from "../src/components/ui/Pagination";
 import { BecomeMentorSection } from "../src/sections/BecomeMentorSection";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
-import { TestimonialSection } from "../src/sections/TestimonialSection";
+import { TestimonialsSection } from "../src/sections/TestimonialsSection";
 import { PartnersSection } from "../src/sections/PartnersSection";
 import { Card, CardContent } from "../src/components/ui/Card";
 import { Button } from "../src/components/ui/Button";

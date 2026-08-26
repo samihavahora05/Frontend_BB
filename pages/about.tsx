@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { ClientsSection } from "../src/sections/ClientsSection";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
+import { TestimonialsSection } from "../src/sections/TestimonialsSection";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -487,6 +488,9 @@ export default function AboutPage() {
 
         {/* --- WHY CHOOSE BLUEBOXX --- */}
         <WhyChooseBlueboxxSection />
+
+        {/* --- SUCCESS STORIES --- */}
+        <TestimonialsSection />
 
         {/* --- CLIENTS / PARTNERS --- */}
         <div className="bg-white">

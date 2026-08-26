@@ -12,6 +12,7 @@ import api from "../src/lib/axios";
 import { useGlobalSettings } from "../src/contexts/SettingsContext";
 import { SEO } from "../src/components/seo/SEO";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
+import { TestimonialsSection } from "../src/sections/TestimonialsSection";
 
 const contactSchema = z.object({
   firstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
@@ -262,6 +263,7 @@ export default function ContactPage() {
         </div>
       </div>
       <WhyChooseBlueboxxSection />
+      <TestimonialsSection />
     </MainLayout>
   );
 }

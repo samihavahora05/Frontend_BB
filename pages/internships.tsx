@@ -16,6 +16,7 @@ import { ApplyModal } from "../src/components/internship/ApplyModal";
 import { StudentsShowcaseSection } from "../src/sections/StudentsShowcaseSection";
 import { PartnersSection } from "../src/sections/PartnersSection";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
+import { TestimonialsSection } from "../src/sections/TestimonialsSection";
 import { getCurrentBatchCycle, BatchCycle } from "../src/lib/dateUtils";
 
 export default function InternshipsPage() {
@@ -734,6 +735,8 @@ export default function InternshipsPage() {
         />
 
         <WhyChooseBlueboxxSection />
+
+        <TestimonialsSection />
 
         <PartnersSection 
           titlePrefix="Companies Hiring " 

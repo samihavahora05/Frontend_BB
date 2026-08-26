@@ -7,6 +7,7 @@ import useSWR from "swr";
 import api from "../src/lib/axios";
 import { SEO } from "../src/components/seo/SEO";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
+import { TestimonialsSection } from "../src/sections/TestimonialsSection";
 
 const fetcher = (url: string) => api.get(url).then(res => res.data);
 
@@ -147,6 +148,7 @@ export default function CollegesPage() {
         </div>
       </div>
       <WhyChooseBlueboxxSection />
+      <TestimonialsSection />
     </MainLayout>
     </>
   );

@@ -8,6 +8,7 @@ import { Input } from "../src/components/ui/Input";
 import { partnerCompanies, INDUSTRIES } from "../src/data/companies";
 import { SEO } from "../src/components/seo/SEO";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
+import { TestimonialsSection } from "../src/sections/TestimonialsSection";
 
 // Helper component for fallback company logos
 const CompanyLogo = ({ company }: { company: any }) => {
@@ -204,6 +205,8 @@ export default function CompaniesPage() {
 
       {/* Why Choose Blueboxx Section */}
       <WhyChooseBlueboxxSection />
+      {/* Success Stories Section */}
+      <TestimonialsSection />
     </MainLayout>
   );
 }

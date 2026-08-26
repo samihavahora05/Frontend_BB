@@ -12,6 +12,7 @@ import useSWR from "swr";
 import { fetcher } from "../../src/lib/fetcher";
 import { SEO } from "../../src/components/seo/SEO";
 import { WhyChooseBlueboxxSection } from "../../src/sections/WhyChooseBlueboxxSection";
+import { TestimonialsSection } from "../../src/sections/TestimonialsSection";
 
 // Fallback seed projects for portfolios if database is empty/loading
 const mockProjects = [
@@ -551,6 +552,7 @@ export default function CompaniesPublicPage() {
           </div>
         </div>
         <WhyChooseBlueboxxSection />
+        <TestimonialsSection />
       </MainLayout>
     </>
   );

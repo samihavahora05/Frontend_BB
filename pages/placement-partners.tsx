@@ -7,6 +7,7 @@ import { fetcher } from "../src/lib/fetcher";
 import { partnerCompanies } from "../src/data/companies"; // fallback
 import { SEO } from "../src/components/seo/SEO";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
+import { TestimonialsSection } from "../src/sections/TestimonialsSection";
 
 export default function PlacementPartnersPage() {
   const { data } = useSWR("/public/cms/placement-partners", fetcher);
@@ -98,6 +99,7 @@ export default function PlacementPartnersPage() {
         </div>
       </div>
       <WhyChooseBlueboxxSection />
+      <TestimonialsSection />
     </MainLayout>
     </>
   );

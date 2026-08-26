@@ -13,6 +13,7 @@ import useSWR from "swr";
 import api from "../src/lib/axios";
 import toast from "react-hot-toast";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
+import { TestimonialsSection } from "../src/sections/TestimonialsSection";
 
 // Simple debounce hook for local use
 function useDebounce<T>(value: T, delay: number): T {
@@ -276,6 +277,7 @@ export default function BlogPage() {
         </div>
       </div>
       <WhyChooseBlueboxxSection />
+      <TestimonialsSection />
     </MainLayout>
   );
 }

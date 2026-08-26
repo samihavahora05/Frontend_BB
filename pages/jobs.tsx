@@ -9,7 +9,7 @@ import { Badge } from "../src/components/ui/Badge";
 import { Button } from "../src/components/ui/Button";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { TestimonialSection } from "../src/sections/TestimonialSection";
+import { TestimonialsSection } from "../src/sections/TestimonialsSection";
 import { StudentsShowcaseSection } from "../src/sections/StudentsShowcaseSection";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
 import { PartnersSection } from "../src/sections/PartnersSection";
@@ -296,11 +296,7 @@ export default function JobsPage() {
         subtitle="Celebrating our learners who successfully cracked corporate selection rounds and secured high-growth job offers."
       />
       <WhyChooseBlueboxxSection />
-      <TestimonialSection 
-        type="job" 
-        titleHighlight="Alumni"
-        subtitle="Read success stories from our alumni who landed their dream jobs through our placement network."
-      />
+      <TestimonialsSection />
       <PartnersSection 
         titlePrefix="Top Hiring " 
         highlightText="Companies" 
