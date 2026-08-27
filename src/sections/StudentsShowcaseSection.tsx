@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
-import { Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { Sparkles, ChevronLeft, ChevronRight, GraduationCap, Briefcase, Star, Award } from "lucide-react";
 import { useAnimationFrame } from "framer-motion";
 import { defaultStudents, StudentShowcaseItem } from "../data/studentsData";
 import { getImageUrl } from "../lib/imageUtils";
@@ -20,9 +20,9 @@ interface StudentsShowcaseSectionProps {
 }
 
 export const StudentsShowcaseSection = ({
-  title = "OUR STUDENTS",
-  subtitle = "Empowering thousands of students to learn, build projects, and secure top industry roles.",
-  tag = "Placement & Internship Network",
+  title,
+  subtitle,
+  tag = "Proven Career Success & Alumni",
   type = "all"
 }: StudentsShowcaseSectionProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -128,52 +128,82 @@ export const StudentsShowcaseSection = ({
     trackRef.current.style.transform = `translate3d(${xRef.current}px, 0, 0)`;
   };
 
+  const displayTitle = title || (
+    <>
+      Meet The <span className="text-[#1B2A6B]">Future Leaders</span> & <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600">Achievers</span>
+    </>
+  );
+
+  const displaySubtitle = subtitle || "From mastering practical skills to building live industry-grade projects — explore our talented learners and placed alumni stepping into high-growth career roles.";
+
   return (
-    <section className="py-24 bg-gradient-to-b from-white via-slate-50/50 to-white relative overflow-hidden border-t border-slate-200/70">
-      {/* Background Soft Glows & Tech Grid */}
+    <section className="py-24 bg-gradient-to-b from-white via-slate-50/60 to-white relative overflow-hidden border-t border-slate-200/70">
+      {/* Background Soft Ambient Elements */}
       <div 
-        className="absolute inset-0 opacity-[0.025] pointer-events-none"
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
-          backgroundImage: "linear-gradient(to right, #0d1635 1px, transparent 1px), linear-gradient(to bottom, #0d1635 1px, transparent 1px)",
-          backgroundSize: "36px 36px"
+          backgroundImage: "radial-gradient(#0d1635 1.5px, transparent 1.5px)",
+          backgroundSize: "28px 28px"
         }}
       />
-      <div className="absolute top-1/3 left-1/4 w-[600px] h-[300px] bg-[#1B2A6B]/5 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 w-[500px] h-[250px] bg-[#C9A227]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-r from-[#1B2A6B]/5 via-amber-500/5 to-[#1B2A6B]/5 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        {/* Section Heading matching reference typography with Navigation Buttons */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-10 gap-6">
-          <div className="text-center md:text-left">
-            {tag && (
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1B2A6B]/5 text-[#1B2A6B] border border-[#1B2A6B]/15 text-xs font-black uppercase tracking-wider mb-3.5 shadow-sm">
-                <Sparkles size={14} className="text-[#C9A227] animate-pulse" />
-                <span>{tag}</span>
-              </div>
-            )}
-            <h2 className="text-3xl md:text-5xl font-black text-[#0d1635] tracking-tight">
-              Our <span className="text-[#C9A227]">Students</span>
-            </h2>
-            <p className="text-slate-500 text-sm md:text-base font-semibold max-w-2xl mt-3">
-              {subtitle}
-            </p>
+        {/* Centered Premium Section Heading */}
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          {tag && (
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1B2A6B]/5 text-[#1B2A6B] border border-[#1B2A6B]/15 text-xs font-black uppercase tracking-wider mb-4 shadow-sm">
+              <Sparkles size={14} className="text-[#C9A227] animate-pulse" />
+              <span>{tag}</span>
+            </div>
+          )}
+          
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0d1635] tracking-tight leading-[1.15] mb-4">
+            {displayTitle}
+          </h2>
+          
+          <p className="text-slate-600 text-sm md:text-base font-medium leading-relaxed max-w-2xl mx-auto mb-6">
+            {displaySubtitle}
+          </p>
+
+          {/* Quick Credibility Trust Badges */}
+          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 mb-8">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/80 shadow-xs text-xs font-bold text-slate-700">
+              <GraduationCap size={13} className="text-[#1B2A6B]" />
+              <span>5,000+ Trained</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/80 shadow-xs text-xs font-bold text-slate-700">
+              <Briefcase size={13} className="text-amber-600" />
+              <span>250+ Hiring Partners</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/80 shadow-xs text-xs font-bold text-slate-700">
+              <Star size={13} className="fill-[#C9A227] text-[#C9A227]" />
+              <span>4.9/5 Student Rating</span>
+            </div>
           </div>
 
-          {/* Navigation Controls */}
-          <div className="flex items-center justify-center md:justify-end gap-2.5 shrink-0">
+          {/* Centered Intuitive Navigation Controls */}
+          <div className="flex items-center justify-center gap-3">
             <button
               onClick={() => handleManualScroll("left")}
-              className="p-3 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-[#1B2A6B] hover:text-white hover:border-[#1B2A6B] transition-all shadow-sm active:scale-95 cursor-pointer"
+              className="p-2.5 sm:p-3 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-[#1B2A6B] hover:text-white hover:border-[#1B2A6B] transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-1.5 text-xs font-bold"
               aria-label="Scroll left"
             >
-              <ChevronLeft size={20} />
+              <ChevronLeft size={18} />
+              <span className="hidden sm:inline">Prev</span>
             </button>
+            
+            <div className="px-3.5 py-1.5 bg-slate-100/80 text-slate-500 rounded-xl text-xs font-semibold border border-slate-200/60">
+              Hover to Pause • Drag or Click to Navigate
+            </div>
+
             <button
               onClick={() => handleManualScroll("right")}
-              className="p-3 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-[#1B2A6B] hover:text-white hover:border-[#1B2A6B] transition-all shadow-sm active:scale-95 cursor-pointer"
+              className="p-2.5 sm:p-3 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-[#1B2A6B] hover:text-white hover:border-[#1B2A6B] transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-1.5 text-xs font-bold"
               aria-label="Scroll right"
             >
-              <ChevronRight size={20} />
+              <span className="hidden sm:inline">Next</span>
+              <ChevronRight size={18} />
             </button>
           </div>
         </div>
@@ -193,7 +223,7 @@ export const StudentsShowcaseSection = ({
               duplicatedList.map((student, idx) => (
                 <div
                   key={`${student.id}-${idx}`}
-                  className="w-[230px] sm:w-[245px] md:w-[260px] shrink-0 bg-white rounded-3xl border border-slate-200/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.18)] hover:-translate-y-2.5 transition-all duration-300 overflow-hidden flex flex-col group/card cursor-pointer select-none"
+                  className="w-[230px] sm:w-[245px] md:w-[260px] shrink-0 bg-white rounded-3xl border border-slate-200/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.16)] hover:-translate-y-2.5 transition-all duration-300 overflow-hidden flex flex-col group/card cursor-pointer select-none"
                 >
                   {/* Student Photo Container */}
                   <div className="w-full aspect-[4/4.3] relative overflow-hidden bg-slate-100">
@@ -215,15 +245,15 @@ export const StudentsShowcaseSection = ({
                   </div>
 
                   {/* Student Info Card Body */}
-                  <div className="p-4 text-center bg-white flex flex-col justify-center items-center grow gap-1">
+                  <div className="p-4 text-center bg-white flex flex-col justify-center items-center grow gap-1.5">
                     <h3 className="font-bold text-base text-slate-800 tracking-tight group-hover/card:text-[#1B2A6B] transition-colors line-clamp-1">
                       {student.name}
                     </h3>
 
                     {/* Standardized Role Text */}
-                    <p className="text-xs font-semibold text-slate-500 line-clamp-1">
+                    <span className="inline-block px-2.5 py-0.5 rounded-md bg-slate-100 text-[#1B2A6B] font-bold text-[11px] border border-slate-200/70 line-clamp-1">
                       {student.role}
-                    </p>
+                    </span>
                   </div>
                 </div>
               ))

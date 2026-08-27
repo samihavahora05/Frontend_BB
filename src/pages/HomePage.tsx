@@ -27,11 +27,7 @@ export const HomePage = () => {
       <MentorsSection />
       <WhoAreYouSection />
       <WhyChooseBlueboxxSection />
-      <StudentsShowcaseSection 
-        title="OUR STUDENTS & ALUMNI"
-        tag="Success & Placement Network"
-        subtitle="Empowering thousands of students to learn, build projects, and secure top industry roles."
-      />
+      <StudentsShowcaseSection />
       <TestimonialsSection />
       <FAQSection />
       <CTASection />
