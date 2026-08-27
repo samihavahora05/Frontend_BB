@@ -10,6 +10,7 @@ import { SidebarFilter } from '../src/components/ui/SidebarFilter';
 import { Clock, Star, ArrowRight } from 'lucide-react';
 import { PartnersSection } from '../src/sections/PartnersSection';
 import { WhyChooseBlueboxxSection } from '../src/sections/WhyChooseBlueboxxSection';
+import { StudentsShowcaseSection } from '../src/sections/StudentsShowcaseSection';
 import { TestimonialsSection } from '../src/sections/TestimonialsSection';
 import { SEO } from '../src/components/seo/SEO';
 import Image from 'next/image';
@@ -294,6 +295,7 @@ export default function CoursesPage() {
         </div>
       </div>
       <WhyChooseBlueboxxSection />
+      <StudentsShowcaseSection />
       <TestimonialsSection />
       <PartnersSection 
         titlePrefix="Instructors from " 

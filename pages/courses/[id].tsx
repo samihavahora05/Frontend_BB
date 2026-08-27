@@ -11,6 +11,7 @@ import { useStore } from "../../src/store/useStore";
 import { useAuth } from "../../src/context/AuthContext";
 import api from "../../src/lib/axios";
 import { SEO } from "../../src/components/seo/SEO";
+import { StudentsShowcaseSection } from "../../src/sections/StudentsShowcaseSection";
 import { Bookmark } from "lucide-react";
 import toast from "react-hot-toast";
 import { mutate } from "swr";
@@ -427,6 +428,8 @@ export default function CourseDetailPage() {
 
         </div>
       </div>
+
+      <StudentsShowcaseSection />
 
       {/* Video Modal */}
       {isVideoOpen && (
