@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, CheckCircle2, Building2 } from "lucide-react";
 import { useAnimationFrame } from "framer-motion";
 import { defaultStudents, StudentShowcaseItem } from "../data/studentsData";
 import { getImageUrl } from "../lib/imageUtils";
@@ -22,7 +22,7 @@ interface StudentsShowcaseSectionProps {
 export const StudentsShowcaseSection = ({
   title,
   subtitle,
-  tag = "Placement & Alumni Network",
+  tag = "Placement & Alumni Directory",
   type = "all"
 }: StudentsShowcaseSectionProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -96,7 +96,7 @@ export const StudentsShowcaseSection = ({
   }, [studentsList]);
 
   // Smooth continuous scroll velocity (px per second)
-  const speed = 40;
+  const speed = 38;
 
   useAnimationFrame((_, delta) => {
     if (isHovered || !trackRef.current || duplicatedList.length === 0) return;
@@ -113,7 +113,7 @@ export const StudentsShowcaseSection = ({
 
   return (
     <section className="py-24 bg-gradient-to-b from-white via-slate-50/50 to-white relative overflow-hidden border-t border-slate-200/70">
-      {/* Background Soft Glows & Tech Grid */}
+      {/* Background Soft Glows & Ambient Tech Grid */}
       <div 
         className="absolute inset-0 opacity-[0.025] pointer-events-none"
         style={{
@@ -125,7 +125,7 @@ export const StudentsShowcaseSection = ({
       <div className="absolute bottom-10 right-1/4 w-[500px] h-[250px] bg-[#C9A227]/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        {/* Clean Centered Section Header */}
+        {/* Clean, Elevated Centered Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-14">
           {tag && (
             <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-[#1B2A6B]/15 bg-[#1B2A6B]/5 text-[#1B2A6B] text-xs font-bold uppercase tracking-wider mb-4 shadow-xs">
@@ -139,19 +139,19 @@ export const StudentsShowcaseSection = ({
               title
             ) : (
               <>
-                Our <span className="text-[#C9A227]">Students</span>
+                Meet Our <span className="text-[#C9A227]">Graduates</span> & Alumni
               </>
             )}
           </h2>
 
           <p className="text-sm md:text-base text-slate-600 font-medium font-inter leading-relaxed max-w-xl mx-auto">
-            {subtitle || "Celebrating our talented learners and placed alumni across top technology & design programs."}
+            {subtitle || "Empowering ambitious learners to master high-demand tech & design skills, build real projects, and secure top industry roles."}
           </p>
         </div>
 
         {/* Single Row Continuous Smooth Scrolling Marquee Track */}
         <div 
-          className="relative w-full overflow-hidden py-2"
+          className="relative w-full overflow-hidden py-3"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -164,14 +164,20 @@ export const StudentsShowcaseSection = ({
               duplicatedList.map((student, idx) => (
                 <div
                   key={`${student.id}-${idx}`}
-                  className="w-[230px] sm:w-[245px] md:w-[260px] shrink-0 bg-white rounded-3xl border border-slate-200/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.16)] hover:-translate-y-2.5 transition-all duration-300 overflow-hidden flex flex-col group/card cursor-pointer select-none"
+                  className="w-[245px] sm:w-[260px] md:w-[275px] shrink-0 bg-white rounded-2xl border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(27,42,107,0.12)] hover:border-[#1B2A6B]/30 hover:-translate-y-1.5 transition-all duration-300 overflow-hidden flex flex-col p-3 group/card cursor-pointer select-none"
                 >
-                  {/* Student Photo Container */}
-                  <div className="w-full aspect-[4/4.3] relative overflow-hidden bg-slate-100">
+                  {/* Framed Portrait Photo Container */}
+                  <div className="w-full aspect-[4/4.4] relative rounded-xl overflow-hidden bg-slate-100 shadow-inner">
+                    {/* Placed Verification Tag */}
+                    <div className="absolute top-2.5 right-2.5 z-10 px-2 py-0.5 rounded-md bg-white/95 backdrop-blur-md text-[10px] font-extrabold text-[#1B2A6B] shadow-xs border border-slate-200/60 flex items-center gap-1">
+                      <CheckCircle2 size={10} className="text-emerald-500" />
+                      <span>Placed</span>
+                    </div>
+
                     <img
                       src={student.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`}
                       alt={student.name}
-                      className="w-full h-full object-cover object-top group-hover/card:scale-108 transition-transform duration-500"
+                      className="w-full h-full object-cover object-top group-hover/card:scale-105 transition-transform duration-500"
                       loading="lazy"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
@@ -181,20 +187,26 @@ export const StudentsShowcaseSection = ({
                         }
                       }}
                     />
-                    {/* Subtle top corner gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-300" />
+                    {/* Subtle vignette gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-300" />
                   </div>
 
                   {/* Student Info Card Body */}
-                  <div className="p-4 text-center bg-white flex flex-col justify-center items-center grow gap-1">
-                    <h3 className="font-bold text-base text-slate-800 tracking-tight group-hover/card:text-[#1B2A6B] transition-colors line-clamp-1">
+                  <div className="pt-3 pb-1 px-1 flex flex-col items-center text-center gap-1.5">
+                    <h3 className="font-extrabold text-[15px] text-[#0d1635] tracking-tight group-hover/card:text-[#1B2A6B] transition-colors truncate max-w-full">
                       {student.name}
                     </h3>
 
-                    {/* Standardized Role Text */}
-                    <p className="text-xs font-medium text-slate-500 line-clamp-1">
+                    {/* Standardized Role Tag */}
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#1B2A6B]/6 text-[#1B2A6B] text-[11px] font-bold tracking-tight truncate max-w-full">
                       {student.role}
-                    </p>
+                    </span>
+
+                    {/* Company Tag */}
+                    <div className="flex items-center gap-1 text-[11px] font-medium text-slate-400 mt-0.5 truncate max-w-full">
+                      <Building2 size={11} className="shrink-0 text-slate-400" />
+                      <span className="truncate">{student.company || "Blueboxx Partner"}</span>
+                    </div>
                   </div>
                 </div>
               ))
@@ -203,12 +215,12 @@ export const StudentsShowcaseSection = ({
               Array.from({ length: 6 }).map((_, idx) => (
                 <div
                   key={`skeleton-${idx}`}
-                  className="w-[230px] sm:w-[245px] md:w-[260px] shrink-0 bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col animate-pulse"
+                  className="w-[245px] sm:w-[260px] md:w-[275px] shrink-0 bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col p-3 animate-pulse"
                 >
-                  <div className="w-full aspect-[4/4.3] bg-slate-100" />
-                  <div className="p-4 flex flex-col items-center gap-2">
+                  <div className="w-full aspect-[4/4.4] rounded-xl bg-slate-100" />
+                  <div className="pt-3 flex flex-col items-center gap-2">
                     <div className="w-24 h-4 bg-slate-200 rounded" />
-                    <div className="w-16 h-3 bg-slate-100 rounded" />
+                    <div className="w-16 h-3 bg-slate-100 rounded-full" />
                   </div>
                 </div>
               ))
