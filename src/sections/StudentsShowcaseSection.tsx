@@ -97,11 +97,13 @@ export const StudentsShowcaseSection = ({
   const [selectedStudent, setSelectedStudent] = useState<StudentItem | null>(null);
   const [localStudents, setLocalStudents] = useState<StudentItem[]>([]);
   const [isPaused, setIsPaused] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const trackRef = useRef<HTMLDivElement>(null);
   const xRef = useRef(0);
 
   useEffect(() => {
+    setIsMounted(true);
     try {
       if (typeof window !== "undefined") {
         const raw = localStorage.getItem("blueboxx_students_showcase");
@@ -131,6 +133,10 @@ export const StudentsShowcaseSection = ({
       image: getImageUrl(st.image)
     }));
 
+    if (!isMounted) {
+      return baseDefaultStudents;
+    }
+
     if (localStudents && localStudents.length >= 40) {
       return localStudents;
     }
@@ -142,7 +148,7 @@ export const StudentsShowcaseSection = ({
     }
 
     return baseDefaultStudents;
-  }, [localStudents]);
+  }, [localStudents, isMounted]);
 
   // Duplicate for seamless infinite loop
   const displayList = useMemo(() => {
@@ -153,7 +159,7 @@ export const StudentsShowcaseSection = ({
   const speed = 36;
 
   useAnimationFrame((_, delta) => {
-    if (isPaused || !trackRef.current || displayList.length === 0) return;
+    if (!isMounted || isPaused || !trackRef.current || displayList.length === 0) return;
 
     xRef.current -= (speed * delta) / 1000;
 
