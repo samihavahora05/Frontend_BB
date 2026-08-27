@@ -81,7 +81,9 @@ export function SEO({
       <meta key="robots" name="robots" content={activeRobots} />
       <meta key="googlebot" name="googlebot" content={activeRobots} />
       
-      <link rel="icon" href="/favicon.ico" />
+      <link rel="icon" href="/Boxxlogo.png" type="image/png" />
+      <link rel="shortcut icon" href="/Boxxlogo.png" type="image/png" />
+      <link rel="apple-touch-icon" href="/Boxxlogo.png" />
       
       <script
         type="application/ld+json"
