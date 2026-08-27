@@ -166,7 +166,7 @@ export const StudentsShowcaseSection = ({
   });
 
   return (
-    <section className="py-24 bg-gradient-to-b from-white via-slate-50/70 to-white relative overflow-hidden border-t border-slate-200/80">
+    <section className="pt-20 pb-8 bg-gradient-to-b from-white via-slate-50/70 to-white relative overflow-hidden border-t border-slate-200/80">
       {/* Background Ambience & Fine Radial Grid */}
       <div 
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
@@ -179,7 +179,7 @@ export const StudentsShowcaseSection = ({
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
+        <div className="text-center max-w-3xl mx-auto mb-10">
           {tag && (
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#1B2A6B]/15 bg-[#1B2A6B]/5 text-[#1B2A6B] text-xs font-extrabold uppercase tracking-widest mb-4 shadow-xs">
               <Sparkles size={14} className="text-[#C9A227] animate-pulse" />
@@ -220,7 +220,7 @@ export const StudentsShowcaseSection = ({
 
         {/* Single-Row Continuous Floating Marquee Stream */}
         <div 
-          className="relative w-full overflow-hidden py-3 my-4"
+          className="relative w-full overflow-hidden py-2"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
@@ -236,11 +236,6 @@ export const StudentsShowcaseSection = ({
               />
             ))}
           </div>
-        </div>
-
-        {/* Subtle Bottom Interaction Hint */}
-        <div className="mt-6 text-center text-xs font-medium text-slate-400">
-          💡 Click on any card to view their complete career placement profile.
         </div>
       </div>
 

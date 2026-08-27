@@ -74,7 +74,7 @@ export const TestimonialsSection = () => {
   };
 
   return (
-    <section ref={containerRef} className="py-[120px] bg-gradient-to-b from-white via-blue-50/15 to-white text-slate-900 overflow-hidden relative border-b border-[#E5E7EB]">
+    <section ref={containerRef} className="pt-14 pb-24 bg-gradient-to-b from-white via-blue-50/15 to-white text-slate-900 overflow-hidden relative border-b border-[#E5E7EB]">
       {/* Soft Blur Blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[20%] left-[5%] w-[350px] h-[350px] rounded-full bg-blue-200/20 blur-[100px]" />
