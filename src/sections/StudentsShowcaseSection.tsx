@@ -25,7 +25,7 @@ interface StudentsShowcaseSectionProps {
 // Reusable Ultra-Modern Alumni Card
 const AlumniCard = ({
   student,
-  onSelect,
+  onSelect
 }: {
   student: StudentItem;
   onSelect: (student: StudentItem) => void;
@@ -33,13 +33,13 @@ const AlumniCard = ({
   return (
     <div
       onClick={() => onSelect(student)}
-      className="group relative w-[270px] sm:w-[295px] md:w-[310px] shrink-0 bg-white/90 backdrop-blur-md rounded-2xl border border-slate-200/90 p-3.5 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.15)] hover:border-[#1B2A6B]/40 hover:-translate-y-2 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col gap-3 select-none"
+      className="group relative w-[240px] sm:w-[260px] md:w-[280px] shrink-0 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/90 p-2.5 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.15)] hover:border-[#1B2A6B]/40 hover:-translate-y-2 transition-all duration-300 cursor-pointer overflow-hidden select-none"
     >
       {/* Top Ambient Highlight Gradient */}
       <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-[#1B2A6B]/40 to-[#C9A227]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Top Row: Photo Container */}
-      <div className="relative w-full aspect-[4/3.8] rounded-xl overflow-hidden bg-slate-100 shadow-inner">
+      {/* Photo Container */}
+      <div className="relative w-full aspect-[3.8/4.2] rounded-xl overflow-hidden bg-slate-100 shadow-inner">
         <img
           src={student.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`}
           alt={student.name}
@@ -55,7 +55,7 @@ const AlumniCard = ({
         />
 
         {/* Gradient Scrim for crisp text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d1635]/70 via-[#0d1635]/10 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d1635]/85 via-[#0d1635]/25 to-transparent pointer-events-none" />
 
         {/* Floating Quick Action Icon on Hover */}
         <div className="absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full bg-[#1B2A6B] text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center shadow-md translate-y-1 group-hover:translate-y-0">
@@ -63,26 +63,14 @@ const AlumniCard = ({
         </div>
 
         {/* Overlay Student Name & Role directly on image */}
-        <div className="absolute bottom-2.5 inset-x-3 z-10 text-white">
+        <div className="absolute bottom-3 inset-x-3.5 z-10 text-white">
           <h3 className="font-extrabold text-base tracking-tight leading-snug drop-shadow-sm truncate">
             {student.name}
           </h3>
-          <p className="text-[11px] font-medium text-slate-200 truncate">
+          <p className="text-xs font-semibold text-amber-300/90 truncate mt-0.5">
             {student.role}
           </p>
         </div>
-      </div>
-
-      {/* Bottom Footer: Hiring Company Tag + Placed Badge */}
-      <div className="flex items-center justify-between pt-1 text-xs">
-        <div className="flex items-center gap-1.5 text-slate-600 font-semibold min-w-0 flex-1">
-          <Building2 size={13} className="text-[#1B2A6B] shrink-0" />
-          <span className="truncate">{student.company || "Blueboxx Partner"}</span>
-        </div>
-
-        <span className="shrink-0 text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-[#C9A227]/12 text-[#996b00] border border-[#C9A227]/25">
-          Placed
-        </span>
       </div>
     </div>
   );
@@ -296,13 +284,12 @@ export const StudentsShowcaseSection = ({
                   {selectedStudent.role}
                 </span>
 
-                {/* Company & Details Block */}
+                {/* Details Block */}
                 <div className="w-full bg-slate-50 rounded-2xl p-4 border border-slate-200/80 mb-6 flex flex-col gap-3 text-left">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-slate-500">Placement Partner:</span>
-                    <span className="text-xs font-extrabold text-[#0d1635] flex items-center gap-1.5">
-                      <Building2 size={13} className="text-[#1B2A6B]" />
-                      {selectedStudent.company || "Blueboxx Partner"}
+                    <span className="text-xs font-medium text-slate-500">Domain / Role:</span>
+                    <span className="text-xs font-extrabold text-[#0d1635]">
+                      {selectedStudent.role}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
