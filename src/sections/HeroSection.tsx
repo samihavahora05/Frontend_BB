@@ -17,8 +17,8 @@ const HUB_SIZE = 210;
 const ORBIT_CARDS = [
   { icon: Target, title: "Career Roadmap", sub: "Structured Paths" },
   { icon: GraduationCap, title: "1:1 Expert Guidance", sub: "Industry leaders" },
-  { icon: BookOpen, title: "Real Client Projects", sub: "850+ Built" },
-  { icon: CheckCircle2, title: "Company Tie-ups", sub: "100+ Partners" },
+  { icon: BookOpen, title: "Real Client Projects", sub: "3000+ Built" },
+  { icon: CheckCircle2, title: "Company Tie-ups", sub: "250+ Partners" },
   { icon: Star, title: "Student Satisfaction", sub: "4.9/5 Average" },
 ] as const;
 

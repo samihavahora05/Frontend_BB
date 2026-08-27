@@ -1,7 +1,6 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { Sparkles } from "lucide-react";
-import useSWR from "swr";
-import { fetcher } from "../lib/fetcher";
+import React, { useMemo, useState, useEffect, useRef } from "react";
+import { Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { useAnimationFrame } from "framer-motion";
 import { defaultStudents, StudentShowcaseItem } from "../data/studentsData";
 import { getImageUrl } from "../lib/imageUtils";
 
@@ -22,13 +21,16 @@ interface StudentsShowcaseSectionProps {
 
 export const StudentsShowcaseSection = ({
   title = "OUR STUDENTS",
-  subtitle = "Celebrating our talented learners and placed alumni across top technology & design programs.",
+  subtitle = "Empowering thousands of students to learn, build projects, and secure top industry roles.",
   tag = "Placement & Internship Network",
   type = "all"
 }: StudentsShowcaseSectionProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [localStudents, setLocalStudents] = useState<StudentItem[]>([]);
+
+  const trackRef = useRef<HTMLDivElement>(null);
+  const xRef = useRef(0);
 
   useEffect(() => {
     setIsMounted(true);
@@ -41,13 +43,15 @@ export const StudentsShowcaseSection = ({
             const parsed = JSON.parse(raw);
             if (Array.isArray(parsed) && parsed.length > 0) {
               setLocalStudents(
-                parsed.map((item: any, idx: number) => ({
-                  id: item.id || `student-${idx}`,
-                  name: item.student_name || item.name || "Student",
-                  role: item.role || item.designation || "Graduate",
-                  company: item.company_name || item.company || "",
-                  image: getImageUrl(item.image_url || item.avatar_url || item.image || defaultStudents[idx % defaultStudents.length]?.image)
-                }))
+                parsed
+                  .filter((item: any) => item && (item.student_name || item.name))
+                  .map((item: any, idx: number) => ({
+                    id: item.id || `student-${idx}`,
+                    name: item.student_name || item.name || "Student",
+                    role: item.role || item.designation || "Graphic Design",
+                    company: item.company_name || item.company || "",
+                    image: getImageUrl(item.image_url || item.avatar_url || item.image || '')
+                  }))
               );
             }
           }
@@ -64,54 +68,26 @@ export const StudentsShowcaseSection = ({
     };
   }, []);
 
-  // Dynamic API Fetching from Database
-  const { data: apiJobOffers } = useSWR("/public/cms/job-offers", fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
-  });
-
   const studentsList: StudentItem[] = useMemo(() => {
-    // Baseline complete 44 students
+    // Verified 44 students with correct photos and designated roles
     const baseDefaultStudents: StudentItem[] = defaultStudents.map(st => ({
       ...st,
       image: getImageUrl(st.image)
     }));
 
-    // Determine custom/API students list
-    const customList = (localStudents && localStudents.length > 0 ? localStudents : (
-      apiJobOffers && Array.isArray(apiJobOffers) && apiJobOffers.length > 0
-        ? apiJobOffers
-            .filter((item: any) => item && (item.student_name || item.name))
-            .map((item: any, idx: number) => {
-              const rawImg = item.image_url || item.avatar_url || item.photo_url || item.image || "";
-              const defaultPhoto = defaultStudents[idx % defaultStudents.length]?.image || '/students/yuvraj_parmar.png';
-              const resolvedImg = rawImg ? getImageUrl(rawImg) : getImageUrl(defaultPhoto);
-              return {
-                id: item.id || `student-${idx}`,
-                name: item.student_name || item.name || "Student",
-                role: item.role || item.designation || "Graduate",
-                company: item.company_name || item.company || "",
-                image: resolvedImg || getImageUrl(defaultPhoto)
-              };
-            })
-        : []
-    ));
-
-    if (customList.length === 0) {
-      return baseDefaultStudents;
+    // If custom students are configured locally via admin showcase tool
+    if (localStudents && localStudents.length >= 40) {
+      return localStudents;
     }
 
-    // If customList already has 40+ students (full uploaded list), return it directly
-    if (customList.length >= 40) {
-      return customList;
+    if (localStudents && localStudents.length > 0) {
+      const customNames = new Set(localStudents.map(s => s.name.toLowerCase().trim()));
+      const remainingDefaults = baseDefaultStudents.filter(s => !customNames.has(s.name.toLowerCase().trim()));
+      return [...localStudents, ...remainingDefaults];
     }
 
-    // If there are a few custom/DB records (e.g. 3 new students), prepend them to all 44 students without duplicates!
-    const customNames = new Set(customList.map(s => s.name.toLowerCase().trim()));
-    const remainingDefaults = baseDefaultStudents.filter(s => !customNames.has(s.name.toLowerCase().trim()));
-    
-    return [...customList, ...remainingDefaults];
-  }, [localStudents, apiJobOffers]);
+    return baseDefaultStudents;
+  }, [localStudents]);
 
   // Duplicate list for seamless infinite loop
   const duplicatedList = useMemo(() => {
@@ -119,35 +95,41 @@ export const StudentsShowcaseSection = ({
     return [...studentsList, ...studentsList];
   }, [studentsList]);
 
-  // Dynamic animation duration based on items to ensure constant silky smooth glide velocity
-  const animationDuration = useMemo(() => {
-    return Math.max(35, Math.min(studentsList.length * 1.5, 75));
-  }, [studentsList.length]);
+  // Smooth continuous scroll velocity (px per second)
+  const speed = 40;
+
+  useAnimationFrame((_, delta) => {
+    if (isHovered || !trackRef.current || duplicatedList.length === 0) return;
+
+    xRef.current -= (speed * delta) / 1000;
+
+    const halfWidth = trackRef.current.scrollWidth / 2;
+    if (halfWidth > 0 && Math.abs(xRef.current) >= halfWidth) {
+      xRef.current = 0;
+    }
+
+    trackRef.current.style.transform = `translate3d(${xRef.current}px, 0, 0)`;
+  });
+
+  const handleManualScroll = (direction: "left" | "right") => {
+    if (!trackRef.current) return;
+    const scrollStep = 280;
+    const dir = direction === "left" ? 1 : -1;
+    xRef.current += dir * scrollStep;
+
+    const halfWidth = trackRef.current.scrollWidth / 2;
+    if (halfWidth > 0) {
+      if (xRef.current > 0) {
+        xRef.current = -halfWidth + (xRef.current % halfWidth);
+      } else if (Math.abs(xRef.current) >= halfWidth) {
+        xRef.current = -(Math.abs(xRef.current) % halfWidth);
+      }
+    }
+    trackRef.current.style.transform = `translate3d(${xRef.current}px, 0, 0)`;
+  };
 
   return (
     <section className="py-24 bg-gradient-to-b from-white via-slate-50/50 to-white relative overflow-hidden border-t border-slate-200/70">
-      {/* Dynamic Keyframes for Ultra-Smooth Continuous Hardware-Accelerated Marquee */}
-      <style jsx global>{`
-        @keyframes continuousGlide {
-          0% {
-            transform: translate3d(0, 0, 0);
-          }
-          100% {
-            transform: translate3d(-50%, 0, 0);
-          }
-        }
-        .continuous-glide-track {
-          display: flex;
-          width: max-content;
-          will-change: transform;
-          backface-visibility: hidden;
-          animation: continuousGlide ${animationDuration}s linear infinite;
-        }
-        .continuous-glide-track:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
-
       {/* Background Soft Glows & Tech Grid */}
       <div 
         className="absolute inset-0 opacity-[0.025] pointer-events-none"
@@ -160,46 +142,71 @@ export const StudentsShowcaseSection = ({
       <div className="absolute bottom-10 right-1/4 w-[500px] h-[250px] bg-[#C9A227]/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        {/* Section Heading matching reference typography */}
-        <div className="text-center mb-12">
-          {tag && (
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1B2A6B]/5 text-[#1B2A6B] border border-[#1B2A6B]/15 text-xs font-black uppercase tracking-wider mb-3.5 shadow-sm">
-              <Sparkles size={14} className="text-[#C9A227] animate-pulse" />
-              <span>{tag}</span>
-            </div>
-          )}
-          <h2 className="text-3xl md:text-5xl font-black text-[#0d1635] tracking-tight">
-            Our <span className="text-[#C9A227]">Students</span>
-          </h2>
-          <p className="text-slate-500 text-sm md:text-base font-semibold max-w-2xl mx-auto mt-3">
-            {subtitle}
-          </p>
+        {/* Section Heading matching reference typography with Navigation Buttons */}
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-10 gap-6">
+          <div className="text-center md:text-left">
+            {tag && (
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1B2A6B]/5 text-[#1B2A6B] border border-[#1B2A6B]/15 text-xs font-black uppercase tracking-wider mb-3.5 shadow-sm">
+                <Sparkles size={14} className="text-[#C9A227] animate-pulse" />
+                <span>{tag}</span>
+              </div>
+            )}
+            <h2 className="text-3xl md:text-5xl font-black text-[#0d1635] tracking-tight">
+              Our <span className="text-[#C9A227]">Students</span>
+            </h2>
+            <p className="text-slate-500 text-sm md:text-base font-semibold max-w-2xl mt-3">
+              {subtitle}
+            </p>
+          </div>
+
+          {/* Navigation Controls */}
+          <div className="flex items-center justify-center md:justify-end gap-2.5 shrink-0">
+            <button
+              onClick={() => handleManualScroll("left")}
+              className="p-3 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-[#1B2A6B] hover:text-white hover:border-[#1B2A6B] transition-all shadow-sm active:scale-95 cursor-pointer"
+              aria-label="Scroll left"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              onClick={() => handleManualScroll("right")}
+              className="p-3 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-[#1B2A6B] hover:text-white hover:border-[#1B2A6B] transition-all shadow-sm active:scale-95 cursor-pointer"
+              aria-label="Scroll right"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
         </div>
 
         {/* Single Row Continuous Smooth Scrolling Marquee Track */}
-        <div className="relative w-full overflow-hidden py-4 rounded-3xl">
+        <div 
+          className="relative w-full overflow-hidden py-4 rounded-3xl"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
           {/* Single Row Glide Track */}
-          <div className="continuous-glide-track gap-6 px-2">
+          <div 
+            ref={trackRef}
+            className="flex gap-6 px-2 w-max will-change-transform"
+          >
             {isMounted && duplicatedList.length > 0 ? (
               duplicatedList.map((student, idx) => (
                 <div
                   key={`${student.id}-${idx}`}
-                  className="w-[230px] sm:w-[245px] md:w-[260px] shrink-0 bg-white rounded-3xl border border-slate-200/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.18)] hover:-translate-y-2.5 transition-all duration-300 overflow-hidden flex flex-col group/card cursor-pointer"
+                  className="w-[230px] sm:w-[245px] md:w-[260px] shrink-0 bg-white rounded-3xl border border-slate-200/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.18)] hover:-translate-y-2.5 transition-all duration-300 overflow-hidden flex flex-col group/card cursor-pointer select-none"
                 >
                   {/* Student Photo Container */}
                   <div className="w-full aspect-[4/4.3] relative overflow-hidden bg-slate-100">
                     <img
-                      src={student.image}
+                      src={student.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`}
                       alt={student.name}
                       className="w-full h-full object-cover object-top group-hover/card:scale-108 transition-transform duration-500"
                       loading="lazy"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        const fallback = defaultStudents[idx % defaultStudents.length]?.image || '/students/yuvraj_parmar.png';
-                        if (!target.src.includes(fallback) && !target.src.endsWith(fallback)) {
-                          target.src = fallback;
-                        } else {
-                          target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`;
+                        const avatarFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`;
+                        if (target.src !== avatarFallback) {
+                          target.src = avatarFallback;
                         }
                       }}
                     />
@@ -213,8 +220,8 @@ export const StudentsShowcaseSection = ({
                       {student.name}
                     </h3>
 
-                    {/* Simple Clean Role Text */}
-                    <p className="text-xs font-medium text-slate-500 capitalize line-clamp-1">
+                    {/* Standardized Role Text */}
+                    <p className="text-xs font-semibold text-slate-500 line-clamp-1">
                       {student.role}
                     </p>
                   </div>
