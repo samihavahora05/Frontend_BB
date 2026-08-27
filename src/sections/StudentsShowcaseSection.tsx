@@ -1,6 +1,10 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { Sparkles, CheckCircle2, Building2, ChevronDown, ChevronUp, Layers, Palette, Code, TrendingUp } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useMemo, useState, useEffect, useRef } from "react";
+import { 
+  Sparkles, CheckCircle2, Building2, Briefcase, 
+  ArrowUpRight, X, GraduationCap, Award, ExternalLink, Zap,
+  Search
+} from "lucide-react";
+import { motion, AnimatePresence, useAnimationFrame } from "framer-motion";
 import { defaultStudents, StudentShowcaseItem } from "../data/studentsData";
 import { getImageUrl } from "../lib/imageUtils";
 
@@ -19,24 +23,145 @@ interface StudentsShowcaseSectionProps {
   type?: "all" | "interns" | "job_seekers" | "recent";
 }
 
-type DomainCategory = "all" | "design" | "development" | "marketing";
+// Reusable Ultra-Modern Alumni Card
+const AlumniCard = ({
+  student,
+  onSelect,
+}: {
+  student: StudentItem;
+  onSelect: (student: StudentItem) => void;
+}) => {
+  return (
+    <div
+      onClick={() => onSelect(student)}
+      className="group relative w-[280px] sm:w-[310px] shrink-0 bg-white/90 backdrop-blur-md rounded-2xl border border-slate-200/90 p-3.5 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.15)] hover:border-[#1B2A6B]/40 hover:-translate-y-2 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col gap-3 select-none"
+    >
+      {/* Top Ambient Highlight Gradient */}
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-[#1B2A6B]/40 to-[#C9A227]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-const categories: { id: DomainCategory; label: string; icon: any }[] = [
-  { id: "all", label: "All Alumni", icon: Layers },
-  { id: "design", label: "Graphic & UI Design", icon: Palette },
-  { id: "development", label: "Web & Software Dev", icon: Code },
-  { id: "marketing", label: "Digital Marketing", icon: TrendingUp },
-];
+      {/* Top Row: Photo + Placement Badge */}
+      <div className="relative w-full aspect-[4/3.8] rounded-xl overflow-hidden bg-slate-100 shadow-inner">
+        <img
+          src={student.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`}
+          alt={student.name}
+          className="w-full h-full object-cover object-top group-hover:scale-106 transition-transform duration-500"
+          loading="lazy"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`;
+            if (target.src !== fallback) {
+              target.src = fallback;
+            }
+          }}
+        />
+
+        {/* Gradient Scrim for crisp text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d1635]/70 via-[#0d1635]/10 to-transparent pointer-events-none" />
+
+        {/* Floating Top-Left Status Pill */}
+        <div className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full bg-white/95 backdrop-blur-md text-[10px] font-bold text-[#1B2A6B] shadow-sm border border-slate-200/80 flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span>Verified Alumni</span>
+        </div>
+
+        {/* Floating Quick Action Icon on Hover */}
+        <div className="absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full bg-[#1B2A6B] text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center shadow-md translate-y-1 group-hover:translate-y-0">
+          <ArrowUpRight size={14} />
+        </div>
+
+        {/* Overlay Student Name & Role right on image */}
+        <div className="absolute bottom-2.5 inset-x-3 z-10 text-white">
+          <h3 className="font-extrabold text-base tracking-tight leading-snug drop-shadow-sm truncate">
+            {student.name}
+          </h3>
+          <p className="text-[11px] font-medium text-slate-200 truncate">
+            {student.role}
+          </p>
+        </div>
+      </div>
+
+      {/* Bottom Footer: Hiring Company Tag + Certified Pill */}
+      <div className="flex items-center justify-between pt-1 text-xs">
+        <div className="flex items-center gap-1.5 text-slate-600 font-semibold min-w-0 flex-1">
+          <Building2 size={13} className="text-[#1B2A6B] shrink-0" />
+          <span className="truncate">{student.company || "Blueboxx Partner"}</span>
+        </div>
+
+        <span className="shrink-0 text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-[#C9A227]/12 text-[#996b00] border border-[#C9A227]/25">
+          Placed
+        </span>
+      </div>
+    </div>
+  );
+};
+
+// Continuous Marquee Row with Frame Loop
+const MarqueeRow = ({
+  students,
+  speed = 35,
+  reverse = false,
+  onSelect,
+}: {
+  students: StudentItem[];
+  speed?: number;
+  reverse?: boolean;
+  onSelect: (student: StudentItem) => void;
+}) => {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const xRef = useRef(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Duplicate for seamless infinite loop
+  const displayList = useMemo(() => {
+    return [...students, ...students];
+  }, [students]);
+
+  useAnimationFrame((_, delta) => {
+    if (isPaused || !trackRef.current || displayList.length === 0) return;
+
+    const dir = reverse ? 1 : -1;
+    xRef.current += (dir * speed * delta) / 1000;
+
+    const halfWidth = trackRef.current.scrollWidth / 2;
+    if (halfWidth > 0) {
+      if (xRef.current <= -halfWidth) xRef.current = 0;
+      if (xRef.current >= 0 && reverse) xRef.current = -halfWidth;
+    }
+
+    trackRef.current.style.transform = `translate3d(${xRef.current}px, 0, 0)`;
+  });
+
+  return (
+    <div
+      className="relative w-full overflow-hidden py-2"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div
+        ref={trackRef}
+        className="flex gap-5 px-2 w-max will-change-transform"
+      >
+        {displayList.map((student, idx) => (
+          <AlumniCard
+            key={`${student.id}-${reverse ? "rev" : "fwd"}-${idx}`}
+            student={student}
+            onSelect={onSelect}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export const StudentsShowcaseSection = ({
   title,
   subtitle,
-  tag = "Placement & Alumni Network",
+  tag = "Alumni Success Ecosystem",
   type = "all"
 }: StudentsShowcaseSectionProps) => {
-  const [activeTab, setActiveTab] = useState<DomainCategory>("all");
-  const [showAll, setShowAll] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<StudentItem | null>(null);
   const [localStudents, setLocalStudents] = useState<StudentItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     try {
@@ -81,179 +206,180 @@ export const StudentsShowcaseSection = ({
     return baseDefaultStudents;
   }, [localStudents]);
 
-  // Filter students based on active domain tab
-  const filteredStudents = useMemo(() => {
-    if (activeTab === "all") return allStudents;
-    if (activeTab === "design") {
-      return allStudents.filter(s => s.role.toLowerCase().includes("design"));
-    }
-    if (activeTab === "development") {
-      return allStudents.filter(s => s.role.toLowerCase().includes("web") || s.role.toLowerCase().includes("dev"));
-    }
-    if (activeTab === "marketing") {
-      return allStudents.filter(s => s.role.toLowerCase().includes("marketing"));
-    }
-    return allStudents;
-  }, [allStudents, activeTab]);
+  // Filtered list if user searches
+  const filteredList = useMemo(() => {
+    if (!searchQuery.trim()) return allStudents;
+    const q = searchQuery.toLowerCase().trim();
+    return allStudents.filter(s => 
+      s.name.toLowerCase().includes(q) || 
+      s.role.toLowerCase().includes(q) || 
+      (s.company && s.company.toLowerCase().includes(q))
+    );
+  }, [allStudents, searchQuery]);
 
-  // Initial display limit
-  const INITIAL_COUNT = 8;
-  const displayedStudents = showAll ? filteredStudents : filteredStudents.slice(0, INITIAL_COUNT);
+  // Split into 2 dynamic staggered stream rows
+  const row1 = useMemo(() => filteredList.slice(0, Math.ceil(filteredList.length / 2)), [filteredList]);
+  const row2 = useMemo(() => filteredList.slice(Math.ceil(filteredList.length / 2)), [filteredList]);
 
   return (
-    <section className="py-24 bg-gradient-to-b from-white via-slate-50/60 to-white relative overflow-hidden border-t border-slate-200/80">
-      {/* Background Soft Glows & Ambient Tech Grid */}
+    <section className="py-24 bg-gradient-to-b from-white via-slate-50/70 to-white relative overflow-hidden border-t border-slate-200/80">
+      {/* Background Ambience & Fine Radial Grid */}
       <div 
-        className="absolute inset-0 opacity-[0.025] pointer-events-none"
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
           backgroundImage: "radial-gradient(#0d1635 1.5px, transparent 1.5px)",
           backgroundSize: "32px 32px"
         }}
       />
-      <div className="absolute top-1/4 left-1/4 w-[600px] h-[300px] bg-[#1B2A6B]/5 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 w-[500px] h-[250px] bg-[#C9A227]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-[700px] h-[350px] bg-gradient-to-r from-[#1B2A6B]/6 via-[#C9A227]/6 to-[#1B2A6B]/6 rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="container mx-auto px-4 sm:px-6 max-w-7xl relative z-10">
+      <div className="container mx-auto px-4 max-w-7xl relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
           {tag && (
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#1B2A6B]/15 bg-[#1B2A6B]/5 text-[#1B2A6B] text-xs font-bold uppercase tracking-wider mb-4 shadow-xs">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#1B2A6B]/15 bg-[#1B2A6B]/5 text-[#1B2A6B] text-xs font-extrabold uppercase tracking-widest mb-4 shadow-xs">
               <Sparkles size={14} className="text-[#C9A227] animate-pulse" />
               <span>{tag}</span>
             </div>
           )}
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0d1635] tracking-tight leading-tight mb-4 font-sora">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0d1635] tracking-tight leading-[1.15] mb-4 font-sora">
             {title ? (
               title
             ) : (
               <>
-                Meet Our <span className="text-[#C9A227]">Graduates</span> & Alumni
+                Where Ambition Meets <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1B2A6B] via-[#2E45A3] to-[#C9A227]">Real Success</span>
               </>
             )}
           </h2>
 
-          <p className="text-sm md:text-base text-slate-600 font-medium font-inter leading-relaxed max-w-2xl mx-auto">
-            {subtitle || "Celebrating our high-achieving students across design, software development, and digital marketing who built live projects and joined top industry teams."}
+          <p className="text-sm md:text-base text-slate-600 font-medium font-inter leading-relaxed max-w-2xl mx-auto mb-6">
+            {subtitle || "Celebrating 5,000+ passionate learners who built production projects, mastered top industry tools, and stepped into rewarding roles across leading organizations."}
           </p>
+
+          {/* Quick Highlight Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4">
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-xs text-xs font-bold text-slate-700">
+              <Zap size={13} className="text-amber-500 fill-amber-500" />
+              <span>44+ Featured Graduates</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-xs text-xs font-bold text-slate-700">
+              <Building2 size={13} className="text-[#1B2A6B]" />
+              <span>250+ Hiring Partners</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-xs text-xs font-bold text-slate-700">
+              <CheckCircle2 size={13} className="text-emerald-500" />
+              <span>100% Practical Exposure</span>
+            </div>
+          </div>
         </div>
 
-        {/* Domain Filter Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-12">
-          {categories.map((cat) => {
-            const Icon = cat.icon;
-            const isActive = activeTab === cat.id;
-            const count = cat.id === "all" 
-              ? allStudents.length 
-              : cat.id === "design" 
-                ? allStudents.filter(s => s.role.toLowerCase().includes("design")).length 
-                : cat.id === "development" 
-                  ? allStudents.filter(s => s.role.toLowerCase().includes("web") || s.role.toLowerCase().includes("dev")).length 
-                  : allStudents.filter(s => s.role.toLowerCase().includes("marketing")).length;
+        {/* Dual-Row Opposite Drifting Stream Showcase */}
+        <div className="flex flex-col gap-4 my-6">
+          <MarqueeRow 
+            students={row1} 
+            speed={32} 
+            reverse={false} 
+            onSelect={setSelectedStudent} 
+          />
+          <MarqueeRow 
+            students={row2} 
+            speed={28} 
+            reverse={true} 
+            onSelect={setSelectedStudent} 
+          />
+        </div>
 
-            return (
+        {/* Section Hint Footer */}
+        <div className="mt-8 text-center text-xs font-medium text-slate-400">
+          💡 Click on any graduate card to view their profile & career journey.
+        </div>
+      </div>
+
+      {/* Interactive Student Career Spotlight Modal */}
+      <AnimatePresence>
+        {selectedStudent && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedStudent(null)}
+              className="absolute inset-0 bg-[#0d1635]/60 backdrop-blur-sm"
+            />
+
+            {/* Modal Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 20 }}
+              transition={{ type: "spring", stiffness: 350, damping: 25 }}
+              className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-10 p-6 md:p-8"
+            >
+              {/* Close Button */}
               <button
-                key={cat.id}
-                onClick={() => {
-                  setActiveTab(cat.id);
-                  setShowAll(false);
-                }}
-                className={`inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer ${
-                  isActive
-                    ? "bg-[#1B2A6B] text-white shadow-md shadow-[#1B2A6B]/20 scale-102"
-                    : "bg-white text-slate-600 hover:text-[#1B2A6B] hover:bg-slate-50 border border-slate-200/80 shadow-xs"
-                }`}
+                onClick={() => setSelectedStudent(null)}
+                className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer"
+                aria-label="Close modal"
               >
-                <Icon size={15} className={isActive ? "text-[#C9A227]" : "text-slate-400"} />
-                <span>{cat.label}</span>
-                <span className={`text-[11px] px-2 py-0.5 rounded-full font-extrabold ${
-                  isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
-                }`}>
-                  {count}
-                </span>
+                <X size={18} />
               </button>
-            );
-          })}
-        </div>
 
-        {/* Modern Bento / Card Grid */}
-        <motion.div 
-          layout
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-        >
-          <AnimatePresence>
-            {displayedStudents.map((student, idx) => (
-              <motion.div
-                layout
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.35, delay: idx * 0.04 }}
-                key={`${student.id}-${student.name}`}
-                className="bg-white rounded-2xl border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(27,42,107,0.12)] hover:border-[#1B2A6B]/30 hover:-translate-y-1.5 transition-all duration-300 overflow-hidden flex flex-col p-3.5 group/card cursor-pointer"
-              >
-                {/* Framed Photo Container */}
-                <div className="w-full aspect-[4/4.3] relative rounded-xl overflow-hidden bg-slate-100 shadow-inner">
-                  {/* Verified Placed Tag */}
-                  <div className="absolute top-2.5 right-2.5 z-10 px-2 py-0.5 rounded-md bg-white/95 backdrop-blur-md text-[10px] font-extrabold text-[#1B2A6B] shadow-xs border border-slate-200/60 flex items-center gap-1">
-                    <CheckCircle2 size={10} className="text-emerald-500" />
-                    <span>Placed</span>
-                  </div>
-
+              <div className="flex flex-col items-center text-center">
+                {/* Large Avatar */}
+                <div className="relative w-28 h-28 rounded-2xl overflow-hidden shadow-lg border-2 border-white ring-4 ring-[#1B2A6B]/10 mb-4 bg-slate-100">
                   <img
-                    src={student.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`}
-                    alt={student.name}
-                    className="w-full h-full object-cover object-top group-hover/card:scale-106 transition-transform duration-500"
-                    loading="lazy"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      const avatarFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`;
-                      if (target.src !== avatarFallback) {
-                        target.src = avatarFallback;
-                      }
-                    }}
+                    src={selectedStudent.image}
+                    alt={selectedStudent.name}
+                    className="w-full h-full object-cover object-top"
                   />
-                  {/* Subtle hover gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d1635]/20 via-transparent to-transparent pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md bg-emerald-500 text-white text-[9px] font-black">
+                    PLACED
+                  </div>
                 </div>
 
-                {/* Card Body */}
-                <div className="pt-3.5 pb-1 px-1 flex flex-col items-center text-center gap-1.5 grow justify-between">
-                  <div className="w-full flex flex-col items-center">
-                    <h3 className="font-extrabold text-base text-[#0d1635] tracking-tight group-hover/card:text-[#1B2A6B] transition-colors truncate max-w-full">
-                      {student.name}
-                    </h3>
+                {/* Name & Role */}
+                <h3 className="text-2xl font-black text-[#0d1635] tracking-tight mb-1">
+                  {selectedStudent.name}
+                </h3>
+                <span className="px-3 py-1 rounded-full bg-[#1B2A6B]/8 text-[#1B2A6B] text-xs font-bold mb-4">
+                  {selectedStudent.role}
+                </span>
 
-                    {/* Role Tag */}
-                    <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-[#1B2A6B]/6 text-[#1B2A6B] text-[11px] font-bold tracking-tight truncate max-w-full">
-                      {student.role}
+                {/* Company & Details Block */}
+                <div className="w-full bg-slate-50 rounded-2xl p-4 border border-slate-200/80 mb-6 flex flex-col gap-3 text-left">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-slate-500">Placement Partner:</span>
+                    <span className="text-xs font-extrabold text-[#0d1635] flex items-center gap-1.5">
+                      <Building2 size={13} className="text-[#1B2A6B]" />
+                      {selectedStudent.company || "Blueboxx Partner"}
                     </span>
                   </div>
-
-                  {/* Company Tag */}
-                  <div className="w-full pt-2.5 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[11px] font-medium text-slate-500 mt-1">
-                    <Building2 size={12} className="shrink-0 text-slate-400" />
-                    <span className="truncate">{student.company || "Blueboxx Partner"}</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-slate-500">Program Track:</span>
+                    <span className="text-xs font-bold text-slate-700">Live Client Training</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-slate-500">Alumni Status:</span>
+                    <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                      <CheckCircle2 size={13} /> Verified Graduate
+                    </span>
                   </div>
                 </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
 
-        {/* Expand / View More Button */}
-        {filteredStudents.length > INITIAL_COUNT && (
-          <div className="mt-12 text-center">
-            <button
-              onClick={() => setShowAll(prev => !prev)}
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold text-sm transition-all duration-200 border-2 border-[#1B2A6B] text-[#1B2A6B] hover:bg-[#1B2A6B] hover:text-white cursor-pointer shadow-sm active:scale-98"
-            >
-              <span>{showAll ? "Show Less" : `View All ${filteredStudents.length} Graduates`}</span>
-              {showAll ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </button>
+                {/* Action Button */}
+                <button
+                  onClick={() => setSelectedStudent(null)}
+                  className="w-full py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-[#1B2A6B] to-[#2E45A3] text-white shadow-md hover:shadow-lg transition-all active:scale-98 cursor-pointer"
+                >
+                  Explore More Alumni
+                </button>
+              </div>
+            </motion.div>
           </div>
         )}
-      </div>
+      </AnimatePresence>
     </section>
   );
 };
