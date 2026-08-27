@@ -1,8 +1,7 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { 
-  Sparkles, CheckCircle2, Building2, Briefcase, 
-  ArrowUpRight, X, GraduationCap, Award, ExternalLink, Zap,
-  Search
+  Sparkles, CheckCircle2, Building2,
+  ArrowUpRight, X, Zap
 } from "lucide-react";
 import { motion, AnimatePresence, useAnimationFrame } from "framer-motion";
 import { defaultStudents, StudentShowcaseItem } from "../data/studentsData";
@@ -34,12 +33,12 @@ const AlumniCard = ({
   return (
     <div
       onClick={() => onSelect(student)}
-      className="group relative w-[280px] sm:w-[310px] shrink-0 bg-white/90 backdrop-blur-md rounded-2xl border border-slate-200/90 p-3.5 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.15)] hover:border-[#1B2A6B]/40 hover:-translate-y-2 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col gap-3 select-none"
+      className="group relative w-[270px] sm:w-[295px] md:w-[310px] shrink-0 bg-white/90 backdrop-blur-md rounded-2xl border border-slate-200/90 p-3.5 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_-10px_rgba(27,42,107,0.15)] hover:border-[#1B2A6B]/40 hover:-translate-y-2 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col gap-3 select-none"
     >
       {/* Top Ambient Highlight Gradient */}
       <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-[#1B2A6B]/40 to-[#C9A227]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Top Row: Photo + Placement Badge */}
+      {/* Top Row: Photo Container */}
       <div className="relative w-full aspect-[4/3.8] rounded-xl overflow-hidden bg-slate-100 shadow-inner">
         <img
           src={student.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`}
@@ -58,18 +57,12 @@ const AlumniCard = ({
         {/* Gradient Scrim for crisp text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0d1635]/70 via-[#0d1635]/10 to-transparent pointer-events-none" />
 
-        {/* Floating Top-Left Status Pill */}
-        <div className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full bg-white/95 backdrop-blur-md text-[10px] font-bold text-[#1B2A6B] shadow-sm border border-slate-200/80 flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Verified Alumni</span>
-        </div>
-
         {/* Floating Quick Action Icon on Hover */}
         <div className="absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full bg-[#1B2A6B] text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center shadow-md translate-y-1 group-hover:translate-y-0">
           <ArrowUpRight size={14} />
         </div>
 
-        {/* Overlay Student Name & Role right on image */}
+        {/* Overlay Student Name & Role directly on image */}
         <div className="absolute bottom-2.5 inset-x-3 z-10 text-white">
           <h3 className="font-extrabold text-base tracking-tight leading-snug drop-shadow-sm truncate">
             {student.name}
@@ -80,7 +73,7 @@ const AlumniCard = ({
         </div>
       </div>
 
-      {/* Bottom Footer: Hiring Company Tag + Certified Pill */}
+      {/* Bottom Footer: Hiring Company Tag + Placed Badge */}
       <div className="flex items-center justify-between pt-1 text-xs">
         <div className="flex items-center gap-1.5 text-slate-600 font-semibold min-w-0 flex-1">
           <Building2 size={13} className="text-[#1B2A6B] shrink-0" />
@@ -95,64 +88,6 @@ const AlumniCard = ({
   );
 };
 
-// Continuous Marquee Row with Frame Loop
-const MarqueeRow = ({
-  students,
-  speed = 35,
-  reverse = false,
-  onSelect,
-}: {
-  students: StudentItem[];
-  speed?: number;
-  reverse?: boolean;
-  onSelect: (student: StudentItem) => void;
-}) => {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const xRef = useRef(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  // Duplicate for seamless infinite loop
-  const displayList = useMemo(() => {
-    return [...students, ...students];
-  }, [students]);
-
-  useAnimationFrame((_, delta) => {
-    if (isPaused || !trackRef.current || displayList.length === 0) return;
-
-    const dir = reverse ? 1 : -1;
-    xRef.current += (dir * speed * delta) / 1000;
-
-    const halfWidth = trackRef.current.scrollWidth / 2;
-    if (halfWidth > 0) {
-      if (xRef.current <= -halfWidth) xRef.current = 0;
-      if (xRef.current >= 0 && reverse) xRef.current = -halfWidth;
-    }
-
-    trackRef.current.style.transform = `translate3d(${xRef.current}px, 0, 0)`;
-  });
-
-  return (
-    <div
-      className="relative w-full overflow-hidden py-2"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      <div
-        ref={trackRef}
-        className="flex gap-5 px-2 w-max will-change-transform"
-      >
-        {displayList.map((student, idx) => (
-          <AlumniCard
-            key={`${student.id}-${reverse ? "rev" : "fwd"}-${idx}`}
-            student={student}
-            onSelect={onSelect}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
 export const StudentsShowcaseSection = ({
   title,
   subtitle,
@@ -161,7 +96,10 @@ export const StudentsShowcaseSection = ({
 }: StudentsShowcaseSectionProps) => {
   const [selectedStudent, setSelectedStudent] = useState<StudentItem | null>(null);
   const [localStudents, setLocalStudents] = useState<StudentItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [isPaused, setIsPaused] = useState(false);
+
+  const trackRef = useRef<HTMLDivElement>(null);
+  const xRef = useRef(0);
 
   useEffect(() => {
     try {
@@ -206,20 +144,26 @@ export const StudentsShowcaseSection = ({
     return baseDefaultStudents;
   }, [localStudents]);
 
-  // Filtered list if user searches
-  const filteredList = useMemo(() => {
-    if (!searchQuery.trim()) return allStudents;
-    const q = searchQuery.toLowerCase().trim();
-    return allStudents.filter(s => 
-      s.name.toLowerCase().includes(q) || 
-      s.role.toLowerCase().includes(q) || 
-      (s.company && s.company.toLowerCase().includes(q))
-    );
-  }, [allStudents, searchQuery]);
+  // Duplicate for seamless infinite loop
+  const displayList = useMemo(() => {
+    if (!allStudents || allStudents.length === 0) return [];
+    return [...allStudents, ...allStudents];
+  }, [allStudents]);
 
-  // Split into 2 dynamic staggered stream rows
-  const row1 = useMemo(() => filteredList.slice(0, Math.ceil(filteredList.length / 2)), [filteredList]);
-  const row2 = useMemo(() => filteredList.slice(Math.ceil(filteredList.length / 2)), [filteredList]);
+  const speed = 36;
+
+  useAnimationFrame((_, delta) => {
+    if (isPaused || !trackRef.current || displayList.length === 0) return;
+
+    xRef.current -= (speed * delta) / 1000;
+
+    const halfWidth = trackRef.current.scrollWidth / 2;
+    if (halfWidth > 0 && Math.abs(xRef.current) >= halfWidth) {
+      xRef.current = 0;
+    }
+
+    trackRef.current.style.transform = `translate3d(${xRef.current}px, 0, 0)`;
+  });
 
   return (
     <section className="py-24 bg-gradient-to-b from-white via-slate-50/70 to-white relative overflow-hidden border-t border-slate-200/80">
@@ -261,7 +205,7 @@ export const StudentsShowcaseSection = ({
           <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4">
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-xs text-xs font-bold text-slate-700">
               <Zap size={13} className="text-amber-500 fill-amber-500" />
-              <span>44+ Featured Graduates</span>
+              <span>44+ Placed Learners</span>
             </div>
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-xs text-xs font-bold text-slate-700">
               <Building2 size={13} className="text-[#1B2A6B]" />
@@ -274,25 +218,29 @@ export const StudentsShowcaseSection = ({
           </div>
         </div>
 
-        {/* Dual-Row Opposite Drifting Stream Showcase */}
-        <div className="flex flex-col gap-4 my-6">
-          <MarqueeRow 
-            students={row1} 
-            speed={32} 
-            reverse={false} 
-            onSelect={setSelectedStudent} 
-          />
-          <MarqueeRow 
-            students={row2} 
-            speed={28} 
-            reverse={true} 
-            onSelect={setSelectedStudent} 
-          />
+        {/* Single-Row Continuous Floating Marquee Stream */}
+        <div 
+          className="relative w-full overflow-hidden py-3 my-4"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <div
+            ref={trackRef}
+            className="flex gap-6 px-2 w-max will-change-transform"
+          >
+            {displayList.map((student, idx) => (
+              <AlumniCard
+                key={`${student.id}-${idx}`}
+                student={student}
+                onSelect={setSelectedStudent}
+              />
+            ))}
+          </div>
         </div>
 
-        {/* Section Hint Footer */}
-        <div className="mt-8 text-center text-xs font-medium text-slate-400">
-          💡 Click on any graduate card to view their profile & career journey.
+        {/* Subtle Bottom Interaction Hint */}
+        <div className="mt-6 text-center text-xs font-medium text-slate-400">
+          💡 Click on any card to view their complete career placement profile.
         </div>
       </div>
 
@@ -361,9 +309,9 @@ export const StudentsShowcaseSection = ({
                     <span className="text-xs font-bold text-slate-700">Live Client Training</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-slate-500">Alumni Status:</span>
+                    <span className="text-xs font-medium text-slate-500">Placement Status:</span>
                     <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
-                      <CheckCircle2 size={13} /> Verified Graduate
+                      <CheckCircle2 size={13} /> Successfully Placed
                     </span>
                   </div>
                 </div>
@@ -373,7 +321,7 @@ export const StudentsShowcaseSection = ({
                   onClick={() => setSelectedStudent(null)}
                   className="w-full py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-[#1B2A6B] to-[#2E45A3] text-white shadow-md hover:shadow-lg transition-all active:scale-98 cursor-pointer"
                 >
-                  Explore More Alumni
+                  Close Profile
                 </button>
               </div>
             </motion.div>
