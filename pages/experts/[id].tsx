@@ -3,12 +3,14 @@ import { useRouter } from "next/router";
 import { MainLayout } from "../../src/layout/MainLayout";
 import { Button } from "../../src/components/ui/Button";
 import { Card, CardContent } from "../../src/components/ui/Card";
-import { Star, Clock, Video, FileText, ChevronRight, ChevronLeft, MapPin, CheckCircle2, Users, Share2, MessageSquare, Loader2 } from "lucide-react";
+import { Star, Clock, Video, FileText, ChevronRight, ChevronLeft, MapPin, CheckCircle2, Users, Share2, MessageSquare, Loader2, PlusCircle, X, Send } from "lucide-react";
 import { useAuth } from "../../src/context/AuthContext";
 import { getActiveToken } from "../../src/lib/authUtils";
 import api from "../../src/lib/axios";
 import { SEO } from "../../src/components/seo/SEO";
 import toast from "react-hot-toast";
+import { ExpertService } from "../../src/lib/api/ExpertService";
+import { getImageUrl } from "../../src/lib/imageUtils";
 
 export default function ExpertProfilePage() {
   const router = useRouter();
@@ -22,6 +24,15 @@ export default function ExpertProfilePage() {
   const [expertRaw, setExpertRaw] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+
+  // Real-time Dynamic Reviews State
+  const [reviewsList, setReviewsList] = useState<any[]>([]);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewSessionTitle, setReviewSessionTitle] = useState("1:1 Mentorship Session");
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && id) {
@@ -43,47 +54,140 @@ export default function ExpertProfilePage() {
   }, [id]);
 
   useEffect(() => {
-    if (id) {
-      const fetchExpert = async () => {
-        try {
-          setIsLoading(true);
-          setLoadError(false);
-          const res = await api.get(`/public/experts/${id}`);
-          if (res.data.success) {
-            setExpertRaw(res.data.data);
-          } else {
-            setLoadError(true);
-          }
-        } catch (error) {
-          console.error("Failed to fetch expert details", error);
+    if (!router.isReady || !id) return;
+    const rawId = Array.isArray(id) ? id[0] : id;
+    if (!rawId || rawId === "undefined" || rawId === "[id]") return;
+    const cleanId = String(rawId).replace(/\/$/, '').trim();
+    if (!cleanId || cleanId === "undefined") return;
+
+    const fetchExpert = async () => {
+      try {
+        setIsLoading(true);
+        setLoadError(false);
+
+        const expertData = await ExpertService.fetchExpertById(cleanId);
+        if (expertData) {
+          setExpertRaw(expertData);
+        } else {
           setLoadError(true);
-        } finally {
-          setIsLoading(false);
         }
-      };
+      } catch (error) {
+        console.error("Failed to fetch expert details", error);
+        setLoadError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchExpert();
+
+    const handleSync = () => {
       fetchExpert();
+    };
+    window.addEventListener("bb_experts_updated", handleSync);
+    window.addEventListener("bb_expert_avatar_updated", handleSync);
+    window.addEventListener("storage", handleSync);
+    return () => {
+      window.removeEventListener("bb_experts_updated", handleSync);
+      window.removeEventListener("bb_expert_avatar_updated", handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
+  }, [router.isReady, id]);
+
+  // Load Real Reviews dynamically from Backend Database API
+  useEffect(() => {
+    if (!id) return;
+    const cleanId = String(Array.isArray(id) ? id[0] : id).replace(/\/$/, '').trim();
+    if (!cleanId || cleanId === "undefined") return;
+
+    const loadReviews = async () => {
+      try {
+        const res = await api.get(`/public/experts/${cleanId}/reviews`);
+        if (res.data?.success && Array.isArray(res.data.data)) {
+          setReviewsList(res.data.data);
+          return;
+        }
+      } catch (err) {
+        // Fallback to reviews array embedded in expert object if endpoint is single show
+        if (expertRaw?.reviews_list && Array.isArray(expertRaw.reviews_list)) {
+          setReviewsList(expertRaw.reviews_list);
+          return;
+        }
+      }
+
+      if (expertRaw?.reviews_list && Array.isArray(expertRaw.reviews_list)) {
+        setReviewsList(expertRaw.reviews_list);
+      }
+    };
+
+    loadReviews();
+  }, [id, expertRaw]);
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isAuthenticated) {
+      toast.error("Please log in to submit a review.");
+      router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
+      return;
     }
-  }, [id]);
+
+    if (!reviewComment.trim()) {
+      toast.error("Please write a review comment.");
+      return;
+    }
+
+    const cleanId = String(Array.isArray(id) ? id[0] : id).replace(/\/$/, '').trim();
+    setIsSubmittingReview(true);
+
+    try {
+      const res = await api.post(`/public/experts/${cleanId}/reviews`, {
+        rating: reviewRating,
+        review_text: reviewComment.trim(),
+        session_title: reviewSessionTitle,
+      });
+
+      if (res.data?.data) {
+        setReviewsList(prev => [res.data.data, ...prev]);
+      } else {
+        // Refresh reviews list from server
+        const refreshed = await api.get(`/public/experts/${cleanId}/reviews`);
+        if (refreshed.data?.success && Array.isArray(refreshed.data.data)) {
+          setReviewsList(refreshed.data.data);
+        }
+      }
+
+      toast.success(res.data?.message || "Thank you! Your review has been saved successfully.");
+      setReviewComment("");
+      setReviewRating(5);
+      setIsReviewModalOpen(false);
+    } catch (err: any) {
+      console.error("Failed to submit review:", err);
+      toast.error(err.response?.data?.message || "Failed to submit review. Please try again.");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
 
   const expert = expertRaw ? {
     id: expertRaw.id,
-    name: expertRaw.name,
-    role: expertRaw.designation,
-    company: expertRaw.company,
-    location: "Online",
-    rating: Number(expertRaw.average_rating).toFixed(1) || "0.0",
-    reviews: expertRaw.total_reviews || 0,
-    sessionsCount: 0,
-    about: expertRaw.bio || "No bio available.",
-    expertise: expertRaw.specialization ? expertRaw.specialization.split(',').map((s: string) => s.trim()) : [],
-    avatar: expertRaw.avatar || `https://ui-avatars.com/api/?name=${expertRaw.name.replace(' ', '+')}&background=1B2A6B&color=fff`,
+    name: expertRaw.name || (expertRaw.user ? `${expertRaw.user.first_name || ''} ${expertRaw.user.last_name || ''}`.trim() : '') || "Expert",
+    role: expertRaw.designation || "Expert",
+    company: expertRaw.company || "Independent",
+    location: expertRaw.location || "Online",
+    rating: Number(expertRaw.average_rating || expertRaw.rating || 5.0).toFixed(1),
+    reviews: expertRaw.total_reviews || expertRaw.reviews_count || 0,
+    sessionsCount: expertRaw.sessions_count || expertRaw.total_sessions || 0,
+    about: expertRaw.bio || expertRaw.about || expertRaw.description || (expertRaw.specialization ? `Specialist in ${expertRaw.specialization}.` : "Industry expert available for 1:1 mentorship."),
+    expertise: expertRaw.specialization 
+      ? (Array.isArray(expertRaw.specialization) ? expertRaw.specialization : String(expertRaw.specialization).split(',').map((s: string) => s.trim())) 
+      : ["Career Mentorship"],
+    avatar: getImageUrl(expertRaw.avatar || expertRaw.profile_photo),
     sessions: expertRaw.sessions || []
   } : {
     id: "",
-    name: "Expert Mentor",
+    name: "Expert",
     role: "Expert",
-    company: "BlueBoxx",
-    location: "India",
+    company: "Independent",
+    location: "Online",
     rating: "5.0",
     reviews: 0,
     sessionsCount: 0,
@@ -93,6 +197,7 @@ export default function ExpertProfilePage() {
     sessions: []
   };
 
+  const baseRate = Number(expertRaw?.hourly_rate) || 500;
   const services = expert.sessions && expert.sessions.length > 0 
     ? expert.sessions.map((s: any) => ({
         id: s.id,
@@ -103,9 +208,9 @@ export default function ExpertProfilePage() {
         description: s.description || ""
       }))
     : [
-        { id: 1, title: "1:1 Career Guidance", duration: "30 mins", price: "₹999", icon: Video, description: "Get personalized advice on your career path, tech stack choices, or general mentorship." },
-        { id: 2, title: "Mock Technical Interview", duration: "60 mins", price: "₹1,999", icon: MessageSquare, description: "A complete DSA or Frontend mock interview followed by detailed feedback." },
-        { id: 3, title: "Resume & Portfolio Review", duration: "45 mins", price: "₹1,499", icon: FileText, description: "I'll review your resume line-by-line and help you optimize it for ATS and recruiters." }
+        { id: 1, title: "1:1 Career Guidance", duration: "30 mins", price: `₹${Math.round(baseRate * 0.6)}`, icon: Video, description: "Get personalized advice on your career path, tech stack choices, or general mentorship." },
+        { id: 2, title: "Mock Technical Interview", duration: "60 mins", price: `₹${baseRate}`, icon: MessageSquare, description: "A complete DSA, System Design, or domain mock interview followed by detailed feedback." },
+        { id: 3, title: "Resume & Portfolio Review", duration: "45 mins", price: `₹${Math.round(baseRate * 0.8)}`, icon: FileText, description: "I'll review your resume line-by-line and help you optimize it for ATS and recruiters." }
       ];
 
   const [currentWeekOffset, setCurrentWeekOffset] = useState<number>(0);
@@ -191,7 +296,9 @@ export default function ExpertProfilePage() {
                       
                       <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-500">
                         <span className="flex items-center gap-1.5"><MapPin size={14} className="text-slate-400"/> {expert.location}</span>
-                        <span className="flex items-center gap-1.5 text-amber-500 font-bold"><Star size={14} className="fill-amber-500"/> {expert.rating} ({expert.reviews} Reviews)</span>
+                        <span className="flex items-center gap-1.5 text-amber-500 font-bold">
+                          <Star size={14} className="fill-amber-500"/> {reviewsList.length > 0 ? (reviewsList.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / reviewsList.length).toFixed(1) : expert.rating} ({reviewsList.length > 0 ? reviewsList.length : expert.reviews} Reviews)
+                        </span>
                         <span className="flex items-center gap-1.5"><Users size={14} className="text-slate-400"/> {expert.sessionsCount} Sessions</span>
                       </div>
                     </div>
@@ -204,7 +311,7 @@ export default function ExpertProfilePage() {
                           const btn = document.getElementById('share-btn');
                           if (btn) {
                             btn.innerHTML = 'Copied!';
-                            setTimeout(() => btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>', 2000);
+                            setTimeout(() => btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share2"><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>', 2000);
                           }
                         }}
                         className="w-auto px-3 h-10 p-0 rounded-xl border-slate-200 text-slate-400 hover:text-[#1B2A6B] shrink-0 font-bold text-xs"
@@ -232,40 +339,96 @@ export default function ExpertProfilePage() {
                 </CardContent>
               </Card>
 
-              {/* Reviews Section */}
+              {/* Dynamic Real-time Reviews Section */}
               <Card className="bg-white border border-slate-100 shadow-sm rounded-3xl overflow-hidden">
                 <CardContent className="p-8">
-                  <h2 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-2">
-                    <Star size={24} className="text-[#C9A227] fill-[#C9A227]" /> 
-                    {expert.rating} Rating <span className="text-sm font-semibold text-slate-500 ml-1">({expert.reviews} Reviews)</span>
-                  </h2>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
+                    <div>
+                      <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
+                        <Star size={24} className="text-[#C9A227] fill-[#C9A227]" /> 
+                        {reviewsList.length > 0 ? (reviewsList.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / reviewsList.length).toFixed(1) : expert.rating} Rating 
+                        <span className="text-sm font-semibold text-slate-500 ml-1">
+                          ({reviewsList.length > 0 ? reviewsList.length : expert.reviews} {reviewsList.length === 1 ? 'Review' : 'Reviews'})
+                        </span>
+                      </h2>
+                      <p className="text-xs font-semibold text-slate-400 mt-1">Verified reviews and feedback from students</p>
+                    </div>
 
-                  <div className="space-y-6">
-                    {[1, 2].map((review) => (
-                      <div key={review} className="pb-6 border-b border-slate-100 last:border-0 last:pb-0">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-3">
-                            <img src={`https://ui-avatars.com/api/?name=User+${review}&background=random`} alt="User" className="w-10 h-10 rounded-full" />
-                            <div>
-                              <div className="text-sm font-black text-slate-800">Student {review}</div>
-                              <div className="text-[10px] font-bold text-slate-400">Oct {20 - review}, 2026 • Mock Technical Interview</div>
-                            </div>
-                          </div>
-                          <div className="flex text-amber-400">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <Star key={star} size={12} className="fill-amber-400" />
-                            ))}
-                          </div>
-                        </div>
-                        <p className="text-sm text-slate-600 font-medium">
-                          "Ankit was incredibly helpful! He pointed out exactly where my system design was failing and gave me actionable steps to improve. Highly recommend booking a session with him if you have an upcoming FAANG interview."
-                        </p>
-                      </div>
-                    ))}
+                    <Button
+                      onClick={() => setIsReviewModalOpen(true)}
+                      className="bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-sm shrink-0 flex items-center gap-2 cursor-pointer"
+                    >
+                      <PlusCircle size={15} /> Write a Review
+                    </Button>
                   </div>
-                  <Button variant="outline" className="w-full mt-6 border-slate-200 text-[#1B2A6B] font-extrabold h-10 rounded-xl text-xs uppercase tracking-wider">
-                    View All Reviews
-                  </Button>
+
+                  {reviewsList.length === 0 ? (
+                    <div className="py-12 px-4 text-center border-2 border-dashed border-slate-100 rounded-2xl bg-slate-50/50">
+                      <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center mx-auto mb-3">
+                        <Star size={22} className="fill-amber-400 text-amber-400" />
+                      </div>
+                      <h3 className="text-base font-bold text-slate-800 mb-1">No reviews yet</h3>
+                      <p className="text-xs font-medium text-slate-500 max-w-sm mx-auto mb-4">
+                        Be the first student to book a session and share your experience with {expert.name}.
+                      </p>
+                      <Button
+                        onClick={() => setIsReviewModalOpen(true)}
+                        variant="outline"
+                        className="border-slate-200 text-[#1B2A6B] hover:bg-white text-xs font-bold rounded-xl"
+                      >
+                        Leave First Review
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      {(showAllReviews ? reviewsList : reviewsList.slice(0, 3)).map((rev: any, idx: number) => {
+                        const studentName = rev.student_name || rev.student?.name || (rev.student ? `${rev.student.first_name || ''} ${rev.student.last_name || ''}`.trim() : '') || 'Verified Student';
+                        const avatar = rev.student_avatar || rev.student?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}&background=random`;
+                        const reviewDate = rev.created_at || 'Recent';
+                        const sessionType = rev.session_title || '1:1 Mentorship Session';
+                        const rating = Number(rev.rating) || 5;
+
+                        return (
+                          <div key={rev.id || idx} className="pb-6 border-b border-slate-100 last:border-0 last:pb-0">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-3">
+                                <img
+                                  src={avatar}
+                                  alt={studentName}
+                                  className="w-10 h-10 rounded-full object-cover border border-slate-100 shadow-xs"
+                                  onError={(e) => {
+                                    (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}&background=random`;
+                                  }}
+                                />
+                                <div>
+                                  <div className="text-sm font-black text-slate-800">{studentName}</div>
+                                  <div className="text-[10px] font-bold text-slate-400">{reviewDate} • {sessionType}</div>
+                                </div>
+                              </div>
+                              <div className="flex text-amber-400">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <Star key={star} size={13} className={star <= rating ? "fill-amber-400 text-amber-400" : "text-slate-200"} />
+                                ))}
+                              </div>
+                            </div>
+                            <p className="text-sm text-slate-600 font-medium leading-relaxed">
+                              "{rev.review_text || rev.comment}"
+                            </p>
+                          </div>
+                        );
+                      })}
+
+                      {reviewsList.length > 3 && (
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowAllReviews(!showAllReviews)}
+                          className="w-full mt-6 border-slate-200 text-[#1B2A6B] font-extrabold h-10 rounded-xl text-xs uppercase tracking-wider cursor-pointer"
+                        >
+                          {showAllReviews ? "Show Less Reviews" : `View All Reviews (${reviewsList.length})`}
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
               </>
@@ -545,6 +708,92 @@ export default function ExpertProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Write a Review Modal */}
+      {isReviewModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 bg-[#0d1635] text-white flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-black">Write a Review</h3>
+                <p className="text-xs text-slate-300">Share your experience with {expert.name}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsReviewModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitReview} className="p-6 space-y-5">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Overall Rating</label>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      type="button"
+                      key={star}
+                      onClick={() => setReviewRating(star)}
+                      className="p-1 text-amber-400 hover:scale-110 transition-transform cursor-pointer"
+                    >
+                      <Star size={28} className={star <= reviewRating ? "fill-amber-400 text-amber-400" : "text-slate-200"} />
+                    </button>
+                  ))}
+                  <span className="ml-2 text-sm font-bold text-slate-700">{reviewRating}.0 / 5.0</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Session Topic / Service</label>
+                <select
+                  value={reviewSessionTitle}
+                  onChange={(e) => setReviewSessionTitle(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-800 outline-none focus:ring-2 focus:ring-[#1B2A6B]"
+                >
+                  <option value="1:1 Career Guidance">1:1 Career Guidance</option>
+                  <option value="Mock Technical Interview">Mock Technical Interview</option>
+                  <option value="Resume & Portfolio Review">Resume & Portfolio Review</option>
+                  <option value="System Design Mentorship">System Design Mentorship</option>
+                  <option value="General Mentorship Call">General Mentorship Call</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Your Feedback & Review *</label>
+                <textarea
+                  rows={4}
+                  required
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                  placeholder="Tell us what you learned, how the expert helped you, and your takeaways..."
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-[#1B2A6B] resize-none"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsReviewModalOpen(false)}
+                  className="flex-1 rounded-xl h-11 border-slate-200 font-bold text-xs cursor-pointer"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmittingReview}
+                  className="flex-1 rounded-xl h-11 bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-bold text-xs gap-2 cursor-pointer"
+                >
+                  {isSubmittingReview ? <Loader2 size={16} className="animate-spin" /> : <Send size={15} />}
+                  Publish Review
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </MainLayout>
     </>
   );

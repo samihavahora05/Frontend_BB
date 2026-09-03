@@ -28,9 +28,9 @@ export const HomePage = () => {
       <WhoAreYouSection />
       <WhyChooseBlueboxxSection />
       <StudentsShowcaseSection />
-      <TestimonialsSection />
       <FAQSection />
       <CTASection />
+      <TestimonialsSection />
     </div>
   );
 };

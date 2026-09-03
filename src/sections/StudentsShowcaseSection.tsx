@@ -90,8 +90,7 @@ export const StudentsShowcaseSection = ({
   const trackRef = useRef<HTMLDivElement>(null);
   const xRef = useRef(0);
 
-  useEffect(() => {
-    setIsMounted(true);
+  const loadShowcaseData = () => {
     try {
       if (typeof window !== "undefined") {
         const raw = localStorage.getItem("blueboxx_students_showcase");
@@ -106,13 +105,29 @@ export const StudentsShowcaseSection = ({
                   name: item.student_name || item.name || "Student",
                   role: item.role || item.designation || "Graphic Design",
                   company: item.company_name || item.company || "",
-                  image: getImageUrl(item.image_url || item.avatar_url || item.image || "")
+                  image: item.image_url || item.avatar_url || item.image || ""
                 }))
             );
+            return;
           }
         }
       }
     } catch (e) {}
+  };
+
+  useEffect(() => {
+    setIsMounted(true);
+    loadShowcaseData();
+
+    // Listen to real-time custom events and storage changes
+    if (typeof window !== "undefined") {
+      window.addEventListener("showcase-updated", loadShowcaseData);
+      window.addEventListener("storage", loadShowcaseData);
+      return () => {
+        window.removeEventListener("showcase-updated", loadShowcaseData);
+        window.removeEventListener("storage", loadShowcaseData);
+      };
+    }
   }, []);
 
   const allStudents: StudentItem[] = useMemo(() => {
@@ -125,14 +140,13 @@ export const StudentsShowcaseSection = ({
       return baseDefaultStudents;
     }
 
-    if (localStudents && localStudents.length >= 40) {
-      return localStudents;
-    }
-
     if (localStudents && localStudents.length > 0) {
-      const customNames = new Set(localStudents.map(s => s.name.toLowerCase().trim()));
-      const remainingDefaults = baseDefaultStudents.filter(s => !customNames.has(s.name.toLowerCase().trim()));
-      return [...localStudents, ...remainingDefaults];
+      if (localStudents.length >= baseDefaultStudents.length) {
+        return localStudents;
+      }
+      const localNames = new Set(localStudents.map(s => s.name.toLowerCase().trim()));
+      const remaining = baseDefaultStudents.filter(s => !localNames.has(s.name.toLowerCase().trim()));
+      return [...localStudents, ...remaining];
     }
 
     return baseDefaultStudents;

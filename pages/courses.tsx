@@ -17,6 +17,7 @@ import Image from 'next/image';
 import useSWR, { mutate } from 'swr';
 import api from '../src/lib/axios';
 import { useAuth } from '../src/context/AuthContext';
+import { AuthNoticeBanner } from '../src/components/common/AuthNoticeBanner';
 import toast from 'react-hot-toast';
 
 // Simple debounce hook for local use
@@ -38,10 +39,49 @@ export default function CoursesPage() {
   const [sortOption, setSortOption] = useState("recommended");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // SWR Fetcher
-  const fetcher = (url: string) => api.get(url).then(res => res.data.data || res.data);
-  const { data: coursesData, isLoading } = useSWR('/public/courses?per_page=50', fetcher, {
-    revalidateOnFocus: false, // Prevents aggressive refetching
+  const getImageUrl = (path: string | null) => {
+    if (!path) return '/logoblue.png';
+    if (path.startsWith('http') || path.startsWith('blob:')) return path;
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in';
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    if (cleanPath.startsWith('storage/')) {
+      return `${backendUrl}/${cleanPath}`;
+    }
+    return `${backendUrl}/storage/${cleanPath}`;
+  };
+
+  const normalizeCourses = (data: any): any[] => {
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.data)) return data.data;
+    if (Array.isArray(data.data?.data)) return data.data.data;
+    if (Array.isArray(data.courses)) return data.courses;
+    if (Array.isArray(data.data?.courses)) return data.data.courses;
+    return [];
+  };
+
+  // SWR Fetcher with resilient fallbacks
+  const fetcher = async (url: string) => {
+    try {
+      const res = await api.get(url);
+      if (res?.data) return res.data;
+    } catch (e) {
+      // ignore
+    }
+    try {
+      const fallback = await api.get('/courses');
+      if (fallback?.data) return fallback.data;
+    } catch (e) {}
+    try {
+      const adminFallback = await api.get('/admin/courses?per_page=50');
+      if (adminFallback?.data) return adminFallback.data;
+    } catch (e) {}
+    return { data: [] };
+  };
+
+  const { data: coursesData, isLoading } = useSWR('/public/courses', fetcher, {
+    revalidateOnFocus: true,
+    revalidateOnMount: true,
   });
 
   const { isAuthenticated } = useAuth();
@@ -89,15 +129,15 @@ export default function CoursesPage() {
 
   const [sidebarFilters, setSidebarFilters] = useState<any>({});
 
-  const courses = coursesData || [];
+  const courses = normalizeCourses(coursesData);
   let sortedCourses = [...courses];
   
   if (debouncedSearchQuery) {
     sortedCourses = sortedCourses.filter(c => {
       const titleMatch = c.title?.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
-      const catName = c.category?.name || c.category;
+      const catName = c.category?.name || c.category_name || c.category;
       const catMatch = typeof catName === 'string' && catName.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
-      const descMatch = (c.short_description || c.shortDesc)?.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
+      const descMatch = (c.short_description || c.shortDesc || c.description)?.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
       return titleMatch || catMatch || descMatch;
     });
   }
@@ -105,31 +145,28 @@ export default function CoursesPage() {
   // Apply Sidebar Filters
   if (sidebarFilters.category) {
     sortedCourses = sortedCourses.filter(c => {
-      const catName = c.category?.name || c.category;
+      const catName = c.category?.name || c.category_name || c.category;
       return typeof catName === 'string' && catName.toLowerCase().includes(sidebarFilters.category.toLowerCase());
     });
   }
   if (sidebarFilters.level) {
     sortedCourses = sortedCourses.filter(c => {
-      const levelName = c.level?.title || c.level;
-      // Also match string fields if API returns level directly
+      const levelName = c.level?.title || c.level?.name || c.level;
       return (typeof levelName === 'string' && levelName.toLowerCase() === sidebarFilters.level.toLowerCase()) || 
              (c.level && String(c.level).toLowerCase() === sidebarFilters.level.toLowerCase());
     });
   }
   if (sidebarFilters.duration) {
-    // Basic duration matching (assuming duration string matching for now)
     sortedCourses = sortedCourses.filter(c => {
        if (!c.duration) return false;
-       // For exact match or simple mapping
        return c.duration.toLowerCase().includes(sidebarFilters.duration.toLowerCase()) ||
               sidebarFilters.duration.toLowerCase().includes(c.duration.toLowerCase());
     });
   }
   
-  if (sortOption === "price-asc") sortedCourses.sort((a, b) => a.price - b.price);
-  if (sortOption === "price-desc") sortedCourses.sort((a, b) => b.price - a.price);
-  if (sortOption === "rating-desc") sortedCourses.sort((a, b) => b.rating - a.rating);
+  if (sortOption === "price-asc") sortedCourses.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
+  if (sortOption === "price-desc") sortedCourses.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
+  if (sortOption === "rating-desc") sortedCourses.sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0));
 
   return (
     <>
@@ -174,6 +211,11 @@ export default function CoursesPage() {
 
         <div className="container mx-auto px-4 max-w-7xl relative z-10">
           
+          <AuthNoticeBanner 
+            title="Login to Enroll in Premium Courses & Masterclasses" 
+            description="Sign in to your account to enroll in live courses, access interactive modules & assignments, get certified, and track your learning progress." 
+          />
+
           <TopSearchBar value={searchQuery} onChange={setSearchQuery} placeholder="Search courses by title, category, or skills..." />
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -222,13 +264,18 @@ export default function CoursesPage() {
                       <Card 
                         key={course.id} 
                         className="overflow-hidden group flex flex-col hover:border-[#1B2A6B]/30 hover:shadow-xl transition-all duration-300 cursor-pointer h-full"
-                        onClick={() => router.push(`/courses/${course.slug}`)}
+                        onClick={() => router.push(`/courses/${course.slug || course.id}`)}
                       >
                         <div className="relative aspect-[16/9] overflow-hidden bg-slate-200 shrink-0">
-                          <Image src={course.thumbnail || "/logoblue.png"} alt={course.title || "Course thumbnail"} fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+                          <img 
+                            src={getImageUrl(course.thumbnail)} 
+                            alt={course.title || "Course thumbnail"} 
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                            onError={(e: any) => { e.currentTarget.src = '/logoblue.png'; }}
+                          />
                           <div className="absolute top-2 left-2 flex flex-wrap gap-1.5 pointer-events-none">
                             <Badge className="bg-white/90 text-slate-900 hover:bg-white border-none shadow-sm backdrop-blur-sm text-[10px] py-0 pointer-events-auto">
-                              {course.category?.name || "Tech"}
+                              {course.category?.name || course.category_name || (typeof course.category === 'string' ? course.category : "Tech")}
                             </Badge>
                             {course.is_popular && (
                               <Badge variant="gold" className="shadow-sm text-[10px] py-0 px-2 pointer-events-auto">Popular</Badge>
@@ -255,17 +302,21 @@ export default function CoursesPage() {
                             {course.title}
                           </h3>
                           
-                          <p className="text-xs text-slate-500 mb-3 line-clamp-2 leading-relaxed">{course.short_description || course.shortDesc}</p>
+                          <p className="text-xs text-slate-500 mb-3 line-clamp-2 leading-relaxed">{course.short_description || course.shortDesc || course.description}</p>
                           
                           <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-slate-600 mb-5 mt-auto">
-                            <div className="flex items-center gap-1"><Clock size={12} className="text-[#1B2A6B]"/> {course.duration}</div>
-                            <div className="flex items-center gap-1"><Star size={12} className="text-[#C9A227] fill-[#C9A227]"/> {course.rating}</div>
+                            <div className="flex items-center gap-1"><Clock size={12} className="text-[#1B2A6B]"/> {course.duration || 'Flexible'}</div>
+                            <div className="flex items-center gap-1"><Star size={12} className="text-[#C9A227] fill-[#C9A227]"/> {course.rating || '4.9'}</div>
                           </div>
 
                           <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
                             <div>
-                              <div className="text-[10px] text-slate-400 font-bold line-through mb-0.5">₹{(course.original_price || course.price * 1.5).toLocaleString()}</div>
-                              <div className="text-lg font-black text-slate-900 leading-none">₹{(course.price || 0).toLocaleString()}</div>
+                              <div className="text-[10px] text-slate-400 font-bold line-through mb-0.5">
+                                ₹{(Number(course.original_price) || (Number(course.discount_price) && Number(course.price) ? Number(course.price) : Number(course.price || 0) * 1.5)).toLocaleString()}
+                              </div>
+                              <div className="text-lg font-black text-slate-900 leading-none">
+                                ₹{(Number(course.discount_price) || Number(course.price) || 0).toLocaleString()}
+                              </div>
                             </div>
                             <button className="h-8 flex items-center justify-center text-xs font-bold bg-[#1B2A6B] hover:bg-[#0d1635] text-white transition-all rounded-lg shadow-md px-4 gap-1.5 border-none cursor-pointer group-hover:bg-[#C9A227] group-hover:text-[#0d1635] group-hover:shadow-lg">
                               Enroll <ArrowRight size={14}/>
@@ -296,12 +347,12 @@ export default function CoursesPage() {
       </div>
       <WhyChooseBlueboxxSection />
       <StudentsShowcaseSection />
-      <TestimonialsSection />
       <PartnersSection 
         titlePrefix="Instructors from " 
         highlightText="Top Companies" 
         subtitle="Learn from instructors at world's top tech and product companies" 
       />
+      <TestimonialsSection />
     </MainLayout>
     </>
   );

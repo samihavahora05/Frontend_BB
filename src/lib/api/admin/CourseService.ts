@@ -26,6 +26,7 @@ export interface Course {
   category: any;
   level: any;
   expert: any;
+  instructor?: any;
 }
 
 export const CourseService = {
@@ -46,9 +47,17 @@ export const CourseService = {
       return res.data;
     });
 
+    const coursesList: Course[] = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.data)
+      ? data.data
+      : Array.isArray(data?.data?.data)
+      ? data.data.data
+      : [];
+
     return {
-      data: (data?.data as Course[]) || [],
-      meta: data?.pagination || {},
+      data: coursesList,
+      meta: data?.pagination || data?.data?.pagination || data?.meta || {},
       isLoading,
       isError: error,
       mutate,

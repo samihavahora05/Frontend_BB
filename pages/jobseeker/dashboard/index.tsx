@@ -1,4 +1,4 @@
-﻿import { JobseekerDashboardLayout } from "../../../src/layout/JobseekerDashboardLayout";
+import { JobseekerDashboardLayout } from "../../../src/layout/JobseekerDashboardLayout";
 import { Target, Eye, Calendar, FileText, CheckCircle, ChevronRight, Briefcase, Zap, Upload, X, MapPin, DollarSign, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
@@ -14,12 +14,25 @@ export default function JobseekerDashboard() {
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
   
   const { data, isLoading } = useSWR("/jobseeker/dashboard", fetcher);
-  const { data: latestJobsRes, isLoading: isJobsLoading } = useSWR("/jobs?per_page=4", fetcher);
+  
+  const jobsFetcher = async () => {
+    try {
+      const res = await api.get("/public/jobs?per_page=4");
+      if (res.data?.data) return res.data.data;
+    } catch {}
+    try {
+      const res = await api.get("/jobs?per_page=4");
+      if (res.data?.data) return res.data.data;
+      if (Array.isArray(res.data)) return res.data;
+    } catch {}
+    return [];
+  };
+  const { data: latestJobsRes, isLoading: isJobsLoading } = useSWR("/public/jobs-recommended", jobsFetcher);
   
   const stats = data?.data?.stats || { jobs_applied: 0, saved_jobs: 0, interviews: 0, offers: 0 };
   const recentApps = data?.data?.recent_applications || [];
   const profileCompletion = data?.data?.profile_completion ?? 0;
-  const recommendedJobs = Array.isArray(latestJobsRes?.data) ? latestJobsRes.data : (Array.isArray(latestJobsRes) ? latestJobsRes : []);
+  const recommendedJobs = Array.isArray(latestJobsRes) ? latestJobsRes : (Array.isArray(latestJobsRes?.data) ? latestJobsRes.data : []);
 
   const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {

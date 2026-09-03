@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../../src/lib/imageUtils";
 import { useState } from "react";
 import { DashboardLayout } from "../../../src/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../src/components/ui/Card";
@@ -51,11 +52,11 @@ export default function MentorSessionsPage() {
   const availableMentors = experts.slice(0, 3).map((e: any) => ({
     id: e.id,
     name: e.name,
-    role: e.expertProfile?.title || "Mentor",
-    expertise: e.expertProfile?.expertise || ["Guidance"],
-    rating: "5.0",
-    reviews: Math.floor(Math.random() * 50) + 10,
-    image: e.profile_photo_path ? `/storage/${e.profile_photo_path}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(e.name || 'Expert')}&background=random`,
+    role: e.designation || "Mentor",
+    expertise: e.specialization ? (Array.isArray(e.specialization) ? e.specialization : [e.specialization]) : ["Guidance"],
+    rating: Number(e.average_rating || 5.0).toFixed(1),
+    reviews: Number(e.total_reviews || 0),
+    image: getImageUrl(e.avatar || e.profile_photo),
   }));
 
   return (

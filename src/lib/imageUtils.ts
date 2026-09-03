@@ -13,7 +13,7 @@ export const getImageUrl = (path?: string | null): string => {
   }
 
   // Strip hardcoded localhost / 127.0.0.1 if saved from local DB
-  if (trimmed.includes('localhost:8000') || trimmed.includes('127.0.0.1:8000') || trimmed.includes('localhost:3000')) {
+  if (trimmed.includes('localhost') || trimmed.includes('127.0.0.1')) {
     const storageIdx = trimmed.indexOf('/storage/');
     if (storageIdx !== -1) {
       trimmed = trimmed.substring(storageIdx);
@@ -37,6 +37,8 @@ export const getImageUrl = (path?: string | null): string => {
     trimmed.startsWith('/images/') ||
     trimmed.startsWith('images/') ||
     trimmed.startsWith('/logo/') ||
+    trimmed.startsWith('/uploads/') ||
+    trimmed.startsWith('uploads/') ||
     trimmed.startsWith('logo/') ||
     trimmed.startsWith('/testimonials photos/') ||
     trimmed.startsWith('testimonials photos/') ||
@@ -59,14 +61,14 @@ export const getImageUrl = (path?: string | null): string => {
   const backendBase = (
     process.env.NEXT_PUBLIC_BACKEND_URL ||
     process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') ||
-    (typeof window !== 'undefined' ? window.location.origin : 'https://backend.blueboxx.in')
+    'http://127.0.0.1:8000'
   ).replace(/\/+$/, '');
 
-  const cleanPath = trimmed.replace(/^\/+/, '');
-
-  if (cleanPath.startsWith('storage/')) {
-    return `${backendBase}/${cleanPath}`;
+  let cleanPath = trimmed.replace(/\\/g, '/').replace(/^\/+/, '');
+  while (cleanPath.startsWith('storage/')) {
+    cleanPath = cleanPath.substring(8).replace(/^\/+/, '');
   }
 
+  if (!cleanPath) return '';
   return `${backendBase}/storage/${cleanPath}`;
 };

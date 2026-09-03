@@ -15,6 +15,8 @@ import { StudentsShowcaseSection } from "../../src/sections/StudentsShowcaseSect
 import { Bookmark } from "lucide-react";
 import toast from "react-hot-toast";
 import { mutate } from "swr";
+import { getImageUrl } from "../../src/lib/imageUtils";
+import { FormattedDescription } from "../../src/components/common/FormattedDescription";
 
 export default function CourseDetailPage() {
   const router = useRouter();
@@ -29,28 +31,85 @@ export default function CourseDetailPage() {
   const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    if (!id) return;
+    if (!router.isReady || !id) return;
     const rawId = Array.isArray(id) ? id[0] : id;
-    const cleanId = rawId.replace(/\/$/, '').trim();
-    if (!cleanId) return;
+    if (!rawId || rawId === "undefined" || rawId === "[id]") return;
+    const cleanId = String(rawId).replace(/\/$/, '').trim();
+    if (!cleanId || cleanId === "undefined") return;
     
     const fetchCourse = async () => {
       try {
         setIsLoading(true);
-        const res = await api.get(`/public/courses/${cleanId}`);
-        setCourse(res.data.data);
-        if (res.data.data?.curriculum?.length > 0) {
-          setOpenModule(res.data.data.curriculum[0].id);
+        let courseData = null;
+
+        // 1. Try public single course endpoint
+        try {
+          const res = await api.get(`/public/courses/${cleanId}`);
+          if (res?.data) {
+            courseData = res.data.data || res.data;
+          }
+        } catch {}
+
+        // 2. Try standard courses endpoint
+        if (!courseData) {
+          try {
+            const res = await api.get(`/courses/${cleanId}`);
+            if (res?.data) {
+              courseData = res.data.data || res.data;
+            }
+          } catch {}
         }
-      } catch (error) {
-        console.error("Failed to fetch course details:", error);
+
+        // 3. If direct slug/ID lookup failed or gave 500, find match from all courses list
+        if (!courseData) {
+          try {
+            let listRes = await api.get('/public/courses').catch(() => null);
+            if (!listRes?.data) {
+              listRes = await api.get('/courses').catch(() => null);
+            }
+            const rawList = listRes?.data?.data?.data || listRes?.data?.data || listRes?.data?.courses || (Array.isArray(listRes?.data) ? listRes.data : []);
+            if (Array.isArray(rawList) && rawList.length > 0) {
+              const matched = rawList.find((c: any) => 
+                String(c.id) === cleanId || 
+                String(c.slug || '').toLowerCase() === cleanId.toLowerCase() ||
+                (c.title && c.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === cleanId.toLowerCase())
+              );
+
+              if (matched) {
+                // If matched has numeric ID, try getting full curriculum
+                if (matched.id && String(matched.id) !== cleanId) {
+                  try {
+                    const singleRes = await api.get(`/public/courses/${matched.id}`).catch(() => api.get(`/courses/${matched.id}`));
+                    courseData = singleRes?.data?.data || singleRes?.data || matched;
+                  } catch {
+                    courseData = matched;
+                  }
+                } else {
+                  courseData = matched;
+                }
+              }
+            }
+          } catch {}
+        }
+
+        if (courseData) {
+          setCourse(courseData);
+          if (courseData.curriculum?.length > 0) {
+            setOpenModule(courseData.curriculum[0].id);
+          }
+        } else {
+          setCourse(null);
+        }
+      } catch (error: any) {
+        console.error("Course fetch error:", error);
+        setCourse(null);
       } finally {
         setIsLoading(false);
       }
     };
     
     fetchCourse();
-  }, [id]);
+  }, [router.isReady, id]);
 
   if (isLoading) {
     return (
@@ -86,7 +145,44 @@ export default function CourseDetailPage() {
     "Prepare for technical interviews with confidence"
   ];
 
-  const isFree = parseFloat(course.price) === 0 || course.course_type === 'Free';
+  const getCourseImageUrl = (c: any) => {
+    const raw = c?.thumbnail || c?.image || c?.banner || c?.featured_image || c?.cover_image;
+    if (!raw || raw === '/logoblue.png' || raw === 'null' || raw === 'undefined' || raw === '') {
+      const title = String(c?.title || '').toLowerCase();
+      if (title.includes('problem') || title.includes('algorithm') || title.includes('dsa') || title.includes('logic') || title.includes('skill')) {
+        return 'https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=1200&q=85';
+      }
+      if (title.includes('python') || title.includes('data') || title.includes('ai') || title.includes('machine') || title.includes('science')) {
+        return 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=85';
+      }
+      if (title.includes('web') || title.includes('react') || title.includes('javascript') || title.includes('frontend') || title.includes('full stack')) {
+        return 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=85';
+      }
+      if (title.includes('marketing') || title.includes('seo') || title.includes('digital') || title.includes('business')) {
+        return 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=85';
+      }
+      if (title.includes('ui') || title.includes('ux') || title.includes('design') || title.includes('graphic')) {
+        return 'https://images.unsplash.com/photo-1581291518655-9523c932edcf?auto=format&fit=crop&w=1200&q=85';
+      }
+      return 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=85';
+    }
+    return getImageUrl(raw);
+  };
+
+  const currentPrice = Number(course.discount_price) > 0 
+    ? Number(course.discount_price) 
+    : (Number(course.price) || 0);
+
+  const originalPrice = (Number(course.discount_price) > 0 && Number(course.price) > 0)
+    ? Number(course.price)
+    : (Number(course.original_price) || (currentPrice ? Math.round(currentPrice * 1.5) : 0));
+
+  const hasDiscount = originalPrice > currentPrice;
+  const discountPercent = hasDiscount && originalPrice > 0 
+    ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) 
+    : 0;
+
+  const isFree = currentPrice === 0 || course.course_type === 'Free';
 
   const handleFreeEnrollment = async () => {
     if (!isAuthenticated) {
@@ -258,14 +354,7 @@ export default function CourseDetailPage() {
             {/* Description */}
             <div>
               <h2 className="text-2xl font-black text-slate-800 mb-6">Description</h2>
-              {course.description ? (
-                <div 
-                  className="prose prose-slate max-w-none prose-headings:font-bold prose-a:text-[#1B2A6B]" 
-                  dangerouslySetInnerHTML={{__html: course.description}} 
-                />
-              ) : (
-                <p className="text-slate-600 font-medium">Detailed description coming soon.</p>
-              )}
+              <FormattedDescription content={course.description} />
             </div>
 
             {/* Instructor */}
@@ -297,31 +386,44 @@ export default function CourseDetailPage() {
           {/* Right Column (Floating/Sticky Card) */}
           <div className="lg:absolute lg:top-[-280px] lg:right-4 w-full lg:w-[400px] z-20">
             <Card className="bg-white border border-slate-100 shadow-[0_20px_40px_rgba(27,42,107,0.1)] rounded-3xl overflow-hidden sticky top-32">
-              {/* Video Preview Image */}
-              <div 
-                className="relative h-56 bg-slate-200 group cursor-pointer overflow-hidden"
-                onClick={() => setIsVideoOpen(true)}
-              >
-                <img src={course.thumbnail || '/logoblue.png'} alt="Course Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-[#0d1635]/40 flex items-center justify-center">
-                  <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/40 group-hover:bg-[#1B2A6B] transition-colors shadow-lg">
-                    <PlayCircle size={32} className="text-white ml-1" />
+              {/* Course Featured High-Definition Image */}
+              <div className="relative aspect-video w-full bg-slate-900 group overflow-hidden rounded-t-3xl shadow-inner">
+                <img 
+                  src={getCourseImageUrl(course)} 
+                  alt={course.title || "Course Cover"} 
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 brightness-[0.98] contrast-[1.02]"
+                  loading="eager"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=1200&q=85';
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-black/20 pointer-events-none" />
+                
+                {course.preview_video_url && (
+                  <div 
+                    className="absolute inset-0 bg-[#0d1635]/40 flex items-center justify-center cursor-pointer"
+                    onClick={() => setIsVideoOpen(true)}
+                  >
+                    <div className="w-16 h-16 bg-white/25 backdrop-blur-md rounded-full flex items-center justify-center border border-white/50 group-hover:bg-[#1B2A6B] group-hover:scale-110 transition-all shadow-xl">
+                      <PlayCircle size={32} className="text-white ml-1" />
+                    </div>
                   </div>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
-                  <span className="text-white text-xs font-extrabold uppercase tracking-widest flex items-center justify-center gap-2">
-                    Preview this course
+                )}
+                <div className="absolute top-3.5 left-3.5 bg-[#0d1635]/85 backdrop-blur-md px-3 py-1 rounded-full border border-white/15 shadow-sm">
+                  <span className="text-[#C9A227] text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#C9A227] animate-pulse" />
+                    {course.course_type || "Online Course"}
                   </span>
                 </div>
               </div>
 
               <CardContent className="p-8">
                 <div className="flex items-end gap-3 mb-6">
-                  <span className="text-4xl font-black text-slate-800">₹{(course.price || 0).toLocaleString()}</span>
-                  {course.discount_price && (
+                  <span className="text-4xl font-black text-slate-800">₹{currentPrice.toLocaleString()}</span>
+                  {hasDiscount && (
                     <>
-                      <span className="text-lg font-bold text-slate-400 line-through mb-1">₹{(course.discount_price).toLocaleString()}</span>
-                      <span className="text-sm font-black text-emerald-600 mb-1.5">Save discount</span>
+                      <span className="text-lg font-bold text-slate-400 line-through mb-1">₹{originalPrice.toLocaleString()}</span>
+                      <span className="text-sm font-black text-emerald-600 mb-1.5">{discountPercent}% off</span>
                     </>
                   )}
                 </div>
@@ -361,8 +463,8 @@ export default function CourseDetailPage() {
                           addToCart({
                             id: course?.id || id as string || course.title,
                             title: course.title,
-                            price: course.price,
-                            thumbnail: course.thumbnail,
+                            price: currentPrice,
+                            thumbnail: getCourseImageUrl(course),
                             type: 'course'
                           });
                           router.push('/checkout');
@@ -382,10 +484,11 @@ export default function CourseDetailPage() {
                           addToCart({
                             id: course?.id || id as string || course.title,
                             title: course.title,
-                            price: course.price,
-                            thumbnail: course.thumbnail,
+                            price: currentPrice,
+                            thumbnail: getCourseImageUrl(course),
                             type: 'course'
                           });
+                          toast.success("Course added to cart!");
                         }}
                         className="w-full border-slate-200 text-slate-600 font-extrabold h-12 rounded-xl hover:bg-slate-50 transition-colors"
                       >

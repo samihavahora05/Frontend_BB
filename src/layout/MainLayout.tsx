@@ -5,7 +5,6 @@ import { Footer } from "../components/Footer";
 import { CustomCursor } from "../components/CustomCursor";
 import { ScrollProgressBar } from "../components/ScrollProgressBar";
 import { FloatingActions } from "../components/FloatingActions";
-import { TopBackButton } from "../components/TopBackButton";
 import { pageVariants } from "../animations/variants";
 import { useLenis } from "../hooks/useLenis";
 const AnimatedBackground = () => (
@@ -54,7 +53,6 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
           exit="exit"
           className="flex-1 flex flex-col relative"
         >
-          <TopBackButton />
           {children}
         </motion.main>
       </AnimatePresence>

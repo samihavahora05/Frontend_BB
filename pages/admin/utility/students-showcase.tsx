@@ -3,13 +3,15 @@ import Head from 'next/head';
 import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
 import { 
   Users, UploadCloud, Plus, Trash2, Edit3, Save, CheckCircle2, 
-  AlertCircle, Sparkles, Image as ImageIcon, RefreshCw, Eye, ArrowUpDown
+  AlertCircle, Sparkles, Image as ImageIcon, RefreshCw, Eye, ArrowUpDown,
+  Camera, Upload, X, Check
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useSWR, { mutate } from 'swr';
 import api from '../../../src/lib/axios';
 import { defaultStudents } from '../../../src/data/studentsData';
 import { getImageUrl } from '../../../src/lib/imageUtils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface StudentRow {
   id?: number | string;
@@ -40,6 +42,11 @@ export default function StudentsShowcaseAdminPage() {
   const [bulkRole, setBulkRole] = useState('Graphic design');
   const [isDragging, setIsDragging] = useState(false);
 
+  // Edit Modal State
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editStudentData, setEditStudentData] = useState<StudentRow | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   // Convert file to Base64 for instant resilient offline preview
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -68,7 +75,7 @@ export default function StudentsShowcaseAdminPage() {
               name: st.student_name || st.name || '',
               role: st.role || st.designation || 'Graphic design',
               company: st.company_name || st.company || '',
-              image: getImageUrl(st.image_url || st.avatar_url || st.image || ''),
+              image: st.image_url || st.avatar_url || st.image || '',
               isNew: false
             })));
             return;
@@ -145,7 +152,7 @@ export default function StudentsShowcaseAdminPage() {
     });
 
     setStudents(prev => [...newRows, ...prev]);
-    toast.success(`Added ${newRows.length} photos! Edit names/roles below and click Save.`);
+    toast.success(`Added ${newRows.length} student photos! You can edit names or photos anytime.`);
   };
 
   // Drag & Drop handlers
@@ -169,8 +176,102 @@ export default function StudentsShowcaseAdminPage() {
     });
   };
 
+  const syncToLocalState = async (updatedList: StudentRow[]) => {
+    if (typeof window !== 'undefined') {
+      try {
+        const payload = await Promise.all(updatedList.map(async (st, idx) => {
+          let img = st.image;
+          if (st.file) {
+            try {
+              img = await fileToBase64(st.file);
+            } catch {}
+          }
+          return {
+            id: st.id || `student-${idx}`,
+            student_name: st.name,
+            name: st.name,
+            role: st.role,
+            designation: st.role,
+            company_name: st.company || '',
+            company: st.company || '',
+            image_url: img,
+            avatar_url: img,
+            image: img
+          };
+        }));
+        localStorage.setItem('blueboxx_students_showcase', JSON.stringify(payload));
+        window.dispatchEvent(new Event('showcase-updated'));
+      } catch (e) {}
+    }
+  };
+
+  const handleRowPhotoChange = async (index: number, file: File) => {
+    const previewUrl = URL.createObjectURL(file);
+    const base64Img = await fileToBase64(file).catch(() => previewUrl);
+    setStudents(prev => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], image: base64Img, file: file };
+      syncToLocalState(copy);
+      return copy;
+    });
+    toast.success(`Photo updated for #${index + 1}! Visible across all pages.`);
+  };
+
   const removeStudent = (index: number) => {
-    setStudents(prev => prev.filter((_, i) => i !== index));
+    setStudents(prev => {
+      const copy = prev.filter((_, i) => i !== index);
+      syncToLocalState(copy);
+      return copy;
+    });
+    toast.success('Removed student record');
+  };
+
+  const handleOpenEditModal = (student: StudentRow, index: number) => {
+    setEditingIndex(index);
+    setEditStudentData({ ...student });
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveModalEdit = async () => {
+    if (editingIndex !== null && editStudentData) {
+      let finalImg = editStudentData.image;
+      if (editStudentData.file) {
+        finalImg = await fileToBase64(editStudentData.file).catch(() => editStudentData.image);
+      }
+      const updatedItem = { ...editStudentData, image: finalImg };
+      setStudents(prev => {
+        const copy = [...prev];
+        copy[editingIndex] = updatedItem;
+        syncToLocalState(copy);
+        return copy;
+      });
+      setIsEditModalOpen(false);
+      toast.success('Student details & photo updated across all pages!');
+    }
+  };
+
+  const handleModalPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0] && editStudentData) {
+      const file = e.target.files[0];
+      const previewUrl = URL.createObjectURL(file);
+      setEditStudentData({
+        ...editStudentData,
+        image: previewUrl,
+        file: file
+      });
+    }
+  };
+
+  const handleAddNewStudentManual = () => {
+    const newStudent: StudentRow = {
+      name: 'New Student',
+      role: bulkRole,
+      company: 'Creative Labs',
+      image: '/students/yuvraj_parmar.png',
+      isNew: true
+    };
+    setStudents(prev => [newStudent, ...prev]);
+    handleOpenEditModal(newStudent, 0);
   };
 
   // Save All to Database Action
@@ -259,11 +360,17 @@ export default function StudentsShowcaseAdminPage() {
                 Bulk Student Showcase Uploader
               </h1>
               <p className="text-slate-300 text-xs md:text-sm font-medium mt-1">
-                Drag and drop multiple photos at once to add students into the "OUR STUDENTS" website carousel.
+                Manage student records, edit names, change photos, and sync with the "OUR STUDENTS" website carousel.
               </p>
             </div>
 
             <div className="flex items-center gap-3">
+              <button
+                onClick={handleAddNewStudentManual}
+                className="px-4 py-3 bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold rounded-xl border border-white/20 transition-all flex items-center gap-2 cursor-pointer text-xs"
+              >
+                <Plus size={16} /> Add Single Student
+              </button>
               <button
                 onClick={handleSaveAll}
                 disabled={isSaving || students.length === 0}
@@ -331,8 +438,16 @@ export default function StudentsShowcaseAdminPage() {
             </select>
           </div>
 
-          <div className="text-xs font-bold text-slate-600">
-            Total Students in Database: <span className="text-[#1B2A6B] font-black">{students.length}</span>
+          <div className="flex items-center gap-4">
+            <div className="text-xs font-bold text-slate-600">
+              Total Students in Database: <span className="text-[#1B2A6B] font-black">{students.length}</span>
+            </div>
+            <button
+              onClick={handleAddNewStudentManual}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1B2A6B] hover:bg-[#121c47] text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
+            >
+              <Plus size={14} /> Add Row
+            </button>
           </div>
         </div>
 
@@ -360,11 +475,11 @@ export default function StudentsShowcaseAdminPage() {
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] font-black text-slate-500 uppercase tracking-wider">
                     <th className="py-3.5 px-4 w-16">#</th>
-                    <th className="py-3.5 px-4 w-24">Photo</th>
+                    <th className="py-3.5 px-4 w-28">Photo</th>
                     <th className="py-3.5 px-4">Student Name</th>
                     <th className="py-3.5 px-4">Domain / Role</th>
                     <th className="py-3.5 px-4">Company (Optional)</th>
-                    <th className="py-3.5 px-4 w-20 text-center">Action</th>
+                    <th className="py-3.5 px-4 w-36 text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-sm font-semibold text-slate-700">
@@ -375,13 +490,17 @@ export default function StudentsShowcaseAdminPage() {
                         {idx + 1}
                       </td>
 
-                      {/* Photo Thumbnail */}
+                      {/* Photo Thumbnail with Click-to-Change Overlay */}
                       <td className="py-3.5 px-4">
-                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 relative shrink-0">
+                        <div 
+                          className="relative group/photo w-12 h-12 min-w-[48px] min-h-[48px] max-w-[48px] max-h-[48px] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0"
+                          style={{ width: '48px', height: '48px' }}
+                        >
                           <img
                             src={student.image}
                             alt={student.name}
                             className="w-full h-full object-cover"
+                            style={{ width: '48px', height: '48px' }}
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               const fallback = defaultStudents[idx % defaultStudents.length]?.image || '/students/yuvraj_parmar.png';
@@ -392,6 +511,23 @@ export default function StudentsShowcaseAdminPage() {
                               }
                             }}
                           />
+                          <label 
+                            className="absolute inset-0 bg-black/50 opacity-0 group-hover/photo:opacity-100 flex flex-col items-center justify-center text-white cursor-pointer transition-opacity text-[9px] font-black gap-0.5"
+                            title="Click to Change Photo"
+                          >
+                            <Camera size={14} />
+                            <span>Change</span>
+                            <input 
+                              type="file" 
+                              accept="image/*" 
+                              className="hidden" 
+                              onChange={(e) => {
+                                if (e.target.files && e.target.files[0]) {
+                                  handleRowPhotoChange(idx, e.target.files[0]);
+                                }
+                              }} 
+                            />
+                          </label>
                         </div>
                       </td>
 
@@ -428,15 +564,27 @@ export default function StudentsShowcaseAdminPage() {
                         />
                       </td>
 
-                      {/* Delete Button */}
-                      <td className="py-3.5 px-4 text-center">
-                        <button
-                          onClick={() => removeStudent(idx)}
-                          className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                          title="Delete Row"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                      {/* Actions: Edit & Delete */}
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center justify-center gap-1.5">
+                          {/* Edit Button */}
+                          <button
+                            onClick={() => handleOpenEditModal(student, idx)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-[#1B2A6B] text-xs font-bold rounded-lg transition-colors border border-blue-200 shadow-2xs"
+                            title="Edit Full Details & Photo"
+                          >
+                            <Edit3 size={13} /> Edit
+                          </button>
+
+                          {/* Delete Button */}
+                          <button
+                            onClick={() => removeStudent(idx)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                            title="Delete Row"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -462,6 +610,145 @@ export default function StudentsShowcaseAdminPage() {
           )}
         </div>
       </div>
+
+      {/* Edit Student Modal */}
+      <AnimatePresence>
+        {isEditModalOpen && editStudentData && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs" 
+              onClick={() => setIsEditModalOpen(false)} 
+            />
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }} 
+              animate={{ scale: 1, opacity: 1 }} 
+              exit={{ scale: 0.95, opacity: 0 }} 
+              className="bg-white rounded-3xl shadow-2xl w-full max-w-lg z-10 relative overflow-hidden flex flex-col max-h-[90vh]"
+            >
+              <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+                <div>
+                  <h3 className="text-lg font-black text-[#0d1635]">Edit Student Record</h3>
+                  <p className="text-xs text-slate-500 font-semibold mt-0.5">Modify name, domain, company, or replace photo.</p>
+                </div>
+                <button 
+                  onClick={() => setIsEditModalOpen(false)} 
+                  className="text-slate-400 hover:text-slate-600 p-1"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-5 overflow-y-auto">
+                {/* Photo Changer Preview */}
+                <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                  <div 
+                    className="relative group/modalphoto w-20 h-20 min-w-[80px] min-h-[80px] max-w-[80px] max-h-[80px] rounded-2xl overflow-hidden bg-slate-200 border-2 border-white shadow-md shrink-0"
+                    style={{ width: '80px', height: '80px' }}
+                  >
+                    <img 
+                      src={editStudentData.image} 
+                      alt={editStudentData.name} 
+                      className="w-full h-full object-cover" 
+                      style={{ width: '80px', height: '80px' }}
+                    />
+                    <label 
+                      className="absolute inset-0 bg-black/50 opacity-0 group-hover/modalphoto:opacity-100 flex flex-col items-center justify-center text-white cursor-pointer transition-opacity text-[10px] font-black gap-1"
+                    >
+                      <Camera size={18} />
+                      <span>Change</span>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={handleModalPhotoChange} 
+                      />
+                    </label>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-black text-slate-800">Student Headshot Photo</h4>
+                    <p className="text-[11px] text-slate-500 font-medium mt-0.5">Click the image to upload a new JPEG/PNG.</p>
+                    <label className="inline-flex items-center gap-1.5 mt-2 px-3 py-1 bg-white border border-slate-200 hover:border-slate-300 rounded-lg text-xs font-bold text-slate-700 cursor-pointer shadow-2xs transition-all">
+                      <Upload size={12} className="text-[#1B2A6B]" /> Choose Photo
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={handleModalPhotoChange} 
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                {/* Student Name */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Student Full Name</label>
+                  <input 
+                    type="text" 
+                    value={editStudentData.name} 
+                    onChange={(e) => setEditStudentData({ ...editStudentData, name: e.target.value })} 
+                    placeholder="e.g. Yuvraj Parmar" 
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1B2A6B]/20 focus:border-[#1B2A6B]"
+                  />
+                </div>
+
+                {/* Domain / Role */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Domain / Specialization Role</label>
+                  <input 
+                    type="text" 
+                    value={editStudentData.role} 
+                    onChange={(e) => setEditStudentData({ ...editStudentData, role: e.target.value })} 
+                    placeholder="e.g. Graphic design, Full Stack" 
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1B2A6B]/20 focus:border-[#1B2A6B]"
+                  />
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {COMMON_ROLES.slice(0, 4).map(r => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => setEditStudentData({ ...editStudentData, role: r })}
+                        className="text-[10px] font-bold px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-md transition-colors"
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Company Name */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Placed Company (Optional)</label>
+                  <input 
+                    type="text" 
+                    value={editStudentData.company || ''} 
+                    onChange={(e) => setEditStudentData({ ...editStudentData, company: e.target.value })} 
+                    placeholder="e.g. Blueboxx Media, Creative Labs" 
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1B2A6B]/20 focus:border-[#1B2A6B]"
+                  />
+                </div>
+              </div>
+
+              <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+                <button 
+                  onClick={() => setIsEditModalOpen(false)} 
+                  className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleSaveModalEdit} 
+                  className="px-5 py-2 bg-[#1B2A6B] hover:bg-[#121c47] text-white text-xs font-bold rounded-xl shadow-sm transition-colors flex items-center gap-1.5"
+                >
+                  <Check size={15} /> Apply Changes
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </AdminDashboardLayout>
   );
 }

@@ -1,7 +1,21 @@
 import { motion } from "framer-motion";
 import { partnerCompanies } from "../data/companies";
+import { CompanyService, CMSCompany } from "../lib/api/CompanyService";
+import { useState, useEffect } from "react";
 
 export function AuthBranding() {
+  const [companies, setCompanies] = useState<CMSCompany[]>([]);
+
+  useEffect(() => {
+    setCompanies(CompanyService.getLocalCompanies());
+    const unsubscribe = CompanyService.subscribe((updated) => {
+      setCompanies(updated);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const displayCompanies = (companies.length > 0 ? companies : partnerCompanies)
+    .filter((c: any) => !c.status || c.status === "published" || c.status === "active");
   return (
     <div className="hidden lg:flex flex-1 relative overflow-hidden bg-[#0d1635]">
       {/* Deep Blue Theme Background */}
@@ -148,7 +162,7 @@ export function AuthBranding() {
               className="flex items-center gap-16 whitespace-nowrap text-white w-max"
             >
               <div className="flex items-center gap-16">
-                {partnerCompanies.map((company, i) => (
+                {displayCompanies.map((company, i) => (
                   <div key={`a-${i}`} className="flex items-center justify-center h-12 px-4">
                     {company.logoUrl ? (
                       <img src={company.logoUrl} alt={company.name} className="h-full w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]" />
@@ -161,7 +175,7 @@ export function AuthBranding() {
 
               {/* Duplicate for infinite seamless scroll */}
               <div className="flex items-center gap-16">
-                {partnerCompanies.map((company, i) => (
+                {displayCompanies.map((company, i) => (
                   <div key={`b-${i}`} className="flex items-center justify-center h-12 px-4">
                     {company.logoUrl ? (
                       <img src={company.logoUrl} alt={company.name} className="h-full w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]" />

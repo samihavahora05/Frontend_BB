@@ -11,10 +11,46 @@ import api from "../lib/axios";
 
 
 
+const getImageUrl = (path: string | null) => {
+  if (!path) return "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=640&h=240&fit=crop&auto=format";
+  if (path.startsWith('http') || path.startsWith('blob:')) return path;
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in';
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  if (cleanPath.startsWith('storage/')) {
+    return `${backendUrl}/${cleanPath}`;
+  }
+  return `${backendUrl}/storage/${cleanPath}`;
+};
+
+const normalizeCourses = (data: any): any[] => {
+  if (!data) return [];
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data.data)) return data.data;
+  if (Array.isArray(data.data?.data)) return data.data.data;
+  if (Array.isArray(data.courses)) return data.courses;
+  if (Array.isArray(data.data?.courses)) return data.data.courses;
+  return [];
+};
+
 export const CoursesSection = () => {
-  const fetcher = (url: string) => api.get(url).then(res => res.data.data);
-  const { data: featuredCourses, isLoading } = useSWR('/public/courses', fetcher, { revalidateOnFocus: false });
-  const currentCourses = featuredCourses?.slice(0, 3) || [];
+  const fetcher = async (url: string) => {
+    try {
+      const res = await api.get(url);
+      if (res?.data) return res.data;
+    } catch (e) {}
+    try {
+      const fallback = await api.get('/courses');
+      if (fallback?.data) return fallback.data;
+    } catch (e) {}
+    try {
+      const adminFallback = await api.get('/admin/courses?per_page=10');
+      if (adminFallback?.data) return adminFallback.data;
+    } catch (e) {}
+    return { data: [] };
+  };
+  const { data: rawCourses, isLoading } = useSWR('/public/courses', fetcher, { revalidateOnFocus: true });
+  const allCourses = normalizeCourses(rawCourses);
+  const currentCourses = allCourses.slice(0, 3);
 
   return (
     <section className="py-24 relative overflow-hidden" style={{ background: "linear-gradient(180deg,#f0f4ff 0%,#eef2ff 60%,#f4f6ff 100%)" }}>
@@ -91,13 +127,12 @@ export const CoursesSection = () => {
                 <TiltCard>
                   <div className="group card-premium overflow-hidden flex flex-col h-full bg-white rounded-2xl shadow-sm border border-slate-200">
                     {/* Course Image Banner */}
-                    <Link href={`/courses/${course.slug}`} className="relative h-44 overflow-hidden block">
-                      <Image
-                        src={course.thumbnail || course.image || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=640&h=240&fit=crop&auto=format"}
-                        alt={course.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    <Link href={`/courses/${course.slug || course.id}`} className="relative h-44 overflow-hidden block">
+                      <img
+                        src={getImageUrl(course.thumbnail || course.image)}
+                        alt={course.title || "Course thumbnail"}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e: any) => { e.currentTarget.src = "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=640&h=240&fit=crop&auto=format"; }}
                       />
                       {/* Gradient overlay */}
                       <div

@@ -489,9 +489,6 @@ export default function AboutPage() {
         {/* --- WHY CHOOSE BLUEBOXX --- */}
         <WhyChooseBlueboxxSection />
 
-        {/* --- SUCCESS STORIES --- */}
-        <TestimonialsSection />
-
         {/* --- CLIENTS / PARTNERS --- */}
         <div className="bg-white">
           <ClientsSection 
@@ -500,6 +497,9 @@ export default function AboutPage() {
             subtitle="We are proud to work with clients and partners from leading organizations worldwide" 
           />
         </div>
+
+        {/* --- SUCCESS STORIES --- */}
+        <TestimonialsSection />
       </div>
     </MainLayout>
     </>

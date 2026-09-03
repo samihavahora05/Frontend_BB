@@ -15,6 +15,13 @@ export interface CourseLevel {
   status?: 'active' | 'inactive' | string;
 }
 
+export const DEFAULT_COURSE_LEVELS: CourseLevel[] = [
+  { id: 1, name: "Beginner", title: "Beginner", slug: "beginner" },
+  { id: 2, name: "Intermediate", title: "Intermediate", slug: "intermediate" },
+  { id: 3, name: "Advanced", title: "Advanced", slug: "advanced" },
+  { id: 4, name: "All Levels", title: "All Levels", slug: "all-levels" },
+];
+
 export const CourseLevelService = {
   useLevels: (params: Record<string, any> = {}) => {
     const query = new URLSearchParams(
@@ -24,9 +31,19 @@ export const CourseLevelService = {
     
     const { data, error, mutate, isLoading } = useSWR(url, fetcher, { keepPreviousData: true });
     
+    const rawList = Array.isArray(data?.data)
+      ? data.data
+      : Array.isArray(data?.data?.data)
+        ? data.data.data
+        : Array.isArray(data?.levels)
+          ? data.levels
+          : Array.isArray(data)
+            ? data
+            : [];
+
     return {
-      data: data?.data || (Array.isArray(data) ? data : []),
-      meta: data?.meta || {},
+      data: rawList.length > 0 ? rawList : (isLoading ? [] : DEFAULT_COURSE_LEVELS),
+      meta: data?.meta || data?.pagination || {},
       isLoading,
       isError: !!error,
       mutate

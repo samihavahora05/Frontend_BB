@@ -1,8 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { MainLayout } from "../src/layout/MainLayout";
-import { Filter, Briefcase, Clock, Building, Loader2 } from "lucide-react";
+import { Briefcase, Clock, Building, Loader2 } from "lucide-react";
 import { TopSearchBar } from "../src/components/ui/TopSearchBar";
-import { SidebarFilter } from "../src/components/ui/SidebarFilter";
 import { Pagination } from "../src/components/ui/Pagination";
 import { Card, CardContent } from "../src/components/ui/Card";
 import { Badge } from "../src/components/ui/Badge";
@@ -17,6 +16,7 @@ import { SEO } from "../src/components/seo/SEO";
 import api from "../src/lib/axios";
 import { fetcher } from "../src/lib/fetcher";
 import { useAuth } from "../src/context/AuthContext";
+import { AuthNoticeBanner } from "../src/components/common/AuthNoticeBanner";
 import useSWR, { mutate } from "swr";
 import toast from "react-hot-toast";
 
@@ -24,8 +24,6 @@ export default function JobsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("newest");
   const [currentPage, setCurrentPage] = useState(1);
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<any>({});
   
   const [jobs, setJobs] = useState<any[]>([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -81,39 +79,20 @@ export default function JobsPage() {
         setIsLoading(true);
         const params: any = {
           page: currentPage,
-          per_page: 6,
+          per_page: 9,
           sort: sortOption,
         };
         
-        let searchTerms = [];
-        if (searchQuery) searchTerms.push(searchQuery);
-        if (activeFilters.role) searchTerms.push(activeFilters.role);
-        if (searchTerms.length > 0) params.search = searchTerms.join(' ');
-        
-        if (activeFilters.mode) {
-           params.location = activeFilters.mode;
-        }
-        if (activeFilters.experience) {
-           params.experience_level = activeFilters.experience.split(' ')[0];
-        }
-        if (activeFilters.type) {
-           params.job_type = activeFilters.type;
-        }
-        if (activeFilters.salary) {
-           const match = activeFilters.salary.match(/(\d+)(?:-(\d+))?\s+LPA/);
-           if (match) {
-               params.min_salary = parseInt(match[1]) * 100000;
-               if (match[2]) params.max_salary = parseInt(match[2]) * 100000;
-           } else if (activeFilters.salary === "25+ LPA") {
-               params.min_salary = 2500000;
-           }
+        if (searchQuery.trim()) {
+          params.search = searchQuery.trim();
         }
 
         const res = await api.get("/public/jobs", { params });
-        if (res.data.success) {
-          setJobs(res.data.data);
-          setTotalPages(res.data.pagination.last_page);
-          setTotalJobs(res.data.pagination.total);
+        const list = res.data?.data || (Array.isArray(res.data) ? res.data : []);
+        if (Array.isArray(list)) {
+          setJobs(list);
+          setTotalPages(res.data?.pagination?.last_page || 1);
+          setTotalJobs(res.data?.pagination?.total || list.length);
         }
       } catch (error) {
         console.error("Failed to fetch jobs:", error);
@@ -128,7 +107,7 @@ export default function JobsPage() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [currentPage, sortOption, searchQuery, activeFilters]);
+  }, [currentPage, sortOption, searchQuery]);
 
   return (
     <>
@@ -173,121 +152,120 @@ export default function JobsPage() {
 
         <div className="container mx-auto px-4 max-w-7xl relative z-10">
 
+          <AuthNoticeBanner
+            title="Login to Apply for High-Paying Tech Jobs & Startups"
+            description="Sign in to submit 1-click job applications, upload your resume, bookmark openings, and track your interview stages directly from your dashboard."
+          />
+
           <TopSearchBar value={searchQuery} onChange={setSearchQuery} placeholder="Search jobs by role or company..." />
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <div className="lg:hidden">
-              <Button 
-                onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)} 
-                variant="outline" 
-                className="w-full border-slate-200 text-slate-700 bg-white hover:bg-slate-50 shadow-sm h-12 rounded-xl gap-2 font-extrabold text-sm uppercase tracking-wider"
-              >
-                <Filter size={16} /> Filters
-              </Button>
-            </div>
-
-            <div className={`lg:col-span-1 ${isMobileFilterOpen ? 'block' : 'hidden'} lg:block`}>
-              <SidebarFilter type="jobs" onFilterChange={setActiveFilters} />
-            </div>
-
-            <main className="lg:col-span-3">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="font-bold text-slate-800 text-lg">Showing {totalJobs} jobs</h2>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-slate-500 font-semibold">Sort by:</span>
-                  <select
-                    value={sortOption}
-                    onChange={(e) => setSortOption(e.target.value)}
-                    className="bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-800 px-3 py-1.5 focus:ring-[#C9A227] focus:border-[#C9A227] cursor-pointer outline-none"
-                  >
-                    <option value="newest">Most Recent</option>
-                    <option value="salary_high">Highest Salary</option>
-                  </select>
-                </div>
+          <main className="w-full">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+              <h2 className="font-bold text-slate-800 text-lg">Showing {totalJobs} jobs</h2>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-slate-500 font-semibold">Sort by:</span>
+                <select
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value)}
+                  className="bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-800 px-3 py-1.5 focus:ring-[#C9A227] focus:border-[#C9A227] cursor-pointer outline-none shadow-xs"
+                >
+                  <option value="newest">Most Recent</option>
+                  <option value="salary_high">Highest Salary</option>
+                </select>
               </div>
+            </div>
 
-              {isLoading ? (
-                <div className="py-20 text-center flex justify-center">
-                  <Loader2 className="animate-spin text-[#1B2A6B] w-10 h-10" />
+            {isLoading ? (
+              <div className="py-20 text-center flex justify-center">
+                <Loader2 className="animate-spin text-[#1B2A6B] w-10 h-10" />
+              </div>
+            ) : jobs.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {jobs.map((job) => (
+                    <Card key={job.id} className="group relative overflow-hidden bg-white border border-slate-200 hover:border-[#1B2A6B]/30 hover:shadow-[0_8px_30px_rgba(27,42,107,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full rounded-[1.25rem]">
+                      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-[#1B2A6B]/5 to-transparent opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-500"></div>
+                      <CardContent className="p-5 flex-1 flex flex-col relative z-10">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="w-11 h-11 rounded-xl border border-slate-100 bg-slate-50 shadow-sm shrink-0 overflow-hidden">
+                            <img src={job.company_logo || `https://ui-avatars.com/api/?name=${job.company_name}&background=random`} alt={job.company_name} className="w-full h-full object-cover" />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 text-slate-700 px-2.5 py-1 rounded-md text-xs font-bold shadow-xs">
+                              <Briefcase size={11} className="text-[#1B2A6B]" /> {job.experience_level || job.job_type}
+                            </div>
+                            <button
+                              onClick={(e) => toggleSave(e, job.id)}
+                              disabled={saving === job.id}
+                              title={savedIds.has(job.id) ? "Remove from saved" : "Save this job"}
+                              className={`p-1.5 rounded-md border transition-all pointer-events-auto ${
+                                savedIds.has(job.id) 
+                                  ? "bg-amber-50 border-amber-200 text-[#C9A227]" 
+                                  : "bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+                              } ${saving === job.id ? "animate-pulse" : ""}`}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={savedIds.has(job.id) ? "#C9A227" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+                            </button>
+                          </div>
+                        </div>
+
+                        <h3 className="text-base font-extrabold text-slate-900 mb-1 group-hover:text-[#1B2A6B] transition-colors leading-tight line-clamp-1">{job.title}</h3>
+                        <p className="text-xs font-bold text-slate-500 mb-3.5 flex items-center gap-1.5">
+                          <Building size={13} className="text-slate-400" /> {job.company_name} • {job.location}
+                        </p>
+
+                        <div className="flex flex-wrap items-center gap-1.5 mb-4">
+                          {job.is_featured && (
+                            <Badge variant="secondary" className="bg-amber-100 text-amber-700 hover:bg-amber-200 border-none font-bold text-[9px] px-2 py-0.5 rounded-md shadow-2xs">Featured</Badge>
+                          )}
+                          {job.vacancies > 1 && (
+                            <span className="inline-flex items-center text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200/60 px-2 py-0.5 rounded-md">
+                              {job.vacancies} Openings
+                            </span>
+                          )}
+                          {job.shift_timings && (
+                            <span className="inline-flex items-center text-[10px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md truncate max-w-[150px]" title={job.shift_timings}>
+                              {job.shift_timings}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="pt-3.5 border-t border-slate-100 flex items-center justify-between mt-auto">
+                          <div>
+                            <div className="text-xs font-extrabold text-emerald-600 mb-0.5">
+                              {job.salary || (job.hide_salary ? 'Best in Industry' : job.salary_min ? `₹${job.salary_min.toLocaleString()} - ₹${job.salary_max.toLocaleString()}` : 'Best in Industry')}
+                            </div>
+                            <div className="text-[9px] text-slate-400 font-bold flex items-center gap-1">
+                              <Clock size={10} /> POSTED {job.posted_at?.toUpperCase()}
+                            </div>
+                          </div>
+                          <Link href={`/apply/job/${job.id}`}>
+                            <Button variant="outline" className="h-8 text-xs font-bold border-slate-200 text-slate-700 bg-slate-50 group-hover:bg-[#1B2A6B] group-hover:text-white group-hover:border-[#1B2A6B] transition-colors shadow-2xs rounded-lg px-3.5 cursor-pointer">
+                              Apply
+                            </Button>
+                          </Link>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
-              ) : jobs.length > 0 ? (
-                <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {jobs.map((job) => (
-                      <Card key={job.id} className="group relative overflow-hidden bg-white border border-slate-200 hover:border-[#1B2A6B]/30 hover:shadow-[0_8px_30px_rgba(27,42,107,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full rounded-[1.25rem]">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-[#1B2A6B]/5 to-transparent opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-500"></div>
-                        <CardContent className="p-4 flex-1 flex flex-col relative z-10">
-                          <div className="flex justify-between items-start mb-3">
-                            <div className="w-10 h-10 rounded-lg border border-slate-100 bg-slate-50 shadow-sm shrink-0 overflow-hidden">
-                              <img src={job.company_logo || `https://ui-avatars.com/api/?name=${job.company_name}&background=random`} alt={job.company_name} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 text-slate-700 px-2 py-0.5 rounded-md text-xs font-bold shadow-sm">
-                                <Briefcase size={10} className="text-[#1B2A6B]" /> {job.experience_level || job.job_type}
-                              </div>
-                              <button
-                                onClick={(e) => toggleSave(e, job.id)}
-                                disabled={saving === job.id}
-                                title={savedIds.has(job.id) ? "Remove from saved" : "Save this job"}
-                                className={`p-1.5 rounded-md border transition-all pointer-events-auto ${
-                                  savedIds.has(job.id) 
-                                    ? "bg-amber-50 border-amber-200 text-[#C9A227]" 
-                                    : "bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50"
-                                } ${saving === job.id ? "animate-pulse" : ""}`}
-                              >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={savedIds.has(job.id) ? "#C9A227" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                              </button>
-                            </div>
-                          </div>
-
-                          <h3 className="text-base font-extrabold text-slate-900 mb-0.5 group-hover:text-[#1B2A6B] transition-colors leading-tight line-clamp-1">{job.title}</h3>
-                          <p className="text-[11px] font-bold text-slate-500 mb-3 flex items-center gap-1">
-                            <Building size={12} /> {job.company_name} • {job.location}
-                          </p>
-
-                          <div className="flex flex-wrap items-center gap-2 mb-5">
-                            {job.is_featured && (
-                              <Badge variant="secondary" className="bg-amber-100 text-amber-700 hover:bg-amber-200 border-none font-bold text-[9px] px-2 py-0.5 rounded-md shadow-sm">Featured</Badge>
-                            )}
-                          </div>
-
-                          <div className="pt-3 border-t border-slate-100 flex items-center justify-between mt-auto">
-                            <div>
-                              <div className="text-xs font-extrabold text-emerald-600 mb-0.5">
-                                {job.hide_salary ? 'Undisclosed' : job.salary_min ? `₹${job.salary_min.toLocaleString()} - ₹${job.salary_max.toLocaleString()}` : 'Not Specified'}
-                              </div>
-                              <div className="text-[9px] text-slate-400 font-bold flex items-center gap-1">
-                                <Clock size={10} /> POSTED {job.posted_at?.toUpperCase()}
-                              </div>
-                            </div>
-                            <Link href={`/apply/job/${job.id}`}>
-                              <Button variant="outline" className="h-7 text-xs font-bold border-slate-200 text-slate-700 bg-slate-50 group-hover:bg-[#1B2A6B] group-hover:text-white group-hover:border-[#1B2A6B] transition-colors shadow-sm rounded-lg px-3">
-                                Apply
-                              </Button>
-                            </Link>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                  {totalPages > 1 && (
-                    <Pagination
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      onPageChange={setCurrentPage}
-                      className="mt-12"
-                    />
-                  )}
-                </>
-              ) : (
-                <div className="py-20 text-center bg-white rounded-2xl border border-slate-200 shadow-sm">
-                  <Briefcase size={48} className="mx-auto text-slate-300 mb-4" />
-                  <h3 className="text-xl font-bold text-slate-800 mb-2">No jobs found</h3>
-                  <p className="text-slate-500">Try adjusting your filters to find what you're looking for.</p>
-                </div>
-              )}
-            </main>
-          </div>
+                {totalPages > 1 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    className="mt-12"
+                  />
+                )}
+              </>
+            ) : (
+              <div className="py-20 text-center bg-white rounded-2xl border border-slate-200 shadow-sm">
+                <Briefcase size={48} className="mx-auto text-slate-300 mb-4" />
+                <h3 className="text-xl font-bold text-slate-800 mb-2">No jobs found</h3>
+                <p className="text-slate-500">Try adjusting your search query to find what you're looking for.</p>
+              </div>
+            )}
+          </main>
         </div>
       </div>
       <StudentsShowcaseSection 
@@ -296,12 +274,12 @@ export default function JobsPage() {
         subtitle="Celebrating our learners who successfully cracked corporate selection rounds and secured high-growth job offers."
       />
       <WhyChooseBlueboxxSection />
-      <TestimonialsSection />
       <PartnersSection 
         titlePrefix="Top Hiring " 
         highlightText="Companies" 
         subtitle="Browse opportunities from 100+ hiring partners across industries" 
       />
+      <TestimonialsSection />
     </MainLayout>
     </>
   );

@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { MainLayout } from "../src/layout/MainLayout";
-import { Filter, Briefcase, Clock, ArrowRight, Building, Loader2, Search, MapPin, CheckCircle2, Play, X, Star, ShieldCheck } from "lucide-react";
-import { SidebarFilter } from "../src/components/ui/SidebarFilter";
+import { Briefcase, Clock, ArrowRight, Building, Loader2, Search, MapPin, CheckCircle2, Play, X, Star, ShieldCheck } from "lucide-react";
 import { Pagination } from "../src/components/ui/Pagination";
 import { Card, CardContent } from "../src/components/ui/Card";
 import { Button } from "../src/components/ui/Button";
@@ -10,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SEO } from "../src/components/seo/SEO";
 import api from "../src/lib/axios";
 import { useAuth } from "../src/context/AuthContext";
+import { AuthNoticeBanner } from "../src/components/common/AuthNoticeBanner";
 import useSWR, { mutate } from "swr";
 import toast from "react-hot-toast";
 import { ApplyModal } from "../src/components/internship/ApplyModal";
@@ -28,8 +28,6 @@ export default function InternshipsPage() {
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [sortOption, setSortOption] = useState("latest");
   const [currentPage, setCurrentPage] = useState(1);
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<any>({});
 
   // Hero Apply Form State
   const [heroForm, setHeroForm] = useState({
@@ -112,7 +110,7 @@ export default function InternshipsPage() {
         setIsLoading(true);
         const params: any = {
           page: currentPage,
-          per_page: 6,
+          per_page: 9,
           sort: sortOption,
         };
 
@@ -120,24 +118,14 @@ export default function InternshipsPage() {
         if (searchQuery) searchTerms.push(searchQuery);
         if (locationQuery) searchTerms.push(locationQuery);
         if (categoryFilter !== "All") searchTerms.push(categoryFilter);
-        if (activeFilters.domain) searchTerms.push(activeFilters.domain);
         if (searchTerms.length > 0) params.search = searchTerms.join(' ');
 
-        if (activeFilters.mode) {
-          params.type = activeFilters.mode === "On-Site" ? "Onsite" : activeFilters.mode;
-        }
-        if (activeFilters.duration) {
-          params.duration = activeFilters.duration;
-        }
-        if (activeFilters.level) {
-          params.experience_level = activeFilters.level;
-        }
-
         const res = await api.get("/public/internships", { params });
-        if (res.data.success) {
-          setInternships(res.data.data);
-          setTotalPages(res.data.pagination.last_page);
-          setTotalInternships(res.data.pagination.total);
+        const list = res.data?.data || (Array.isArray(res.data) ? res.data : []);
+        if (Array.isArray(list)) {
+          setInternships(list);
+          setTotalPages(res.data?.pagination?.last_page || 1);
+          setTotalInternships(res.data?.pagination?.total || list.length);
         }
       } catch (error) {
         console.error("Failed to fetch internships:", error);
@@ -151,7 +139,7 @@ export default function InternshipsPage() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [currentPage, sortOption, searchQuery, locationQuery, categoryFilter, activeFilters]);
+  }, [currentPage, sortOption, searchQuery, locationQuery, categoryFilter]);
 
   const handleOpenApply = (internship: any) => {
     if (!isAuthenticated) {
@@ -514,6 +502,11 @@ export default function InternshipsPage() {
         <div className="py-16 min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(135deg, #f8faff 0%, #fafafa 40%, #fffdf5 100%)" }}>
           <div className="container mx-auto px-4 max-w-7xl relative z-10">
 
+            <AuthNoticeBanner
+              title="Login to Apply for Guaranteed Live Internships"
+              description="Sign in to apply directly to verified industrial internships, submit your portfolio, earn certificates, and connect with mentors."
+            />
+
             <div className="text-center max-w-2xl mx-auto mb-10">
               <h2 className="text-3xl font-black text-[#0d1635]">Live Projects & Opportunities</h2>
               <p className="text-xs text-slate-500 font-semibold mt-2">Filter opportunities by role, duration, work mode, and stipend structure.</p>
@@ -568,162 +561,143 @@ export default function InternshipsPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-
-              {/* Mobile Filter Toggle */}
-              <div className="lg:hidden col-span-1">
-                <Button
-                  onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
-                  variant="outline"
-                  className="w-full border-slate-200 text-slate-700 bg-white hover:bg-slate-50 shadow-xs h-12 rounded-xl gap-2 font-extrabold text-sm uppercase tracking-wider"
-                >
-                  <Filter size={16} /> Filters
-                </Button>
-              </div>
-
-              {/* Sidebar Filter */}
-              <div className={`lg:col-span-1 ${isMobileFilterOpen ? 'block' : 'hidden'} lg:block`}>
-                <SidebarFilter type="internships" onFilterChange={setActiveFilters} />
-              </div>
-
-              {/* Listings */}
-              <main className="lg:col-span-3">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="font-extrabold text-slate-800 text-base md:text-lg">
-                    Showing <span className="text-[#1B2A6B]">{totalInternships}</span> Open Positions
-                  </h2>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">Sort:</span>
-                    <select
-                      value={sortOption}
-                      onChange={(e) => setSortOption(e.target.value)}
-                      className="bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800 px-3 py-1.5 focus:ring-[#1B2A6B] focus:border-[#1B2A6B] cursor-pointer outline-none shadow-xs"
-                    >
-                      <option value="latest">Latest First</option>
-                      <option value="salary_high">Highest Stipend</option>
-                    </select>
-                  </div>
+            {/* Listings Full Width Grid */}
+            <main className="w-full">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="font-extrabold text-slate-800 text-base md:text-lg">
+                  Showing <span className="text-[#1B2A6B]">{totalInternships}</span> Open Positions
+                </h2>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">Sort:</span>
+                  <select
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value)}
+                    className="bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800 px-3 py-1.5 focus:ring-[#1B2A6B] focus:border-[#1B2A6B] cursor-pointer outline-none shadow-xs"
+                  >
+                    <option value="latest">Latest First</option>
+                    <option value="salary_high">Highest Stipend</option>
+                  </select>
                 </div>
+              </div>
 
-                {isLoading ? (
-                  <div className="py-20 text-center flex justify-center">
-                    <Loader2 className="animate-spin text-[#1B2A6B] w-10 h-10" />
-                  </div>
-                ) : internships.length > 0 ? (
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                      {internships.map((internship) => (
-                        <Card
-                          key={internship.id}
-                          className="group relative overflow-hidden bg-white border border-slate-200/90 hover:border-[#1B2A6B]/40 hover:shadow-[0_12px_35px_rgba(27,42,107,0.1)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full rounded-[1.25rem]"
-                        >
-                          <CardContent className="p-5 flex-1 flex flex-col relative z-10">
+              {isLoading ? (
+                <div className="py-20 text-center flex justify-center">
+                  <Loader2 className="animate-spin text-[#1B2A6B] w-10 h-10" />
+                </div>
+              ) : internships.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {internships.map((internship) => (
+                      <Card
+                        key={internship.id}
+                        className="group relative overflow-hidden bg-white border border-slate-200/90 hover:border-[#1B2A6B]/40 hover:shadow-[0_12px_35px_rgba(27,42,107,0.1)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full rounded-[1.25rem]"
+                      >
+                        <CardContent className="p-5 flex-1 flex flex-col relative z-10">
 
-                            {/* Card Top Row */}
-                            <div className="flex justify-between items-start mb-4">
-                              <div className="w-12 h-12 rounded-xl border border-slate-100 bg-slate-50 shadow-xs shrink-0 overflow-hidden flex items-center justify-center font-black text-[#1B2A6B] text-lg">
-                                {internship.company_logo ? (
-                                  <img src={internship.company_logo} alt={internship.company_name} className="w-full h-full object-cover" />
-                                ) : (
-                                  (internship.company_name?.[0] || 'B')
-                                )}
-                              </div>
+                          {/* Card Top Row - Clean Mode Badge & Save Action */}
+                          <div className="flex justify-between items-center mb-3.5">
+                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                              internship.type === 'Remote' ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' :
+                              internship.type === 'Hybrid' ? 'bg-amber-50 border border-amber-200 text-amber-700' :
+                              'bg-blue-50 border border-blue-200 text-blue-700'
+                            }`}>
+                              {internship.type || 'On-Site'}
+                            </span>
 
-                              <div className="flex items-center gap-2">
-                                <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${internship.type === 'Remote' ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' :
-                                    internship.type === 'Hybrid' ? 'bg-amber-50 border border-amber-200 text-amber-700' :
-                                      'bg-blue-50 border border-blue-200 text-blue-700'
-                                  }`}>
-                                  {internship.type || 'Remote'}
-                                </span>
+                            <button
+                              onClick={(e) => toggleSave(e, internship.id)}
+                              disabled={saving === internship.id}
+                              title={savedIds.has(internship.id) ? "Remove from saved" : "Save this internship"}
+                              className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                                savedIds.has(internship.id)
+                                  ? "bg-amber-50 border-amber-200 text-[#C9A227]"
+                                  : "bg-white border-slate-200 text-slate-400 hover:text-slate-700 hover:bg-slate-50"
+                              }`}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={savedIds.has(internship.id) ? "#C9A227" : "none"} stroke="currentColor" strokeWidth="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" /></svg>
+                            </button>
+                          </div>
 
-                                <button
-                                  onClick={(e) => toggleSave(e, internship.id)}
-                                  disabled={saving === internship.id}
-                                  title={savedIds.has(internship.id) ? "Remove from saved" : "Save this internship"}
-                                  className={`p-1.5 rounded-lg border transition-all ${savedIds.has(internship.id)
-                                      ? "bg-amber-50 border-amber-200 text-[#C9A227]"
-                                      : "bg-white border-slate-200 text-slate-400 hover:text-slate-700 hover:bg-slate-50"
-                                    }`}
-                                >
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={savedIds.has(internship.id) ? "#C9A227" : "none"} stroke="currentColor" strokeWidth="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" /></svg>
-                                </button>
-                              </div>
-                            </div>
+                          {/* Title & Company */}
+                          <h3 className="text-base font-extrabold text-[#0d1635] mb-1 group-hover:text-[#1B2A6B] transition-colors leading-snug line-clamp-2">
+                            {internship.title}
+                          </h3>
+                          <p className="text-xs font-semibold text-slate-500 mb-3 flex items-center gap-1.5">
+                            <Building size={13} className="text-[#C9A227] shrink-0" />
+                            <span>{internship.company_name && internship.company_name !== 'Super Admin' ? internship.company_name : 'Blueboxx DA'}</span>
+                            {internship.location && (
+                              <>
+                                <span>•</span>
+                                <MapPin size={13} className="text-slate-400 shrink-0" />
+                                <span>{internship.location}</span>
+                              </>
+                            )}
+                          </p>
 
-                            {/* Title & Company */}
-                            <h3 className="text-base font-extrabold text-[#0d1635] mb-1 group-hover:text-[#1B2A6B] transition-colors leading-snug line-clamp-2">
-                              {internship.title}
-                            </h3>
-                            <p className="text-xs font-semibold text-slate-500 mb-3 flex items-center gap-1">
-                              <Building size={13} className="text-[#C9A227]" /> {internship.company_name} • <MapPin size={13} /> {internship.location}
+                          {/* Meta row */}
+                          <div className="flex items-center gap-3 text-[11px] font-semibold text-slate-500 mb-4 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                            <span className="flex items-center gap-1">
+                              <Clock size={12} className="text-[#1B2A6B]" /> {internship.duration || '2-3 Months'}
+                            </span>
+                            <span>•</span>
+                            <span className="text-slate-600 font-bold">
+                              {internship.department || 'General'}
+                            </span>
+                          </div>
+
+                          {/* Stipend Display Box */}
+                          <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 p-3 rounded-xl border border-blue-100/80 mb-5">
+                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Monthly Stipend</p>
+                            <p className="text-sm font-black text-emerald-600">
+                              {internship.stipend_text || (internship.stipend > 0 ? `₹${Number(internship.stipend).toLocaleString('en-IN')} / month` : 'Performance Based')}
                             </p>
+                          </div>
 
-                            {/* Meta row */}
-                            <div className="flex items-center gap-3 text-[11px] font-semibold text-slate-500 mb-4 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                              <span className="flex items-center gap-1">
-                                <Clock size={12} className="text-[#1B2A6B]" /> {internship.duration}
-                              </span>
-                              <span>•</span>
-                              <span className="text-slate-600 font-bold">
-                                {internship.department || 'Track'}
-                              </span>
-                            </div>
+                          {/* Card Footer Actions */}
+                          <div className="pt-3 border-t border-slate-100 flex items-center justify-between mt-auto">
+                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                              {internship.posted_at || 'RECENT'}
+                            </span>
 
-                            {/* Stipend Display Box (Site Theme) */}
-                            <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 p-3 rounded-xl border border-blue-100/80 mb-5">
-                              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Monthly Stipend</p>
-                              <p className="text-sm font-black text-emerald-600">
-                                {internship.stipend_text || (internship.stipend > 0 ? `₹${Number(internship.stipend).toLocaleString('en-IN')} / month` : 'Performance Based')}
-                              </p>
-                            </div>
+                            <Button
+                              onClick={() => handleOpenApply(internship)}
+                              disabled={internship.has_applied}
+                              className={`h-9 px-4 text-xs font-black rounded-xl transition-all shadow-xs gap-1 cursor-pointer ${
+                                internship.has_applied
+                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                  : "bg-[#1B2A6B] hover:bg-[#0d1635] text-white"
+                              }`}
+                            >
+                              {internship.has_applied ? (
+                                <><CheckCircle2 size={13} /> Applied</>
+                              ) : (
+                                <>Apply Now <ArrowRight size={13} /></>
+                              )}
+                            </Button>
+                          </div>
 
-                            {/* Card Footer Actions */}
-                            <div className="pt-3 border-t border-slate-100 flex items-center justify-between mt-auto">
-                              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                                {internship.posted_at || 'RECENT'}
-                              </span>
-
-                              <Button
-                                onClick={() => handleOpenApply(internship)}
-                                disabled={internship.has_applied}
-                                className={`h-9 px-4 text-xs font-black rounded-xl transition-all shadow-xs gap-1 ${internship.has_applied
-                                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                    : "bg-[#1B2A6B] hover:bg-[#0d1635] text-white"
-                                  }`}
-                              >
-                                {internship.has_applied ? (
-                                  <><CheckCircle2 size={13} /> Applied</>
-                                ) : (
-                                  <>Apply Now <ArrowRight size={13} /></>
-                                )}
-                              </Button>
-                            </div>
-
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-
-                    {totalPages > 1 && (
-                      <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={setCurrentPage}
-                        className="mt-12"
-                      />
-                    )}
-                  </>
-                ) : (
-                  <div className="py-20 text-center bg-white rounded-2xl border border-slate-200 shadow-xs">
-                    <Briefcase size={36} className="text-slate-300 mx-auto mb-3" />
-                    <h3 className="text-lg font-bold text-slate-800 mb-1">No internships found</h3>
-                    <p className="text-xs text-slate-500 font-medium">Try clearing your filters or searching for different keywords.</p>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
-                )}
-              </main>
 
-            </div>
+                  {totalPages > 1 && (
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                      className="mt-12"
+                    />
+                  )}
+                </>
+              ) : (
+                <div className="py-20 text-center bg-white rounded-2xl border border-slate-200 shadow-xs">
+                  <Briefcase size={36} className="text-slate-300 mx-auto mb-3" />
+                  <h3 className="text-lg font-bold text-slate-800 mb-1">No internships found</h3>
+                  <p className="text-xs text-slate-500 font-medium">Try searching for different keywords.</p>
+                </div>
+              )}
+            </main>
           </div>
         </div>
 

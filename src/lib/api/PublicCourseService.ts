@@ -66,11 +66,30 @@ export const PublicCourseService = {
       }
     });
     const key = `/public/courses?${params.toString()}`;
-    const { data, error, isLoading, mutate } = useSWR(key, (url) =>
-      api.get(url).then((r) => r.data)
-    );
+    const { data, error, isLoading, mutate } = useSWR(key, async (url) => {
+      try {
+        const r = await api.get(url);
+        return r.data;
+      } catch (err) {
+        try {
+          const fallback = await api.get('/courses');
+          return fallback.data;
+        } catch {
+          return { data: [] };
+        }
+      }
+    });
+
+    const coursesList = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.data)
+      ? data.data
+      : Array.isArray(data?.data?.data)
+      ? data.data.data
+      : [];
+
     return {
-      courses: (data?.data ?? []) as CourseSummary[],
+      courses: coursesList as CourseSummary[],
       pagination: data?.pagination ?? null,
       error,
       isLoading,

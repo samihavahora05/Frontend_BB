@@ -1,10 +1,14 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { MainLayout } from "../../src/layout/MainLayout";
 import { partnerCompanies } from "../../src/data/companies";
+import { CompanyService } from "../../src/lib/api/CompanyService";
 import {
   Building2, ArrowRight, PlayCircle, ExternalLink, Layers,
   Globe, Smartphone, Monitor, TrendingUp, Compass, Award,
-  Search, X, ShieldCheck, Filter, Sparkles, CheckCircle2
+  Search, X, ShieldCheck, Filter, Sparkles, CheckCircle2,
+  Bot, Code2, Database, Megaphone, Cloud, Users, Rocket,
+  Briefcase, UserPlus, Gamepad2, Laptop, Target, Cog,
+  LineChart, Lightbulb, Maximize, PiggyBank, Cpu, Clock
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -14,13 +18,40 @@ import { SEO } from "../../src/components/seo/SEO";
 import { WhyChooseBlueboxxSection } from "../../src/sections/WhyChooseBlueboxxSection";
 import { TestimonialsSection } from "../../src/sections/TestimonialsSection";
 
-// Fallback seed projects for portfolios if database is empty/loading
+export const ALL_23_COMPANY_SERVICES = [
+  'All Industries',
+  'IT & Software Development',
+  'AI Automation & Smart Business Systems',
+  'CRM & ERP Solutions',
+  'Digital & Performance Marketing',
+  'Project Outsourcing',
+  'Virtual & Trained Workforce',
+  'SMEs & Startups',
+  'Marketing & IT Agencies',
+  'HR & Recruitment Firms',
+  'Web & Mobile App Development',
+  'Game Development Services',
+  'IT Project Outsourcing',
+  'Lead Generation Company',
+  'Growth Marketing Services',
+  'Online Marketing for Businesses',
+  'Marketing Automation Services',
+  'Business Growth Services',
+  'SME Business Solutions',
+  'Startup Support Services',
+  'Scale Business Operations',
+  'Cost-Effective Business Services',
+  'Business Consulting & Execution'
+];
+
+// Fallback seed projects for portfolios across all corporate domains
 const mockProjects = [
   {
     id: 1,
     title: "Brand Identity & 3D Promo Film",
     studio: "Anibrain Studios",
-    category: "3D Animation",
+    category: "Game Development Services",
+    service: "Game Development Services",
     icon: "Monitor",
     color: "bg-purple-50 text-purple-700 border-purple-200/80",
     image_url: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&q=80",
@@ -31,22 +62,24 @@ const mockProjects = [
   },
   {
     id: 2,
-    title: "Corporate E-Learning Platform",
+    title: "Corporate E-Learning & LMS Web Platform",
     studio: "AISECT",
-    category: "Web Development",
+    category: "Web & Mobile App Development",
+    service: "Web & Mobile App Development",
     icon: "Globe",
     color: "bg-blue-50 text-blue-700 border-blue-200/80",
     image_url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80",
     description: "Custom LMS web platform with live sessions, course tracking, certificate generation and payment integration.",
-    tags: ["React", "Node.js", "MongoDB"],
+    tags: ["React", "Node.js", "Next.js"],
     duration: "12 weeks",
     deliverables: "Full Platform + Admin Dashboard",
   },
   {
     id: 3,
-    title: "Social Media Growth Campaign",
+    title: "Omnichannel Growth & Performance Marketing",
     studio: "Lakshya Digital",
-    category: "Digital Marketing",
+    category: "Digital & Performance Marketing",
+    service: "Digital & Performance Marketing",
     icon: "TrendingUp",
     color: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
     image_url: "https://images.unsplash.com/photo-1611926653458-09294b3142bf?w=600&q=80",
@@ -57,42 +90,87 @@ const mockProjects = [
   },
   {
     id: 4,
-    title: "2D Explainer Series",
-    studio: "DQ Entertainment",
-    category: "2D Animation",
-    icon: "PlayCircle",
+    title: "AI Customer Support & Automation Engine",
+    studio: "Techpace Labs",
+    category: "AI Automation & Smart Business Systems",
+    service: "AI Automation & Smart Business Systems",
+    icon: "Bot",
     color: "bg-amber-50 text-amber-700 border-amber-200/80",
-    image_url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&q=80",
-    description: "Series of 10 animated explainer videos for a children's educational brand with custom characters and storyboards.",
-    tags: ["2D Animation", "Storyboarding", "Voice-over"],
+    image_url: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&q=80",
+    description: "Autonomous customer care agent and document parser integrated with corporate CRM reducing response time by 85%.",
+    tags: ["LLM Agents", "FastAPI", "Python"],
     duration: "6 weeks",
-    deliverables: "10 Animated Videos",
+    deliverables: "Trained Model + API Microservices",
   },
   {
     id: 5,
-    title: "Product Packaging & Brand Design",
-    studio: "Vistaprint India",
-    category: "Graphic Design",
-    icon: "Layers",
-    color: "bg-rose-50 text-rose-700 border-rose-200/80",
-    image_url: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=600&q=80",
-    description: "Complete brand identity redesign including logo, packaging, stationery, and brand guidelines for a product line.",
-    tags: ["Logo Design", "Packaging", "Brand Identity"],
-    duration: "4 weeks",
-    deliverables: "Brand Kit + Style Guide",
+    title: "Multi-Tenant Cloud ERP & Supply Chain Suite",
+    studio: "Greenclean Power",
+    category: "CRM & ERP Solutions",
+    service: "CRM & ERP Solutions",
+    icon: "Database",
+    color: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
+    image_url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80",
+    description: "End-to-end ERP with automated billing, inventory ledger, GST compliance, and real-time vendor dispatch tracking.",
+    tags: ["PostgreSQL", "Laravel", "React"],
+    duration: "16 weeks",
+    deliverables: "ERP System + Mobile Apps",
   },
   {
     id: 6,
-    title: "Mobile App UI/UX Design",
-    studio: "Hopmotion",
-    category: "UI/UX Design",
+    title: "Cross-Platform FinTech Mobile Wallet",
+    studio: "Elite Trading & Services",
+    category: "IT & Software Development",
+    service: "IT & Software Development",
     icon: "Smartphone",
-    color: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
+    color: "bg-rose-50 text-rose-700 border-rose-200/80",
     image_url: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=600&q=80",
-    description: "Full mobile app UI/UX design with user research, wireframes, prototypes and a pixel-perfect Figma design system.",
-    tags: ["Figma", "UX Research", "Prototyping"],
-    duration: "5 weeks",
-    deliverables: "Figma Prototype + Design System",
+    description: "High-security financial wallet with biometric authentication, instant UPI transfers, and real-time ledger settlement.",
+    tags: ["React Native", "TypeScript", "Node.js"],
+    duration: "10 weeks",
+    deliverables: "iOS & Android Apps + Backend",
+  },
+  {
+    id: 7,
+    title: "Dedicated Engineering Pod & DevOps Migration",
+    studio: "Vistaprint Global",
+    category: "Project Outsourcing",
+    service: "Project Outsourcing",
+    icon: "Cloud",
+    color: "bg-blue-50 text-blue-700 border-blue-200/80",
+    image_url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80",
+    description: "Full-scale dedicated engineering team delivering infrastructure modernization, Kubernetes clusters, and 99.99% uptime.",
+    tags: ["Kubernetes", "AWS", "CI/CD"],
+    duration: "6 months",
+    deliverables: "DevOps Pipeline + Cloud Infra",
+  },
+  {
+    id: 8,
+    title: "B2B Lead Generation & Outreach Engine",
+    studio: "GrowthSpark IT",
+    category: "Lead Generation Company",
+    service: "Lead Generation Company",
+    icon: "Target",
+    color: "bg-amber-50 text-amber-700 border-amber-200/80",
+    image_url: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80",
+    description: "Targeted lead discovery, verified B2B email pipelines, and high-conversion outbound workflows generating 400+ SQLs/mo.",
+    tags: ["Outbound", "Cold Email", "Data Scraping"],
+    duration: "8 weeks",
+    deliverables: "Sales Pipeline + CRM Integration",
+  },
+  {
+    id: 9,
+    title: "SME Cloud Infrastructure & Digital Rollout",
+    studio: "Nexus Enterprise",
+    category: "SME Business Solutions",
+    service: "SME Business Solutions",
+    icon: "Building2",
+    color: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
+    image_url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80",
+    description: "Cost-effective digital transformation package helping local SMEs migrate manual operations into smart automated workflows.",
+    tags: ["Cloud Setup", "Accounting", "Workflow"],
+    duration: "4 weeks",
+    deliverables: "Custom Business Portal",
   },
 ];
 
@@ -142,48 +220,84 @@ export default function CompaniesPublicPage() {
     PlayCircle: <PlayCircle size={14} />,
     Layers: <Layers size={14} />,
     Smartphone: <Smartphone size={14} />,
+    Bot: <Bot size={14} />,
+    Database: <Database size={14} />,
+    Cloud: <Cloud size={14} />,
+    Target: <Target size={14} />,
+    Building2: <Building2 size={14} />,
   };
 
   // --- DYNAMIC DATABASE API FETCHING ---
   // 1. Portfolios / Client Deliverables Endpoint
-  const { data: apiPortfolios, isLoading: isPortfoliosLoading } = useSWR("/public/cms/portfolios", fetcher);
+  const { data: apiPortfolios, isLoading: isPortfoliosLoading } = useSWR("/cms/portfolios", fetcher, {
+    shouldRetryOnError: false,
+    revalidateOnFocus: false,
+  });
 
-  // 2. Corporate Companies / Hiring Partners Endpoint
-  const { data: apiCompanies, isLoading: isCompaniesLoading } = useSWR("/public/cms/companies", fetcher);
+  // 2. Corporate Companies / Hiring Partners Endpoint - Live sync with Admin
+  const { data: apiCompanies, isLoading: isCompaniesLoading, mutate: mutatePublicCompanies } = useSWR("/cms/companies", fetcher, {
+    shouldRetryOnError: false,
+    revalidateOnFocus: true,
+    refreshInterval: 5000,
+  });
 
-  // Dynamic Portfolio / Project Data
+  const [liveCompanies, setLiveCompanies] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Initial fetch from CompanyService (merges backend API & local cache)
+    CompanyService.getAll().then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        setLiveCompanies(data);
+      }
+    });
+
+    // Subscribe to cross-tab and local updates from Admin
+    const unsubscribe = CompanyService.subscribe((updated) => {
+      setLiveCompanies(updated);
+      mutatePublicCompanies();
+    });
+
+    return () => unsubscribe();
+  }, [mutatePublicCompanies]);
+
+  // Dynamic Portfolio / Project Data (Merges API entries with full mock dataset)
   const projectsList = useMemo(() => {
-    if (apiPortfolios && Array.isArray(apiPortfolios) && apiPortfolios.length > 0) {
+    if (apiPortfolios && Array.isArray(apiPortfolios) && apiPortfolios.length >= 6) {
       return apiPortfolios;
+    }
+    if (apiPortfolios && Array.isArray(apiPortfolios) && apiPortfolios.length > 0) {
+      return [...apiPortfolios, ...mockProjects.filter(m => !apiPortfolios.some((a: any) => a.title === m.title))];
     }
     return mockProjects;
   }, [apiPortfolios]);
 
-  // Dynamically extract categories from Portfolio data
-  const projectCategories = useMemo(() => {
-    const catSet = new Set<string>();
-    projectsList.forEach((p: any) => {
-      if (p.category && typeof p.category === "string" && p.category.trim() !== "") {
-        catSet.add(p.category.trim());
-      }
-    });
-    return ["All", ...Array.from(catSet).sort()];
-  }, [projectsList]);
+  // Use ALL_23_COMPANY_SERVICES for comprehensive filtering
+  const projectCategories = ALL_23_COMPANY_SERVICES;
 
   const filteredProjects = useMemo(() => {
-    if (activeProjectCategory === "All") return projectsList;
-    return projectsList.filter(
-      (p: any) => (p.category || "").toLowerCase() === activeProjectCategory.toLowerCase()
-    );
+    if (activeProjectCategory === "All" || activeProjectCategory === "All Industries") return projectsList;
+    const cat = activeProjectCategory.toLowerCase();
+    const result = projectsList.filter((p: any) => {
+      const pCat = (p.category || "").toLowerCase();
+      const pServ = (p.service || "").toLowerCase();
+      const pTitle = (p.title || "").toLowerCase();
+      const pDesc = (p.description || "").toLowerCase();
+      return pCat === cat || pCat.includes(cat) || pServ === cat || pServ.includes(cat) || pTitle.includes(cat) || pDesc.includes(cat);
+    });
+    // If no direct keyword match in mock array, fallback to relevant mock projects so cards are always visible
+    return result.length > 0 ? result : projectsList.slice(0, 3);
   }, [projectsList, activeProjectCategory]);
 
-  // Dynamic Companies Data (Merges API companies with fallback partnerCompanies array)
+  // Dynamic Companies Data: strictly uses active companies from Admin / API / synchronized store
   const companiesList = useMemo(() => {
     if (apiCompanies && Array.isArray(apiCompanies) && apiCompanies.length > 0) {
-      return apiCompanies;
+      return apiCompanies.filter((c: any) => !c.status || c.status === "published" || c.status === "active");
     }
-    return partnerCompanies;
-  }, [apiCompanies]);
+    if (liveCompanies && liveCompanies.length > 0) {
+      return liveCompanies.filter((c: any) => !c.status || c.status === "published" || c.status === "active");
+    }
+    return partnerCompanies.filter((c: any) => !c.status || c.status === "published");
+  }, [apiCompanies, liveCompanies]);
 
   // Dynamically extract unique industries from Companies data
   const availableIndustries = useMemo(() => {
@@ -320,15 +434,15 @@ export default function CompaniesPublicPage() {
               </p>
             </motion.div>
 
-            {/* Dynamic Category Filter Tabs */}
-            <div className="flex flex-wrap justify-center gap-2 mb-12">
+            {/* Dynamic Category Filter Tabs — All 23 Service Pills */}
+            <div className="flex flex-wrap justify-center gap-2.5 max-w-6xl mx-auto mb-14">
               {projectCategories.map(cat => (
                 <button
                   key={cat}
                   onClick={() => setActiveProjectCategory(cat)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${activeProjectCategory === cat
-                      ? "bg-[#1B2A6B] text-white border-[#1B2A6B] shadow-md shadow-indigo-100"
-                      : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-900"
+                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all border shadow-2xs ${activeProjectCategory === cat
+                      ? "bg-[#1B2A6B] text-white border-[#1B2A6B] shadow-md shadow-indigo-200/50 scale-105"
+                      : "bg-white text-slate-600 border-slate-200 hover:border-[#1B2A6B]/40 hover:text-[#1B2A6B] hover:bg-slate-50"
                     }`}
                 >
                   {cat}
@@ -609,7 +723,7 @@ function CompanyDirectoryGrid({
             viewport={{ once: true }}
             transition={{ duration: 0.35, delay: (idx % 4) * 0.04 }}
           >
-            <Link href={`/companies/${company.id || 'c1'}`} className="block h-full">
+            <Link href={`/companies/${company.id || company.slug || '1'}`} className="block h-full">
               <div className="group relative overflow-hidden bg-gradient-to-b from-white via-slate-50/60 to-slate-100/40 border border-slate-200/80 hover:border-amber-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_50px_rgba(201,162,39,0.15)] hover:-translate-y-2 transition-all duration-500 flex flex-col justify-between h-full rounded-[28px] p-5 cursor-pointer">
                 {/* Top Subtle Hover Accent Bar */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 via-indigo-600 to-[#1B2A6B] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

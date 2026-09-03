@@ -29,6 +29,25 @@ export default function CourseList() {
     return `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in'}/storage/${path}`;
   };
 
+  const getInstructorDisplayName = (inst: any) => {
+    if (!inst) return 'Unknown';
+    if (inst.name && typeof inst.name === 'string' && inst.name.trim()) return inst.name.trim();
+    if (inst.full_name && typeof inst.full_name === 'string' && inst.full_name.trim()) return inst.full_name.trim();
+    const user = inst.user;
+    if (user) {
+      if (user.name && typeof user.name === 'string' && user.name.trim()) return user.name.trim();
+      const userCombined = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+      if (userCombined) return userCombined;
+      if (user.email) return user.email;
+    }
+    const directCombined = `${inst.first_name || ''} ${inst.last_name || ''}`.trim();
+    if (directCombined) return directCombined;
+    if (inst.title) return inst.title;
+    if (inst.designation) return inst.designation;
+    if (inst.email) return inst.email;
+    return typeof inst === 'string' ? inst : `Instructor #${inst.id || 'N/A'}`;
+  };
+
   const { data: categories } = CourseCategoryService.useCategories();
   const { data: courses, meta, isLoading, mutate } = CourseService.useCourses({
     search: debouncedSearch,
@@ -273,7 +292,7 @@ export default function CourseList() {
                         </div>
                       </td>
                       <td className="p-4">
-                        <div className="font-bold text-slate-800">{course.expert?.name || 'Unknown'}</div>
+                        <div className="font-bold text-slate-800">{getInstructorDisplayName(course.expert || course.instructor)}</div>
                       </td>
                       <td className="p-4 text-center">
                         <div className="inline-flex flex-col items-center">

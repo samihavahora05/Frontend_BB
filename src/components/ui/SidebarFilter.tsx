@@ -55,11 +55,22 @@ const FilterSection = ({ title, icon: Icon, options, selected, onChange }: any) 
   );
 };
 
+import useSWR from "swr";
+import api from "../../lib/axios";
+
 // ─── COURSES FILTERS ─────────────────────────────────────────────────────────
 function CoursesFilter({ onFilterChange }: { onFilterChange?: (f: any) => void }) {
   const [category, setCategory] = useState("");
   const [level, setLevel] = useState("");
   const [duration, setDuration] = useState("");
+
+  const { data: dbCategories } = useSWR('/public/course-categories', (url) => 
+    api.get(url).then(res => res.data?.data || res.data).catch(() => [])
+  );
+
+  const categoryOptions = (dbCategories && Array.isArray(dbCategories) && dbCategories.length > 0)
+    ? Array.from(new Set(dbCategories.map((c: any) => c.name || c.title).filter(Boolean))) as string[]
+    : ["Full Stack Development", "Frontend Development", "Backend Development", "AI/ML", "Graphic Design", "UI/UX Design", "Digital Marketing"];
 
   useEffect(() => {
     onFilterChange?.({ category, level, duration });
@@ -69,7 +80,7 @@ function CoursesFilter({ onFilterChange }: { onFilterChange?: (f: any) => void }
   return (
     <>
       <FilterSection title="Category" icon={BookOpen}
-        options={["Full Stack Development", "Frontend Development", "Backend Development", "AI/ML", "Graphic Design", "UI/UX Design", "Digital Marketing"]}
+        options={categoryOptions}
         selected={category} onChange={setCategory} />
       <FilterSection title="Level" icon={Layers}
         options={["Beginner", "Intermediate", "Advanced", "All Levels"]}
@@ -88,6 +99,14 @@ function InternshipsFilter({ onFilterChange }: { onFilterChange?: (f: any) => vo
   const [mode, setMode] = useState("");
   const [level, setLevel] = useState("");
 
+  const { data: dbIntCategories } = useSWR('/public/internship-categories', (url) => 
+    api.get(url).then(res => res.data?.data || res.data).catch(() => [])
+  );
+
+  const domainOptions = (dbIntCategories && Array.isArray(dbIntCategories) && dbIntCategories.length > 0)
+    ? Array.from(new Set(dbIntCategories.map((c: any) => c.name || c.title).filter(Boolean))) as string[]
+    : ["Engineering", "Design", "Data & Analytics", "Marketing", "Finance", "Operations", "Human Resources"];
+
   useEffect(() => {
     onFilterChange?.({ domain, duration, mode, level });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,7 +115,7 @@ function InternshipsFilter({ onFilterChange }: { onFilterChange?: (f: any) => vo
   return (
     <>
       <FilterSection title="Domain" icon={Briefcase}
-        options={["Engineering", "Design", "Data & Analytics", "Marketing", "Finance", "Operations", "Human Resources"]}
+        options={domainOptions}
         selected={domain} onChange={setDomain} />
       <FilterSection title="Duration" icon={Clock}
         options={["1 Month", "2 Months", "3 Months", "6 Months", "1 Year"]}

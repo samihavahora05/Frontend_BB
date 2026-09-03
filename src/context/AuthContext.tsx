@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import api from "../lib/axios";
 import { getActiveRoleFromUrl, getActiveToken, saveSession, clearSession, migrateLegacyToken, getSessions } from "../lib/authUtils";
@@ -13,6 +13,7 @@ export interface User {
   last_name?: string;
   email: string;
   avatar?: string;
+  profile_photo?: string;
   role?: UserRole;
   phone?: string;
 }

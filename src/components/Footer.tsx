@@ -8,7 +8,7 @@ const footerLinks = {
     { label: "Blogs", href: "/blog" },
     { label: "Contact us", href: "/contact" },
     { label: "Work With Us", href: "/careers" },
-    { label: "Explore Services", href: "/courses" },
+    { label: "Explore Services", href: "/services" },
   ],
   supportZone: [
     { label: "Help and Support", href: "/contact" },
@@ -178,18 +178,18 @@ export const Footer = () => {
                   ))}
                 </ul>
               </div>
-            <div>
-              <h4 className="font-bold text-white mb-3 text-sm tracking-wide uppercase">Featured courses</h4>
-              <ul className="flex flex-col items-center md:items-start gap-3 text-sm">
-                {footerLinks.featuredCourses.map((link) => (
-                  <li key={link.label}>
-                    <Link href={link.href} className="text-slate-400 hover:text-[#C9A227] transition-colors duration-200">
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              <div>
+                <h4 className="font-bold text-white mb-3 text-sm tracking-wide uppercase">Featured courses</h4>
+                <ul className="flex flex-col items-center md:items-start gap-3 text-sm">
+                  {footerLinks.featuredCourses.map((link) => (
+                    <li key={link.label}>
+                      <Link href={link.href} className="text-slate-400 hover:text-[#C9A227] transition-colors duration-200">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
           </div>

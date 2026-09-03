@@ -42,6 +42,25 @@ export default function AdminEditCoursePage() {
     description: "",
   });
 
+  const getInstructorDisplayName = (inst: any) => {
+    if (!inst) return 'Unknown';
+    if (inst.name && typeof inst.name === 'string' && inst.name.trim()) return inst.name.trim();
+    if (inst.full_name && typeof inst.full_name === 'string' && inst.full_name.trim()) return inst.full_name.trim();
+    const user = inst.user;
+    if (user) {
+      if (user.name && typeof user.name === 'string' && user.name.trim()) return user.name.trim();
+      const userCombined = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+      if (userCombined) return userCombined;
+      if (user.email) return user.email;
+    }
+    const directCombined = `${inst.first_name || ''} ${inst.last_name || ''}`.trim();
+    if (directCombined) return directCombined;
+    if (inst.title) return inst.title;
+    if (inst.designation) return inst.designation;
+    if (inst.email) return inst.email;
+    return `Instructor #${inst.id || 'N/A'}`;
+  };
+
   const getImageUrl = (path: string | null) => {
     if (!path) return '';
     if (path.startsWith('http') || path.startsWith('blob:')) return path;
@@ -235,19 +254,12 @@ export default function AdminEditCoursePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-[11px] font-black text-slate-500 uppercase tracking-wider mb-2">Course Category <span className="text-red-500">*</span></label>
-                    {categories?.length === 0 ? (
-                      <div className="w-full px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm font-bold text-red-600 flex items-center justify-between">
-                        <span>No categories found.</span>
-                        <Link href="/admin/course-categories" className="text-red-700 underline">Create one first</Link>
-                      </div>
-                    ) : (
-                      <select required value={form.category_id} onChange={e => handleChange('category_id', e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-[#1B2A6B]">
-                        <option value="">Select Category...</option>
-                        {categories?.map((c: any) => (
-                          <option key={c.id} value={c.id}>{c.name}</option>
-                        ))}
-                      </select>
-                    )}
+                    <select required value={form.category_id} onChange={e => handleChange('category_id', e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-[#1B2A6B]">
+                      <option value="">Select Category...</option>
+                      {categories?.map((c: any) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-[11px] font-black text-slate-500 uppercase tracking-wider mb-2">Duration</label>
@@ -369,7 +381,7 @@ export default function AdminEditCoursePage() {
                 <select value={form.expert_id} onChange={e => handleChange('expert_id', e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-[#1B2A6B]">
                   <option value="">Select Instructor...</option>
                   {instructors?.map((inst: any) => (
-                    <option key={inst.id} value={inst.user?.id || inst.id}>{inst.user?.name || 'Unknown'}</option>
+                    <option key={inst.id} value={inst.id}>{getInstructorDisplayName(inst)}</option>
                   ))}
                 </select>
               </div>

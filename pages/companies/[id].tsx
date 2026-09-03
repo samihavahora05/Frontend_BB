@@ -5,28 +5,45 @@ import { Card, CardContent } from "../../src/components/ui/Card";
 import { Badge } from "../../src/components/ui/Badge";
 import { 
   Building2, MapPin, Users, Globe, ExternalLink, 
-  Briefcase, CheckCircle2, DollarSign, ChevronRight
+  Briefcase, CheckCircle2, DollarSign, ChevronRight, ArrowLeft
 } from "lucide-react";
 import { SEO } from "../../src/components/seo/SEO";
+import { useState, useEffect } from "react";
+import { CompanyService, CMSCompany } from "../../src/lib/api/CompanyService";
+import Link from "next/link";
 
 export default function CompanyProfilePage() {
   const router = useRouter();
   const { id } = router.query;
+  const [companyData, setCompanyData] = useState<CMSCompany | null>(null);
 
-  // Mock data for the company
+  useEffect(() => {
+    if (!id) return;
+    const found = CompanyService.getCompanyByIdOrSlug(id as string);
+    if (found) {
+      setCompanyData(found);
+    } else {
+      CompanyService.getAll().then(() => {
+        const refound = CompanyService.getCompanyByIdOrSlug(id as string);
+        if (refound) setCompanyData(refound);
+      });
+    }
+  }, [id]);
+
+  // Derived or fallback data for the company
   const company = {
-    name: "TechCorp Inc.",
-    industry: "Financial Technology (FinTech)",
-    location: "Mumbai, India (Global Remote)",
-    size: "500 - 1000 Employees",
-    website: "www.techcorp.example.com",
-    logo: "https://ui-avatars.com/api/?name=TechCorp&background=0d1635&color=fff",
+    name: companyData?.name || "Corporate Partner",
+    industry: companyData?.industry || "IT & Software Development",
+    location: companyData?.location || "India",
+    size: "50 - 500 Employees",
+    website: companyData?.website_url || "https://blueboxxda.com",
+    logo: companyData?.logoUrl || "/logo/damyaa.png",
     cover: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80",
-    about: "TechCorp is a leading financial technology company focused on democratizing access to enterprise-grade tools for small and medium businesses. Founded in 2020, we've rapidly grown into a global team of passionate engineers, designers, and thinkers who are reshaping the future of digital finance.",
+    about: `${companyData?.name || "This company"} is a verified corporate partner of Blueboxx DA. Through our partnership, students and graduates gain practical industry exposure, live project opportunities, and direct hiring pathways across high-growth corporate domains.`,
     perks: [
-      "Flexible Remote Work", "Comprehensive Health Insurance", 
-      "Learning & Development Stipend", "Stock Options (ESOPs)", 
-      "Unlimited Paid Time Off", "Latest MacBook Pro provided"
+      "Practical Hands-on Projects", "Direct Industry Mentorship", 
+      "Placement & Internship Opportunities", "Certificate of Experience", 
+      "Verified Corporate Endorsement", "Skill-based Hiring"
     ]
   };
 
@@ -44,35 +61,42 @@ export default function CompanyProfilePage() {
       />
       <MainLayout>
         {/* Cover Image & Header */}
-      <div className="relative pt-[72px] md:pt-[80px]">
-        <div className="h-48 md:h-72 w-full relative">
-          <div className="absolute inset-0 bg-[#0d1635]/60 z-10" />
-          <img src={company.cover} alt="Office" className="w-full h-full object-cover" />
-        </div>
+        <div className="relative pt-[72px] md:pt-[80px]">
+          <div className="container mx-auto px-4 max-w-7xl pt-4 pb-2">
+            <Link href="/companies" className="inline-flex items-center gap-2 text-xs font-extrabold text-slate-500 hover:text-[#1B2A6B] transition-colors">
+              <ArrowLeft size={14} /> Back to Companies Directory
+            </Link>
+          </div>
+          <div className="h-48 md:h-72 w-full relative">
+            <div className="absolute inset-0 bg-[#0d1635]/60 z-10" />
+            <img src={company.cover} alt="Office" className="w-full h-full object-cover" />
+          </div>
 
-        <div className="container mx-auto px-4 max-w-7xl relative -mt-16 md:-mt-24 z-20">
-          <div className="flex flex-col md:flex-row gap-6 md:items-end mb-8">
-            <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-3xl p-2 shadow-[0_8px_30px_rgba(0,0,0,0.12)] shrink-0">
-              <img src={company.logo} alt={company.name} className="w-full h-full rounded-2xl object-cover" />
-            </div>
-            
-            <div className="flex-1 pb-2">
-              <h1 className="text-3xl md:text-4xl font-black text-slate-800 mb-2">{company.name}</h1>
-              <div className="flex flex-wrap items-center gap-4 text-sm font-semibold text-slate-600">
-                <span className="flex items-center gap-1.5"><Building2 size={16} className="text-[#1B2A6B]"/> {company.industry}</span>
-                <span className="flex items-center gap-1.5"><MapPin size={16} className="text-slate-400"/> {company.location}</span>
-                <span className="flex items-center gap-1.5"><Users size={16} className="text-slate-400"/> {company.size}</span>
+          <div className="container mx-auto px-4 max-w-7xl relative -mt-16 md:-mt-24 z-20">
+            <div className="flex flex-col md:flex-row gap-6 md:items-end mb-8">
+              <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-3xl p-3 shadow-[0_8px_30px_rgba(0,0,0,0.12)] shrink-0 flex items-center justify-center">
+                <img src={company.logo} alt={company.name} className="max-w-full max-h-full object-contain" />
               </div>
-            </div>
+              
+              <div className="flex-1 pb-2">
+                <h1 className="text-3xl md:text-4xl font-black text-slate-800 mb-2">{company.name}</h1>
+                <div className="flex flex-wrap items-center gap-4 text-sm font-semibold text-slate-600">
+                  <span className="flex items-center gap-1.5"><Building2 size={16} className="text-[#1B2A6B]"/> {company.industry}</span>
+                  <span className="flex items-center gap-1.5"><MapPin size={16} className="text-slate-400"/> {company.location}</span>
+                  <span className="flex items-center gap-1.5"><Users size={16} className="text-slate-400"/> {company.size}</span>
+                </div>
+              </div>
 
-            <div className="flex gap-3 pb-2 w-full md:w-auto">
-              <Button variant="outline" className="flex-1 md:flex-none border-slate-200 text-[#1B2A6B] font-extrabold h-12 rounded-xl text-sm shadow-sm gap-2 uppercase tracking-wider">
-                <Globe size={16} /> Visit Website
-              </Button>
+              <div className="flex gap-3 pb-2 w-full md:w-auto">
+                <a href={company.website.startsWith("http") ? company.website : `https://${company.website}`} target="_blank" rel="noopener noreferrer" className="flex-1 md:flex-none">
+                  <Button variant="outline" className="w-full border-slate-200 text-[#1B2A6B] font-extrabold h-12 rounded-xl text-sm shadow-sm gap-2 uppercase tracking-wider">
+                    <Globe size={16} /> Visit Website <ExternalLink size={14} />
+                  </Button>
+                </a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
       {/* Main Content Area */}
       <div className="container mx-auto px-4 max-w-7xl pb-16">

@@ -11,6 +11,7 @@ import {
   Clock, Award, BarChart3, Send, Trash2
 } from "lucide-react";
 import api from "../../../src/lib/axios";
+import { FormattedDescription } from "../../../src/components/common/FormattedDescription";
 
 // ─── Types ──────────────────────────────────────────────────────────
 type Note = {
@@ -481,11 +482,11 @@ export default function LMSPlayerPage() {
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                   <div>
                     <h2 className="text-xl font-bold text-white mb-3">
-                      {currentLesson?.title || "Select a Lesson"}
+                      {currentLesson?.title || "Course Overview"}
                     </h2>
-                    <p className="text-slate-400 text-sm leading-relaxed">
-                      {course?.description || "Master modern web development by building real-world projects."}
-                    </p>
+                    <div className="text-slate-300 text-sm leading-relaxed">
+                      <FormattedDescription content={course?.description} className="prose-invert text-slate-300" />
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-4 py-5 border-y border-white/10">

@@ -143,7 +143,7 @@ export default function JobseekerProfilePage() {
   const resumeHref = profile.resume_url || (profile.resume_path ? (
     profile.resume_path.startsWith('http') 
       ? profile.resume_path 
-      : `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000'}/storage/${profile.resume_path}`
+      : `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in'}/storage/${profile.resume_path}`
   ) : null);
 
   const avatarUrl = user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=1B2A6B&color=fff&size=100`;

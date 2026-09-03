@@ -17,6 +17,16 @@ export interface CourseCategory {
   status?: string;
 }
 
+export const DEFAULT_COURSE_CATEGORIES: CourseCategory[] = [
+  { id: 1, name: "Full Stack Development", slug: "full-stack-development" },
+  { id: 2, name: "Frontend Development", slug: "frontend-development" },
+  { id: 3, name: "Backend Development", slug: "backend-development" },
+  { id: 4, name: "AI/ML", slug: "ai-ml" },
+  { id: 5, name: "Graphic Design", slug: "graphic-design" },
+  { id: 6, name: "UI/UX Design", slug: "ui-ux-design" },
+  { id: 7, name: "Digital Marketing", slug: "digital-marketing" },
+];
+
 export const CourseCategoryService = {
   useCategories: (params: Record<string, any> = {}) => {
     const query = new URLSearchParams(
@@ -26,9 +36,19 @@ export const CourseCategoryService = {
     
     const { data, error, mutate, isLoading } = useSWR(url, fetcher, { keepPreviousData: true });
     
+    const rawList = Array.isArray(data?.data)
+      ? data.data
+      : Array.isArray(data?.data?.data)
+        ? data.data.data
+        : Array.isArray(data?.categories)
+          ? data.categories
+          : Array.isArray(data)
+            ? data
+            : [];
+
     return {
-      data: data?.data || (Array.isArray(data) ? data : []),
-      meta: data?.meta || {},
+      data: rawList.length > 0 ? rawList : (isLoading ? [] : DEFAULT_COURSE_CATEGORIES),
+      meta: data?.meta || data?.pagination || {},
       isLoading,
       isError: !!error,
       mutate

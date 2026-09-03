@@ -4,16 +4,18 @@ import { staggerContainer, staggerItem } from "../animations/variants";
 import { Award, Target, Briefcase, ArrowRight, CheckCircle, Code, PenTool, TrendingUp, Cpu, BarChart, Smartphone } from "lucide-react";
 import Link from "next/link";
 import { TiltCard } from "../components/ui/TiltCard";
-import { dummyInternships } from "../data/internships";
+import useSWR from "swr";
+import api from "../lib/axios";
 
-// fallback icons based on some logic or hardcode for now
+// Helper icons based on domain
 const getIcon = (title: string) => {
-  if (title.includes('Web')) return Code;
-  if (title.includes('Design')) return PenTool;
-  if (title.includes('Digital')) return TrendingUp;
-  if (title.includes('AI') || title.includes('Machine')) return Cpu;
-  if (title.includes('Data')) return BarChart;
-  if (title.includes('App')) return Smartphone;
+  const t = (title || '').toLowerCase();
+  if (t.includes('web') || t.includes('full') || t.includes('frontend') || t.includes('backend') || t.includes('software')) return Code;
+  if (t.includes('design') || t.includes('ui') || t.includes('ux') || t.includes('graphic')) return PenTool;
+  if (t.includes('digital') || t.includes('marketing') || t.includes('seo') || t.includes('growth')) return TrendingUp;
+  if (t.includes('ai') || t.includes('machine') || t.includes('python') || t.includes('robotics')) return Cpu;
+  if (t.includes('data') || t.includes('analytics') || t.includes('analyst')) return BarChart;
+  if (t.includes('app') || t.includes('android') || t.includes('ios') || t.includes('flutter') || t.includes('mobile')) return Smartphone;
   return Briefcase;
 };
 
@@ -25,11 +27,13 @@ const features = [
 ];
 
 export const InternshipsSection = () => {
-  // const fetcher = (url: string) => api.get(url).then(res => res.data.data);
-  // const { data: internshipsData } = useSWR('/public/internships-cms', fetcher, { revalidateOnFocus: false });
-  const currentInternships = dummyInternships.slice(0, 6);
+  const fetcher = (url: string) => api.get(url).then(res => res.data.data);
+  const { data: internshipsData, isLoading } = useSWR('/public/internships', fetcher, { revalidateOnFocus: false });
+  
+  const rawList = Array.isArray(internshipsData) ? internshipsData : (internshipsData?.data || []);
+  const currentInternships = rawList.slice(0, 6);
 
-  if (currentInternships.length === 0) return null;
+  if (!isLoading && currentInternships.length === 0) return null;
 
   return (
     <section className="py-24 bg-gradient-to-b from-white via-blue-50/20 to-slate-50 overflow-hidden border-y border-slate-100 relative">

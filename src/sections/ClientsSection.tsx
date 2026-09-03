@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useAnimationFrame, useInView } from "framer-motion";
 import { useCountUp } from "../hooks/useAnimations";
 import {
@@ -12,6 +12,7 @@ import {
 import useSWR from "swr";
 import api from "../lib/axios";
 import { partnerCompanies } from "../data/companies";
+import { CompanyService } from "../lib/api/CompanyService";
 
 interface CompanyType {
   id?: number;
@@ -127,21 +128,51 @@ export const ClientsSection = ({
   const isInView = useInView(containerRef, { once: true, margin: "0px" });
 
   const fetcher = (url: string) => api.get(url).then(res => res.data.data);
-  const { data: statsData } = useSWR('/public/stats', fetcher, { revalidateOnFocus: false });
+  const { data: statsData } = useSWR('/public/stats', fetcher);
+  
+  // Dynamic companies fetcher with auto-revalidation
+  const { data: apiCompaniesData, mutate: mutateCompanies } = useSWR('/cms/companies', (url) => api.get(url).then(res => res.data), {
+    shouldRetryOnError: false,
+    revalidateOnFocus: true,
+    refreshInterval: 5000,
+  });
 
-  const fallbackPartners = partnerCompanies.map(c => ({
-    name: c.name,
-    logo: c.logoUrl
-  }));
+  const [liveCompanies, setLiveCompanies] = useState<any[]>([]);
 
-  const partners = fallbackPartners; // Local source of truth containing valid existing logo files
+  useEffect(() => {
+    // Initial fetch from CompanyService
+    CompanyService.getAll().then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        setLiveCompanies(data);
+      }
+    });
+
+    // Real-time multi-tab subscription to Admin company updates
+    const unsubscribe = CompanyService.subscribe((updated) => {
+      setLiveCompanies(updated);
+      mutateCompanies();
+    });
+
+    return () => unsubscribe();
+  }, [mutateCompanies]);
+
+  const activeSource = (apiCompaniesData && Array.isArray(apiCompaniesData) && apiCompaniesData.length > 0)
+    ? apiCompaniesData
+    : (liveCompanies.length > 0 ? liveCompanies : partnerCompanies);
+
+  const partners = activeSource
+    .filter((c: any) => !c.status || c.status === "published" || c.status === "active")
+    .map((c: any) => ({
+      name: c.name,
+      logo: c.logoUrl || c.logo_url || c.logo
+    }));
 
   const row1 = partners.slice(0, Math.ceil(partners.length / 2));
   const row2 = partners.slice(Math.ceil(partners.length / 2));
 
   const currentStats = [
     { value: 5000, suffix: "+", label: "Students Trained", icon: GraduationCap },
-    { value: statsData?.partners || 43, suffix: "+", label: "Hiring Partners", icon: Users },
+    { value: partners.length || 41, suffix: "+", label: "Hiring Partners", icon: Users },
     { value: statsData?.projects || 850, suffix: "+", label: "Live Projects", icon: Briefcase },
     { value: 98.4, suffix: "%", label: "Placement Rate", icon: Star },
   ];

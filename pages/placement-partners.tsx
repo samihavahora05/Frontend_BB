@@ -1,17 +1,40 @@
+import { useState, useEffect } from "react";
 import { MainLayout } from "../src/layout/MainLayout";
 import { Award } from "lucide-react";
 import { motion } from "framer-motion";
 
 import useSWR from "swr";
 import { fetcher } from "../src/lib/fetcher";
-import { partnerCompanies } from "../src/data/companies"; // fallback
+import { partnerCompanies } from "../src/data/companies";
+import { CompanyService, CMSCompany } from "../src/lib/api/CompanyService";
 import { SEO } from "../src/components/seo/SEO";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
 import { TestimonialsSection } from "../src/sections/TestimonialsSection";
 
 export default function PlacementPartnersPage() {
-  const { data } = useSWR("/public/cms/placement-partners", fetcher);
-  const partnersList = (data && data.length > 20) ? data : partnerCompanies; // force local array to show all partners
+  const { data } = useSWR("/cms/companies", fetcher, {
+    shouldRetryOnError: false,
+    revalidateOnFocus: false,
+  });
+
+  const [liveCompanies, setLiveCompanies] = useState<CMSCompany[]>([]);
+
+  useEffect(() => {
+    CompanyService.getAll().then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        setLiveCompanies(data);
+      }
+    });
+
+    const unsubscribe = CompanyService.subscribe((updated) => {
+      setLiveCompanies(updated);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const partnersList = (data && Array.isArray(data) && data.length > 0)
+    ? data.filter((c: any) => !c.status || c.status === "published" || c.status === "active")
+    : (liveCompanies.length > 0 ? liveCompanies.filter((c: any) => !c.status || c.status === "published" || c.status === "active") : partnerCompanies.filter((c: any) => !c.status || c.status === "published"));
 
   return (
     <>

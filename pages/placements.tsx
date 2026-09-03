@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { MainLayout } from "../src/layout/MainLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, CheckCircle2, Building2, Briefcase, Award } from "lucide-react";
@@ -6,6 +6,7 @@ import { Card, CardContent } from "../src/components/ui/Card";
 import { Badge } from "../src/components/ui/Badge";
 import { Input } from "../src/components/ui/Input";
 import { partnerCompanies, INDUSTRIES } from "../src/data/companies";
+import { CompanyService, CMSCompany } from "../src/lib/api/CompanyService";
 import { SEO } from "../src/components/seo/SEO";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
 import { TestimonialsSection } from "../src/sections/TestimonialsSection";
@@ -13,10 +14,11 @@ import { TestimonialsSection } from "../src/sections/TestimonialsSection";
 // Helper component for fallback company logos
 const CompanyLogo = ({ company }: { company: any }) => {
   const [imgError, setImgError] = useState(false);
+  const logo = company.logoUrl || company.logo_url;
 
-  if (!company.logoUrl || imgError) {
+  if (!logo || imgError) {
     // Generate initials from company name
-    const initials = company.name
+    const initials = (company.name || "Company")
       .split(" ")
       .slice(0, 2)
       .map((w: string) => w[0])
@@ -25,7 +27,7 @@ const CompanyLogo = ({ company }: { company: any }) => {
     
     // Consistent color based on company name length
     const colors = ["bg-blue-100 text-blue-700", "bg-emerald-100 text-emerald-700", "bg-amber-100 text-amber-700", "bg-purple-100 text-purple-700", "bg-rose-100 text-rose-700"];
-    const colorClass = colors[company.name.length % colors.length];
+    const colorClass = colors[(company.name || "").length % colors.length];
 
     return (
       <div className={`w-16 h-16 rounded-xl flex items-center justify-center font-bold text-xl ${colorClass}`}>
@@ -38,7 +40,7 @@ const CompanyLogo = ({ company }: { company: any }) => {
     <div className="w-16 h-16 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center p-2 overflow-hidden relative">
       <div className="absolute inset-1 rounded-lg bg-gradient-to-br from-slate-200/50 via-slate-100/30 to-amber-100/20 blur-sm pointer-events-none" />
       <img 
-        src={company.logoUrl} 
+        src={logo} 
         alt={company.name} 
         className="max-w-full max-h-full object-contain relative z-10 [filter:drop-shadow(0_4px_8px_rgba(15,23,42,0.55))_drop-shadow(0_0_1.5px_rgba(15,23,42,0.75))]"
         onError={() => setImgError(true)}
@@ -47,14 +49,49 @@ const CompanyLogo = ({ company }: { company: any }) => {
   );
 };
 
+import useSWR from "swr";
+import { fetcher } from "../src/lib/fetcher";
+
 export default function CompaniesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedIndustry, setSelectedIndustry] = useState("All Industries");
+  const [companies, setCompanies] = useState<CMSCompany[]>([]);
 
-  const filteredCompanies = partnerCompanies.filter(company => {
+  // Live API sync with background revalidation
+  const { data: apiCompanies, mutate: mutateCompanies } = useSWR("/cms/companies", fetcher, {
+    shouldRetryOnError: false,
+    revalidateOnFocus: true,
+    refreshInterval: 5000,
+  });
+
+  useEffect(() => {
+    // Initial fetch from CompanyService
+    CompanyService.getAll().then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        setCompanies(data);
+      }
+    });
+
+    // Real-time subscription across tabs
+    const unsubscribe = CompanyService.subscribe((updated) => {
+      setCompanies(updated);
+      mutateCompanies();
+    });
+
+    return () => unsubscribe();
+  }, [mutateCompanies]);
+
+  const activeSource = (apiCompanies && Array.isArray(apiCompanies) && apiCompanies.length > 0)
+    ? apiCompanies
+    : (companies.length > 0 ? companies : partnerCompanies);
+
+  const companiesList = activeSource.filter((c: any) => !c.status || c.status === "published" || c.status === "active");
+
+  const filteredCompanies = companiesList.filter((company: any) => {
+    const indName = company.industry?.name || company.industry || "";
     const matchesSearch = company.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          company.industry.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesIndustry = selectedIndustry === "All Industries" || company.industry === selectedIndustry;
+                          indName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesIndustry = selectedIndustry === "All Industries" || indName.toLowerCase() === selectedIndustry.toLowerCase() || indName.toLowerCase().includes(selectedIndustry.toLowerCase());
     
     return matchesSearch && matchesIndustry;
   });

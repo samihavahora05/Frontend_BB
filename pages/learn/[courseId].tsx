@@ -15,14 +15,32 @@ import {
   Share2,
   ThumbsUp
 } from "lucide-react";
-import { dummyCourses as MOCK_COURSES } from "../../src/data/courses";
+import useSWR from "swr";
+import api from "../../src/lib/axios";
 import { AnimatedContent } from "../../src/components/reactbits/AnimatedContent";
 import { SEO } from "../../src/components/seo/SEO";
+import { getImageUrl } from "../../src/lib/imageUtils";
 
 export default function CoursePlayerPage() {
   const router = useRouter();
   const { courseId } = router.query;
-  const course = MOCK_COURSES.find(c => c.slug === courseId) || MOCK_COURSES[0];
+
+  const fetcher = async (url: string) => {
+    try {
+      const res = await api.get(url);
+      if (res?.data?.data) return res.data.data;
+      if (res?.data) return res.data;
+    } catch {}
+    try {
+      const res2 = await api.get(`/courses/${courseId}`);
+      if (res2?.data?.data) return res2.data.data;
+      if (res2?.data) return res2.data;
+    } catch {}
+    return null;
+  };
+
+  const { data: liveCourse } = useSWR(courseId ? `/public/courses/${courseId}` : null, fetcher);
+  const course = liveCourse;
 
   const [activeTab, setActiveTab] = useState('overview');
   const [expandedModules, setExpandedModules] = useState<number[]>([0]);
@@ -208,7 +226,7 @@ export default function CoursePlayerPage() {
 
           <div className="flex-1 overflow-y-auto">
             {course?.curriculum && course.curriculum.length > 0 ? (
-              course.curriculum.map((module, mIdx) => (
+              course.curriculum.map((module: any, mIdx: number) => (
                 <div key={mIdx} className="border-b border-slate-100">
                   <button 
                     onClick={() => toggleModule(mIdx)}

@@ -180,7 +180,18 @@ export default function CheckoutPage() {
 
       // 2. Create order on backend for courses
       const courseIds = cartItems.map((item) => item.id);
-      const { data } = await api.post("/checkout/create-order", { course_ids: courseIds });
+      let data: any = null;
+      try {
+        const res = await api.post("/checkout/create-order", { course_ids: courseIds });
+        data = res.data;
+      } catch (err1: any) {
+        try {
+          const res2 = await api.post("/orders", { course_ids: courseIds });
+          data = res2.data;
+        } catch {
+          throw err1;
+        }
+      }
 
       if (data?.is_free) {
         clearCart();
