@@ -12,40 +12,34 @@ export const getImageUrl = (path?: string | null): string => {
     return trimmed;
   }
 
+  // Base backend URL for API and uploaded media
+  const backendBase = (
+    process.env.NEXT_PUBLIC_BACKEND_URL ||
+    process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') ||
+    'https://backend.blueboxx.in'
+  ).replace(/\/+$/, '');
+
   // Strip hardcoded localhost / 127.0.0.1 if saved from local DB
   if (trimmed.includes('localhost') || trimmed.includes('127.0.0.1')) {
     const storageIdx = trimmed.indexOf('/storage/');
     if (storageIdx !== -1) {
       trimmed = trimmed.substring(storageIdx);
     } else {
-      const studentsIdx = trimmed.indexOf('/students/');
-      if (studentsIdx !== -1) {
-        trimmed = trimmed.substring(studentsIdx);
+      const uploadsIdx = trimmed.indexOf('/uploads/');
+      if (uploadsIdx !== -1) {
+        trimmed = trimmed.substring(uploadsIdx);
       } else {
-        const slashIdx = trimmed.indexOf('/', trimmed.indexOf('://') + 3);
-        if (slashIdx !== -1) {
-          trimmed = trimmed.substring(slashIdx);
+        const studentsIdx = trimmed.indexOf('/students/');
+        if (studentsIdx !== -1) {
+          trimmed = trimmed.substring(studentsIdx);
+        } else {
+          const slashIdx = trimmed.indexOf('/', trimmed.indexOf('://') + 3);
+          if (slashIdx !== -1) {
+            trimmed = trimmed.substring(slashIdx);
+          }
         }
       }
     }
-  }
-
-  // Local static frontend assets stored in public/
-  if (
-    trimmed.startsWith('/students/') ||
-    trimmed.startsWith('students/') ||
-    trimmed.startsWith('/images/') ||
-    trimmed.startsWith('images/') ||
-    trimmed.startsWith('/logo/') ||
-    trimmed.startsWith('/uploads/') ||
-    trimmed.startsWith('uploads/') ||
-    trimmed.startsWith('logo/') ||
-    trimmed.startsWith('/testimonials photos/') ||
-    trimmed.startsWith('testimonials photos/') ||
-    trimmed.startsWith('/assets/') ||
-    trimmed.startsWith('assets/')
-  ) {
-    return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
   }
 
   // If already an absolute HTTPS/HTTP external URL (e.g. dicebear, ui-avatars, unsplash)
@@ -57,12 +51,36 @@ export const getImageUrl = (path?: string | null): string => {
     return trimmed;
   }
 
-  // Backend storage URL resolution
-  const backendBase = (
-    process.env.NEXT_PUBLIC_BACKEND_URL ||
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') ||
-    'http://127.0.0.1:8000'
-  ).replace(/\/+$/, '');
+  // Backend uploaded assets (/uploads/... or uploads/...) -> prepend backendBase
+  if (trimmed.startsWith('/uploads/') || trimmed.startsWith('uploads/')) {
+    const cleanUploadsPath = trimmed.replace(/\\/g, '/').replace(/^\/+/, '');
+    return `${backendBase}/${cleanUploadsPath}`;
+  }
+
+  // Backend storage assets (/storage/... or storage/...) -> prepend backendBase/storage
+  if (trimmed.startsWith('/storage/') || trimmed.startsWith('storage/') || trimmed.startsWith('media_files/')) {
+    let cleanStoragePath = trimmed.replace(/\\/g, '/').replace(/^\/+/, '');
+    while (cleanStoragePath.startsWith('storage/')) {
+      cleanStoragePath = cleanStoragePath.substring(8).replace(/^\/+/, '');
+    }
+    return `${backendBase}/storage/${cleanStoragePath}`;
+  }
+
+  // Local static frontend assets stored in public/
+  if (
+    trimmed.startsWith('/students/') ||
+    trimmed.startsWith('students/') ||
+    trimmed.startsWith('/images/') ||
+    trimmed.startsWith('images/') ||
+    trimmed.startsWith('/logo/') ||
+    trimmed.startsWith('logo/') ||
+    trimmed.startsWith('/testimonials photos/') ||
+    trimmed.startsWith('testimonials photos/') ||
+    trimmed.startsWith('/assets/') ||
+    trimmed.startsWith('assets/')
+  ) {
+    return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  }
 
   let cleanPath = trimmed.replace(/\\/g, '/').replace(/^\/+/, '');
   while (cleanPath.startsWith('storage/')) {
