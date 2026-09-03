@@ -191,7 +191,7 @@ export default function AdminCompaniesPage() {
       location: company.location || "",
       website_url: company.website_url || "",
       logoUrl: company.logoUrl || "",
-      status: company.status || "published",
+      status: (company.status === "draft" || company.status === "archived" ? company.status : "published") as "published" | "draft" | "archived",
       is_featured: !!company.is_featured,
     });
     setIsEditCompanyModalOpen(true);
@@ -397,7 +397,7 @@ export default function AdminCompaniesPage() {
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status?: string) => {
     switch (status?.toLowerCase()) {
       case "published":
       case "verified":
