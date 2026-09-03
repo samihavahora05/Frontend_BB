@@ -87,12 +87,24 @@ export default function JobsPage() {
           params.search = searchQuery.trim();
         }
 
-        const res = await api.get("/public/jobs", { params });
-        const list = res.data?.data || (Array.isArray(res.data) ? res.data : []);
+        let list: any[] = [];
+        let total = 0;
+        let lastP = 1;
+        try {
+          const res = await api.get("/public/jobs", { params });
+          list = res.data?.data || (Array.isArray(res.data) ? res.data : []);
+          total = res.data?.pagination?.total ?? res.data?.total ?? list.length;
+          lastP = res.data?.pagination?.last_page ?? res.data?.last_page ?? 1;
+        } catch (_) {
+          const res = await api.get("/jobs", { params });
+          list = res.data?.data || (Array.isArray(res.data) ? res.data : []);
+          total = res.data?.pagination?.total ?? res.data?.total ?? list.length;
+          lastP = res.data?.pagination?.last_page ?? res.data?.last_page ?? 1;
+        }
         if (Array.isArray(list)) {
           setJobs(list);
-          setTotalPages(res.data?.pagination?.last_page || 1);
-          setTotalJobs(res.data?.pagination?.total || list.length);
+          setTotalPages(lastP);
+          setTotalJobs(total);
         }
       } catch (error) {
         console.error("Failed to fetch jobs:", error);
