@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
 import {
   Briefcase, Plus, Users, Trash2, StopCircle,
   CheckCircle, XCircle, Clock, AlertCircle, Search,
-  Download, ChevronLeft, ChevronRight, RefreshCw
+  Download, Upload, ChevronLeft, ChevronRight, RefreshCw,
+  FileSpreadsheet, X, Check, Loader2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { JobService } from '../../../src/lib/api/admin/JobService';
@@ -54,6 +55,12 @@ export default function JobsManager() {
 
   const { data: metrics, mutate: mutateMetrics } = JobService.useDashboardMetrics();
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // ─── CSV Import State ────────────────────────────────────────────────────────
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile]           = useState<File | null>(null);
+  const [isUploading, setIsUploading]             = useState(false);
+  const fileInputRef                              = useRef<HTMLInputElement>(null);
 
   // ─── Actions ─────────────────────────────────────────────────────────────────
   const handleRefresh = async () => {
@@ -120,6 +127,44 @@ export default function JobsManager() {
     toast.success('Downloading CSV…');
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (!file.name.endsWith('.csv') && !file.type.includes('csv') && !file.type.includes('text')) {
+        toast.error('Please select a valid .csv file');
+        return;
+      }
+      setSelectedFile(file);
+    }
+  };
+
+  const handleImportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedFile) {
+      toast.error('Please choose a CSV file first');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const res = await JobService.importCSV(selectedFile);
+      if (res.success) {
+        toast.success(res.message || 'Jobs imported and published successfully!');
+        setSelectedFile(null);
+        setIsImportModalOpen(false);
+        mutate();
+        mutateMetrics();
+      } else {
+        toast.error(res.message || 'Failed to import jobs');
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.response?.data?.message || 'Error uploading CSV. Please verify column format.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   // ─── Pagination helpers ───────────────────────────────────────────────────────
   const totalPages  = meta?.last_page ?? 1;
   const totalCount  = meta?.total ?? 0;
@@ -135,10 +180,16 @@ export default function JobsManager() {
             <Briefcase size={28} className="text-[#C9A227]"/> Jobs Management
           </h1>
           <p className="text-gray-500 text-sm mt-1 font-semibold">
-            Review company postings, approve jobs, and manage candidate pipelines.
+            Post, review, import via CSV, and publish jobs directly to the live platform.
           </p>
         </div>
         <div className="flex gap-2 flex-wrap">
+          <button 
+            onClick={() => setIsImportModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-50 border border-blue-200 text-[#1B2A6B] hover:bg-blue-100 px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-sm"
+          >
+            <Upload size={15}/> Import CSV
+          </button>
           <button onClick={handleExport}
             className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 px-4 py-2 rounded-lg font-bold text-sm transition-colors">
             <Download size={15}/> Export CSV
@@ -229,10 +280,16 @@ export default function JobsManager() {
                         {search || status ? 'No jobs match your filters.' : 'No jobs posted yet.'}
                       </p>
                       {!search && !status && (
-                        <button onClick={() => router.push('/admin/jobs/add')}
-                          className="mt-4 flex items-center gap-2 bg-[#1B2A6B] text-white px-4 py-2 rounded-lg font-bold text-sm">
-                          <Plus size={14}/> Post First Job
-                        </button>
+                        <div className="mt-4 flex gap-3">
+                          <button onClick={() => setIsImportModalOpen(true)}
+                            className="flex items-center gap-2 bg-blue-50 border border-blue-200 text-[#1B2A6B] px-4 py-2 rounded-lg font-bold text-sm">
+                            <Upload size={14}/> Import from CSV
+                          </button>
+                          <button onClick={() => router.push('/admin/jobs/add')}
+                            className="flex items-center gap-2 bg-[#1B2A6B] text-white px-4 py-2 rounded-lg font-bold text-sm">
+                            <Plus size={14}/> Post First Job
+                          </button>
+                        </div>
                       )}
                     </div>
                   </td>
@@ -361,6 +418,108 @@ export default function JobsManager() {
           </div>
         )}
       </div>
+
+      {/* ── CSV Import Modal ────────────────────────────────────────────────── */}
+      {isImportModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-100">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#1B2A6B] flex items-center justify-center">
+                  <FileSpreadsheet size={22}/>
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-gray-800">Import Jobs via CSV</h3>
+                  <p className="text-xs font-semibold text-gray-400">Bulk upload and publish jobs immediately</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => { setIsImportModalOpen(false); setSelectedFile(null); }}
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              >
+                <X size={18}/>
+              </button>
+            </div>
+
+            <form onSubmit={handleImportSubmit} className="mt-4 space-y-4">
+              <div className="flex items-center justify-between bg-amber-50/70 border border-amber-200/80 rounded-xl p-3 text-xs text-amber-900 font-medium">
+                <span>Need the format template?</span>
+                <button
+                  type="button"
+                  onClick={() => JobService.downloadSampleCSV()}
+                  className="flex items-center gap-1.5 bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg font-bold transition-colors shadow-sm"
+                >
+                  <Download size={13}/> Sample CSV
+                </button>
+              </div>
+
+              <div 
+                onClick={() => fileInputRef.current?.click()}
+                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
+                  selectedFile 
+                    ? 'border-emerald-500 bg-emerald-50/30' 
+                    : 'border-gray-300 hover:border-[#1B2A6B] hover:bg-gray-50'
+                }`}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv,text/csv,text/plain"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+                <div className="w-12 h-12 mx-auto rounded-full bg-blue-50 text-[#1B2A6B] flex items-center justify-center mb-3">
+                  <Upload size={22}/>
+                </div>
+                {selectedFile ? (
+                  <div>
+                    <p className="text-sm font-bold text-emerald-700 flex items-center justify-center gap-1.5">
+                      <Check size={16}/> {selectedFile.name}
+                    </p>
+                    <p className="text-xs text-gray-400 font-semibold mt-1">
+                      {(selectedFile.size / 1024).toFixed(1)} KB • Click to change file
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-sm font-bold text-gray-700">
+                      Click to browse or drag and drop your CSV file
+                    </p>
+                    <p className="text-xs text-gray-400 font-semibold mt-1">
+                      Supports UTF-8 CSV with job titles, departments, requirements, etc.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => { setIsImportModalOpen(false); setSelectedFile(null); }}
+                  className="px-4 py-2 rounded-lg font-bold text-sm text-gray-600 hover:bg-gray-100 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!selectedFile || isUploading}
+                  className="flex items-center gap-2 bg-[#1B2A6B] hover:bg-[#121c47] text-white px-5 py-2 rounded-lg font-bold text-sm shadow-md transition-colors disabled:opacity-50"
+                >
+                  {isUploading ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin"/> Importing Jobs…
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={16}/> Upload & Publish
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </AdminDashboardLayout>
   );
 }

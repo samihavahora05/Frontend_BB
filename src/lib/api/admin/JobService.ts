@@ -55,6 +55,31 @@ export const JobService = {
     return response.data;
   },
 
+  importCSV: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await api.post('/admin/jobs/import', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  downloadSampleCSV: () => {
+    const token = typeof window !== 'undefined' ? getActiveToken() : '';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://backend.blueboxx.in/api';
+    const url = `${baseUrl}/admin/jobs/sample-csv`;
+    fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.blob())
+      .then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'jobs-sample-template.csv';
+        a.click();
+      });
+  },
+
   useDashboardMetrics: () => {
     const { data, error, isLoading, mutate } = useSWR('/admin/jobs/dashboard-metrics', fetcher, {
       revalidateOnFocus: false,
