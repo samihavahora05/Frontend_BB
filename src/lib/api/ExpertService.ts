@@ -107,21 +107,25 @@ export const ExpertService = {
     let apiExperts: any[] = [];
     let lastError: any = null;
 
+    // 1. Try admin instructors endpoint first with cache-busting timestamp
     try {
-      const res = await api.get("/public/experts?per_page=100");
+      const res = await api.get(`/admin/instructors?per_page=100&_t=${Date.now()}`);
       apiExperts = res?.data?.data || (Array.isArray(res?.data) ? res.data : []);
-    } catch (err) {
-      lastError = err;
+    } catch (adminErr) {
+      lastError = adminErr;
+      // 2. Fallback to public endpoint
       try {
-        const res = await api.get("/admin/instructors?per_page=100");
+        const res = await api.get(`/public/experts?per_page=100&_t=${Date.now()}`);
         apiExperts = res?.data?.data || (Array.isArray(res?.data) ? res.data : []);
         lastError = null;
-      } catch (adminErr) {
-        lastError = adminErr;
+      } catch (publicErr) {
+        lastError = publicErr;
       }
     }
 
     if (lastError && apiExperts.length === 0) {
+      const cached = this.getLocalExperts();
+      if (cached.length > 0) return cached;
       throw lastError;
     }
 
@@ -266,11 +270,16 @@ export const ExpertService = {
   },
 
   async deleteExpert(id: string | number): Promise<boolean> {
+    const strId = String(id);
     try {
       await api.delete(`/admin/instructors/${id}`).catch(() => api.delete(`/admin/users/${id}`));
     } catch (err) {
       console.warn("Backend delete notice:", err);
     }
+
+    const current = this.getLocalExperts();
+    const filtered = current.filter((e) => String(e.id) !== strId && String(e.user_id) !== strId);
+    this.setLocalCache(filtered);
 
     if (typeof window !== "undefined") {
       window.dispatchEvent(new Event("bb_experts_updated"));

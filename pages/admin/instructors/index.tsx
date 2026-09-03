@@ -112,12 +112,14 @@ export default function InstructorsManager() {
   const handleDelete = async (id: string | number) => {
     if (await confirmAction({ title: "Delete Expert", description: "Are you sure you want to permanently delete this expert from the platform?", isDestructive: true })) {
       try {
+        setExpertsList((prev) => prev.filter((e) => String(e.id) !== String(id) && String(e.user_id) !== String(id)));
         await ExpertService.deleteExpert(id);
         toast.success("Expert deleted successfully!");
         const fresh = await ExpertService.getAll();
         setExpertsList(fresh);
       } catch (e: any) {
         toast.error("Failed to delete expert.");
+        loadExperts();
       }
     }
     setOpenDropdownId(null);
