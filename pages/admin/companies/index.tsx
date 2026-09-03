@@ -14,6 +14,7 @@ import { fetcher } from "../../../src/lib/fetcher";
 import api from "../../../src/lib/axios";
 import { CompanyService, CMSCompany } from "../../../src/lib/api/CompanyService";
 import { INDUSTRIES } from "../../../src/data/companies";
+import { getImageUrl } from "../../../src/lib/imageUtils";
 
 export default function AdminCompaniesPage() {
   const [activeTab, setActiveTab] = useState<"companies" | "projects" | "partners" | "colleges">("companies");
@@ -636,7 +637,7 @@ export default function AdminCompaniesPage() {
                           <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 p-1.5 shadow-sm flex items-center justify-center overflow-hidden shrink-0 group-hover:border-indigo-300 transition-colors">
                             {company.logoUrl ? (
                               <img
-                                src={company.logoUrl}
+                                src={getImageUrl(company.logoUrl)}
                                 alt={company.name}
                                 className="w-full h-full object-contain"
                                 onError={(e) => {
@@ -821,7 +822,7 @@ export default function AdminCompaniesPage() {
                 </div>
 
                 <div className="relative h-48 w-full bg-slate-100 shrink-0">
-                  <img src={project.image_url} alt={project.title} className="w-full h-full object-cover" />
+                  <img src={getImageUrl(project.image_url)} alt={project.title} className="w-full h-full object-cover" />
                   <div className="absolute top-3 left-3 flex gap-2 z-10">
                     <span className="px-2.5 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-[10px] font-black text-[#1B2A6B] uppercase tracking-wider shadow-sm">
                       {project.category}
@@ -885,7 +886,7 @@ export default function AdminCompaniesPage() {
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center p-1.5 shadow-sm">
-                          {partner.logo_url ? <img src={partner.logo_url} alt={partner.name} className="w-full h-full object-contain" /> : <Building className="text-slate-300" size={20} />}
+                          {partner.logo_url ? <img src={getImageUrl(partner.logo_url)} alt={partner.name} className="w-full h-full object-contain" /> : <Building className="text-slate-300" size={20} />}
                         </div>
                         <div className="font-bold text-slate-900 group-hover:text-[#1B2A6B] transition-colors">{partner.name}</div>
                       </div>
@@ -938,7 +939,7 @@ export default function AdminCompaniesPage() {
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center p-1.5 shadow-sm">
-                          {college.logo_url ? <img src={college.logo_url} alt={college.name} className="w-full h-full object-contain" /> : <Building className="text-slate-300" size={20} />}
+                          {college.logo_url ? <img src={getImageUrl(college.logo_url)} alt={college.name} className="w-full h-full object-contain" /> : <Building className="text-slate-300" size={20} />}
                         </div>
                         <div className="font-bold text-slate-900 group-hover:text-[#1B2A6B] transition-colors">{college.name}</div>
                       </div>
@@ -1092,7 +1093,7 @@ export default function AdminCompaniesPage() {
                   <div className="mt-3 flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200">
                     <div className="w-14 h-14 rounded-lg border border-slate-200 bg-slate-50 p-1 flex items-center justify-center shrink-0 overflow-hidden">
                       <img
-                        src={companyForm.logoUrl}
+                        src={getImageUrl(companyForm.logoUrl)}
                         alt="Logo preview"
                         className="w-full h-full object-contain"
                       />

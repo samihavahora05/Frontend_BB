@@ -7,7 +7,7 @@ export const getImageUrl = (path?: string | null): string => {
   let trimmed = String(path).trim();
   if (!trimmed) return '';
 
-  // If path is a data URI or blob URI, return directly
+  // If path is a data URI or blob URI, return directly (instant preview on upload)
   if (trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
     return trimmed;
   }
@@ -51,21 +51,6 @@ export const getImageUrl = (path?: string | null): string => {
     return trimmed;
   }
 
-  // Backend uploaded assets (/uploads/... or uploads/...) -> prepend backendBase
-  if (trimmed.startsWith('/uploads/') || trimmed.startsWith('uploads/')) {
-    const cleanUploadsPath = trimmed.replace(/\\/g, '/').replace(/^\/+/, '');
-    return `${backendBase}/${cleanUploadsPath}`;
-  }
-
-  // Backend storage assets (/storage/... or storage/...) -> prepend backendBase/storage
-  if (trimmed.startsWith('/storage/') || trimmed.startsWith('storage/') || trimmed.startsWith('media_files/')) {
-    let cleanStoragePath = trimmed.replace(/\\/g, '/').replace(/^\/+/, '');
-    while (cleanStoragePath.startsWith('storage/')) {
-      cleanStoragePath = cleanStoragePath.substring(8).replace(/^\/+/, '');
-    }
-    return `${backendBase}/storage/${cleanStoragePath}`;
-  }
-
   // Local static frontend assets stored in public/
   if (
     trimmed.startsWith('/students/') ||
@@ -80,6 +65,20 @@ export const getImageUrl = (path?: string | null): string => {
     trimmed.startsWith('assets/')
   ) {
     return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  }
+
+  // Frontend public uploads (/uploads/media/...)
+  if (trimmed.startsWith('/uploads/') || trimmed.startsWith('uploads/')) {
+    return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  }
+
+  // Backend storage assets (/storage/... or storage/...)
+  if (trimmed.startsWith('/storage/') || trimmed.startsWith('storage/') || trimmed.startsWith('media_files/')) {
+    let cleanStoragePath = trimmed.replace(/\\/g, '/').replace(/^\/+/, '');
+    while (cleanStoragePath.startsWith('storage/')) {
+      cleanStoragePath = cleanStoragePath.substring(8).replace(/^\/+/, '');
+    }
+    return `${backendBase}/storage/${cleanStoragePath}`;
   }
 
   let cleanPath = trimmed.replace(/\\/g, '/').replace(/^\/+/, '');
