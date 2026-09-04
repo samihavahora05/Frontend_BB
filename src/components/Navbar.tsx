@@ -103,7 +103,13 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-2 group flex-shrink-0">
             <img
               src={getImageUrl(settings.main_logo || "/logoblue.png")}
-              alt={settings.website_name || "BB Logo"}
+              alt={settings.website_name || "BlueBoxx"}
+              onError={(e: any) => {
+                if (!e.currentTarget.dataset.fallbackApplied) {
+                  e.currentTarget.dataset.fallbackApplied = "true";
+                  e.currentTarget.src = "/logoblue.png";
+                }
+              }}
               className="h-[44px] md:h-[50px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02] drop-shadow-xs"
             />
           </Link>
@@ -248,7 +254,17 @@ export default function Navbar() {
       >
         {/* Header Area */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-          <img src={settings.main_logo || "/logoblue.png"} alt={settings.website_name || "BB Logo"} className="h-9 w-auto object-contain" />
+          <img 
+            src={getImageUrl(settings.main_logo || "/logoblue.png")} 
+            alt={settings.website_name || "BlueBoxx"} 
+            onError={(e: any) => {
+              if (!e.currentTarget.dataset.fallbackApplied) {
+                e.currentTarget.dataset.fallbackApplied = "true";
+                e.currentTarget.src = "/logoblue.png";
+              }
+            }}
+            className="h-9 w-auto object-contain" 
+          />
           <button onClick={() => setIsOpen(false)} className="p-2 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer" aria-label="Close menu">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

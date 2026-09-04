@@ -94,7 +94,7 @@ export const Footer = () => {
       <div className="container mx-auto px-4 md:px-6 pt-6 pb-2 relative z-10">
         <div className="flex flex-col lg:flex-row gap-6 mb-4">
 
-          {/* Brand & Newsletter column */}
+          {/* Brand & Contact column */}
           <div className="lg:w-2/5 flex flex-col justify-start items-center lg:items-start text-center lg:text-left">
             <div className="flex flex-col items-center lg:items-start w-full">
               <Link href="/" className="inline-block mb-6">
@@ -218,7 +218,7 @@ export const Footer = () => {
                 { Icon: Linkedin, label: "LinkedIn", href: settings.linkedin_url || "https://www.linkedin.com/in/blueboxx-da-ab509428/" },
                 { Icon: Instagram, label: "Instagram", href: settings.instagram_url || "https://www.instagram.com/blueboxxda_/" },
                 { Icon: Facebook, label: "Facebook", href: settings.facebook_url || "https://www.facebook.com/profile.php?id=100091587679727" },
-                { Icon: Send, label: "YouTube", href: settings.youtube_url } // Reusing Send icon if Youtube isn't imported
+                { Icon: Send, label: "YouTube", href: settings.youtube_url }
               ].filter(s => !!s.href).map(({ Icon, label, href }) => (
                 <a
                   key={label}

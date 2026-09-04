@@ -3,6 +3,19 @@
  * local static assets, uploaded backend storage assets, and external URLs.
  */
 
+const KNOWN_STATIC_ROOT_FILES = new Set([
+  'logoblue.png',
+  'boxxlogo.png',
+  'logowhite.png',
+  'card.png',
+  'upi.png',
+  'netbanking.png',
+  'favicon.png',
+  'favicon.ico',
+  'ankush.jpeg',
+  'loading.mp4',
+]);
+
 const KNOWN_STATIC_LOGOS = new Set([
   '3d studio.png', '118884943_255121585574741_6686225333604484729_n.jpg', 'anacle.webp',
   'aps-associates.png', 'asha_tours&travels.jpeg', 'asha_tours-travels.jpeg', 'atr-logo.png',
@@ -16,7 +29,10 @@ const KNOWN_STATIC_LOGOS = new Set([
   'pranav plastic pvt.jpg', 'preloader.png', 'primax-engineers-private-limited-90x90.jpg',
   'qinoxy.jpg', 'rang techno.png', 'rang techno.svg', 'sabaz tourism.jpeg', 'shiv agro.webp',
   'siamp.png', 'srauav dixit advakate.png', 'supriya-association.png', 'swasstik enterpris.webp',
-  'tensile staucchar.svg', '3insys.png'
+  'tensile staucchar.svg', '3insys.png', 'aatapi.png', 'adf.png', 'aldar.png', 'anibrain.png',
+  'associatedpower.png', 'cizzara.png', 'essar.png', 'globaldiscovery.png', 'method.png',
+  'nationalfoods.png', 'nexrise.png', 'nhsrcl.png', 'packman.png', 'pizzabell.png', 'railway.png',
+  'sawariya.png', 'speedline.png', 'vfxwaala.png', 'vistaprint.png', 'weta.png'
 ]);
 
 function fullyDecode(str: string): string {
@@ -86,6 +102,12 @@ export const getImageUrl = (path?: string | null): string => {
 
   const decoded = fullyDecode(trimmed);
   const baseName = decoded.split('/').pop()?.toLowerCase() || '';
+
+  // Local static root assets in public/ (like /logoblue.png, /Boxxlogo.png)
+  if (KNOWN_STATIC_ROOT_FILES.has(baseName)) {
+    const rawRootFile = decoded.startsWith('/') ? decoded : '/' + decoded;
+    return encodeURI(rawRootFile);
+  }
 
   // Local static company logos in public/logo/
   if (
