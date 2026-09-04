@@ -48,7 +48,7 @@ export const getImageUrl = (path?: string | null): string => {
     !trimmed.includes('localhost') &&
     !trimmed.includes('127.0.0.1')
   ) {
-    return trimmed;
+    return encodeURI(decodeURI(trimmed));
   }
 
   // Local static frontend assets stored in public/
@@ -68,7 +68,8 @@ export const getImageUrl = (path?: string | null): string => {
     trimmed.startsWith('/svg/') ||
     trimmed.startsWith('svg/')
   ) {
-    return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+    const rawPath = trimmed.startsWith('/') ? trimmed : '/' + trimmed;
+    return encodeURI(decodeURI(rawPath));
   }
 
   // Clean relative backend storage or uploads path
@@ -78,5 +79,6 @@ export const getImageUrl = (path?: string | null): string => {
   }
 
   if (!cleanPath) return '';
-  return `${backendBase}/storage/${cleanPath}`;
+  const safePath = encodeURI(decodeURI(cleanPath));
+  return backendBase + '/storage/' + safePath;
 };

@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+﻿import { useRef, useState, useEffect } from "react";
 import { motion, useAnimationFrame, useInView } from "framer-motion";
 import { useCountUp } from "../hooks/useAnimations";
 import {
@@ -13,6 +13,7 @@ import useSWR from "swr";
 import api from "../lib/axios";
 import { partnerCompanies } from "../data/companies";
 import { CompanyService } from "../lib/api/CompanyService";
+import { getImageUrl } from "../lib/imageUtils";
 
 interface CompanyType {
   id?: number;
@@ -62,7 +63,7 @@ const CompanyLogo = ({ name, logo }: { name: string; logo?: string }) => {
 
       {logo && !imgError ? (
         <img
-          src={logo}
+          src={getImageUrl(logo)}
           alt={name}
           className="max-w-full max-h-full object-contain filter group-hover:scale-105 transition-transform duration-300 relative z-10 [filter:drop-shadow(0_4px_10px_rgba(15,23,42,0.55))_drop-shadow(0_0_1.5px_rgba(15,23,42,0.75))]"
           onError={() => setImgError(true)}

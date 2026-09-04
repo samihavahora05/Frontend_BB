@@ -84,6 +84,8 @@ export default function AdminEditInternshipPage() {
     try {
       await InternshipService.updateInternship(id as string, {
         title:                form.title,
+        company_name:         form.companyName,
+        companyName:          form.companyName,
         description:          form.description,
         location:             form.location || null,
         duration:             form.duration || null,
