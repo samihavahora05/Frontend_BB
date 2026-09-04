@@ -72,7 +72,7 @@ export const partnerCompanies: Company[] = [
   { id: 29, name: "Manavta Hospital", industry: "HR & Recruitment Firms", logoUrl: "/logo/manavta hospital.png", location: "India", status: "published", is_featured: true },
   { id: 30, name: "Mark Cafe", industry: "Food & Hospitality", logoUrl: "/logo/mark cafe.jpg", location: "India", status: "published", is_featured: true },
   { id: 31, name: "Office24", industry: "Business Consulting & Execution", logoUrl: "/logo/office24.webp", location: "India", status: "published", is_featured: true },
-  { id: 32, name: "Otto Valves & Rubers", industry: "Manufacturing & Building", logoUrl: "/logo/otto valves & rubers.png", location: "India", status: "published", is_featured: true },
+  { id: 32, name: "Otto Valves & Rubers", industry: "Manufacturing & Building", logoUrl: "/logo/otto-valves-rubers.png", location: "India", status: "published", is_featured: true },
   { id: 33, name: "Pandit Restaurant", industry: "Food & Hospitality", logoUrl: "/logo/pandit rasturant.jpg", location: "India", status: "published", is_featured: true },
   { id: 34, name: "Pranav Plastic", industry: "Manufacturing & Building", logoUrl: "/logo/pranav plastic pvt.jpg", location: "India", status: "published", is_featured: true },
   { id: 35, name: "Primax Engineers", industry: "Manufacturing & Building", logoUrl: "/logo/primax-engineers-private-limited-90x90.jpg", location: "India", status: "published", is_featured: true },

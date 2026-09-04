@@ -109,6 +109,10 @@ export const getImageUrl = (path?: string | null): string => {
     return encodeURI(rawRootFile);
   }
 
+  // Direct alias normalization for static logos
+  if (baseName.includes('otto') && (baseName.includes('valve') || baseName.includes('ruber'))) { return '/logo/otto-valves-rubers.png'; }
+  if (baseName.includes('asha') && (baseName.includes('tour') || baseName.includes('travel'))) { return '/logo/Asha_tours-travels.jpeg'; }
+
   // Local static company logos in public/logo/
   if (
     decoded.startsWith('/logo/') ||

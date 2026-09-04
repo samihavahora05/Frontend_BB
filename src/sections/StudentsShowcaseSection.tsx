@@ -41,7 +41,7 @@ const AlumniCard = ({
       {/* Photo Container */}
       <div className="relative w-full aspect-[3.8/4.2] rounded-xl overflow-hidden bg-slate-100 shadow-inner">
         <img
-          src={student.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`}
+          src={getImageUrl(student.image) || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1B2A6B&color=fff&size=400&bold=true`}
           alt={student.name}
           className="w-full h-full object-cover object-top group-hover:scale-106 transition-transform duration-500"
           loading="lazy"
