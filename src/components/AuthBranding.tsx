@@ -1,3 +1,4 @@
+import { getImageUrl } from "../lib/imageUtils";
 import { motion } from "framer-motion";
 import { partnerCompanies } from "../data/companies";
 import { CompanyService, CMSCompany } from "../lib/api/CompanyService";
@@ -165,7 +166,7 @@ export function AuthBranding() {
                 {displayCompanies.map((company, i) => (
                   <div key={`a-${i}`} className="flex items-center justify-center h-12 px-4">
                     {company.logoUrl ? (
-                      <img src={company.logoUrl} alt={company.name} className="h-full w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]" />
+                      <img src={getImageUrl(company.logoUrl)} alt={company.name} className="h-full w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]" />
                     ) : (
                       <span className="text-xl md:text-2xl font-black tracking-tighter font-sora text-white">{company.name.toUpperCase()}</span>
                     )}
@@ -178,7 +179,7 @@ export function AuthBranding() {
                 {displayCompanies.map((company, i) => (
                   <div key={`b-${i}`} className="flex items-center justify-center h-12 px-4">
                     {company.logoUrl ? (
-                      <img src={company.logoUrl} alt={company.name} className="h-full w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]" />
+                      <img src={getImageUrl(company.logoUrl)} alt={company.name} className="h-full w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]" />
                     ) : (
                       <span className="text-xl md:text-2xl font-black tracking-tighter font-sora text-white">{company.name.toUpperCase()}</span>
                     )}

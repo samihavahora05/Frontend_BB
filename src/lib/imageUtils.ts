@@ -19,16 +19,20 @@ const KNOWN_STATIC_LOGOS = new Set([
   'tensile staucchar.svg', '3insys.png'
 ]);
 
-function safeDecode(str: string): string {
+function fullyDecode(str: string): string {
+  let decoded = str;
   try {
-    return decodeURIComponent(str);
-  } catch (e) {
-    try {
-      return decodeURI(str);
-    } catch (e2) {
-      return str;
+    while (decoded.includes('%')) {
+      const next = decodeURIComponent(decoded);
+      if (next === decoded) break;
+      decoded = next;
     }
+  } catch (_) {
+    try {
+      decoded = decodeURI(decoded);
+    } catch (_) {}
   }
+  return decoded;
 }
 
 export const getImageUrl = (path?: string | null): string => {
@@ -36,7 +40,7 @@ export const getImageUrl = (path?: string | null): string => {
   let trimmed = String(path).trim();
   if (!trimmed) return '';
 
-  // Data or blob preview URIs
+  // Instant preview data or blob URIs
   if (trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
     return trimmed;
   }
@@ -47,7 +51,7 @@ export const getImageUrl = (path?: string | null): string => {
     'https://backend.blueboxx.in'
   ).replace(/\/+$/, '');
 
-  // Strip localhost / 127.0.0.1 origins from saved database paths
+  // Strip localhost / 127.0.0.1 hardcoded prefixes from saved database paths
   if (trimmed.includes('localhost') || trimmed.includes('127.0.0.1')) {
     const storageIdx = trimmed.indexOf('/storage/');
     if (storageIdx !== -1) {
@@ -76,46 +80,46 @@ export const getImageUrl = (path?: string | null): string => {
     !trimmed.includes('localhost') &&
     !trimmed.includes('127.0.0.1')
   ) {
-    const decoded = safeDecode(trimmed);
+    const decoded = fullyDecode(trimmed);
     return encodeURI(decoded);
   }
 
-  const decodedPath = safeDecode(trimmed);
-  const baseName = decodedPath.split('/').pop()?.toLowerCase() || '';
+  const decoded = fullyDecode(trimmed);
+  const baseName = decoded.split('/').pop()?.toLowerCase() || '';
 
   // Local static company logos in public/logo/
   if (
-    decodedPath.startsWith('/logo/') ||
-    decodedPath.startsWith('logo/') ||
+    decoded.startsWith('/logo/') ||
+    decoded.startsWith('logo/') ||
     KNOWN_STATIC_LOGOS.has(baseName)
   ) {
-    const rawLogoFile = decodedPath.startsWith('/logo/')
-      ? decodedPath.substring(6)
-      : (decodedPath.startsWith('logo/') ? decodedPath.substring(5) : decodedPath);
+    const rawLogoFile = decoded.startsWith('/logo/')
+      ? decoded.substring(6)
+      : (decoded.startsWith('logo/') ? decoded.substring(5) : decoded);
     return '/logo/' + encodeURI(rawLogoFile);
   }
 
   // Other public static frontend assets
   if (
-    decodedPath.startsWith('/students/') ||
-    decodedPath.startsWith('students/') ||
-    decodedPath.startsWith('/images/') ||
-    decodedPath.startsWith('images/') ||
-    decodedPath.startsWith('/testimonials photos/') ||
-    decodedPath.startsWith('testimonials photos/') ||
-    decodedPath.startsWith('/assets/') ||
-    decodedPath.startsWith('assets/') ||
-    decodedPath.startsWith('/icons/') ||
-    decodedPath.startsWith('icons/') ||
-    decodedPath.startsWith('/svg/') ||
-    decodedPath.startsWith('svg/')
+    decoded.startsWith('/students/') ||
+    decoded.startsWith('students/') ||
+    decoded.startsWith('/images/') ||
+    decoded.startsWith('images/') ||
+    decoded.startsWith('/testimonials photos/') ||
+    decoded.startsWith('testimonials photos/') ||
+    decoded.startsWith('/assets/') ||
+    decoded.startsWith('assets/') ||
+    decoded.startsWith('/icons/') ||
+    decoded.startsWith('icons/') ||
+    decoded.startsWith('/svg/') ||
+    decoded.startsWith('svg/')
   ) {
-    const rawPath = decodedPath.startsWith('/') ? decodedPath : '/' + decodedPath;
+    const rawPath = decoded.startsWith('/') ? decoded : '/' + decoded;
     return encodeURI(rawPath);
   }
 
   // Backend uploaded storage path
-  let cleanPath = decodedPath.replace(/\\/g, '/').replace(/^\/+/, '');
+  let cleanPath = decoded.replace(/\\/g, '/').replace(/^\/+/, '');
   while (cleanPath.startsWith('storage/')) {
     cleanPath = cleanPath.substring(8).replace(/^\/+/, '');
   }

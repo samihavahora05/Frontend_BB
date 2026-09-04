@@ -17,7 +17,7 @@ export interface CMSCompany {
   updated_at?: string;
 }
 
-const STORAGE_KEY = "bb_admin_companies_sync_v2";
+const STORAGE_KEY = "bb_admin_companies_sync_v3";
 
 // Initial seed: strictly the 41 companies configured in the Admin Companies panel
 export const getInitialVerifiedCompanies = (): CMSCompany[] => {

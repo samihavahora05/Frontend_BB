@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../lib/imageUtils";
 import { useRouter } from "next/router";
 import { Card, CardContent } from "../ui/Card";
 import { Badge } from "../ui/Badge";
@@ -58,7 +59,7 @@ export function CourseCard({ course }: { course: CourseProps }) {
         {/* Thumbnail */}
         <div className="relative h-44 overflow-hidden">
           <img 
-            src={course.image} 
+            src={getImageUrl(course.image)} 
             alt={course.title} 
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
           />
