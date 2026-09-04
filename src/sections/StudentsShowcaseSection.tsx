@@ -158,7 +158,7 @@ export const StudentsShowcaseSection = ({
     return [...allStudents, ...allStudents];
   }, [allStudents]);
 
-  const speed = 36;
+  const speed = 85;
 
   useAnimationFrame((_, delta) => {
     if (!isMounted || isPaused || !trackRef.current || displayList.length === 0) return;
