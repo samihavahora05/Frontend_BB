@@ -1,5 +1,5 @@
-import { getImageUrl } from "../lib/imageUtils";
 "use client";
+import { getImageUrl } from "../lib/imageUtils";
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
