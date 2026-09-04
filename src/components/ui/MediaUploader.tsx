@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react';
+﻿import React, { useRef, useState } from 'react';
 import { Upload, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import api from '../../lib/axios';
 
 interface MediaUploaderProps {
   onUploadSuccess: (url: string) => void;
@@ -20,46 +21,41 @@ export const MediaUploader = ({
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (fileInputRef.current) fileInputRef.current.value = "";
 
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const base64Data = event.target?.result;
-      if (typeof base64Data !== 'string') return;
+    setIsUploading(true);
+    const loadingToast = toast.loading(`Uploading ${file.name}...`);
 
-      setIsUploading(true);
-      const loadingToast = toast.loading(`Uploading ${file.name}...`);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('image', file);
 
-      try {
-        const res = await fetch('/api/media', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: file.name,
-            data: base64Data
-          })
+      const res = await api.post('/admin/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      }).catch(async () => {
+        return await api.post('/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
         });
+      });
 
-        const result = await res.json();
-        
-        if (res.ok) {
-          toast.success("Upload complete!", { id: loadingToast });
-          onUploadSuccess(result.url);
-        } else {
-          toast.error(result.error || "Upload failed", { id: loadingToast });
-        }
-      } catch (err) {
-        console.error(err);
-        toast.error("Network error during upload", { id: loadingToast });
-      } finally {
-        setIsUploading(false);
+      if (res.data && (res.data.url || res.data.path)) {
+        const uploadedUrl = res.data.url || res.data.path;
+        toast.success("Upload complete!", { id: loadingToast });
+        onUploadSuccess(uploadedUrl);
+      } else {
+        toast.error("Upload failed", { id: loadingToast });
       }
-    };
-    reader.readAsDataURL(file);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.response?.data?.message || "Network error during upload", { id: loadingToast });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (

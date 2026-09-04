@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Utility helper to resolve image and media URLs correctly across
  * local static assets, uploaded backend storage assets, and external URLs.
  */
@@ -62,25 +62,16 @@ export const getImageUrl = (path?: string | null): string => {
     trimmed.startsWith('/testimonials photos/') ||
     trimmed.startsWith('testimonials photos/') ||
     trimmed.startsWith('/assets/') ||
-    trimmed.startsWith('assets/')
+    trimmed.startsWith('assets/') ||
+    trimmed.startsWith('/icons/') ||
+    trimmed.startsWith('icons/') ||
+    trimmed.startsWith('/svg/') ||
+    trimmed.startsWith('svg/')
   ) {
     return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
   }
 
-  // Frontend public uploads (/uploads/media/...)
-  if (trimmed.startsWith('/uploads/') || trimmed.startsWith('uploads/')) {
-    return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
-  }
-
-  // Backend storage assets (/storage/... or storage/...)
-  if (trimmed.startsWith('/storage/') || trimmed.startsWith('storage/') || trimmed.startsWith('media_files/')) {
-    let cleanStoragePath = trimmed.replace(/\\/g, '/').replace(/^\/+/, '');
-    while (cleanStoragePath.startsWith('storage/')) {
-      cleanStoragePath = cleanStoragePath.substring(8).replace(/^\/+/, '');
-    }
-    return `${backendBase}/storage/${cleanStoragePath}`;
-  }
-
+  // Clean relative backend storage or uploads path
   let cleanPath = trimmed.replace(/\\/g, '/').replace(/^\/+/, '');
   while (cleanPath.startsWith('storage/')) {
     cleanPath = cleanPath.substring(8).replace(/^\/+/, '');
