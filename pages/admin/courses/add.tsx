@@ -94,6 +94,10 @@ export default function AdminCreateCoursePage() {
           }
         }
       });
+      if (!formData.get('price')) formData.set('price', '0');
+      if (!formData.get('discount_price')) formData.set('discount_price', '0');
+      if (!formData.get('price')) formData.set('price', '0');
+      if (!formData.get('discount_price')) formData.set('discount_price', '0');
       if (thumbnailFile) {
         formData.append('thumbnail', thumbnailFile);
       }
@@ -315,11 +319,11 @@ export default function AdminCreateCoursePage() {
                 {form.course_type === 'Paid' && (
                   <div className="space-y-4 pt-2 border-t border-slate-100">
                     <div>
-                      <label className="block text-[11px] font-black text-slate-500 uppercase tracking-wider mb-2">Regular Price (₹)</label>
+                      <label className="block text-[11px] font-black text-slate-500 uppercase tracking-wider mb-2">Regular Price (â‚¹)</label>
                       <input type="number" value={form.price} onChange={e => handleChange('price', e.target.value)} placeholder="0.00" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 outline-none focus:ring-2 focus:ring-[#1B2A6B] focus:bg-white" />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-black text-slate-500 uppercase tracking-wider mb-2">Discount Price (₹)</label>
+                      <label className="block text-[11px] font-black text-slate-500 uppercase tracking-wider mb-2">Discount Price (â‚¹)</label>
                       <input type="number" value={form.discount_price} onChange={e => handleChange('discount_price', e.target.value)} placeholder="0.00" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 outline-none focus:ring-2 focus:ring-[#1B2A6B] focus:bg-white" />
                     </div>
                   </div>
@@ -336,7 +340,7 @@ export default function AdminCreateCoursePage() {
                 <select value={form.expert_id} onChange={e => handleChange('expert_id', e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-[#1B2A6B]">
                   <option value="">Select Instructor...</option>
                   {instructors?.map((inst: any) => (
-                    <option key={inst.id} value={inst.id}>{getInstructorDisplayName(inst)}</option>
+                    <option key={inst.id} value={inst.user_id || inst.id}>{getInstructorDisplayName(inst)}</option>
                   ))}
                 </select>
               </div>
