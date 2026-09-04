@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../../src/lib/imageUtils";
 import React, { useState, useEffect } from "react";
 import { StudentDashboardLayout } from "../../../src/layout/StudentDashboardLayout";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";

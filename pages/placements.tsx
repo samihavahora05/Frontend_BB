@@ -1,3 +1,4 @@
+import { getImageUrl } from "../src/lib/imageUtils";
 import { useState, useEffect, useMemo } from "react";
 import { MainLayout } from "../src/layout/MainLayout";
 import { motion, AnimatePresence } from "framer-motion";

@@ -1,3 +1,4 @@
+import { getImageUrl } from "../src/lib/imageUtils";
 import { useState, useEffect } from "react";
 import { MainLayout } from "../src/layout/MainLayout";
 import { Award } from "lucide-react";
@@ -93,7 +94,7 @@ export default function PlacementPartnersPage() {
                   <div className="w-full h-32 shrink-0 flex items-center justify-center relative p-3 my-1">
                     <div className="absolute inset-2 rounded-2xl bg-gradient-to-br from-slate-200/60 via-slate-100/40 to-amber-100/30 blur-md group-hover:from-amber-200/50 group-hover:via-indigo-100/40 group-hover:to-blue-100/30 transition-all duration-500 pointer-events-none" />
                     <img
-                      src={partner.logo_url || partner.logoUrl}
+                      src={getImageUrl(partner.logo_url || partner.logoUrl)}
                       alt={partner.name}
                       className="max-w-full max-h-full object-contain filter group-hover:scale-110 transition-transform duration-500 relative z-10 [filter:drop-shadow(0_4px_10px_rgba(15,23,42,0.55))_drop-shadow(0_0_1.5px_rgba(15,23,42,0.75))]"
                       onError={(e) => {

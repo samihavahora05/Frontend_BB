@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../src/lib/imageUtils";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import api from "../../src/lib/axios";
@@ -54,7 +55,7 @@ export default function CollegeDetailsPage() {
         <div className="relative pt-24 pb-16 min-h-[400px] flex items-center bg-[#0d1635] overflow-hidden">
           {college.banner_image && (
             <div className="absolute inset-0 z-0">
-               <img src={college.banner_image} alt={college.name} className="w-full h-full object-cover opacity-30" />
+               <img src={getImageUrl(college.banner_image)} alt={college.name} className="w-full h-full object-cover opacity-30" />
                <div className="absolute inset-0 bg-gradient-to-t from-[#0d1635] via-[#0d1635]/80 to-transparent"></div>
             </div>
           )}
@@ -73,7 +74,7 @@ export default function CollegeDetailsPage() {
               {/* Logo Box */}
               <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-2xl p-4 shadow-2xl flex-shrink-0 flex items-center justify-center border-4 border-white/10">
                 {college.logo_url ? (
-                  <img src={college.logo_url} alt={college.name} className="w-full h-full object-contain" />
+                  <img src={getImageUrl(college.logo_url)} alt={college.name} className="w-full h-full object-contain" />
                 ) : (
                   <Building2 size={48} className="text-slate-300" />
                 )}

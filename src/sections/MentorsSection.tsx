@@ -64,7 +64,7 @@ export const ExpertCard = ({ mentor, variants }: ExpertCardProps) => {
               <div className="w-16 h-16 rounded-full shrink-0 relative border-2 border-white/30 ring-2 ring-white/15 shadow-md bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white overflow-hidden">
                 {photoUrl ? (
                   <img
-                    src={photoUrl}
+                    src={getImageUrl(photoUrl)}
                     alt={mentor.name || "Expert"}
                     className="w-full h-full object-cover"
                     loading="lazy"

@@ -281,7 +281,7 @@ export const StudentsShowcaseSection = ({
                 {/* Large Avatar */}
                 <div className="relative w-28 h-28 rounded-2xl overflow-hidden shadow-lg border-2 border-white ring-4 ring-[#1B2A6B]/10 mb-4 bg-slate-100">
                   <img
-                    src={selectedStudent.image}
+                    src={getImageUrl(selectedStudent.image)}
                     alt={selectedStudent.name}
                     className="w-full h-full object-cover object-top"
                   />

@@ -257,7 +257,7 @@ export default function ExpertsPage() {
                                     <span>{initials}</span>
                                     {avatarUrl ? (
                                       <img
-                                        src={avatarUrl}
+                                        src={getImageUrl(avatarUrl)}
                                         alt={mentor.name || "Expert"}
                                         className="absolute inset-0 w-full h-full object-cover z-10"
                                         loading="lazy"

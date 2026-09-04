@@ -1,3 +1,4 @@
+import { getImageUrl } from "../lib/imageUtils";
 import { Star, Quote, CheckCircle2 } from "lucide-react";
 import { useMemo } from "react";
 import useSWR from "swr";
@@ -123,7 +124,7 @@ export const TestimonialSection = ({
                 <div className="flex items-center gap-3.5 pt-4 border-t border-slate-100 mt-auto relative z-10">
                   <div className="relative">
                     <img 
-                      src={avatarUrl}
+                      src={getImageUrl(avatarUrl)}
                       alt={reviewerName}
                       className="w-12 h-12 rounded-full object-cover border-2 border-amber-400/80 shadow-md group-hover:scale-105 transition-transform"
                       onError={(e) => {

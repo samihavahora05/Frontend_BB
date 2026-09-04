@@ -1,3 +1,4 @@
+import { getImageUrl } from "../lib/imageUtils";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -131,7 +132,7 @@ export const CompanyDashboardLayout = ({ children }: { children: React.ReactNode
             <Link href="/company/profile" className="flex items-center gap-3 px-3 py-3 mb-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer group">
               <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#0d1635] font-black shadow-inner overflow-hidden border-2 border-transparent group-hover:border-[#C9A227] transition-all shrink-0">
                 {profile.logo ? (
-                  <img src={profile.logo} className="w-full h-full object-cover" alt="Company Logo" />
+                  <img src={getImageUrl(profile.logo)} className="w-full h-full object-cover" alt="Company Logo" />
                 ) : (
                   <Building size={20} />
                 )}

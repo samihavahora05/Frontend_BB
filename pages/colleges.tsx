@@ -1,3 +1,4 @@
+import { getImageUrl } from "../src/lib/imageUtils";
 import { MainLayout } from "../src/layout/MainLayout";
 import { Card, CardContent } from "../src/components/ui/Card";
 import { GraduationCap, ExternalLink, Award, CheckCircle2 } from "lucide-react";
@@ -87,7 +88,7 @@ export default function CollegesPage() {
                       <div className="w-24 h-24 mx-auto rounded-xl bg-white border border-slate-100 flex items-center justify-center p-4 mb-5 group-hover:bg-slate-50 transition-all duration-500 shadow-sm shrink-0">
                         {college.logo_url ? (
                           <img
-                            src={college.logo_url}
+                            src={getImageUrl(college.logo_url)}
                             alt={college.name}
                             className="h-full w-full object-contain transition-all duration-300 group-hover:scale-105"
                             onError={(e) => {

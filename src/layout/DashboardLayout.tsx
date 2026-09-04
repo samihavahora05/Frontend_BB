@@ -1,3 +1,4 @@
+import { getImageUrl } from "../lib/imageUtils";
 import { ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -59,7 +60,7 @@ export const DashboardLayout = ({ children }: { children: ReactNode }) => {
                   {/* User Profile Summary */}
                   <div className="p-5 border-b border-slate-100 flex items-center gap-4 bg-[#0d1635] text-white">
                     <div className="relative">
-                      <img src={user?.avatar || "https://i.pravatar.cc/150"} alt="Avatar" className="w-12 h-12 rounded-full border-2 border-[#C9A227] shadow-md object-cover" />
+                      <img src={getImageUrl(user?.avatar || "https://i.pravatar.cc/150")} alt="Avatar" className="w-12 h-12 rounded-full border-2 border-[#C9A227] shadow-md object-cover" />
                       <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-[#0d1635] rounded-full"></span>
                     </div>
                     <div>

@@ -1,3 +1,4 @@
+import { getImageUrl } from "../lib/imageUtils";
 import Link from "next/link";
 import { Facebook, Twitter, Instagram, Linkedin, MapPin, Mail, Phone, Send } from "lucide-react";
 import { useGlobalSettings } from "../contexts/SettingsContext";
@@ -97,7 +98,7 @@ export const Footer = () => {
           <div className="lg:w-2/5 flex flex-col justify-start items-center lg:items-start text-center lg:text-left">
             <div className="flex flex-col items-center lg:items-start w-full">
               <Link href="/" className="inline-block mb-6">
-                <img src={settings.footer_logo || "/logowhite.png"} alt={settings.website_name || "BlueBoxx logo"} className="h-14 w-auto object-contain rounded-md shadow-sm" />
+                <img src={getImageUrl(settings.footer_logo || "/logowhite.png")} alt={settings.website_name || "BlueBoxx logo"} className="h-14 w-auto object-contain rounded-md shadow-sm" />
               </Link>
             </div>
 

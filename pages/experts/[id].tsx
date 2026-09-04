@@ -283,7 +283,7 @@ export default function ExpertProfilePage() {
                 <CardContent className="px-8 pb-8 pt-0 relative">
                   <div className="flex flex-col md:flex-row gap-6 md:items-end mb-6">
                     <div className="w-28 h-28 bg-white rounded-2xl p-1.5 shadow-md border border-slate-100 shrink-0 relative z-10 -mt-12">
-                      <img src={expert.avatar} alt={expert.name} className="w-full h-full rounded-xl object-cover" />
+                      <img src={getImageUrl(expert.avatar)} alt={expert.name} className="w-full h-full rounded-xl object-cover" />
                       <span className="absolute bottom-1 right-1 w-5 h-5 bg-emerald-500 border-2 border-white rounded-full"></span>
                     </div>
                     
@@ -393,7 +393,7 @@ export default function ExpertProfilePage() {
                             <div className="flex items-center justify-between mb-3">
                               <div className="flex items-center gap-3">
                                 <img
-                                  src={avatar}
+                                  src={getImageUrl(avatar)}
                                   alt={studentName}
                                   className="w-10 h-10 rounded-full object-cover border border-slate-100 shadow-xs"
                                   onError={(e) => {

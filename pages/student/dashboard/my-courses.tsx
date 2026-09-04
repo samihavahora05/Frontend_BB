@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../../src/lib/imageUtils";
 import { useState } from "react";
 import { DashboardLayout } from "../../../src/layout/DashboardLayout";
 import { Card, CardContent } from "../../../src/components/ui/Card";
@@ -80,7 +81,7 @@ export default function MyCoursesPage() {
                     {/* Course Image */}
                     <div className="w-full md:w-72 h-48 md:h-auto bg-slate-200 shrink-0 relative overflow-hidden flex items-center justify-center text-slate-400">
                       {course.thumbnail ? (
-                        <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={getImageUrl(course.thumbnail)} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       ) : (
                         <PlayCircle size={48} />
                       )}
@@ -156,7 +157,7 @@ export default function MyCoursesPage() {
                 <Card key={course.enrollment_id} className="bg-white border border-slate-100 shadow-sm hover:shadow-[0_8px_30px_rgba(27,42,107,0.06)] hover:-translate-y-1 transition-all duration-300 rounded-3xl overflow-hidden group">
                   <div className="h-40 bg-slate-200 relative overflow-hidden flex items-center justify-center text-slate-400">
                     {course.thumbnail ? (
-                      <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={getImageUrl(course.thumbnail)} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
                       <PlayCircle size={48} />
                     )}

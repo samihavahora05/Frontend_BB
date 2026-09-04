@@ -497,7 +497,7 @@ export default function StudentsShowcaseAdminPage() {
                           style={{ width: '48px', height: '48px' }}
                         >
                           <img
-                            src={student.image}
+                            src={getImageUrl(student.image)}
                             alt={student.name}
                             className="w-full h-full object-cover"
                             style={{ width: '48px', height: '48px' }}
@@ -649,7 +649,7 @@ export default function StudentsShowcaseAdminPage() {
                     style={{ width: '80px', height: '80px' }}
                   >
                     <img 
-                      src={editStudentData.image} 
+                      src={getImageUrl(editStudentData.image)} 
                       alt={editStudentData.name} 
                       className="w-full h-full object-cover" 
                       style={{ width: '80px', height: '80px' }}

@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../src/lib/imageUtils";
 import { useRouter } from "next/router";
 import { MainLayout } from "../../src/layout/MainLayout";
 import { Button } from "../../src/components/ui/Button";
@@ -69,13 +70,13 @@ export default function CompanyProfilePage() {
           </div>
           <div className="h-48 md:h-72 w-full relative">
             <div className="absolute inset-0 bg-[#0d1635]/60 z-10" />
-            <img src={company.cover} alt="Office" className="w-full h-full object-cover" />
+            <img src={getImageUrl(company.cover)} alt="Office" className="w-full h-full object-cover" />
           </div>
 
           <div className="container mx-auto px-4 max-w-7xl relative -mt-16 md:-mt-24 z-20">
             <div className="flex flex-col md:flex-row gap-6 md:items-end mb-8">
               <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-3xl p-3 shadow-[0_8px_30px_rgba(0,0,0,0.12)] shrink-0 flex items-center justify-center">
-                <img src={company.logo} alt={company.name} className="max-w-full max-h-full object-contain" />
+                <img src={getImageUrl(company.logo)} alt={company.name} className="max-w-full max-h-full object-contain" />
               </div>
               
               <div className="flex-1 pb-2">

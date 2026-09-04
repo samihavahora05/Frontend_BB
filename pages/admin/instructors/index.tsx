@@ -232,7 +232,7 @@ export default function InstructorsManager() {
                             <div className="relative w-12 h-12 rounded-full shrink-0 overflow-hidden ring-2 ring-slate-100 shadow-sm bg-gradient-to-br from-indigo-500 to-[#1B2A6B] flex items-center justify-center text-white font-black text-sm">
                               {avatarUrl ? (
                                 <img 
-                                  src={avatarUrl} 
+                                  src={getImageUrl(avatarUrl)} 
                                   alt={instructor.name} 
                                   className="w-full h-full object-cover"
                                   onError={(e: any) => { e.currentTarget.style.display = 'none'; }}
@@ -375,7 +375,7 @@ export default function InstructorsManager() {
                   <div className="flex items-center gap-5 p-4 bg-slate-50 rounded-2xl border border-slate-200/80 mb-2">
                     <div className="relative group w-20 h-20 shrink-0">
                       {editAvatarPreview ? (
-                        <img src={editAvatarPreview} alt="Expert photo" className="w-20 h-20 rounded-full object-cover ring-2 ring-indigo-500 shadow-md" />
+                        <img src={getImageUrl(editAvatarPreview)} alt="Expert photo" className="w-20 h-20 rounded-full object-cover ring-2 ring-indigo-500 shadow-md" />
                       ) : (
                         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-[#1B2A6B] flex items-center justify-center text-white font-black text-xl shadow-md ring-2 ring-indigo-500">
                           {getInitials(selectedInstructor.name)}
@@ -504,7 +504,7 @@ export default function InstructorsManager() {
                   <div className="flex items-center gap-5 p-4 bg-slate-50 rounded-2xl border border-slate-200/80 mb-2">
                     <div className="relative group w-20 h-20 shrink-0">
                       {addAvatarPreview ? (
-                        <img src={addAvatarPreview} alt="Preview" className="w-20 h-20 rounded-full object-cover ring-2 ring-indigo-500 shadow-md" />
+                        <img src={getImageUrl(addAvatarPreview)} alt="Preview" className="w-20 h-20 rounded-full object-cover ring-2 ring-indigo-500 shadow-md" />
                       ) : (
                         <div className="w-20 h-20 rounded-full bg-slate-200 border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400">
                           <Camera size={26} />

@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../src/lib/imageUtils";
 import { useEffect, useState } from "react";
 import { MainLayout } from "../../src/layout/MainLayout";
 import { useRouter } from "next/router";
@@ -100,7 +101,7 @@ export default function InternshipDetailsPage() {
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
               <div className="flex gap-5">
                 <div className="w-20 h-20 bg-indigo-100 text-indigo-700 rounded-2xl flex items-center justify-center text-3xl font-extrabold shrink-0 shadow-sm border border-indigo-200 overflow-hidden">
-                  <img src={internship.company_logo || `https://ui-avatars.com/api/?name=${internship.company_name}&background=random`} alt={internship.company_name} className="w-full h-full object-cover" />
+                  <img src={getImageUrl(internship.company_logo || `https://ui-avatars.com/api/?name=${internship.company_name}&background=random`)} alt={internship.company_name} className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2 capitalize leading-tight">

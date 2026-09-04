@@ -1,3 +1,4 @@
+import { getImageUrl } from "../lib/imageUtils";
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -101,7 +102,7 @@ export default function Navbar() {
           {/* Left Side: Only Logo */}
           <Link href="/" className="flex items-center gap-2 group flex-shrink-0">
             <img
-              src={settings.main_logo || "/logoblue.png"}
+              src={getImageUrl(settings.main_logo || "/logoblue.png")}
               alt={settings.website_name || "BB Logo"}
               className="h-[44px] md:h-[50px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02] drop-shadow-xs"
             />

@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../src/lib/imageUtils";
 import React, { useState, useMemo, useEffect } from "react";
 import { MainLayout } from "../../src/layout/MainLayout";
 import { partnerCompanies } from "../../src/data/companies";
@@ -194,7 +195,7 @@ const CompanyLogo = ({ company }: { company: any }) => {
       
       {logoUrl && !imgError ? (
         <img
-          src={logoUrl}
+          src={getImageUrl(logoUrl)}
           alt={company.name}
           className="max-w-full max-h-full object-contain filter group-hover:scale-110 transition-transform duration-500 relative z-10 [filter:drop-shadow(0_4px_10px_rgba(15,23,42,0.55))_drop-shadow(0_0_1.5px_rgba(15,23,42,0.75))]"
           onError={() => setImgError(true)}
@@ -479,7 +480,7 @@ export default function CompaniesPublicPage() {
                     >
                       <div className="relative h-48 overflow-hidden bg-slate-100">
                         <img
-                          src={imageUrl}
+                          src={getImageUrl(imageUrl)}
                           alt={project.title}
                           className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
                         />

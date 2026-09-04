@@ -1,3 +1,4 @@
+import { getImageUrl } from "../lib/imageUtils";
 import React from "react";
 import { motion } from "framer-motion";
 
@@ -70,7 +71,7 @@ export const InternshipBenefitsSection = () => {
             >
               <div className="w-full h-52 overflow-hidden rounded-2xl bg-slate-100 relative">
                 <img 
-                  src={item.image} 
+                  src={getImageUrl(item.image)} 
                   alt={item.alt}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"

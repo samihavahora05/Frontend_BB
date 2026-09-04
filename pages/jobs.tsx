@@ -1,3 +1,4 @@
+import { getImageUrl } from "../src/lib/imageUtils";
 import { useState, useEffect, useMemo } from "react";
 import { MainLayout } from "../src/layout/MainLayout";
 import { Briefcase, Clock, Building, Loader2 } from "lucide-react";
@@ -200,7 +201,7 @@ export default function JobsPage() {
                       <CardContent className="p-5 flex-1 flex flex-col relative z-10">
                         <div className="flex justify-between items-start mb-3">
                           <div className="w-11 h-11 rounded-xl border border-slate-100 bg-slate-50 shadow-sm shrink-0 overflow-hidden">
-                            <img src={job.company_logo || `https://ui-avatars.com/api/?name=${job.company_name}&background=random`} alt={job.company_name} className="w-full h-full object-cover" />
+                            <img src={getImageUrl(job.company_logo || `https://ui-avatars.com/api/?name=${job.company_name}&background=random`)} alt={job.company_name} className="w-full h-full object-cover" />
                           </div>
                           <div className="flex items-center gap-2">
                             <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 text-slate-700 px-2.5 py-1 rounded-md text-xs font-bold shadow-xs">

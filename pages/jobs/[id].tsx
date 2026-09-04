@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../src/lib/imageUtils";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { MainLayout } from "../../src/layout/MainLayout";
@@ -84,7 +85,7 @@ export default function JobDetailPage() {
             
             <div className="flex flex-col md:flex-row gap-6 items-start">
               <div className="w-24 h-24 bg-white rounded-2xl p-2 shadow-md border border-slate-100 shrink-0">
-                <img src={job.company_logo || `https://ui-avatars.com/api/?name=${job.company_name}&background=random`} alt={job.company_name} className="w-full h-full rounded-xl object-cover" />
+                <img src={getImageUrl(job.company_logo || `https://ui-avatars.com/api/?name=${job.company_name}&background=random`)} alt={job.company_name} className="w-full h-full rounded-xl object-cover" />
               </div>
               
               <div>

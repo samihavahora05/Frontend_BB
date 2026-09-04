@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../src/lib/imageUtils";
 import { AdminDashboardLayout } from "../../src/layout/AdminDashboardLayout";
 import { Search, Plus, X, Trash2, Edit, Star, Briefcase } from "lucide-react";
 import { Badge } from "../../src/components/ui/Badge";
@@ -112,7 +113,7 @@ export default function AdminPartnersPage() {
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-10 bg-white border border-slate-200 rounded p-1 shadow-sm flex items-center justify-center overflow-hidden shrink-0">
-                        <img src={partner.logo} alt={partner.name} className="w-full h-full object-contain" />
+                        <img src={getImageUrl(partner.logo)} alt={partner.name} className="w-full h-full object-contain" />
                       </div>
                       <div>
                         <p className="text-sm font-bold text-slate-900">{partner.name}</p>

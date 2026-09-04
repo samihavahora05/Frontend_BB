@@ -1,3 +1,4 @@
+import { getImageUrl } from "../lib/imageUtils";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -574,7 +575,7 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
         >
           <div className="h-16 flex items-center px-5 border-b border-white/10 justify-between lg:justify-start shrink-0">
             <Link href="/admin/dashboard" className="flex items-center gap-3">
-              <img src={settings.admin_dashboard_logo || settings.footer_logo || "/logowhite.png"} alt="BlueBoxx DA" className="h-10 w-auto object-contain" />
+              <img src={getImageUrl(settings.admin_dashboard_logo || settings.footer_logo || "/logowhite.png")} alt="BlueBoxx DA" className="h-10 w-auto object-contain" />
             </Link>
             <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-white">
               <X size={18} />
@@ -911,7 +912,7 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
                   className={`w-11 h-11 rounded-full overflow-hidden transition-all focus:outline-none focus:ring-2 focus:ring-[#1B2A6B]/30 ${isProfileOpen ? 'ring-2 ring-[#1B2A6B]/30' : 'ring-2 ring-transparent hover:ring-[#1B2A6B]/20'}`}
                 >
                   {user?.avatar && !user.avatar.includes('dicebear') ? (
-                    <img src={user.avatar} alt="Admin" className="w-full h-full object-cover bg-slate-100" />
+                    <img src={getImageUrl(user.avatar)} alt="Admin" className="w-full h-full object-cover bg-slate-100" />
                   ) : (
                     <div className="w-full h-full bg-[#C9A227] text-[#0d1635] flex items-center justify-center font-black uppercase shadow-inner text-[15px] tracking-widest">
                       {userInitials}
