@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../../src/lib/imageUtils";
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -22,12 +23,6 @@ export default function CourseList() {
     const handler = setTimeout(() => { setDebouncedSearch(searchQuery); setPage(1); }, 500);
     return () => clearTimeout(handler);
   }, [searchQuery]);
-
-  const getImageUrl = (path: string | null) => {
-    if (!path) return '';
-    if (path.startsWith('http')) return path;
-    return `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in'}/storage/${path}`;
-  };
 
   const getInstructorDisplayName = (inst: any) => {
     if (!inst) return 'Unknown';

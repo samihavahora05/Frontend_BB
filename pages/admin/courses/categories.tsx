@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../../src/lib/imageUtils";
 import React, { useState, useRef } from "react";
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
 import { ChevronRight, ChevronDown, Search, Check, Image as ImageIcon, Trash2, Edit3, X, FileText, Download, Printer, Loader2 } from "lucide-react";
@@ -165,13 +166,6 @@ export default function AdminCourseCategoriesPage() {
     } catch (e) {
       toast.error('Export failed', { id: toastId });
     }
-  };
-
-  const getImageUrl = (path?: string | null) => {
-    if (!path) return undefined;
-    if (path.startsWith('http')) return path;
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL.replace('/api', '') : 'https://backend.blueboxx.in';
-    return `${baseUrl}/storage/${path}`;
   };
 
   return (

@@ -1,3 +1,4 @@
+import { getImageUrl } from "../src/lib/imageUtils";
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
@@ -38,17 +39,6 @@ export default function CoursesPage() {
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [sortOption, setSortOption] = useState("recommended");
   const [currentPage, setCurrentPage] = useState(1);
-
-  const getImageUrl = (path: string | null) => {
-    if (!path) return '/logoblue.png';
-    if (path.startsWith('http') || path.startsWith('blob:')) return path;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in';
-    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-    if (cleanPath.startsWith('storage/')) {
-      return `${backendUrl}/${cleanPath}`;
-    }
-    return `${backendUrl}/storage/${cleanPath}`;
-  };
 
   const normalizeCourses = (data: any): any[] => {
     if (!data) return [];

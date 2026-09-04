@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../../../src/lib/imageUtils";
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { AdminDashboardLayout } from "../../../../src/layout/AdminDashboardLayout";
@@ -59,12 +60,6 @@ export default function AdminEditCoursePage() {
     if (inst.designation) return inst.designation;
     if (inst.email) return inst.email;
     return `Instructor #${inst.id || 'N/A'}`;
-  };
-
-  const getImageUrl = (path: string | null) => {
-    if (!path) return '';
-    if (path.startsWith('http') || path.startsWith('blob:')) return path;
-    return `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in'}/storage/${path}`;
   };
 
   useEffect(() => {

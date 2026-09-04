@@ -1,3 +1,4 @@
+import { getImageUrl } from "../lib/imageUtils";
 import React from "react";
 import { motion } from "framer-motion";
 import { staggerContainer, fadeInUp } from "../animations/variants";
@@ -10,17 +11,6 @@ import api from "../lib/axios";
 
 
 
-
-const getImageUrl = (path: string | null) => {
-  if (!path) return "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=640&h=240&fit=crop&auto=format";
-  if (path.startsWith('http') || path.startsWith('blob:')) return path;
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in';
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-  if (cleanPath.startsWith('storage/')) {
-    return `${backendUrl}/${cleanPath}`;
-  }
-  return `${backendUrl}/storage/${cleanPath}`;
-};
 
 const normalizeCourses = (data: any): any[] => {
   if (!data) return [];
