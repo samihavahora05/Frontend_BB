@@ -20,6 +20,7 @@ export default function InstructorsManager() {
   const [selectedInstructor, setSelectedInstructor] = useState<ExpertData | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | number | null>(null);
 
   // Avatar Upload States
   const [editAvatarPreview, setEditAvatarPreview] = useState<string | null>(null);
@@ -110,19 +111,23 @@ export default function InstructorsManager() {
   };
 
   const handleDelete = async (id: string | number) => {
+    if (deletingId) return;
+    setOpenDropdownId(null);
     if (await confirmAction({ title: "Delete Expert", description: "Are you sure you want to permanently delete this expert from the platform?", isDestructive: true })) {
+      setDeletingId(id);
       try {
-        setExpertsList((prev) => prev.filter((e) => String(e.id) !== String(id) && String(e.user_id) !== String(id)));
         await ExpertService.deleteExpert(id);
         toast.success("Expert deleted successfully!");
         const fresh = await ExpertService.getAll();
         setExpertsList(fresh);
       } catch (e: any) {
-        toast.error("Failed to delete expert.");
+        const errorMsg = e?.response?.data?.message || e?.message || "Failed to delete expert.";
+        toast.error(errorMsg);
         loadExperts();
+      } finally {
+        setDeletingId(null);
       }
     }
-    setOpenDropdownId(null);
   };
 
   const filteredExperts = expertsList.filter((e) => {
@@ -293,7 +298,7 @@ export default function InstructorsManager() {
                                     <Edit2 size={14}/> Edit Profile
                                   </button>
                                   <div className="my-1 border-t border-slate-100"></div>
-                                  <button onClick={() => handleDelete(instructor.id)} className="w-full text-left px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 flex items-center gap-2">
+                                  <button disabled={deletingId === instructor.id} onClick={() => handleDelete(instructor.id)} className="w-full text-left px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 flex items-center gap-2 disabled:opacity-50">
                                     <Trash2 size={14}/> Delete Expert
                                   </button>
                                 </div>

@@ -284,10 +284,26 @@ export const ExpertService = {
 
   async deleteExpert(id: string | number): Promise<boolean> {
     const strId = String(id);
+    let deleted = false;
+    let lastError: any = null;
+
     try {
-      await api.delete(`/admin/instructors/${id}`).catch(() => api.delete(`/admin/users/${id}`));
-    } catch (err) {
-      console.warn("Backend delete notice:", err);
+      await api.delete(`/admin/instructors/${id}`);
+      deleted = true;
+    } catch (err: any) {
+      lastError = err;
+      if (err?.response?.status === 404) {
+        try {
+          await api.delete(`/admin/users/${id}`);
+          deleted = true;
+        } catch (userErr: any) {
+          lastError = userErr;
+        }
+      }
+    }
+
+    if (!deleted) {
+      throw lastError || new Error("Failed to delete expert on backend");
     }
 
     const current = this.getLocalExperts();
