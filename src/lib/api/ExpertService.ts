@@ -1,5 +1,6 @@
 import api from "../axios";
 import { getImageUrl } from "../imageUtils";
+import { getSessions } from "../authUtils";
 
 export interface ExpertData {
   id: string | number;
@@ -107,13 +108,25 @@ export const ExpertService = {
     let apiExperts: any[] = [];
     let lastError: any = null;
 
-    // 1. Try admin instructors endpoint first with cache-busting timestamp
-    try {
-      const res = await api.get(`/admin/instructors?per_page=100&_t=${Date.now()}`);
-      apiExperts = res?.data?.data || (Array.isArray(res?.data) ? res.data : []);
-    } catch (adminErr) {
-      lastError = adminErr;
-      // 2. Fallback to public endpoint
+    const isBrowser = typeof window !== "undefined";
+    const sessions = isBrowser ? getSessions() : {};
+    const isAdmin = isBrowser && (
+      window.location.pathname.startsWith('/admin') ||
+      !!(sessions['admin']?.token || sessions['super_admin']?.token)
+    );
+
+    // 1. Try admin instructors endpoint first if user is admin
+    if (isAdmin) {
+      try {
+        const res = await api.get(`/admin/instructors?per_page=100&_t=${Date.now()}`);
+        apiExperts = res?.data?.data || (Array.isArray(res?.data) ? res.data : []);
+      } catch (adminErr) {
+        lastError = adminErr;
+      }
+    }
+
+    // 2. Query public endpoint if not admin or admin request returned empty/error
+    if (apiExperts.length === 0) {
       try {
         const res = await api.get(`/public/experts?per_page=100&_t=${Date.now()}`);
         apiExperts = res?.data?.data || (Array.isArray(res?.data) ? res.data : []);

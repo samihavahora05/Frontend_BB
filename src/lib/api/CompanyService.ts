@@ -1,5 +1,6 @@
 import api from "../axios";
 import { partnerCompanies, Company } from "../../data/companies";
+import { getSessions } from "../authUtils";
 
 export interface CMSCompany {
   id: string | number;
@@ -117,32 +118,41 @@ export const CompanyService = {
     };
   },
 
-  // Fetch companies from API (tries admin endpoint first, falls back to public endpoint, then local storage)
+  // Fetch companies from API (queries admin endpoint for admin sessions, public endpoint otherwise)
   async getAll(): Promise<CMSCompany[]> {
-    // 1. Try admin endpoint first (if logged in as admin)
-    try {
-      const res = await api.get("/admin/cms/companies");
-      if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-        const normalized: CMSCompany[] = res.data.map((c: any) => ({
-          id: c.id,
-          name: c.name,
-          slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-          industry: c.industry?.name || c.industry || "IT & Software Development",
-          logoUrl: c.logo_url || c.logoUrl || "/logo/damyaa.png",
-          location: c.location || "India",
-          website_url: c.website_url || "",
-          status: c.status || "published",
-          is_featured: !!c.is_featured,
-          display_order: c.display_order || 0,
-        }));
-        this.saveLocalCompanies(normalized);
-        return normalized;
+    const isBrowser = typeof window !== "undefined";
+    const sessions = isBrowser ? getSessions() : {};
+    const isAdmin = isBrowser && (
+      window.location.pathname.startsWith('/admin') ||
+      !!(sessions['admin']?.token || sessions['super_admin']?.token)
+    );
+
+    // 1. Try admin endpoint first ONLY if logged in as admin / on admin dashboard
+    if (isAdmin) {
+      try {
+        const res = await api.get("/admin/cms/companies");
+        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+          const normalized: CMSCompany[] = res.data.map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+            industry: c.industry?.name || c.industry || "IT & Software Development",
+            logoUrl: c.logo_url || c.logoUrl || "/logo/damyaa.png",
+            location: c.location || "India",
+            website_url: c.website_url || "",
+            status: c.status || "published",
+            is_featured: !!c.is_featured,
+            display_order: c.display_order || 0,
+          }));
+          this.saveLocalCompanies(normalized);
+          return normalized;
+        }
+      } catch (err) {
+        // Fallback to public endpoint if admin endpoint fails
       }
-    } catch (err) {
-      // Not admin or admin endpoint failed; try public endpoint
     }
 
-    // 2. Try public endpoint
+    // 2. Query public endpoint
     try {
       const res = await api.get("/cms/companies");
       if (res.data && Array.isArray(res.data) && res.data.length > 0) {

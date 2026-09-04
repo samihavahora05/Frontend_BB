@@ -50,30 +50,52 @@ const PORTAL_PATHS = [
     '/jobseeker/',
 ];
 
-// Interceptor to handle global 401 Unauthorized responses
+// Interceptor to handle errors and global 401 Unauthorized responses
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-            if (typeof window !== 'undefined') {
-                const currentPath = window.location.pathname;
+        if (error.response) {
+            const method = (error.config?.method || 'GET').toUpperCase();
+            const endpoint = error.config?.url || '';
+            const baseURL = error.config?.baseURL || '';
+            const fullUrl = endpoint.startsWith('http') 
+                ? endpoint 
+                : `${baseURL.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`;
+            
+            console.error(`[Axios ${error.response.status}] ${method} ${fullUrl}`, {
+                status: error.response.status,
+                statusText: error.response.statusText,
+                data: error.response.data,
+                config: error.config,
+            });
 
-                const isPublicPath = PUBLIC_PATHS.some(
-                    (path) => currentPath === path || currentPath.startsWith(path + '/')
-                );
+            // Provide a clear descriptive error message for Next.js error overlays & toast handlers
+            const serverMsg = error.response.data?.message;
+            error.message = serverMsg 
+                ? `HTTP ${error.response.status}: ${serverMsg} (${method} ${endpoint})`
+                : `HTTP ${error.response.status} (${method} ${fullUrl})`;
 
-                const isPortalPath = PORTAL_PATHS.some(
-                    (path) => currentPath.startsWith(path)
-                );
+            if (error.response.status === 401 || error.response.status === 403) {
+                if (typeof window !== 'undefined') {
+                    const currentPath = window.location.pathname;
 
-                // Only logout and redirect if on a portal page and it's a 401 (not authenticated)
-                if (!isPublicPath && isPortalPath) {
-                    if (error.response.status === 401) {
-                        const activeRole = getActiveRoleFromUrl(currentPath);
-                        if (activeRole !== 'public') {
-                            clearSession(activeRole as string);
+                    const isPublicPath = PUBLIC_PATHS.some(
+                        (path) => currentPath === path || currentPath.startsWith(path + '/')
+                    );
+
+                    const isPortalPath = PORTAL_PATHS.some(
+                        (path) => currentPath.startsWith(path)
+                    );
+
+                    // Only logout and redirect if on a portal page and it's a 401 (not authenticated)
+                    if (!isPublicPath && isPortalPath) {
+                        if (error.response.status === 401) {
+                            const activeRole = getActiveRoleFromUrl(currentPath);
+                            if (activeRole !== 'public') {
+                                clearSession(activeRole as string);
+                            }
+                            window.location.href = '/login';
                         }
-                        window.location.href = '/login';
                     }
                 }
             }
