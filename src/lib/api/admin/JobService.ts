@@ -1,4 +1,4 @@
-import api from '../../axios';
+﻿import api from '../../axios';
 import { getActiveToken } from '../../authUtils';
 import useSWR from 'swr';
 
@@ -66,18 +66,22 @@ export const JobService = {
     return response.data;
   },
 
-  downloadSampleCSV: () => {
-    const token = typeof window !== 'undefined' ? getActiveToken() : '';
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://backend.blueboxx.in/api';
-    const url = `${baseUrl}/admin/jobs/sample-csv`;
-    fetch(url, { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.blob())
-      .then(blob => {
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'jobs-sample-template.csv';
-        a.click();
-      });
+    downloadSampleCSV: async () => {
+    try {
+      const res = await api.get('/admin/jobs/sample-csv', { responseType: 'blob' });
+      const blob = new Blob([res.data], { type: 'text/csv;charset=utf-8;' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'jobs-sample-template.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to download sample CSV', err);
+      throw err;
+    }
   },
 
   useDashboardMetrics: () => {
@@ -88,17 +92,22 @@ export const JobService = {
     return { data: data?.data || data, error, isLoading, mutate };
   },
 
-  exportCSV: () => {
-    const token = typeof window !== 'undefined' ? getActiveToken() : '';
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://backend.blueboxx.in/api';
-    const url = `${baseUrl}/admin/jobs/export`;
-    fetch(url, { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.blob())
-      .then(blob => {
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'jobs-export.csv';
-        a.click();
-      });
+    exportCSV: async () => {
+    try {
+      const res = await api.get('/admin/jobs/export', { responseType: 'blob' });
+      const blob = new Blob([res.data], { type: 'text/csv;charset=utf-8;' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'jobs-export.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to export CSV', err);
+      throw err;
+    }
   },
 };
+

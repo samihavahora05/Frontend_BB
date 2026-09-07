@@ -15,7 +15,7 @@ import {
   Building2, Play, Plus, Trash2, Upload, Video, MessageSquare,
   FolderOpen, Fingerprint,
   Hammer, Loader, MapPin, ShieldBan, RotateCcw, BarChart, Layout,
-  Code, Trophy
+  Code, Trophy, CheckCircle2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NotificationService } from "../lib/api/admin/RealtimeNotificationService";
@@ -58,12 +58,12 @@ const getSidebarCategories = () => {
       title: "USERS",
       isHeader: true,
     },
-
     {
       title: "All Internships",
       icon: ClipboardList,
       links: [
         { name: "List Internships", href: "/admin/internships", icon: ClipboardList },
+        { name: "Applications & Approvals", href: "/admin/internships/applications", icon: CheckCircle2 },
         { name: "College Drives", href: "/admin/internship-drives", icon: BookOpen },
         { name: "Active Internships", href: "/admin/internships/active", icon: Briefcase },
         { name: "Add Internship", href: "/admin/internships/add", icon: Plus },
@@ -87,7 +87,6 @@ const getSidebarCategories = () => {
         { name: "All Applications", href: "/admin/jobs/applications", icon: ClipboardList },
       ]
     },
-
     {
       title: "Experts",
       icon: GraduationCap,
@@ -101,11 +100,9 @@ const getSidebarCategories = () => {
       icon: ShieldCheck,
       links: [
         { name: "Roles", href: "/admin/roles", icon: ShieldCheck },
-
         { name: "Delete Request", href: "/admin/users/delete-requests", icon: Trash2 },
       ]
     },
-
     {
       title: "EDUCATION",
       isHeader: true,

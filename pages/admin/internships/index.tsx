@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
 import {
   Briefcase, CheckCircle, XCircle, Search, Edit2,
-  Trash2, Building2, FileText, Plus,
+  Trash2, Building2, FileText, Plus, Users,
   RefreshCw, Download, ChevronLeft, ChevronRight, Loader2, AlertCircle as AlertIcon
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -379,14 +379,17 @@ export default function InternshipManager() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-2">
-                          <Link href={`/admin/internships/${prog.id}`} className="text-blue-500 hover:text-blue-700 transition-colors bg-blue-50 p-2 rounded-lg">
+                          <Link href={`/admin/internships/applications?internshipId=${prog.id}`} title="Review Applications & Approvals" className="text-emerald-600 hover:text-emerald-800 transition-colors bg-emerald-50 p-2 rounded-lg">
+                            <Users size={16} />
+                          </Link>
+                          <Link href={`/admin/internships/${prog.id}`} title="Edit Internship" className="text-blue-500 hover:text-blue-700 transition-colors bg-blue-50 p-2 rounded-lg">
                             <Edit2 size={16} />
                           </Link>
                           <button onClick={() => {
                             if (confirm('Delete this internship?')) {
                               InternshipService.deleteInternship(prog.id).then(() => mutatePrograms());
                             }
-                          }} className="text-red-500 hover:text-red-700 transition-colors bg-red-50 p-2 rounded-lg">
+                          }} title="Delete Internship" className="text-red-500 hover:text-red-700 transition-colors bg-red-50 p-2 rounded-lg">
                             <Trash2 size={16} />
                           </button>
                         </div>

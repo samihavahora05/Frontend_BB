@@ -77,22 +77,27 @@ export const InternshipService = {
     return res.data;
   },
 
-  exportCSV: (params: Record<string, any> = {}) => {
-    const token = typeof window !== 'undefined' ? getActiveToken() : '';
-    const queryParams = new URLSearchParams(
-      Object.fromEntries(Object.entries(params).filter(([, v]) => v !== '' && v != null))
-    ).toString();
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://backend.blueboxx.in/api';
-    const url = `${baseUrl}/admin/internships/export${queryParams ? '?' + queryParams : ''}`;
-    // Use fetch with auth header for file download
-    fetch(url, { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.blob())
-      .then(blob => {
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'internships_export.csv';
-        a.click();
+    exportCSV: async (params: Record<string, any> = {}) => {
+    try {
+      const queryParams = new URLSearchParams(
+        Object.fromEntries(Object.entries(params).filter(([, v]) => v !== '' && v != null))
+      ).toString();
+      const res = await api.get(`/admin/internships/export${queryParams ? '?' + queryParams : ''}`, {
+        responseType: 'blob',
       });
+      const blob = new Blob([res.data], { type: 'text/csv;charset=utf-8;' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'internships_export.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to export CSV', err);
+      throw err;
+    }
   },
 
   // ─── Applications ────────────────────────────────────────────────────────────
@@ -131,6 +136,87 @@ export const InternshipService = {
   getApplication: async (id: number | string) => {
     const res = await api.get(`/admin/internships/applications/${id}`);
     return res.data;
+  },
+
+  saveAppointmentDetails: async (id: number | string, payload: Record<string, any>) => {
+    if (payload?.admin_signature instanceof File) {
+      const formData = new FormData();
+      Object.keys(payload).forEach(key => {
+        if (payload[key] !== undefined && payload[key] !== null) {
+          if (Array.isArray(payload[key])) {
+            formData.append(key, JSON.stringify(payload[key]));
+          } else {
+            formData.append(key, payload[key]);
+          }
+        }
+      });
+      const res = await api.post(`/admin/internships/applications/${id}/appointment-details`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return res.data;
+    }
+    const res = await api.post(`/admin/internships/applications/${id}/appointment-details`, payload || {});
+    return res.data;
+  },
+
+  approveApplication: async (id: number | string, payload?: Record<string, any>) => {
+    if (payload?.admin_signature instanceof File) {
+      const formData = new FormData();
+      Object.keys(payload).forEach(key => {
+        if (payload[key] !== undefined && payload[key] !== null) {
+          if (Array.isArray(payload[key])) {
+            formData.append(key, JSON.stringify(payload[key]));
+          } else {
+            formData.append(key, payload[key]);
+          }
+        }
+      });
+      const res = await api.post(`/admin/internships/applications/${id}/approve`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return res.data;
+    }
+    const res = await api.post(`/admin/internships/applications/${id}/approve`, payload || {});
+    return res.data;
+  },
+
+  rejectApplication: async (id: number | string, reason?: string) => {
+    const res = await api.post(`/admin/internships/applications/${id}/reject`, {
+      rejection_reason: reason,
+    });
+    return res.data;
+  },
+
+  downloadAppointmentLetter: async (id: number | string) => {
+    try {
+      const response = await api.get(`/admin/internships/applications/${id}/appointment-letter?t=${Date.now()}`, {
+        responseType: 'blob',
+      });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Appointment_Letter_App_${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      return true;
+    } catch (err: any) {
+      console.error('Failed to download appointment letter:', err);
+      if (err.response?.data instanceof Blob) {
+        try {
+          const text = await err.response.data.text();
+          const json = JSON.parse(text);
+          if (json.message) {
+            throw new Error(json.message);
+          }
+        } catch (e: any) {
+          if (e.message && e !== err) throw e;
+        }
+      }
+      throw err;
+    }
   },
 
   updateApplicationStatus: async (id: number | string, status: string, internalNotes?: string) => {
@@ -192,3 +278,4 @@ export const InternshipService = {
     return res.data;
   },
 };
+

@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import fs from 'fs';
+import path from 'path';
+
+const frontendAppPath = 'c:\\Users\\Lenovo\\Documents\\Downloads\\Frontend_BB_fixed_v4\\pages\\admin\\internships\\applications.tsx';
+
+const pageContent = `import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
@@ -38,7 +43,7 @@ function Pagination({ meta, page, setPage }: { meta: any; page: number; setPage:
           className="p-1.5 rounded-lg hover:bg-gray-100 border border-gray-200 disabled:opacity-40"><ChevronLeft size={16} /></button>
         {Array.from({ length: Math.min(meta.last_page, 5) }, (_, i) => i + 1).map(p => (
           <button key={p} onClick={() => setPage(p)}
-            className={`w-8 h-8 rounded-lg text-xs font-black transition-all ${p === page ? 'bg-[#1B2A6B] text-white shadow-xs' : 'hover:bg-gray-100 text-gray-600 border border-gray-200'}`}>{p}</button>
+            className={\`w-8 h-8 rounded-lg text-xs font-black transition-all \${p === page ? 'bg-[#1B2A6B] text-white shadow-xs' : 'hover:bg-gray-100 text-gray-600 border border-gray-200'}\`}>{p}</button>
         ))}
         <button disabled={page >= meta.last_page} onClick={() => setPage(page + 1)}
           className="p-2 rounded-lg hover:bg-gray-100 border border-gray-200 disabled:opacity-40"><ChevronRight size={16} /></button>
@@ -180,7 +185,7 @@ export default function InternshipApplications() {
     setWorkMode(metaData.work_mode || app.internship?.mode || 'Onsite');
 
     setIssueDate(metaData.issue_date || new Date().toISOString().split('T')[0]);
-    setReferenceNumber(app.appointment_letter?.reference_number || app.appointmentLetter?.reference_number || `BB-AL-${new Date().getFullYear()}-${String(app.id).padStart(4, '0')}-CONF`);
+    setReferenceNumber(app.appointment_letter?.reference_number || app.appointmentLetter?.reference_number || \`BB-AL-\${new Date().getFullYear()}-\${String(app.id).padStart(4, '0')}-CONF\`);
 
     if (metaData.signatory_name) setSignatoryName(metaData.signatory_name);
     if (metaData.signatory_designation) setSignatoryDesignation(metaData.signatory_designation);
@@ -269,7 +274,7 @@ export default function InternshipApplications() {
     toast.loading('Updating application status...', { id: 'app-status' });
     try {
       await InternshipService.updateApplicationStatus(id, status, notes);
-      toast.success(`Application marked as ${status.replace('_', ' ').toUpperCase()}`, { id: 'app-status' });
+      toast.success(\`Application marked as \${status.replace('_', ' ').toUpperCase()}\`, { id: 'app-status' });
       if (selectedApp && selectedApp.id === id) {
         setSelectedApp((prev: any) => ({ ...prev, status, internal_notes: notes }));
       }
@@ -293,7 +298,7 @@ export default function InternshipApplications() {
       setSelectedApp((prev: any) => ({
         ...prev,
         status: 'approved',
-        appointment_letter_url: res.data?.appointment_letter_url || `/api/admin/internships/applications/${selectedApp.id}/appointment-letter`,
+        appointment_letter_url: res.data?.appointment_letter_url || \`/api/admin/internships/applications/\${selectedApp.id}/appointment-letter\`,
         appointment_letter_path: res.data?.appointment_letter_path || 'appointment_letters/generated.pdf'
       }));
       mutate();
@@ -411,7 +416,7 @@ export default function InternshipApplications() {
                   {apps.map((app: any) => (
                     <tr key={app.id} className="hover:bg-slate-50/80 transition-colors">
                       <td className="py-4 px-6">
-                        <div className="font-extrabold text-gray-900">{app.applicant_name || `${app.first_name || ''} ${app.last_name || ''}`}</div>
+                        <div className="font-extrabold text-gray-900">{app.applicant_name || \`\${app.first_name || ''} \${app.last_name || ''}\`}</div>
                         <div className="text-[11px] text-gray-500 font-medium">{app.applicant_email || app.email}</div>
                         <div className="text-[10px] text-gray-400">{app.applicant_phone || app.phone}</div>
                       </td>
@@ -436,7 +441,7 @@ export default function InternshipApplications() {
                         </div>
                       </td>
                       <td className="py-4 px-6">
-                        <span className={`inline-block px-2.5 py-1 text-[11px] font-extrabold rounded-full ${statusColors[app.status] || 'bg-gray-100 text-gray-700'}`}>
+                        <span className={\`inline-block px-2.5 py-1 text-[11px] font-extrabold rounded-full \${statusColors[app.status] || 'bg-gray-100 text-gray-700'}\`}>
                           {(app.status || 'submitted').replace('_', ' ').toUpperCase()}
                         </span>
                       </td>
@@ -485,12 +490,12 @@ export default function InternshipApplications() {
                   <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md">
                     APPLICATION #{selectedApp.id}
                   </span>
-                  <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${statusColors[selectedApp.status] || 'bg-gray-100'}`}>
+                  <span className={\`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full \${statusColors[selectedApp.status] || 'bg-gray-100'}\`}>
                     {(selectedApp.status || 'submitted').replace('_', ' ').toUpperCase()}
                   </span>
                 </div>
                 <h2 className="text-xl font-black text-gray-900 mt-1">
-                  {selectedApp.applicant_name || `${selectedApp.first_name || ''} ${selectedApp.last_name || ''}`}
+                  {selectedApp.applicant_name || \`\${selectedApp.first_name || ''} \${selectedApp.last_name || ''}\`}
                 </h2>
                 <p className="text-xs text-gray-500 font-semibold">
                   Applied for: <strong>{selectedApp.internship?.title || selectedApp.application_type || 'Internship'}</strong>
@@ -521,7 +526,7 @@ export default function InternshipApplications() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 bg-slate-50 p-4 rounded-2xl border border-gray-100">
                   <div>
                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-0.5">Full Name</span>
-                    <p className="font-extrabold text-gray-900 text-xs">{selectedApp.applicant_name || `${selectedApp.first_name || ''} ${selectedApp.last_name || ''}`}</p>
+                    <p className="font-extrabold text-gray-900 text-xs">{selectedApp.applicant_name || \`\${selectedApp.first_name || ''} \${selectedApp.last_name || ''}\`}</p>
                   </div>
                   <div>
                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-0.5">Email Address</span>
@@ -658,11 +663,11 @@ export default function InternshipApplications() {
                           key={day}
                           type="button"
                           onClick={() => toggleDay(day)}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                          className={\`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer \${
                             isSelected 
                               ? 'bg-[#1B2A6B] text-white shadow-xs' 
                               : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                          }`}
+                          }\`}
                         >
                           {isSelected && <Check size={12} className="inline mr-1" />}
                           {day}
@@ -868,7 +873,7 @@ export default function InternshipApplications() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setReferenceNumber(`BB-AL-${new Date().getFullYear()}-${String(selectedApp.id).padStart(4, '0')}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`)}
+                    onClick={() => setReferenceNumber(\`BB-AL-\${new Date().getFullYear()}-\${String(selectedApp.id).padStart(4, '0')}-\${Math.random().toString(36).substring(2, 6).toUpperCase()}\`)}
                     className="p-1.5 text-xs text-slate-600 hover:text-[#1B2A6B] hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-1 cursor-pointer font-bold"
                     title="Generate new unique reference"
                   >
@@ -904,7 +909,7 @@ export default function InternshipApplications() {
                         {selectedApp.signature_data ? (
                           <img src={selectedApp.signature_data} alt="Candidate Signature" className="max-h-16 object-contain" />
                         ) : (
-                          <img src={selectedApp.signature_url || `/api/public/internships/applications/${selectedApp.id}/signature`} alt="Candidate Signature" className="max-h-16 object-contain" />
+                          <img src={selectedApp.signature_url || \`/api/public/internships/applications/\${selectedApp.id}/signature\`} alt="Candidate Signature" className="max-h-16 object-contain" />
                         )}
                       </div>
                       <p className="text-[10px] text-gray-500 font-bold flex items-center justify-between">
@@ -1076,3 +1081,7 @@ export default function InternshipApplications() {
     </AdminDashboardLayout>
   );
 }
+`;
+
+fs.writeFileSync(frontendAppPath, pageContent);
+console.log('Successfully updated pages/admin/internships/applications.tsx with complete Appointment Letter Details Form');
