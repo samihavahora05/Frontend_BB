@@ -1,15 +1,15 @@
 ﻿import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
+import { AdminDashboardLayout } from "../../../../src/layout/AdminDashboardLayout";
 import { ArrowLeft, Save, Image as ImageIcon, Video, FileText, Check, UploadCloud, Link as LinkIcon, DollarSign, Type, AlignLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
-import { CourseService } from "../../../src/lib/api/admin/CourseService";
-import { CourseCategoryService } from "../../../src/lib/api/admin/CourseCategoryService";
-import { InstructorService } from "../../../src/lib/api/admin/InstructorService";
-import { CourseLevelService } from "../../../src/lib/api/admin/CourseLevelService";
-import { getImageUrl } from "../../../src/lib/imageUtils";
+import { CourseService } from "../../../../src/lib/api/admin/CourseService";
+import { CourseCategoryService } from "../../../../src/lib/api/admin/CourseCategoryService";
+import { InstructorService } from "../../../../src/lib/api/admin/InstructorService";
+import { CourseLevelService } from "../../../../src/lib/api/admin/CourseLevelService";
+import { getImageUrl } from "../../../../src/lib/imageUtils";
 
 export default function AdminEditCoursePage() {
   const router = useRouter();
