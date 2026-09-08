@@ -913,7 +913,7 @@ export default function InternshipApplications() {
                       Applicant: <span className="text-[#1B2A6B]">{selectedApp.applicant_name}</span> ({selectedApp.email})
                     </p>
                     <p className="text-slate-500 font-medium">
-                      Terms Accepted: <strong className="text-emerald-700">{selectedApp.terms_accepted ? 'Yes â€” Verified' : 'Standard Agreement'}</strong>
+                      Terms Accepted: <strong className="text-emerald-700">{selectedApp.terms_accepted ? 'Yes - Verified' : 'Standard Agreement'}</strong>
                     </p>
                     <p className="text-[11px] text-slate-400 font-medium italic">
                       Per official policy, the Appointment Letter requires and displays ONLY the candidate's verified signature.
