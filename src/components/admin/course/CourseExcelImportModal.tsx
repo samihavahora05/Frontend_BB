@@ -5,8 +5,26 @@ import {
   ArrowRight, ArrowLeft, Eye, Sparkles, BookOpen, Layers, DollarSign, Clock, ImageIcon
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import api from '../../../lib/axios';
 import { CourseService } from '../../../lib/api/admin/CourseService';
 import { getImageUrl } from '../../../lib/imageUtils';
+
+function dataURLtoBlob(dataUrl: string): Blob | null {
+  try {
+    const arr = dataUrl.split(',');
+    const mimeMatch = arr[0].match(/:(.*?);/);
+    const mime = mimeMatch ? mimeMatch[1] : 'image/png';
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  } catch {
+    return null;
+  }
+}
 
 interface CourseExcelImportModalProps {
   isOpen: boolean;
@@ -194,26 +212,57 @@ export const CourseExcelImportModal: React.FC<CourseExcelImportModalProps> = ({ 
     }
 
     setIsProcessing(true);
-    const cleanRows = rowsToImport.map(row => ({
-      title: row.title,
-      category_name: row.category_name,
-      level_title: row.level_title,
-      instructor_name: row.instructor_name,
-      course_type: row.course_type,
-      price: row.price,
-      discount_price: row.discount_price,
-      duration: row.duration,
-      language: row.language,
-      thumbnail: row.thumbnail,
-      short_description: row.short_description,
-      description: row.description,
-      status: row.status,
-      is_featured: row.is_featured,
-      row_status: row.row_status,
-      is_duplicate: row.is_duplicate,
-    }));
-
     try {
+      // If any row has base64 thumbnail, upload it individually as a small multipart file
+      const cleanRows = await Promise.all(
+        rowsToImport.map(async (row, idx) => {
+          let thumbnail = row.thumbnail || '';
+          if (typeof thumbnail === 'string' && thumbnail.startsWith('data:image')) {
+            try {
+              const blob = dataURLtoBlob(thumbnail);
+              if (blob) {
+                const formData = new FormData();
+                formData.append('file', blob, `course_thumb_${idx}_${Date.now()}.png`);
+                formData.append('type', 'courses/thumbnails');
+
+                const uploadRes = await api.post('/admin/upload', formData, {
+                  headers: { 'Content-Type': 'multipart/form-data' }
+                }).catch(() => api.post('/upload', formData, {
+                  headers: { 'Content-Type': 'multipart/form-data' }
+                }));
+
+                if (uploadRes?.data?.path) {
+                  thumbnail = `/storage/${uploadRes.data.path}`;
+                } else if (uploadRes?.data?.url) {
+                  thumbnail = uploadRes.data.url;
+                }
+              }
+            } catch (err) {
+              console.warn('Course thumbnail upload skipped for', row.title);
+            }
+          }
+
+          return {
+            title: row.title,
+            category_name: row.category_name,
+            level_title: row.level_title,
+            instructor_name: row.instructor_name,
+            course_type: row.course_type,
+            price: row.price,
+            discount_price: row.discount_price,
+            duration: row.duration,
+            language: row.language,
+            thumbnail: thumbnail,
+            short_description: row.short_description,
+            description: row.description,
+            status: row.status,
+            is_featured: row.is_featured,
+            row_status: row.row_status,
+            is_duplicate: row.is_duplicate,
+          };
+        })
+      );
+
       const res = await CourseService.confirmImport({
         rows: cleanRows,
         initial_status: importStatus,
