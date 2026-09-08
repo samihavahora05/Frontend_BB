@@ -295,24 +295,35 @@ export default function StudentsShowcaseAdminPage() {
       // Prepare students payload with uploaded image paths
       const processedStudents = await Promise.all(
         students.map(async (st, idx) => {
-          let imageUrl = st.image;
+          let imageUrl = st.image || '';
 
-          // If there's an actual file uploaded, upload it to the server
-          if (st.file) {
-            const formData = new FormData();
-            formData.append('file', st.file);
+          // If there is an attached File or a raw Base64 data URI in state, upload it as a physical file
+          if (st.file || (typeof imageUrl === 'string' && imageUrl.startsWith('data:image'))) {
             try {
+              const formData = new FormData();
+              if (st.file) {
+                formData.append('file', st.file);
+              } else if (imageUrl.startsWith('data:image')) {
+                const blob = dataURLtoBlob(imageUrl);
+                if (blob) {
+                  formData.append('file', blob, `student_${idx}_${Date.now()}.png`);
+                }
+              }
+              formData.append('type', 'students');
+
               const uploadRes = await api.post('/admin/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
-              });
-              if (uploadRes.data?.path) {
+              }).catch(() => api.post('/upload', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+              }));
+
+              if (uploadRes?.data?.path) {
                 imageUrl = `/storage/${uploadRes.data.path}`;
-              } else if (uploadRes.data?.url) {
+              } else if (uploadRes?.data?.url) {
                 imageUrl = uploadRes.data.url;
               }
-            } catch {
-              // Convert to base64 so image preview doesn't break if server upload has issues
-              imageUrl = await fileToBase64(st.file).catch(() => st.image);
+            } catch (err) {
+              console.warn('Image upload skipped for', st.name);
             }
           }
 
@@ -344,7 +355,7 @@ export default function StudentsShowcaseAdminPage() {
       mutate('/public/cms/job-offers');
       mutate('students_showcase_local');
     } catch (err: any) {
-      toast.error('Saved locally. Database table updated!', { id: toastId });
+      toast.error('Failed to sync to database table.', { id: toastId });
     } finally {
       setIsSaving(false);
     }
