@@ -136,7 +136,7 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ internship, isOpen, onCl
         toast.error(res.data?.message || "Failed to submit application.");
       }
     } catch (err: any) {
-      const msg = err.response?.data?.message || (err.response?.data?.errors ? Object.values(err.response.data.errors).flat().join(", ") : "Error submitting application. Please try again.");
+      const msg = err.response?.data?.message || (err.response?.data?.errors ? Object.values(err.response.data.errors).flat().join(", ") : (err.message || "Error submitting application. Please try again."));
       toast.error(msg);
     } finally {
       setIsSubmitting(false);

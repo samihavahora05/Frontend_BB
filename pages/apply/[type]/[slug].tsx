@@ -185,7 +185,8 @@ export default function ApplicationFlowPage() {
           }
         }, 1000);
       } catch (err: any) {
-        toast.error(err.response?.data?.message || "Failed to submit application. Please check your inputs.");
+        const msg = err.response?.data?.message || (err.response?.data?.errors ? Object.values(err.response.data.errors).flat().join(", ") : (err.message || "Failed to submit application. Please check your inputs."));
+        toast.error(msg);
         setIsSubmitting(false);
       }
     }
