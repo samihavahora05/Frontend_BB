@@ -5,7 +5,7 @@ import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
 import {
   Briefcase, CheckCircle, XCircle, Search, Edit2,
   Trash2, Building2, FileText, Plus, Users,
-  RefreshCw, Download, ChevronLeft, ChevronRight, Loader2, AlertCircle as AlertIcon
+  RefreshCw, Download, Upload, Check, X, ChevronLeft, ChevronRight, Loader2, AlertCircle as AlertIcon
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { InternshipService } from '../../../src/lib/api/admin/InternshipService';
@@ -115,6 +115,50 @@ export default function InternshipManager() {
   const [gradeSubmission, setGradeSubmission] = useState<any>(null);
 
   const [isActionLoading, setIsActionLoading] = useState(false);
+
+  // ─── Import CSV State ──────────────────────────────────────────────────────
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (!file.name.endsWith('.csv') && !file.type.includes('csv') && !file.type.includes('text')) {
+        toast.error('Please select a valid .csv file');
+        return;
+      }
+      setSelectedFile(file);
+    }
+  };
+
+  const handleImportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedFile) {
+      toast.error('Please choose a CSV file first');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const res = await InternshipService.importCSV(selectedFile);
+      if (res.success) {
+        toast.success(res.message || 'Internships imported and published successfully!');
+        setSelectedFile(null);
+        setIsImportModalOpen(false);
+        mutatePrograms();
+        mutateStats();
+      } else {
+        toast.error(res.message || 'Failed to import internships');
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.response?.data?.message || 'Error uploading CSV. Please verify column format.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   // ─── Stats ─────────────────────────────────────────────────────────────────
   const { data: stats, mutate: mutateStats } = InternshipService.useStats();
@@ -761,6 +805,111 @@ export default function InternshipManager() {
                 <button type="button" onClick={() => setGradeSubmission(null)}
                   className="px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors">
                   Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── Bulk Import CSV Modal ────────────────────────────────────────── */}
+      {isImportModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-100 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#1B2A6B] flex items-center justify-center font-bold">
+                  <Upload size={18}/>
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-gray-900">Bulk Import Internships (CSV)</h3>
+                  <p className="text-xs text-gray-500 font-semibold">Upload a spreadsheet of internship programs</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => { setIsImportModalOpen(false); setSelectedFile(null); }}
+                className="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <X size={18}/>
+              </button>
+            </div>
+
+            <form onSubmit={handleImportSubmit} className="mt-4 space-y-4">
+              <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-3.5 flex items-center justify-between gap-3 text-xs">
+                <div className="text-amber-900 font-medium">
+                  <p className="font-bold mb-0.5">Need the correct column format?</p>
+                  <p className="text-amber-700/80 text-[11px]">Download our pre-formatted sample CSV template.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => InternshipService.downloadSampleCSV()}
+                  className="flex items-center gap-1.5 bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg font-bold transition-colors shadow-sm shrink-0"
+                >
+                  <Download size={13}/> Sample CSV
+                </button>
+              </div>
+
+              <div 
+                onClick={() => fileInputRef.current?.click()}
+                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
+                  selectedFile 
+                    ? 'border-emerald-500 bg-emerald-50/30' 
+                    : 'border-gray-300 hover:border-[#1B2A6B] hover:bg-gray-50'
+                }`}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv,text/csv,text/plain"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+                <div className="w-12 h-12 mx-auto rounded-full bg-blue-50 text-[#1B2A6B] flex items-center justify-center mb-3">
+                  <Upload size={22}/>
+                </div>
+                {selectedFile ? (
+                  <div>
+                    <p className="text-sm font-bold text-emerald-700 flex items-center justify-center gap-1.5">
+                      <Check size={16}/> {selectedFile.name}
+                    </p>
+                    <p className="text-xs text-gray-400 font-semibold mt-1">
+                      {(selectedFile.size / 1024).toFixed(1)} KB • Click to change file
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-sm font-bold text-gray-700">
+                      Click to browse or drag and drop your CSV file
+                    </p>
+                    <p className="text-xs text-gray-400 font-semibold mt-1">
+                      Supports UTF-8 CSV with title, department, mode, stipend, duration, etc.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => { setIsImportModalOpen(false); setSelectedFile(null); }}
+                  className="px-4 py-2 rounded-lg font-bold text-sm text-gray-600 hover:bg-gray-100 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!selectedFile || isUploading}
+                  className="flex items-center gap-2 bg-[#1B2A6B] hover:bg-[#121c47] text-white px-5 py-2 rounded-lg font-bold text-sm shadow-md transition-colors disabled:opacity-50"
+                >
+                  {isUploading ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin"/> Importing Internships…
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={16}/> Upload & Publish
+                    </>
+                  )}
                 </button>
               </div>
             </form>

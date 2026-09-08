@@ -77,6 +77,35 @@ export const InternshipService = {
     return res.data;
   },
 
+  importCSV: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await api.post('/admin/internships/import', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  downloadSampleCSV: async () => {
+    try {
+      const res = await api.get('/admin/internships/sample-csv', { responseType: 'blob' });
+      const blob = new Blob([res.data], { type: 'text/csv;charset=utf-8;' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'internships-sample-template.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to download sample CSV', err);
+      throw err;
+    }
+  },
+
     exportCSV: async (params: Record<string, any> = {}) => {
     try {
       const queryParams = new URLSearchParams(
