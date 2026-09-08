@@ -656,24 +656,50 @@ export default function InternshipsPage() {
                           {/* Card Footer Actions */}
                           <div className="pt-3 border-t border-slate-100 flex items-center justify-between mt-auto">
                             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                              {internship.posted_at || 'RECENT'}
+                              {internship.application_deadline ? (
+                                <span className={new Date(internship.application_deadline) < new Date(new Date().setHours(0,0,0,0)) ? 'text-red-500 font-extrabold' : ''}>
+                                  Deadline: {internship.application_deadline}
+                                </span>
+                              ) : (
+                                internship.posted_at || 'RECENT'
+                              )}
                             </span>
 
-                            <Button
-                              onClick={() => handleOpenApply(internship)}
-                              disabled={internship.has_applied}
-                              className={`h-9 px-4 text-xs font-black rounded-xl transition-all shadow-xs gap-1 cursor-pointer ${
-                                internship.has_applied
-                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                  : "bg-[#1B2A6B] hover:bg-[#0d1635] text-white"
-                              }`}
-                            >
-                              {internship.has_applied ? (
-                                <><CheckCircle2 size={13} /> Applied</>
-                              ) : (
-                                <>Apply Now <ArrowRight size={13} /></>
-                              )}
-                            </Button>
+                            {(() => {
+                              const isExpired = internship.application_deadline && new Date(internship.application_deadline) < new Date(new Date().setHours(0,0,0,0));
+                              const isClosed = internship.status === 'closed' || isExpired;
+
+                              if (internship.has_applied) {
+                                return (
+                                  <Button
+                                    disabled
+                                    className="h-9 px-4 text-xs font-black rounded-xl shadow-xs gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                  >
+                                    <CheckCircle2 size={13} /> Applied
+                                  </Button>
+                                );
+                              }
+
+                              if (isClosed) {
+                                return (
+                                  <Button
+                                    disabled
+                                    className="h-9 px-3 text-xs font-black rounded-xl bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
+                                  >
+                                    Closed
+                                  </Button>
+                                );
+                              }
+
+                              return (
+                                <Button
+                                  onClick={() => handleOpenApply(internship)}
+                                  className="h-9 px-4 text-xs font-black rounded-xl transition-all shadow-xs gap-1 cursor-pointer bg-[#1B2A6B] hover:bg-[#0d1635] text-white"
+                                >
+                                  Apply Now <ArrowRight size={13} />
+                                </Button>
+                              );
+                            })()}
                           </div>
 
                         </CardContent>

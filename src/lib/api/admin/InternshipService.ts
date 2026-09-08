@@ -77,6 +77,22 @@ export const InternshipService = {
     return res.data;
   },
 
+  previewImport: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await api.post('/admin/internships/import/preview', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  confirmImport: async (payload: { rows: any[]; initial_status?: string; skip_duplicates?: boolean; skip_invalid?: boolean }) => {
+    const response = await api.post('/admin/internships/import/confirm', payload);
+    return response.data;
+  },
+
   importCSV: async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -86,6 +102,28 @@ export const InternshipService = {
       },
     });
     return response.data;
+  },
+
+  downloadSampleTemplate: async (format: 'csv' | 'xlsx' = 'xlsx') => {
+    try {
+      const res = await api.get(`/admin/internships/sample-template?format=${format}`, { responseType: 'blob' });
+      const mime = format === 'xlsx' 
+        ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+        : 'text/csv;charset=utf-8;';
+      const blob = new Blob([res.data], { type: mime });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `internships-sample-template.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to download sample template', err);
+      // Fallback to sample-csv
+      return InternshipService.downloadSampleCSV();
+    }
   },
 
   downloadSampleCSV: async () => {

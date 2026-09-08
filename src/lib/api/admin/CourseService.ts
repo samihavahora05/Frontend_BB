@@ -108,5 +108,35 @@ export const CourseService = {
   async bulkStatus(ids: number[], status: string) {
     const res = await api.post('/admin/courses/bulk-status', { ids, status });
     return res.data;
+  },
+
+  async previewImport(formData: FormData) {
+    const res = await api.post('/admin/courses/import/preview', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return res.data;
+  },
+
+  async confirmImport(payload: {
+    rows: any[];
+    initial_status?: 'Published' | 'Draft';
+    skip_duplicates?: boolean;
+    skip_invalid?: boolean;
+  }) {
+    const res = await api.post('/admin/courses/import/confirm', payload);
+    return res.data;
+  },
+
+  async downloadSampleTemplate(format: 'xlsx' | 'csv' = 'xlsx') {
+    const res = await api.get(`/admin/courses/sample-template?format=${format}`, {
+      responseType: 'blob'
+    });
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `courses-sample-template.${format}`);
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode?.removeChild(link);
   }
 };

@@ -4,9 +4,13 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
 import { CourseService } from '../../../src/lib/api/admin/CourseService';
-import { Plus, ListTree, Search, Download, MoreVertical, Edit, Trash2, Copy, Archive, Globe, Lock } from 'lucide-react';
+import { 
+  Plus, ListTree, Search, Download, Upload, MoreVertical, Edit, Trash2, 
+  Copy, Archive, Globe, Lock, Eye, X, FileSpreadsheet, CheckCircle, AlertCircle
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import { CourseCategoryService } from '../../../src/lib/api/admin/CourseCategoryService';
+import { CourseExcelImportModal } from '../../../src/components/admin/course/CourseExcelImportModal';
 
 export default function CourseList() {
   const router = useRouter();
@@ -17,6 +21,10 @@ export default function CourseList() {
   const [perPage] = useState(10);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [categoryFilter, setCategoryFilter] = useState('');
+  
+  // Import modal & Image preview modal states
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState<{ url: string; title: string } | null>(null);
 
   // Debounce search
   useEffect(() => {
@@ -172,9 +180,16 @@ export default function CourseList() {
             <h1 className="text-2xl font-black text-[#0d1635]">Course Management</h1>
             <p className="text-sm font-semibold text-slate-500 mt-1">Manage courses, publish content, and track performance.</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-2.5">
+            <button
+              onClick={() => setIsImportModalOpen(true)}
+              className="flex items-center gap-2 bg-[#1B2A6B]/10 hover:bg-[#1B2A6B]/20 text-[#1B2A6B] border border-[#1B2A6B]/30 px-4 py-2.5 rounded-xl font-extrabold text-sm transition-all shadow-xs cursor-pointer"
+            >
+              <Upload size={16} /> Import Excel / CSV
+            </button>
+
             <div className="relative group/export">
-              <button className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-sm shadow-sm hover:bg-slate-50 transition-colors">
+              <button className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-sm shadow-sm hover:bg-slate-50 transition-colors cursor-pointer">
                 <Download size={16} /> Export
               </button>
               <div className="absolute right-0 top-full mt-1 w-36 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 invisible group-hover/export:opacity-100 group-hover/export:visible transition-all z-10 py-1">
@@ -183,14 +198,52 @@ export default function CourseList() {
                 <button onClick={() => handleExport('pdf')} className="w-full text-left px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">PDF</button>
               </div>
             </div>
+
             <button 
               onClick={() => router.push('/admin/courses/add')}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#1B2A6B] hover:bg-[#121c47] text-white text-sm font-black rounded-xl shadow-md transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#1B2A6B] hover:bg-[#121c47] text-white text-sm font-black rounded-xl shadow-md transition-colors cursor-pointer"
             >
               <Plus size={18} /> Create Course
             </button>
           </div>
         </div>
+
+        {/* Image Preview Lightbox Modal */}
+        {previewImage && (
+          <div 
+            className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
+            onClick={() => setPreviewImage(null)}
+          >
+            <div className="relative max-w-2xl w-full bg-slate-900 rounded-3xl overflow-hidden border border-slate-700 shadow-2xl p-5" onClick={e => e.stopPropagation()}>
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="text-white font-black text-sm line-clamp-1">{previewImage.title}</h4>
+                <button onClick={() => setPreviewImage(null)} className="p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+                  <X size={18} />
+                </button>
+              </div>
+              <div className="aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center border border-slate-800 shadow-inner">
+                <img 
+                  src={previewImage.url} 
+                  alt={previewImage.title} 
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+              <div className="flex items-center justify-between mt-3 text-xs text-slate-400">
+                <span className="font-semibold truncate max-w-sm">{previewImage.url}</span>
+                <a href={previewImage.url} target="_blank" rel="noreferrer" className="text-blue-400 hover:underline font-bold">Open Full Image &rarr;</a>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Course Excel Import Wizard Modal */}
+        <CourseExcelImportModal
+          isOpen={isImportModalOpen}
+          onClose={() => setIsImportModalOpen(false)}
+          onSuccess={() => {
+            mutate();
+          }}
+        />
 
         {/* Main Card */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
@@ -271,10 +324,32 @@ export default function CourseList() {
                       <td className="p-4"><input type="checkbox" checked={selectedIds.has(course.id)} onChange={() => toggleSelect(course.id)} className="rounded border-slate-300 text-[#1B2A6B] focus:ring-[#1B2A6B]" /></td>
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-slate-100 shrink-0 overflow-hidden border border-slate-200 flex items-center justify-center relative">
-                            {course.thumbnail ? <img src={getImageUrl(course.thumbnail)} alt={course.title} className="w-full h-full object-cover"/> : <span className="text-xs font-bold text-slate-400">IMG</span>}
+                          
+                          {/* Course Thumbnail Image with Interactive Lightbox Zoom */}
+                          <div 
+                            onClick={() => {
+                              if (course.thumbnail) {
+                                setPreviewImage({ url: getImageUrl(course.thumbnail), title: course.title });
+                              }
+                            }}
+                            className={`w-14 h-14 rounded-xl bg-slate-100 shrink-0 overflow-hidden border border-slate-200 flex items-center justify-center relative shadow-xs ${
+                              course.thumbnail ? 'cursor-pointer hover:ring-2 hover:ring-[#1B2A6B] hover:shadow-md transition-all group/img' : ''
+                            }`}
+                            title={course.thumbnail ? "Click to view full image" : "No thumbnail"}
+                          >
+                            {course.thumbnail ? (
+                              <>
+                                <img src={getImageUrl(course.thumbnail)} alt={course.title} className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-300"/>
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center text-white transition-opacity">
+                                  <Eye size={14} />
+                                </div>
+                              </>
+                            ) : (
+                              <span className="text-xs font-bold text-slate-400">IMG</span>
+                            )}
                             {course.is_featured && <div className="absolute top-0 right-0 bg-amber-500 w-3 h-3 rounded-bl-lg"></div>}
                           </div>
+
                           <div>
                             <div className="font-bold text-[#1B2A6B] line-clamp-1 max-w-[300px] mb-0.5">{course.title}</div>
                             <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-2">
@@ -296,7 +371,21 @@ export default function CourseList() {
                         </div>
                       </td>
                       <td className="p-4">
-                        <StatusBadge status={course.status} />
+                        <div className="flex items-center gap-2">
+                          <StatusBadge status={course.status} />
+                          {/* 1-Click Publish / Unpublish Toggle */}
+                          <button
+                            onClick={() => handleStatusChange(course.id, course.status === 'Published' ? 'Draft' : 'Published')}
+                            title={course.status === 'Published' ? 'Click to Unpublish (Draft)' : 'Click to Publish live'}
+                            className={`p-1 rounded-lg border transition-colors cursor-pointer ${
+                              course.status === 'Published'
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                                : 'bg-slate-50 text-slate-400 border-slate-200 hover:text-emerald-600 hover:bg-emerald-50'
+                            }`}
+                          >
+                            <Globe size={13} />
+                          </button>
+                        </div>
                       </td>
                       <td className="p-4 text-center">
                         <button 
