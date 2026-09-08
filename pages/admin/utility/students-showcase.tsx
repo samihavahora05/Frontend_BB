@@ -176,52 +176,57 @@ export default function StudentsShowcaseAdminPage() {
     });
   };
 
-  const syncToLocalState = async (updatedList: StudentRow[]) => {
+  const syncToLocalState = (updatedList: StudentRow[]) => {
     if (typeof window !== 'undefined') {
       try {
-        const payload = await Promise.all(updatedList.map(async (st, idx) => {
-          let img = st.image;
-          if (st.file) {
-            try {
-              img = await fileToBase64(st.file);
-            } catch {}
-          }
-          return {
-            id: st.id || `student-${idx}`,
-            student_name: st.name,
-            name: st.name,
-            role: st.role,
-            designation: st.role,
-            company_name: st.company || '',
-            company: st.company || '',
-            image_url: img,
-            avatar_url: img,
-            image: img
-          };
+        const payload = updatedList.map((st, idx) => ({
+          id: st.id || `student-${idx}`,
+          student_name: st.name,
+          name: st.name,
+          role: st.role,
+          designation: st.role,
+          company_name: st.company || '',
+          company: st.company || '',
+          image_url: st.image,
+          avatar_url: st.image,
+          image: st.image
         }));
         localStorage.setItem('blueboxx_students_showcase', JSON.stringify(payload));
         window.dispatchEvent(new Event('showcase-updated'));
-
-        // Automatically sync to backend database so other users immediately see additions and changes
-        api.post('/public/cms/job-offers', { students: payload })
-          .catch(() => api.post('/admin/cms/job-offers', { students: payload }))
-          .finally(() => {
-            mutate('/public/cms/job-offers');
-          });
       } catch (e) {}
     }
   };
 
   const handleRowPhotoChange = async (index: number, file: File) => {
     const previewUrl = URL.createObjectURL(file);
-    const base64Img = await fileToBase64(file).catch(() => previewUrl);
+    let finalImageUrl = previewUrl;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'students');
+      const uploadRes = await api.post('/admin/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      }).catch(() => api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      }));
+
+      if (uploadRes?.data?.path) {
+        finalImageUrl = `/storage/${uploadRes.data.path}`;
+      } else if (uploadRes?.data?.url) {
+        finalImageUrl = uploadRes.data.url;
+      }
+    } catch {
+      finalImageUrl = previewUrl;
+    }
+
     setStudents(prev => {
       const copy = [...prev];
-      copy[index] = { ...copy[index], image: base64Img, file: file };
+      copy[index] = { ...copy[index], image: finalImageUrl, file: file };
       syncToLocalState(copy);
       return copy;
     });
-    toast.success(`Photo updated for #${index + 1}! Visible across all pages.`);
+    toast.success(`Photo updated for #${index + 1}!`);
   };
 
   const removeStudent = (index: number) => {
@@ -331,12 +336,9 @@ export default function StudentsShowcaseAdminPage() {
         window.dispatchEvent(new Event('showcase-updated'));
       }
 
-      // 2. Also save to server endpoints
-      await Promise.allSettled([
-        api.post('/admin/settings', { group: 'showcase', settings: { students_list: processedStudents } }),
-        api.post('/public/cms/job-offers', { students: processedStudents }),
-        api.post('/admin/cms/job-offers', { students: processedStudents })
-      ]);
+      // 2. Save directly to authoritative CMS Job Offers table
+      await api.post('/admin/cms/job-offers', { students: processedStudents })
+        .catch(() => api.post('/public/cms/job-offers', { students: processedStudents }));
 
       toast.success('Successfully saved all students to database!', { id: toastId });
       mutate('/public/cms/job-offers');
