@@ -194,9 +194,28 @@ export const CourseExcelImportModal: React.FC<CourseExcelImportModalProps> = ({ 
     }
 
     setIsProcessing(true);
+    const cleanRows = rowsToImport.map(row => ({
+      title: row.title,
+      category_name: row.category_name,
+      level_title: row.level_title,
+      instructor_name: row.instructor_name,
+      course_type: row.course_type,
+      price: row.price,
+      discount_price: row.discount_price,
+      duration: row.duration,
+      language: row.language,
+      thumbnail: row.thumbnail,
+      short_description: row.short_description,
+      description: row.description,
+      status: row.status,
+      is_featured: row.is_featured,
+      row_status: row.row_status,
+      is_duplicate: row.is_duplicate,
+    }));
+
     try {
       const res = await CourseService.confirmImport({
-        rows: rowsToImport,
+        rows: cleanRows,
         initial_status: importStatus,
         skip_duplicates: skipDuplicates,
         skip_invalid: skipInvalid,
