@@ -73,6 +73,23 @@ export const CourseExcelImportModal: React.FC<CourseExcelImportModalProps> = ({ 
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const handleRowImageUpload = (rowNum: number, file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target?.result as string;
+      if (previewData && base64) {
+        const newRows = [...previewData.rows];
+        const targetIdx = newRows.findIndex(r => r.row_number === rowNum);
+        if (targetIdx !== -1) {
+          newRows[targetIdx] = { ...newRows[targetIdx], thumbnail: base64 };
+          setPreviewData({ ...previewData, rows: newRows });
+          toast.success(`Image attached to Row #${rowNum}!`);
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   if (!isOpen) return null;
 
   const resetModal = () => {
@@ -542,29 +559,57 @@ export const CourseExcelImportModal: React.FC<CourseExcelImportModalProps> = ({ 
                             
                             {/* Image Thumbnail Column */}
                             <td className="p-3 text-center">
-                              {row.thumbnail ? (
-                                <div 
-                                  onClick={() => setPreviewImage({ url: getImageUrl(row.thumbnail), title: row.title })}
-                                  className="w-10 h-10 rounded-lg overflow-hidden border border-slate-200 shadow-xs mx-auto cursor-pointer hover:ring-2 hover:ring-[#1B2A6B] transition-all relative group"
-                                  title="Click to view full image"
-                                >
-                                  <img 
-                                    src={getImageUrl(row.thumbnail)} 
-                                    alt={row.title} 
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                      (e.target as HTMLElement).style.display = 'none';
-                                    }}
-                                  />
-                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity">
-                                    <Eye size={12} />
+                              <div className="flex flex-col items-center justify-center gap-1">
+                                {row.thumbnail ? (
+                                  <div className="relative group mx-auto">
+                                    <div 
+                                      onClick={() => setPreviewImage({ url: getImageUrl(row.thumbnail), title: row.title })}
+                                      className="w-10 h-10 rounded-lg overflow-hidden border border-slate-200 shadow-xs mx-auto cursor-pointer hover:ring-2 hover:ring-[#1B2A6B] transition-all relative"
+                                      title="Click to view full image"
+                                    >
+                                      <img 
+                                        src={getImageUrl(row.thumbnail)} 
+                                        alt={row.title} 
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                          (e.target as HTMLElement).style.display = 'none';
+                                        }}
+                                      />
+                                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity">
+                                        <Eye size={12} />
+                                      </div>
+                                    </div>
+                                    <label className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#1B2A6B] hover:bg-indigo-700 text-white rounded-full flex items-center justify-center cursor-pointer shadow-xs transition-transform hover:scale-110" title="Replace / upload image file">
+                                      <Upload size={8} />
+                                      <input 
+                                        type="file" 
+                                        accept="image/*" 
+                                        className="hidden" 
+                                        onChange={(e) => {
+                                          if (e.target.files && e.target.files[0]) {
+                                            handleRowImageUpload(row.row_number, e.target.files[0]);
+                                          }
+                                        }}
+                                      />
+                                    </label>
                                   </div>
-                                </div>
-                              ) : (
-                                <div className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 mx-auto" title="No thumbnail URL provided">
-                                  <ImageIcon size={14} />
-                                </div>
-                              )}
+                                ) : (
+                                  <label className="w-10 h-10 rounded-lg bg-slate-100 hover:bg-blue-50 border border-dashed border-slate-300 hover:border-[#1B2A6B] flex flex-col items-center justify-center text-slate-400 hover:text-[#1B2A6B] cursor-pointer mx-auto transition-colors" title="Click to attach an image file">
+                                    <Upload size={12} />
+                                    <span className="text-[8px] font-bold">Attach</span>
+                                    <input 
+                                      type="file" 
+                                      accept="image/*" 
+                                      className="hidden" 
+                                      onChange={(e) => {
+                                        if (e.target.files && e.target.files[0]) {
+                                          handleRowImageUpload(row.row_number, e.target.files[0]);
+                                        }
+                                      }}
+                                    />
+                                  </label>
+                                )}
+                              </div>
                             </td>
 
                             <td className="p-3 font-extrabold text-[#1B2A6B]">
