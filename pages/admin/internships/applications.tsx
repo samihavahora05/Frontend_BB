@@ -942,7 +942,7 @@ export default function InternshipApplications() {
                 <div className="flex flex-wrap items-center justify-between gap-4 p-4 bg-slate-50 rounded-2xl border border-gray-200">
                   <div>
                     <h4 className="font-extrabold text-xs text-gray-900 uppercase tracking-wider">Generate & Issue Official Letter</h4>
-                    <p className="text-[11px] text-gray-500">Signs & compiles the appointment details onto the official 1-page BlueBoxx DA Letterhead.</p>
+                    <p className="text-[11px] text-gray-500">Signs & compiles the appointment details onto the official BlueBoxx DA Letterhead.</p>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2.5">
@@ -952,7 +952,7 @@ export default function InternshipApplications() {
                         onClick={() => InternshipService.downloadAppointmentLetter(selectedApp.id)}
                         className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-sm transition-all inline-flex items-center gap-1.5 cursor-pointer"
                       >
-                        <Download size={14} /> Download Official Letter (1-Page)
+                        <Download size={14} /> Download Official Appointment Letter
                       </button>
                     )}
 
