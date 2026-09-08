@@ -1,9 +1,11 @@
-import React, { useMemo, useState, useEffect, useRef } from "react";
+﻿import React, { useMemo, useState, useEffect, useRef } from "react";
 import { 
   Sparkles, CheckCircle2, Building2,
   ArrowUpRight, X, Zap
 } from "lucide-react";
 import { motion, AnimatePresence, useAnimationFrame } from "framer-motion";
+import useSWR from "swr";
+import api from "../lib/axios";
 import { defaultStudents, StudentShowcaseItem } from "../data/studentsData";
 import { getImageUrl } from "../lib/imageUtils";
 
@@ -90,6 +92,17 @@ export const StudentsShowcaseSection = ({
   const trackRef = useRef<HTMLDivElement>(null);
   const xRef = useRef(0);
 
+  // 1. Authoritative Backend Database Query for Live Student Showcase
+  const { data: dbData, mutate: refreshShowcase } = useSWR(
+    "/public/cms/job-offers",
+    (url: string) => api.get(url).then((res) => res.data),
+    {
+      revalidateOnFocus: true,
+      dedupingInterval: 10000,
+      errorRetryCount: 3,
+    }
+  );
+
   const loadShowcaseData = () => {
     try {
       if (typeof window !== "undefined") {
@@ -121,14 +134,18 @@ export const StudentsShowcaseSection = ({
 
     // Listen to real-time custom events and storage changes
     if (typeof window !== "undefined") {
-      window.addEventListener("showcase-updated", loadShowcaseData);
-      window.addEventListener("storage", loadShowcaseData);
+      const handleUpdate = () => {
+        loadShowcaseData();
+        refreshShowcase();
+      };
+      window.addEventListener("showcase-updated", handleUpdate);
+      window.addEventListener("storage", handleUpdate);
       return () => {
-        window.removeEventListener("showcase-updated", loadShowcaseData);
-        window.removeEventListener("storage", loadShowcaseData);
+        window.removeEventListener("showcase-updated", handleUpdate);
+        window.removeEventListener("storage", handleUpdate);
       };
     }
-  }, []);
+  }, [refreshShowcase]);
 
   const allStudents: StudentItem[] = useMemo(() => {
     const baseDefaultStudents: StudentItem[] = defaultStudents.map(st => ({
@@ -136,10 +153,31 @@ export const StudentsShowcaseSection = ({
       image: getImageUrl(st.image)
     }));
 
+    // Priority 1: Live Authoritative Database Records from Backend API
+    if (dbData && Array.isArray(dbData) && dbData.length > 0) {
+      const apiList = dbData
+        .filter((item: any) => item && (item.student_name || item.name))
+        .map((item: any, idx: number) => {
+          const rawImg = item.avatar_url || item.image_url || item.photo_url || item.image || "";
+          return {
+            id: item.id || `student-api-${idx}`,
+            name: item.student_name || item.name || "Student",
+            role: item.role || item.designation || item.degree || "Alumni",
+            company: item.company_name || item.company || "Partner Enterprise",
+            image: getImageUrl(rawImg) || (baseDefaultStudents[idx % baseDefaultStudents.length]?.image || "")
+          };
+        });
+
+      if (apiList.length > 0) {
+        return apiList;
+      }
+    }
+
     if (!isMounted) {
       return baseDefaultStudents;
     }
 
+    // Priority 2: Local storage (for instant admin drafting)
     if (localStudents && localStudents.length > 0) {
       if (localStudents.length >= baseDefaultStudents.length) {
         return localStudents;
@@ -149,8 +187,9 @@ export const StudentsShowcaseSection = ({
       return [...localStudents, ...remaining];
     }
 
+    // Priority 3: Fallback default static array
     return baseDefaultStudents;
-  }, [localStudents, isMounted]);
+  }, [dbData, localStudents, isMounted]);
 
   // Duplicate for seamless infinite loop
   const displayList = useMemo(() => {
