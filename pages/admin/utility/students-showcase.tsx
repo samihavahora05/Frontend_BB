@@ -201,6 +201,13 @@ export default function StudentsShowcaseAdminPage() {
         }));
         localStorage.setItem('blueboxx_students_showcase', JSON.stringify(payload));
         window.dispatchEvent(new Event('showcase-updated'));
+
+        // Automatically sync to backend database so other users immediately see additions and changes
+        api.post('/public/cms/job-offers', { students: payload })
+          .catch(() => api.post('/admin/cms/job-offers', { students: payload }))
+          .finally(() => {
+            mutate('/public/cms/job-offers');
+          });
       } catch (e) {}
     }
   };

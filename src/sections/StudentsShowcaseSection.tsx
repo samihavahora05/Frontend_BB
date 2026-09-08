@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import { 
   Sparkles, CheckCircle2, Building2,
   ArrowUpRight, X, Zap
@@ -168,8 +168,14 @@ export const StudentsShowcaseSection = ({
           };
         });
 
-      if (apiList.length > 0) {
+      if (apiList.length >= 40) {
         return apiList;
+      }
+
+      if (apiList.length > 0) {
+        const apiNames = new Set(apiList.map(s => s.name.toLowerCase().trim()));
+        const remaining = baseDefaultStudents.filter(s => !apiNames.has(s.name.toLowerCase().trim()));
+        return [...apiList, ...remaining];
       }
     }
 
@@ -252,7 +258,7 @@ export const StudentsShowcaseSection = ({
           <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4">
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-xs text-xs font-bold text-slate-700">
               <Zap size={13} className="text-amber-500 fill-amber-500" />
-              <span>44+ Placed Learners</span>
+              <span>{allStudents.length}+ Placed Learners</span>
             </div>
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-xs text-xs font-bold text-slate-700">
               <Building2 size={13} className="text-[#1B2A6B]" />
