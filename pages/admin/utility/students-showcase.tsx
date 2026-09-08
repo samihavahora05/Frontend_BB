@@ -63,27 +63,6 @@ export default function StudentsShowcaseAdminPage() {
   );
 
   useEffect(() => {
-    // 1. Check localStorage first for recently saved showcase
-    if (typeof window !== 'undefined') {
-      try {
-        const raw = localStorage.getItem('blueboxx_students_showcase');
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setStudents(parsed.map((st: any) => ({
-              id: st.id,
-              name: st.student_name || st.name || '',
-              role: st.role || st.designation || 'Graphic design',
-              company: st.company_name || st.company || '',
-              image: st.image_url || st.avatar_url || st.image || '',
-              isNew: false
-            })));
-            return;
-          }
-        }
-      } catch (e) {}
-    }
-
     const baseDefaultStudents: StudentRow[] = defaultStudents.map(st => ({
       id: st.id,
       name: st.name,
@@ -93,9 +72,9 @@ export default function StudentsShowcaseAdminPage() {
       isNew: false
     }));
 
-    let customList: StudentRow[] = [];
+    // 1. Prioritize authoritative database data from backend
     if (dbData && Array.isArray(dbData) && dbData.length > 0) {
-      customList = dbData
+      const customList = dbData
         .filter((item: any) => item && (item.student_name || item.name))
         .map((item: any) => ({
           id: item.id,
@@ -105,21 +84,47 @@ export default function StudentsShowcaseAdminPage() {
           image: getImageUrl(item.image_url || item.avatar_url || item.photo_url || ''),
           isNew: false
         }));
+
+      if (customList.length >= 40) {
+        setStudents(customList);
+        return;
+      }
+
+      if (customList.length > 0) {
+        const customNames = new Set(customList.map(s => s.name.toLowerCase().trim()));
+        const remainingDefaults = baseDefaultStudents.filter(s => !customNames.has(s.name.toLowerCase().trim()));
+        setStudents([...customList, ...remainingDefaults]);
+        return;
+      }
     }
 
-    if (customList.length >= 40) {
-      setStudents(customList);
-      return;
+    // 2. Check localStorage only if clean of base64
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('blueboxx_students_showcase');
+        if (raw) {
+          if (raw.includes('data:image')) {
+            // Automatically purge bloated legacy base64 from browser storage
+            localStorage.removeItem('blueboxx_students_showcase');
+          } else {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setStudents(parsed.map((st: any) => ({
+                id: st.id,
+                name: st.student_name || st.name || '',
+                role: st.role || st.designation || 'Graphic design',
+                company: st.company_name || st.company || '',
+                image: st.image_url || st.avatar_url || st.image || '',
+                isNew: false
+              })));
+              return;
+            }
+          }
+        }
+      } catch (e) {}
     }
 
-    if (customList.length > 0) {
-      const customNames = new Set(customList.map(s => s.name.toLowerCase().trim()));
-      const remainingDefaults = baseDefaultStudents.filter(s => !customNames.has(s.name.toLowerCase().trim()));
-      setStudents([...customList, ...remainingDefaults]);
-      return;
-    }
-
-    // Fallback to default 44 students
+    // Fallback to default 44 authentic students
     setStudents(baseDefaultStudents);
   }, [dbData]);
 
@@ -384,14 +389,29 @@ export default function StudentsShowcaseAdminPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    localStorage.removeItem('blueboxx_students_showcase');
+                  }
+                  mutate('/public/cms/job-offers');
+                  toast.success('Purged cached data! Loaded fresh records from live database.');
+                }}
+                className="px-3.5 py-3 bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold rounded-xl border border-white/20 transition-all flex items-center gap-1.5 cursor-pointer text-xs"
+              >
+                <RefreshCw size={15} /> Reset / Sync DB
+              </button>
+              <button
+                type="button"
                 onClick={handleAddNewStudentManual}
                 className="px-4 py-3 bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold rounded-xl border border-white/20 transition-all flex items-center gap-2 cursor-pointer text-xs"
               >
                 <Plus size={16} /> Add Single Student
               </button>
               <button
+                type="button"
                 onClick={handleSaveAll}
                 disabled={isSaving || students.length === 0}
                 className="px-6 py-3 bg-[#C9A227] hover:bg-[#b08d1f] active:scale-95 text-[#0d1635] font-black rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
