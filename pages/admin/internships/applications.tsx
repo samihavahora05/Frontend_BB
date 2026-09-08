@@ -889,86 +889,36 @@ export default function InternshipApplications() {
                 </div>
               </div>
 
-              {/* 3. DUAL SIGNATURES VERIFICATION & UPLOAD */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Candidate Signature Box */}
-                <div className="bg-slate-50 p-4 rounded-2xl border border-gray-100 space-y-3">
-                  <h3 className="text-xs font-black uppercase tracking-wider text-gray-500 flex items-center justify-between">
-                    <span className="flex items-center gap-1.5"><PenTool size={14} className="text-[#1B2A6B]" /> Candidate Signature</span>
-                    <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">Auto-Fetched</span>
+              {/* 3. CANDIDATE SIGNATURE & T&C CONSENT */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-gray-700 flex items-center gap-1.5">
+                    <PenTool size={14} className="text-[#1B2A6B]" /> Candidate Digital Signature & Verification
                   </h3>
-                  
-                  {selectedApp.signature_data || selectedApp.signature_path || selectedApp.signature_url ? (
-                    <div className="space-y-2">
-                      <div className="bg-white p-2.5 rounded-xl border border-gray-200 flex items-center justify-center min-h-[75px] max-h-24 overflow-hidden shadow-2xs">
-                        {selectedApp.signature_data ? (
-                          <img src={selectedApp.signature_data} alt="Candidate Signature" className="max-h-16 object-contain" />
-                        ) : (
-                          <img src={selectedApp.signature_url || `/api/public/internships/applications/${selectedApp.id}/signature`} alt="Candidate Signature" className="max-h-16 object-contain" />
-                        )}
-                      </div>
-                      <p className="text-[10px] text-gray-500 font-bold flex items-center justify-between">
-                        <span>Signed by: {selectedApp.applicant_name}</span>
-                        <span className="text-emerald-600 font-extrabold flex items-center gap-1">
-                          <CheckCircle2 size={12} /> Accepted T&C
-                        </span>
-                      </p>
-                    </div>
-                  ) : (
-                    <p className="text-xs text-gray-400 italic">No digital signature image attached.</p>
-                  )}
+                  <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-extrabold flex items-center gap-1">
+                    <CheckCircle2 size={11} /> Auto-Fetched from Application
+                  </span>
                 </div>
-
-                {/* Admin Official Signature Box */}
-                <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 p-4 rounded-2xl border border-blue-100 space-y-3">
-                  <h3 className="text-xs font-black uppercase tracking-wider text-[#1B2A6B] flex items-center justify-between">
-                    <span className="flex items-center gap-1.5"><Award size={15} /> Admin Signature</span>
-                    {adminSignatureData ? (
-                      <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <CheckCircle2 size={11} /> Ready
-                      </span>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                  <div className="sm:col-span-1 bg-white p-3 rounded-xl border border-gray-200 flex items-center justify-center min-h-[85px] max-h-28 overflow-hidden shadow-2xs">
+                    {selectedApp.signature_data ? (
+                      <img src={selectedApp.signature_data} alt="Candidate Signature" className="max-h-20 object-contain" />
                     ) : (
-                      <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
-                        Upload Below
-                      </span>
+                      <img src={selectedApp.signature_url || `/api/public/internships/applications/${selectedApp.id}/signature`} alt="Candidate Signature" className="max-h-20 object-contain" />
                     )}
-                  </h3>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <span className="text-[10px] text-gray-500 font-bold block mb-0.5">Signatory Name</span>
-                      <input
-                        type="text"
-                        value={signatoryName}
-                        onChange={(e) => {
-                          setSignatoryName(e.target.value);
-                          if (typeof window !== 'undefined') localStorage.setItem('bb_signatory_name', e.target.value);
-                        }}
-                        placeholder="Authorized Signatory"
-                        className="w-full px-2.5 py-1.5 text-xs font-bold border border-slate-200 rounded-lg bg-white"
-                      />
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-gray-500 font-bold block mb-0.5">Designation</span>
-                      <input
-                        type="text"
-                        value={signatoryDesignation}
-                        onChange={(e) => {
-                          setSignatoryDesignation(e.target.value);
-                          if (typeof window !== 'undefined') localStorage.setItem('bb_signatory_designation', e.target.value);
-                        }}
-                        placeholder="Director / HR Head"
-                        className="w-full px-2.5 py-1.5 text-xs font-bold border border-slate-200 rounded-lg bg-white"
-                      />
-                    </div>
                   </div>
-
-                  <SignaturePad
-                    label="Upload / Draw Admin Signature"
-                    defaultMode="upload"
-                    onSave={handleAdminSignatureUpdate}
-                    onChange={handleAdminSignatureUpdate}
-                  />
+                  <div className="sm:col-span-2 space-y-1.5 text-xs">
+                    <p className="font-bold text-slate-800">
+                      Applicant: <span className="text-[#1B2A6B]">{selectedApp.applicant_name}</span> ({selectedApp.email})
+                    </p>
+                    <p className="text-slate-500 font-medium">
+                      Terms Accepted: <strong className="text-emerald-700">{selectedApp.terms_accepted ? 'Yes â€” Verified' : 'Standard Agreement'}</strong>
+                    </p>
+                    <p className="text-[11px] text-slate-400 font-medium italic">
+                      Per official policy, the Appointment Letter requires and displays ONLY the candidate's verified signature.
+                    </p>
+                  </div>
                 </div>
               </div>
 

@@ -289,6 +289,17 @@ export default function TermsPage() {
             <p className="text-base text-slate-500 mt-4 max-w-2xl mx-auto">
               Applicable for all Students, Interns, Trainees, Companies, and Project Participants using the BlueBoxx Platform.
             </p>
+            <div className="mt-6 flex justify-center">
+              <a
+                href={`${process.env.NEXT_PUBLIC_API_URL || 'https://backend.blueboxx.in/api'}/documents/terms-and-conditions`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#1B2A6B] hover:bg-[#121c47] text-white text-sm font-bold rounded-xl shadow-md transition-all hover:scale-105"
+              >
+                <FileText size={18} />
+                <span>Download Official Terms & Conditions PDF</span>
+              </a>
+            </div>
           </motion.div>
 
           <div className="flex flex-col lg:flex-row gap-8">
