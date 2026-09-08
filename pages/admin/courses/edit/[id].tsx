@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { AdminDashboardLayout } from "../../../../src/layout/AdminDashboardLayout";
 import { ArrowLeft, Save, Image as ImageIcon, Video, FileText, Check, UploadCloud, Link as LinkIcon, DollarSign, Type, AlignLeft } from "lucide-react";
@@ -10,6 +10,7 @@ import { CourseCategoryService } from "../../../../src/lib/api/admin/CourseCateg
 import { InstructorService } from "../../../../src/lib/api/admin/InstructorService";
 import { CourseLevelService } from "../../../../src/lib/api/admin/CourseLevelService";
 import { getImageUrl } from "../../../../src/lib/imageUtils";
+import { compressImage } from "../../../../src/lib/imageCompressor";
 
 export default function AdminEditCoursePage() {
   const router = useRouter();
@@ -103,15 +104,21 @@ export default function AdminEditCoursePage() {
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("Image must be less than 5MB");
+      if (file.size > 25 * 1024 * 1024) {
+        toast.error("Image must be less than 25MB");
         return;
       }
-      setThumbnailFile(file);
-      setForm(prev => ({ ...prev, thumbnail: URL.createObjectURL(file) }));
+      try {
+        const compressed = await compressImage(file, 1280, 0.85);
+        setThumbnailFile(compressed);
+        setForm(prev => ({ ...prev, thumbnail: URL.createObjectURL(compressed) }));
+      } catch {
+        setThumbnailFile(file);
+        setForm(prev => ({ ...prev, thumbnail: URL.createObjectURL(file) }));
+      }
     }
   };
 

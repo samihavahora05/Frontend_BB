@@ -9,6 +9,7 @@ import { CourseService } from "../../../src/lib/api/admin/CourseService";
 import { CourseCategoryService } from "../../../src/lib/api/admin/CourseCategoryService";
 import { InstructorService } from "../../../src/lib/api/admin/InstructorService";
 import { CourseLevelService } from "../../../src/lib/api/admin/CourseLevelService";
+import { compressImage } from "../../../src/lib/imageCompressor";
 
 export default function AdminCreateCoursePage() {
   const router = useRouter();
@@ -63,15 +64,21 @@ export default function AdminCreateCoursePage() {
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("Image must be less than 5MB");
+      if (file.size > 25 * 1024 * 1024) {
+        toast.error("Image must be less than 25MB");
         return;
       }
-      setThumbnailFile(file);
-      setForm(prev => ({ ...prev, thumbnail: URL.createObjectURL(file) }));
+      try {
+        const compressed = await compressImage(file, 1280, 0.85);
+        setThumbnailFile(compressed);
+        setForm(prev => ({ ...prev, thumbnail: URL.createObjectURL(compressed) }));
+      } catch {
+        setThumbnailFile(file);
+        setForm(prev => ({ ...prev, thumbnail: URL.createObjectURL(file) }));
+      }
     }
   };
 
