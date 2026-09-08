@@ -1,11 +1,11 @@
-import { getImageUrl } from "../../src/lib/imageUtils";
+﻿import { getImageUrl } from "../../src/lib/imageUtils";
 import React, { useState, useMemo, useEffect } from "react";
 import { MainLayout } from "../../src/layout/MainLayout";
 import { partnerCompanies } from "../../src/data/companies";
 import { CompanyService } from "../../src/lib/api/CompanyService";
 import {
   Building2, ArrowRight, PlayCircle, ExternalLink, Layers,
-  Globe, Smartphone, Monitor, TrendingUp, Compass, Award,
+  Globe, Smartphone, Monitor, TrendingUp, Compass,
   Search, X, ShieldCheck, Filter, Sparkles, CheckCircle2,
   Bot, Code2, Database, Megaphone, Cloud, Users, Rocket,
   Briefcase, UserPlus, Gamepad2, Laptop, Target, Cog,
@@ -686,14 +686,15 @@ function CompanyDirectoryGrid({
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
-            className="bg-white/80 border border-slate-200/80 rounded-[28px] p-6 animate-pulse flex flex-col items-center justify-between h-[310px]"
+            className="bg-white/80 border border-slate-200/80 rounded-[28px] p-5 animate-pulse flex flex-col justify-between"
           >
-            <div className="w-full h-32 bg-slate-200/60 rounded-2xl mb-4" />
-            <div className="w-full space-y-2 flex flex-col items-center">
-              <div className="h-4 bg-slate-200/60 rounded w-3/4 mb-1" />
-              <div className="h-3 bg-slate-200/60 rounded w-1/2" />
+            <div className="w-full flex justify-start mb-1">
+              <div className="h-4 w-16 bg-slate-200/60 rounded-full" />
             </div>
-            <div className="w-full h-3 bg-slate-100 rounded mt-3" />
+            <div className="w-full h-32 bg-slate-200/60 rounded-2xl my-1" />
+            <div className="w-full flex flex-col items-center my-2">
+              <div className="h-4 bg-slate-200/60 rounded w-3/4" />
+            </div>
           </div>
         ))}
       </div>
@@ -713,9 +714,6 @@ function CompanyDirectoryGrid({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {companies.map((company: any, idx: number) => {
-        const industryName = company.industry?.name || company.industry || 'Corporate Partner';
-        const locationText = company.location || company.city || 'India / Remote';
-
         return (
           <motion.div
             key={company.id || company.slug || idx}
@@ -730,39 +728,20 @@ function CompanyDirectoryGrid({
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 via-indigo-600 to-[#1B2A6B] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 {/* Top Bar Badges */}
-                <div className="flex items-center justify-between gap-2 relative z-10 mb-1">
+                <div className="flex items-center justify-start relative z-10 mb-1">
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 text-[10px] font-extrabold uppercase tracking-wider">
                     <ShieldCheck size={11} className="text-emerald-600" /> Verified
-                  </span>
-                  <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1 truncate max-w-[130px]">
-                    📍 {locationText}
                   </span>
                 </div>
 
                 {/* Borderless Floating Logo Stage */}
                 <CompanyLogo company={company} />
 
-                {/* Company Name & Industry Tag */}
+                {/* Company Name */}
                 <div className="text-center relative z-10 my-2">
                   <h3 className="text-base font-black text-slate-900 group-hover:text-[#1B2A6B] transition-colors leading-snug line-clamp-1">
                     {company.name}
                   </h3>
-                  
-                  <div className="mt-2 flex flex-wrap items-center justify-center">
-                    <span className="px-3.5 py-1 rounded-full bg-slate-200/50 text-slate-700 text-[11px] font-bold group-hover:bg-[#1B2A6B] group-hover:text-white transition-all duration-300 line-clamp-1">
-                      {industryName}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Footer Action Row */}
-                <div className="mt-3 pt-3 border-t border-slate-200/60 flex items-center justify-between text-[11px] font-extrabold relative z-10 w-full">
-                  <span className="text-amber-600 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                    <Award size={12} /> Top Partner
-                  </span>
-                  <span className="text-[#1B2A6B] flex items-center gap-1.5 group-hover:translate-x-1.5 transition-transform duration-300">
-                    Explore <ArrowRight size={12} />
-                  </span>
                 </div>
               </div>
             </Link>
