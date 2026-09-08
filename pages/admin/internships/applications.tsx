@@ -28,6 +28,21 @@ const statusColors: Record<string, string> = {
 
 const ALL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
+function formatDateForInput(dateStr?: string): string {
+  if (!dateStr) return new Date().toISOString().split('T')[0];
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+  const parts = dateStr.split(/[-/]/);
+  if (parts.length === 3) {
+    if (parts[0].length === 4) {
+      return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+    } else if (parts[2].length === 4) {
+      return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+    }
+  }
+  const parsed = new Date(dateStr);
+  return isNaN(parsed.getTime()) ? new Date().toISOString().split('T')[0] : parsed.toISOString().split('T')[0];
+}
+
 function Pagination({ meta, page, setPage }: { meta: any; page: number; setPage: (p: number) => void }) {
   if (!meta?.last_page || meta.last_page <= 1) return null;
   return (
@@ -179,7 +194,7 @@ export default function InternshipApplications() {
     setWorkLocation(metaData.work_location || app.internship?.location || 'Vadodara, Gujarat');
     setWorkMode(metaData.work_mode || app.internship?.mode || 'Onsite');
 
-    setIssueDate(metaData.issue_date || new Date().toISOString().split('T')[0]);
+    setIssueDate(formatDateForInput(metaData.issue_date));
     setReferenceNumber(app.appointment_letter?.reference_number || app.appointmentLetter?.reference_number || `BB-AL-${new Date().getFullYear()}-${String(app.id).padStart(4, '0')}-CONF`);
 
     if (metaData.signatory_name) setSignatoryName(metaData.signatory_name);
