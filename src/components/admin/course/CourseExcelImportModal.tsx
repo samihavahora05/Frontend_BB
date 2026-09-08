@@ -164,10 +164,22 @@ export const CourseExcelImportModal: React.FC<CourseExcelImportModalProps> = ({ 
       return;
     }
 
+    const rowsToImport = previewData.rows.filter(row => {
+      if (!skipInvalid && row.row_status === 'invalid') return true;
+      if (skipInvalid && row.row_status === 'invalid') return false;
+      if (skipDuplicates && (row.row_status === 'duplicate' || row.is_duplicate)) return false;
+      return true;
+    });
+
+    if (rowsToImport.length === 0) {
+      toast.error('No eligible courses to import based on your filter settings.');
+      return;
+    }
+
     setIsProcessing(true);
     try {
       const res = await CourseService.confirmImport({
-        rows: previewData.rows,
+        rows: rowsToImport,
         initial_status: importStatus,
         skip_duplicates: skipDuplicates,
         skip_invalid: skipInvalid,
@@ -215,6 +227,14 @@ export const CourseExcelImportModal: React.FC<CourseExcelImportModalProps> = ({ 
   };
 
   const filteredRows = getFilteredRows();
+
+  const eligibleRows = (previewData?.rows || []).filter(row => {
+    if (!skipInvalid && row.row_status === 'invalid') return true;
+    if (skipInvalid && row.row_status === 'invalid') return false;
+    if (skipDuplicates && (row.row_status === 'duplicate' || row.is_duplicate)) return false;
+    return true;
+  });
+  const eligibleCount = eligibleRows.length;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/70 backdrop-blur-md animate-fade-in">
@@ -471,6 +491,25 @@ export const CourseExcelImportModal: React.FC<CourseExcelImportModalProps> = ({ 
                 </div>
               </div>
 
+              {/* Duplicate Notice Banner when all or some rows are duplicates */}
+              {skipDuplicates && previewData.summary.duplicate_count > 0 && eligibleCount === 0 && (
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in">
+                  <div className="flex items-center gap-2.5 text-amber-800 text-xs font-semibold">
+                    <AlertTriangle size={18} className="text-amber-600 shrink-0" />
+                    <span>
+                      All <strong>{previewData.summary.duplicate_count} detected courses</strong> already exist in the database. Uncheck <strong>"Skip duplicate titles"</strong> to import them anyway as new listings.
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSkipDuplicates(false)}
+                    className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-black shrink-0 transition-colors shadow-xs cursor-pointer"
+                  >
+                    Allow Duplicates ({previewData.summary.duplicate_count})
+                  </button>
+                </div>
+              )}
+
               {/* Preview Table with Image Thumbnail Preview */}
               <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
                 <div className="max-h-72 overflow-y-auto admin-scrollbar">
@@ -687,14 +726,20 @@ export const CourseExcelImportModal: React.FC<CourseExcelImportModalProps> = ({ 
               </button>
               <button
                 type="button"
-                disabled={isProcessing || previewData?.summary.valid_count === 0}
+                disabled={isProcessing || eligibleCount === 0}
                 onClick={handleConfirmImport}
-                className="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow-md disabled:opacity-50 transition-colors cursor-pointer"
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black shadow-md transition-colors ${
+                  eligibleCount === 0
+                    ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                    : 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer'
+                }`}
               >
                 {isProcessing ? (
                   <><Loader2 size={15} className="animate-spin" /> Committing to DB...</>
+                ) : eligibleCount === 0 ? (
+                  <><AlertTriangle size={14} /> 0 Courses Selected (Uncheck Skip Duplicates)</>
                 ) : (
-                  <>Confirm & Import Courses <Sparkles size={15} /></>
+                  <>Confirm & Import ({eligibleCount} {eligibleCount === 1 ? 'Course' : 'Courses'}) <Sparkles size={15} /></>
                 )}
               </button>
             </>

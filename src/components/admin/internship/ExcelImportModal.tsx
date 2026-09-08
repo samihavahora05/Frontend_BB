@@ -204,6 +204,14 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
     return true;
   });
 
+  const eligibleRows = (previewData?.rows || []).filter(row => {
+    if (!skipInvalid && !row.is_valid) return true;
+    if (skipInvalid && !row.is_valid) return false;
+    if (skipDuplicates && row.is_duplicate) return false;
+    return true;
+  });
+  const eligibleCount = eligibleRows.length;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-xs p-4 animate-in fade-in duration-150">
       
@@ -498,6 +506,25 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
                 </div>
               </div>
 
+              {/* Duplicate Notice Banner when all or some rows are duplicates */}
+              {skipDuplicates && previewData.duplicate_count > 0 && eligibleCount === 0 && (
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in">
+                  <div className="flex items-center gap-2.5 text-amber-800 text-xs font-semibold">
+                    <AlertTriangle size={18} className="text-amber-600 shrink-0" />
+                    <span>
+                      All <strong>{previewData.duplicate_count} detected records</strong> already exist in the database. Uncheck <strong>"Skip Duplicates"</strong> to import them anyway as new active listings.
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSkipDuplicates(false)}
+                    className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-black shrink-0 transition-colors shadow-xs cursor-pointer"
+                  >
+                    Allow Duplicates ({previewData.duplicate_count})
+                  </button>
+                </div>
+              )}
+
               {/* Preview Table */}
               <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
                 <div className="max-h-72 overflow-y-auto">
@@ -699,17 +726,25 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
 
               <button
                 type="button"
-                disabled={isProcessing}
+                disabled={isProcessing || eligibleCount === 0}
                 onClick={handleConfirmImport}
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold shadow-md transition-all disabled:opacity-50 cursor-pointer"
+                className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-extrabold shadow-md transition-all ${
+                  eligibleCount === 0
+                    ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                    : 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer'
+                }`}
               >
                 {isProcessing ? (
                   <>
                     <Loader2 size={14} className="animate-spin" /> Importing to Database...
                   </>
+                ) : eligibleCount === 0 ? (
+                  <>
+                    <AlertTriangle size={14} /> 0 Records Selected (Uncheck Skip Duplicates)
+                  </>
                 ) : (
                   <>
-                    <Check size={14} /> Confirm & Import Valid Records
+                    <Check size={14} /> Confirm & Import ({eligibleCount} {eligibleCount === 1 ? 'Record' : 'Records'})
                   </>
                 )}
               </button>
