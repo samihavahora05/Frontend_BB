@@ -1,4 +1,4 @@
-﻿import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { RotateCcw, CheckCircle2, AlertCircle, PenTool, Upload, X } from 'lucide-react';
 
 interface SignaturePadProps {
@@ -71,8 +71,8 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
 
     canvas.width = rect.width * dpr;
     canvas.height = height * dpr;
-    canvas.style.width = ${rect.width}px;
-    canvas.style.height = ${height}px;
+    canvas.style.width = String(rect.width) + 'px';
+    canvas.style.height = String(height) + 'px';
 
     const ctx = canvas.getContext('2d');
     if (ctx) {
@@ -264,7 +264,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
   const isSignatureReady = mode === 'upload' ? !!uploadedImagePreview : hasDrawn;
 
   return (
-    <div className={space-y-3 }>
+    <div className={'space-y-3 ' + className}>
       {/* Mode Switcher Tabs + Status Header */}
       <div className='flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2'>
         <div className='flex items-center gap-1 bg-slate-100 p-1 rounded-xl'>
@@ -275,7 +275,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
               if (uploadedImagePreview) triggerChange(uploadedImagePreview);
               else triggerChange(null);
             }}
-            className={lex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer }
+            className={'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ' + (mode === 'upload' ? 'bg-white text-[#1B2A6B] shadow-xs' : 'text-slate-600 hover:text-slate-900')}
           >
             <Upload size={13} />
             <span>Upload Signature Photo</span>
@@ -289,7 +289,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
               if (hasDrawn && canvasRef.current) triggerChange(canvasRef.current.toDataURL('image/png'));
               else triggerChange(null);
             }}
-            className={lex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer }
+            className={'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ' + (mode === 'draw' ? 'bg-white text-[#1B2A6B] shadow-xs' : 'text-slate-600 hover:text-slate-900')}
           >
             <PenTool size={13} />
             <span>Draw Signature</span>
@@ -386,7 +386,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
           <div
             ref={containerRef}
             className='w-full relative rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 hover:bg-slate-50 transition-all overflow-hidden focus-within:border-[#1B2A6B]'
-            style={{ minHeight: ${height}px }}
+            style={{ minHeight: String(height) + 'px' }}
           >
             <canvas
               ref={canvasRef}
