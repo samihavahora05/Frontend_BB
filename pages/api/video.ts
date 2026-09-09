@@ -5,15 +5,17 @@ import path from "path";
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   // Candidate video paths
   const videoPaths = [
-    "C:\\Users\\Lenovo\\Documents\\Downloads\\Internship.mp4",
-    path.join(process.cwd(), "public", "uploads", "Internship.mp4"),
     path.join(process.cwd(), "public", "Internship.mp4"),
+    path.join(process.cwd(), "public", "internship.mp4"),
+    path.join(process.cwd(), "public", "uploads", "Internship.mp4"),
+    path.join(process.cwd(), "public", "uploads", "internship.mp4"),
+    path.join(process.cwd(), "public", "loading.mp4"),
   ];
 
-  let targetPath = videoPaths.find(p => fs.existsSync(p));
+  const targetPath = videoPaths.find((p) => fs.existsSync(p));
 
   if (!targetPath) {
-    return res.status(404).send("Video file not found");
+    return res.status(404).json({ error: "Video file not found" });
   }
 
   const stat = fs.statSync(targetPath);
@@ -26,7 +28,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
     const chunksize = end - start + 1;
     const file = fs.createReadStream(targetPath, { start, end });
-    
+
     res.writeHead(206, {
       "Content-Range": `bytes ${start}-${end}/${fileSize}`,
       "Accept-Ranges": "bytes",

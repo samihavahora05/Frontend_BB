@@ -482,12 +482,13 @@ export default function InternshipsPage() {
                   <video
                     controls
                     autoPlay
+                    playsInline
                     className="w-full h-full object-cover"
-                    src="/api/video"
                   >
+                    <source src="/Internship.mp4" type="video/mp4" />
                     <source src="/api/video" type="video/mp4" />
+                    <source src="/loading.mp4" type="video/mp4" />
                     <source src="/uploads/Internship.mp4" type="video/mp4" />
-                    <source src="https://blueboxx.in/public/uploads/Internship.mp4" type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
                 </div>
