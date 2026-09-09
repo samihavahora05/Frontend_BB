@@ -95,9 +95,13 @@ export default function ApplicationFlowPage() {
   const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
   const handleDownloadTermsPdf = () => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://backend.blueboxx.in/api';
-    const termsUrl = `${baseUrl}/public/documents/terms-and-conditions`;
-    window.open(termsUrl, '_blank', 'noopener,noreferrer');
+    const link = document.createElement('a');
+    link.href = '/documents/terms-and-conditions.pdf';
+    link.target = '_blank';
+    link.download = 'BlueBoxx_Internship_Terms_and_Conditions.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleSubmit = async (e: FormEvent) => {

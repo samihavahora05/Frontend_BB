@@ -62,9 +62,13 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ internship, isOpen, onCl
   if (!isOpen || !internship) return null;
 
   const handleDownloadTermsPdf = () => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://backend.blueboxx.in/api';
-    const termsUrl = `${baseUrl}/public/documents/terms-and-conditions`;
-    window.open(termsUrl, '_blank', 'noopener,noreferrer');
+    const link = document.createElement('a');
+    link.href = '/documents/terms-and-conditions.pdf';
+    link.target = '_blank';
+    link.download = 'BlueBoxx_Internship_Terms_and_Conditions.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleNextStep = (e: React.FormEvent) => {

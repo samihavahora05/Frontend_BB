@@ -1,6 +1,6 @@
 import { MainLayout } from "../src/layout/MainLayout";
 import { motion } from "framer-motion";
-import { ShieldCheck, FileText, CreditCard, Award, Briefcase, RefreshCcw, AlertTriangle, CheckCircle2, UserCheck } from "lucide-react";
+import { ShieldCheck, FileText, CreditCard, Award, Briefcase, RefreshCcw, AlertTriangle, CheckCircle2, UserCheck, Download } from "lucide-react";
 import { SEO } from "../src/components/seo/SEO";
 
 export default function TermsPage() {
@@ -35,40 +35,68 @@ export default function TermsPage() {
         <div className="space-y-4 text-slate-600">
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">2.1 Platform Fee — Complete Detailed Breakdown</h3>
-            <p className="mb-3">The Platform Fee charged by BlueBoxx covers the following:</p>
-            <ul className="space-y-3">
-              <li className="flex gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" /> <span><strong>Access to the Task Management System:</strong> Students receive full access to the BlueBoxx Task Dashboard where tasks, deadlines, comments, revisions, and approvals are managed. It ensures accuracy, transparency, and zero miscommunication. All actions are automatically recorded with timestamps to avoid disputes.</span></li>
-              <li className="flex gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" /> <span><strong>KRA/KPI Tracking Tools:</strong> The system displays daily/weekly/monthly performance metrics. Students can track progress in real-time and improve based on mentor feedback. This transparent system ensures measurable growth.</span></li>
-              <li className="flex gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" /> <span><strong>Internship / Project Assignments:</strong> Students receive real, practical assignments based on projects—either internal BlueBoxx or external client work. Task allocation is matched with student skill and performance history. Workload distribution is fair, regulated, and based on system logic.</span></li>
-              <li className="flex gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" /> <span><strong>Mentor Guidance & Evaluation:</strong> Mentors provide feedback, task review, corrections, quality checks, and expert advice. Time and expertise of mentors are compensated through the Platform Fee. Mentors help maintain professional project standards.</span></li>
-              <li className="flex gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" /> <span><strong>Reporting & Analytics Dashboard:</strong> Students can view daily reports, submission history, performance charts, attendance, and logs. This avoids misunderstandings regarding performance. Reports are auto-generated and cannot be manipulated by students.</span></li>
-              <li className="flex gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" /> <span><strong>Certificate & Experience Letter Processing:</strong> After successful completion, documents are issued as per standards. Verification, formatting, approval, and digital delivery are included in the fee. Documents are only issued after 100% criteria are met.</span></li>
-              <li className="flex gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" /> <span><strong>System Maintenance & Operational Support:</strong> The platform requires servers, software updates, automation tools, backups, and maintenance. The fee supports the complete tech infrastructure that students use. This ensures a smooth and uninterrupted platform experience.</span></li>
-              <li className="flex gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" /> <span><strong>Admin Support & Student Management System:</strong> The internal administration team manages onboarding, verification, progress tracking, and communication. This team handles operational support essential for internship flow. The Platform Fee compensates for these operational resources.</span></li>
-              <li className="flex gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" /> <span><strong>Resource Material & Training Assets:</strong> Reference guides, templates, briefs, industry examples, and learning material may be provided. These help students perform better and produce industry-level work. Such resources are proprietary and included as part of the system.</span></li>
-              <li className="flex gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" /> <span><strong>Quality Assurance & Review:</strong> Each submission is evaluated for quality, accuracy, creativity, and correctness. QA reviewers ensure the delivered work meets professional standards. The review process is time-consuming and is covered within the platform fee.</span></li>
-            </ul>
+            <p className="mb-3">The Platform Fee charged by BlueBoxx covers the following operational, digital, and infrastructural deliverables:</p>
+            
+            <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm my-4">
+              <table className="min-w-full divide-y divide-slate-200 text-sm">
+                <thead className="bg-slate-100 text-slate-800 font-bold">
+                  <tr>
+                    <th scope="col" className="px-4 py-3 text-left w-1/3">Deliverable</th>
+                    <th scope="col" className="px-4 py-3 text-left w-2/3">What It Covers</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 bg-white text-slate-700">
+                  <tr className="hover:bg-slate-50">
+                    <td className="px-4 py-3 font-semibold text-slate-900">Task Management System</td>
+                    <td className="px-4 py-3">Deployment and maintenance of customized project tracking boards, milestone submissions, and version-controlled review portals.</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50 bg-slate-50/50">
+                    <td className="px-4 py-3 font-semibold text-slate-900">KRA/KPI Tracking Tools</td>
+                    <td className="px-4 py-3">Real-time quantitative performance benchmarking, evaluation metrics, analytics engines, and milestone progress logging.</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="px-4 py-3 font-semibold text-slate-900">Internship / Project Assignments</td>
+                    <td className="px-4 py-3">Curation, provisioning, and allocation of verified corporate, industrial, and internal practical live-project tasks.</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50 bg-slate-50/50">
+                    <td className="px-4 py-3 font-semibold text-slate-900">Mentor Guidance & Evaluation</td>
+                    <td className="px-4 py-3">Dedicated industry expert reviews, structured technical feedback, code/deliverable inspection, and weekly advisory sessions.</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="px-4 py-3 font-semibold text-slate-900">Reporting & Analytics Dashboard</td>
+                    <td className="px-4 py-3">Live productivity graphs, time-tracking logs, submission compliance trackers, and cumulative performance scoring.</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50 bg-slate-50/50">
+                    <td className="px-4 py-3 font-semibold text-slate-900">Certificate & Experience Letters</td>
+                    <td className="px-4 py-3">Verification, generation, unique credential authentication, secure archiving, and issuance of formal completion credentials.</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="px-4 py-3 font-semibold text-slate-900">Maintenance & Tech Support</td>
+                    <td className="px-4 py-3">24/7 cloud infrastructure, server uptime, database backups, API integrations, and continuous portal enhancements.</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50 bg-slate-50/50">
+                    <td className="px-4 py-3 font-semibold text-slate-900">Admin Support & Student Management</td>
+                    <td className="px-4 py-3">Comprehensive query resolution, onboarding coordination, documentation validation, and administrative helpdesk services.</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="px-4 py-3 font-semibold text-slate-900">Resource Material & Training Assets</td>
+                    <td className="px-4 py-3">Curated technical guides, standard operating procedures, development templates, workflow documentation, and software toolkits.</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50 bg-slate-50/50">
+                    <td className="px-4 py-3 font-semibold text-slate-900">Quality Assurance & Review</td>
+                    <td className="px-4 py-3">Multi-tier manual deliverable assessment, anti-plagiarism scanning, and industry-readiness quality certification.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2 mt-6">2.2 Fee Payment Responsibility</h3>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>The Platform Fee must be paid either by the Student OR by the Company, depending on agreement.</li>
-              <li>If a company refuses to pay, the student must pay the fee, even if they are a beginner.</li>
-              <li>Platform access is activated only after successful fee payment.</li>
-            </ul>
+            <p>The Platform Fee must be paid either by the Student OR by the Company, depending on the agreed onboarding contract. If a company refuses to pay or sponsors only partial costs, the student must pay the fee to maintain platform access, even if they are a beginner. Platform access, task allocation, and mentorship are activated strictly after confirmed fee payment.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2 mt-6">2.3 Non-Refundable Nature of Fees</h3>
-            <p className="mb-2">Platform Fee, Mentor Fee, and Deposit Fee are strictly non-refundable under any circumstance. Reasons include:</p>
-            <ul className="list-disc pl-5 space-y-1 mb-2">
-              <li>Immediate resource allocation</li>
-              <li>Mentor time booked</li>
-              <li>Dashboard activated</li>
-              <li>Seat blocked for you</li>
-              <li>Digital material shared</li>
-              <li>Administrative overhead incurred</li>
-            </ul>
-            <p>Refund requests will not be processed unless approved by BlueBoxx management in exceptional cases only.</p>
+            <p className="mb-2">Platform Fee, Mentor Fee, and Deposit Fee are strictly non-refundable under any circumstance. Immediate resource allocation, mentor time booking, dedicated seat reservations, digital asset provisioning, and administrative overheads are irreversibly incurred upon registration. Refund requests will not be processed unless approved in writing by BlueBoxx management in exceptional cases only.</p>
           </div>
         </div>
       ),
@@ -81,29 +109,23 @@ export default function TermsPage() {
         <div className="space-y-4 text-slate-600">
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">3.1 Purpose of KRA & KPI System</h3>
-            <p>The KRA/KPI system ensures structured performance evaluation and helps students learn real workplace discipline. It removes confusion by setting clear expectations, deadlines, and measurable outcomes. Every student is judged based on the work recorded in the system—no manual adjustments.</p>
+            <p>The KRA/KPI system ensures structured performance evaluation and helps students learn real workplace discipline, accountability, and time management.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">3.2 Student Responsibility & Task Execution</h3>
-            <p>Students must complete tasks as per guidelines, quality standards, and submission formats assigned. They must read the task descriptions carefully, avoid shortcuts, and follow mentor instructions. Daily progress updates and time logs are part of the performance requirement.</p>
+            <p>Students must complete tasks strictly as per assigned guidelines, quality standards, and submission formats. Daily progress updates, milestone check-ins, and time logs are mandatory components of the performance requirement.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">3.3 Failure to Meet Performance Expectations</h3>
-            <p className="mb-2">If a student regularly misses deadlines, does not complete tasks, or fails to meet KPIs, it will negatively affect their evaluation. Repeated poor performance may lead to:</p>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Withheld certificates</li>
-              <li>Internship marked as &quot;Incomplete&quot;</li>
-              <li>Termination without refund</li>
-              <li>Reporting issues recorded in the system</li>
-            </ul>
+            <p>Repeated poor performance, missed deadlines, or substandard deliverables may lead to withheld certificates, marking the internship as “Incomplete”, termination of platform access without refund, and recording compliance flags in the student&apos;s permanent profile.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">3.4 Daily Checking & Platform Accountability</h3>
-            <p>Students are required to check the dashboard daily for updates. Excuses such as &quot;I didn&apos;t see the task&quot; or &quot;I forgot&quot; are not accepted. All assigned work, comments, and deadlines are automatically logged with time stamps.</p>
+            <p>Students are required to log in and check their dashboard daily for updates, feedback, task adjustments, and notices. All assigned work, mentor comments, and deadlines are automatically logged with cryptographic timestamps.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">3.5 Zero Tolerance for Irresponsibility</h3>
-            <p>Continuous negligence or lack of effort will immediately affect internship status. The platform records all activity; hence, no disputes will be entertained regarding unsubmitted or late work.</p>
+            <p>Continuous negligence, unexcused absence, or lack of effort will immediately affect internship standing and lead to disciplinary action or disenrollment.</p>
           </div>
         </div>
       ),
@@ -116,30 +138,23 @@ export default function TermsPage() {
         <div className="space-y-4 text-slate-600">
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">4.1 Eligibility Criteria for Certificates</h3>
-            <p>Students will receive certificates only after achieving the minimum KPI score, completing all tasks, and closing pending submissions. The platform and mentors jointly evaluate performance before issuing any document. Incomplete KPIs automatically disqualify a student from receiving certifications.</p>
+            <p>Students will receive completion certificates and experience credentials only after achieving the minimum required KPI score, completing 100% of assigned tasks, and resolving all pending mentor review submissions.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">4.2 Standardized Document Formats</h3>
-            <p>BlueBoxx follows strict corporate formatting for Experience Letters, Internship Certificates, LORs, and Project Reports. These formats are designed to reflect professional quality and brand standards. Customization requests by students are not entertained to maintain uniformity.</p>
+            <p>BlueBoxx follows strict corporate formatting and verifiable identification numbers for Experience Letters, Internship Certificates, Letters of Recommendation (LOR), and Project Reports.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">4.3 Processing & Verification Requirements</h3>
-            <p>Before issuing documents, BlueBoxx conducts verification of all submissions, attendance, quality, and KPIs. Only after successful verification, documents are digitally processed and issued to the student. Any mismatch, incomplete log, or missing task delays certificate issuance.</p>
+            <p>Before issuing any formal document, BlueBoxx conducts thorough internal verification of project submissions, attendance logs, technical quality, and overall KPI metrics.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">4.4 Circumstances Where Documents May Be Withheld</h3>
-            <p className="mb-2">BlueBoxx will not issue certificates if:</p>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Student performance is below KPI standards</li>
-              <li>Tasks are incomplete or plagiarized</li>
-              <li>The internship was terminated</li>
-              <li>There is behavioral misconduct</li>
-              <li>Tasks were not submitted consistently</li>
-            </ul>
+            <p>BlueBoxx will not issue certificates or recommendation letters if student performance is below KPI standards, tasks are incomplete or plagiarized, the internship was terminated for cause, behavioral misconduct occurred, or tasks were not submitted consistently.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">4.5 Final Approval Rights</h3>
-            <p>The management and mentor team hold final authority to approve, modify, or reject certification depending on overall performance.</p>
+            <p>Management and appointed mentor panels hold final authority to approve, modify, or reject certification depending on cumulative overall performance.</p>
           </div>
         </div>
       ),
@@ -152,23 +167,23 @@ export default function TermsPage() {
         <div className="space-y-4 text-slate-600">
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">5.1 Ownership of Client-Based Work</h3>
-            <p>All assignments and project work delivered to clients remain fully owned by the client. Students act only as contributors and do not possess any ownership of the work they produce. This includes designs, videos, code, marketing content, drafts, and strategy documents.</p>
+            <p>All source code, architectures, creative assets, designs, and project work delivered for clients remain the exclusive, perpetual property of the respective client.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">5.2 Ownership of BlueBoxx Internal Work</h3>
-            <p>Any work done as part of internal BlueBoxx projects is the sole property of BlueBoxx DA. Students cannot reuse, resell, reverse engineer, or claim credit for the work. Such work is protected under BlueBoxx&apos;s internal IP and copyright rules.</p>
+            <p>Any work, modules, datasets, software tools, or content created as part of internal BlueBoxx initiatives is the sole and exclusive intellectual property of BlueBoxx DA Pvt. Ltd.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">5.3 Restriction on Portfolio Usage</h3>
-            <p>Students must take written permission before using any BlueBoxx or client project in their portfolio. Unauthorized use may violate NDA/IP laws, resulting in legal action.</p>
+            <p>Students must obtain prior written permission from BlueBoxx management before using any BlueBoxx or client project code, screenshots, or assets in their personal portfolio or public repositories.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">5.4 Penalties for IP Misuse</h3>
-            <p>Any form of plagiarism, file stealing, sharing internal data, or publishing confidential work is strictly prohibited. Consequences include immediate termination, blacklisting, withholding certificates, and legal action if required.</p>
+            <p>Plagiarism, unauthorized repository cloning, data exfiltration, sharing internal credentials, or publishing confidential work is strictly prohibited and subject to immediate termination and legal recourse.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">5.5 Confidentiality Obligation</h3>
-            <p>Students must maintain confidentiality of all data, credentials, internal project files, and documents accessed during internship.</p>
+            <p>Students must maintain strict non-disclosure of all confidential data, credentials, internal project files, client roadmaps, and proprietary documentation accessed during their tenure.</p>
           </div>
         </div>
       ),
@@ -181,19 +196,19 @@ export default function TermsPage() {
         <div className="space-y-4 text-slate-600">
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">6.1 Nature of Stipend</h3>
-            <p>Stipend, if applicable, is based on the agreement between the company/client and student. Stipend is not guaranteed for all internships and depends entirely on external partner decisions. Eligibility is linked to performance, reported hours, and KPI score.</p>
+            <p>Stipend, if applicable, is determined strictly by the specific agreement between the hiring company/client and the student, contingent on satisfactory milestone completion.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">6.2 BlueBoxx Is Not Responsible for Stipend Delays</h3>
-            <p>BlueBoxx is not liable if a company delays payment, cancels or denies stipend, the student fails to meet requirements, or payment systems change. All stipend agreements are solely between the student and the paying company.</p>
+            <p>BlueBoxx is not liable if a third-party company delays payment, cancels or denies stipend, if the student fails to meet deliverable requirements, or if external banking channels encounter issues.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">6.3 Stipend Approved by BlueBoxx</h3>
-            <p>If BlueBoxx itself is the stipend provider, students must strictly follow reporting schedules. Incorrect or missing logs, poor performance, or misconduct may result in stipend cancellation. Stipend is released only after task and KPI verification.</p>
+            <p>In cases where BlueBoxx itself is the direct stipend provider, students must strictly adhere to milestone deadlines, quality parameters, and formal reporting schedules to qualify for disbursement.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">6.4 Stipend Cannot Be Claimed Later</h3>
-            <p>If the internship ends and student did not follow reporting or complete tasks, stipend cannot be claimed afterwards. Pending stipend requests after closure are automatically invalid.</p>
+            <p>If the internship tenure concludes and the student did not follow reporting requirements or complete deliverables on time, stipend cannot be claimed retroactively under any circumstance.</p>
           </div>
         </div>
       ),
@@ -206,19 +221,19 @@ export default function TermsPage() {
         <div className="space-y-4 text-slate-600">
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">7.1 Non-Refundable Fee Policy</h3>
-            <p>All fees collected—Platform Fee, Mentor Fee, Deposit Fee—are strictly non-refundable. This is because resources, mentors, dashboards, and admin time are allocated from day one. Even if a student discontinues voluntarily, fees are non-refundable.</p>
+            <p>All fees collected — including Platform Fees, Mentor Booking Fees, and Administrative Deposit Fees — are strictly non-refundable.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">7.2 No Refund Cases</h3>
-            <p>Refunds will not be given for personal issues, medical emergencies, device issues, lack of internet, lack of time, poor performance, internship withdrawal, conflicts, or failure to meet tasks/KRAs/KPIs.</p>
+            <p>Refunds will not be granted under any circumstance for personal reasons, academic exam conflicts, medical situations, device malfunctions, internet unavailability, lack of time, poor performance scores, unilateral withdrawal, interpersonal disagreements, or failure to meet KRAs/KPIs.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">7.3 Deposit Adjustment Rules</h3>
-            <p>Deposits, if any, may be adjusted internally but will not be refunded unless management approves. Any deduction applied is final and non-negotiable.</p>
+            <p>Security or administrative deposits, if applicable, may be adjusted internally against platform services but will not be refunded in cash unless approved in writing by executive management.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">7.4 Management Decision is Final</h3>
-            <p>In rare circumstances, if a refund is approved, it will follow company policy and documentation. Such approval is solely at the discretion of senior management.</p>
+            <p>In rare, exceptional circumstances where a refund or credit note is sanctioned by management, it will follow formal company policy and documentation timelines.</p>
           </div>
         </div>
       ),
@@ -231,23 +246,23 @@ export default function TermsPage() {
         <div className="space-y-4 text-slate-600">
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">8.1 Expected Behaviour from All Students</h3>
-            <p>Students must demonstrate professionalism at all times. This includes respecting mentors, maintaining work ethics, following deadlines, and adhering to task instructions. Positive attitude and discipline are mandatory parts of evaluation.</p>
+            <p>Students and participants must exhibit the highest standards of integrity, punctuality, diligence, and professional etiquette in all platform activities and communications.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">8.2 Actions Strictly Prohibited</h3>
-            <p>Fake submissions, plagiarism, rude/abusive behavior, fake attendance, sharing confidential data, unapproved leaves, or misuse of assets are strictly not allowed. Any such action will immediately affect internship status.</p>
+            <p>The following actions are strictly prohibited: fraudulent task submissions, code plagiarism, abusive or unprofessional language, proxy attendance, unauthorized sharing of proprietary data, unapproved absence, and misuse of platform infrastructure.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">8.3 Consequences for Misconduct</h3>
-            <p>Misconduct can lead to warnings, temporary suspension, permanent banning, &quot;Incomplete Internship&quot; status, no certificate, or legal reporting.</p>
+            <p>Misconduct will result in immediate formal warnings, temporary suspension, permanent platform blacklisting, marking the internship as “Incomplete”, forfeiture of certificates, and reporting to academic institutions or legal authorities where appropriate.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">8.4 Confidentiality & Data Safety Rules</h3>
-            <p>Students must protect client data, login credentials, strategy documents, project files, payment information, and training material. Sharing any such data outside the platform is considered a serious violation.</p>
+            <p>Students must safeguard client records, authentication tokens, strategy documentation, proprietary codebase repositories, payment mechanisms, and training assets from unauthorized disclosure.</p>
           </div>
           <div>
             <h3 className="font-semibold text-slate-800 text-lg mb-2">8.5 Communication Standards</h3>
-            <p>Students must communicate respectfully with clients, mentors, and team members. Unprofessional communication can lead to termination.</p>
+            <p>All interactions with mentors, project leads, clients, and fellow interns must remain courteous, constructive, and conducted exclusively through authorized platform communication channels.</p>
           </div>
         </div>
       ),
@@ -258,7 +273,21 @@ export default function TermsPage() {
       title: "9. FINAL DECLARATION & ACCEPTANCE",
       content: (
         <div className="space-y-4 text-slate-600">
-          <p>By registering, you acknowledge that all information provided is true and accurate. You understand and accept that all fees are non-refundable. You accept that performance is evaluated based only on dashboard data. You grant BlueBoxx full authority to approve/reject applications, issue/withhold certificates, and terminate access due to misconduct. You agree that all work belongs to either the client or BlueBoxx. You agree that BlueBoxx is not responsible for stipend issues unless BlueBoxx is the paying agency. You confirm you have read, understood, and accepted all terms listed in this document. Proceeding with registration means complete acceptance of these policies.</p>
+          <div className="border border-emerald-500/40 bg-emerald-50/50 p-5 rounded-xl">
+            <p className="font-bold text-slate-900 mb-3">By submitting your registration, application, or digital signature on the BlueBoxx platform, you solemnly declare and agree:</p>
+            <ol className="list-decimal pl-5 space-y-2 text-slate-700 text-sm">
+              <li>All credentials, contact details, educational records, and resumes provided are authentic, accurate, and verifiable.</li>
+              <li>You understand, acknowledge, and accept that all platform, mentor, and deposit fees are strictly non-refundable.</li>
+              <li>You accept that internship progress, certificate eligibility, and stipend disbursements are evaluated solely on documented dashboard analytics, task submissions, and KPI performance.</li>
+              <li>You grant BlueBoxx DA Pvt. Ltd. full administrative authority to approve or reject applications, issue or withhold completion documents, and terminate access in cases of misconduct or substandard performance.</li>
+              <li>You agree that all deliverables, code, and project assets belong exclusively to the client or BlueBoxx DA Pvt. Ltd. as per policy.</li>
+              <li>You confirm that BlueBoxx is not responsible for external company stipend delays or disputes unless BlueBoxx is the designated paying agency.</li>
+              <li>You confirm that you have thoroughly read, fully understood, and unconditionally accepted all 9 sections and policies contained within this Official Consent & Terms document.</li>
+            </ol>
+          </div>
+          <div className="bg-[#1B2A6B] text-white font-bold p-3.5 rounded-lg text-center text-xs tracking-wide">
+            PROCEEDING WITH REGISTRATION OR DIGITAL SIGNATURE SUBMISSION REPRESENTS COMPLETE, LEGALLY BINDING ACCEPTANCE OF THESE POLICIES.
+          </div>
         </div>
       ),
     },
@@ -291,12 +320,13 @@ export default function TermsPage() {
             </p>
             <div className="mt-6 flex justify-center">
               <a
-                href={`${process.env.NEXT_PUBLIC_API_URL || 'https://backend.blueboxx.in/api'}/documents/terms-and-conditions`}
+                href="/documents/terms-and-conditions.pdf"
+                download="BlueBoxx_Internship_Terms_and_Conditions.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-[#1B2A6B] hover:bg-[#121c47] text-white text-sm font-bold rounded-xl shadow-md transition-all hover:scale-105"
               >
-                <FileText size={18} />
+                <Download size={18} />
                 <span>Download Official Terms & Conditions PDF</span>
               </a>
             </div>
