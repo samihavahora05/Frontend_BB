@@ -965,12 +965,12 @@ export default function InternshipApplications() {
                       {isProcessingAction ? (
                         <>
                           <Loader2 size={15} className="animate-spin" />
-                          <span>Generating Official Letter...</span>
+                          <span>{selectedApp.status === 'approved' ? 'Updating & Regenerating Letter...' : 'Approving & Generating Letter...'}</span>
                         </>
                       ) : (
                         <>
                           <Award size={15} />
-                          <span>{selectedApp.status === 'approved' ? 'Regenerate & Update Letter' : 'Sign & Approve Application'}</span>
+                          <span>{selectedApp.status === 'approved' ? 'Update & Regenerate Appointment Letter' : 'Approve Application & Generate Appointment Letter'}</span>
                         </>
                       )}
                     </button>
