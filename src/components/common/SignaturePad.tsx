@@ -418,3 +418,5 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
     </div>
   );
 };
+
+export default SignaturePad;

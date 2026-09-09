@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Button } from "../src/components/ui/Button";
-import { Lock, Eye, EyeOff, ChevronRight, CheckCircle2, ArrowLeft, Mail, RefreshCw } from "lucide-react";
+import { Lock, Eye, EyeOff, ChevronRight, CheckCircle2, ArrowLeft, Mail, RefreshCw, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import api from "../src/lib/axios";
 import toast from "react-hot-toast";
@@ -10,8 +10,8 @@ import { SEO } from "../src/components/seo/SEO";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
-  const { email } = router.query;
-  const targetEmail = (Array.isArray(email) ? email[0] : email) || "";
+  const [emailInput, setEmailInput] = useState("");
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
   
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
@@ -22,6 +22,17 @@ export default function ResetPasswordPage() {
   const [isResending, setIsResending] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
 
+  // Sync email from router query once available
+  useEffect(() => {
+    if (router.isReady) {
+      const qEmail = Array.isArray(router.query.email) ? router.query.email[0] : router.query.email;
+      if (qEmail && typeof qEmail === "string") {
+        setEmailInput(qEmail);
+      }
+    }
+  }, [router.isReady, router.query.email]);
+
+  // Resend cooldown timer
   useEffect(() => {
     let timer: any;
     if (resendCooldown > 0) {
@@ -54,14 +65,20 @@ export default function ResetPasswordPage() {
   const passwordsMatch = password && confirmPassword ? password === confirmPassword : true;
 
   const handleResendOtp = async () => {
-    if (!targetEmail || isResending || resendCooldown > 0) return;
+    const trimmedEmail = emailInput.trim();
+    if (!trimmedEmail) {
+      toast.error("Please enter your registered email address first.");
+      setIsEditingEmail(true);
+      return;
+    }
+    if (isResending || resendCooldown > 0) return;
     setIsResending(true);
     try {
-      const res = await api.post('/forgot-password', { email: targetEmail });
-      toast.success(res.data?.message || `New OTP sent to ${targetEmail}`, { duration: 5000 });
+      const res = await api.post("/forgot-password", { email: trimmedEmail });
+      toast.success(res.data?.message || `New OTP sent to ${trimmedEmail}`, { duration: 5000 });
       setResendCooldown(45);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to resend OTP code.');
+      toast.error(err.response?.data?.message || "Failed to resend OTP code. Please check email address.");
     } finally {
       setIsResending(false);
     }
@@ -69,24 +86,41 @@ export default function ResetPasswordPage() {
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!passwordsMatch || strength < 50 || !otp || otp.length !== 6 || !targetEmail) return;
+    const trimmedEmail = emailInput.trim();
+    if (!trimmedEmail) {
+      toast.error("Registered email is required.");
+      setIsEditingEmail(true);
+      return;
+    }
+    if (!otp || otp.length !== 6) {
+      toast.error("Please enter the complete 6-digit OTP code.");
+      return;
+    }
+    if (!passwordsMatch) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+    if (strength < 50) {
+      toast.error("Please choose a stronger password.");
+      return;
+    }
 
     setIsLoading(true);
     
     try {
-      const response = await api.post('/reset-password', {
-        email: targetEmail,
-        otp,
+      const response = await api.post("/reset-password", {
+        email: trimmedEmail,
+        otp: otp.trim(),
         password,
         password_confirmation: confirmPassword
       });
       
-      toast.success(response.data.message || 'Password reset successfully! Redirecting to login...', { duration: 4000 });
+      toast.success(response.data?.message || "Password reset successfully! Redirecting to login...", { duration: 4000 });
       setTimeout(() => {
-        router.push('/login');
+        router.push("/login");
       }, 1500);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to reset password. Please verify the OTP code.');
+      toast.error(err.response?.data?.message || "Failed to reset password. Please verify the OTP code.");
       setIsLoading(false);
     }
   };
@@ -114,20 +148,46 @@ export default function ResetPasswordPage() {
         </div>
 
         <Link href="/forgot-password" className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-[#1B2A6B] transition-colors mb-5 w-fit">
-          <ArrowLeft size={14} /> Change Email
+          <ArrowLeft size={14} /> Request New OTP
         </Link>
 
         <div className="text-center mb-5">
           <h2 className="text-xl font-black text-slate-800 leading-tight font-sora">Set New Password</h2>
           
-          {/* Registered Email Confirmation Badge */}
-          <div className="mt-3 p-3 bg-blue-50/80 border border-blue-200/80 rounded-2xl text-left flex items-start gap-2.5">
-            <Mail className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-            <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-extrabold uppercase tracking-wider text-blue-900">OTP Sent to Registered Email:</p>
-              <p className="text-xs font-black text-blue-700 truncate">{targetEmail || 'Registered Email Address'}</p>
+          {/* Registered Email Card */}
+          {emailInput && !isEditingEmail ? (
+            <div className="mt-3 p-3 bg-blue-50/80 border border-blue-200/80 rounded-2xl text-left flex items-start justify-between gap-2.5">
+              <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                <Mail className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-extrabold uppercase tracking-wider text-blue-900">OTP Sent to Registered Email:</p>
+                  <p className="text-xs font-black text-blue-700 truncate">{emailInput}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditingEmail(true)}
+                className="text-[10px] font-bold text-blue-600 hover:text-blue-800 underline shrink-0 cursor-pointer pt-0.5"
+              >
+                Edit
+              </button>
             </div>
-          </div>
+          ) : (
+            <div className="mt-3 space-y-1 text-left">
+              <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Registered Email Address</label>
+              <div className="relative">
+                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="email"
+                  required
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  placeholder="name@example.com"
+                  className="w-full h-10 pl-10 pr-4 rounded-xl border border-slate-200 focus:border-[#1B2A6B] focus:ring-2 focus:ring-[#1B2A6B]/15 outline-none transition-all text-xs font-semibold text-slate-800 bg-slate-50/20"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleReset} className="space-y-4">
@@ -137,7 +197,7 @@ export default function ResetPasswordPage() {
               <button
                 type="button"
                 onClick={handleResendOtp}
-                disabled={isResending || resendCooldown > 0 || !targetEmail}
+                disabled={isResending || resendCooldown > 0 || !emailInput}
                 className="text-[11px] font-bold text-[#1B2A6B] hover:underline disabled:opacity-50 disabled:no-underline flex items-center gap-1 cursor-pointer"
               >
                 <RefreshCw size={11} className={isResending ? 'animate-spin' : ''} />
@@ -170,7 +230,7 @@ export default function ResetPasswordPage() {
               <button 
                 type="button" 
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -208,19 +268,21 @@ export default function ResetPasswordPage() {
               <button 
                 type="button" 
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
               >
                 {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
             {!passwordsMatch && (
-              <p className="text-[10px] font-bold text-rose-500 mt-1">Passwords do not match.</p>
+              <p className="text-[10px] font-bold text-rose-500 mt-1 flex items-center gap-1">
+                <AlertCircle size={12} /> Passwords do not match.
+              </p>
             )}
           </div>
 
           <Button 
             type="submit"
-            disabled={isLoading || !passwordsMatch || strength < 50 || otp.length !== 6 || !targetEmail}
+            disabled={isLoading || !passwordsMatch || strength < 50 || otp.length !== 6 || !emailInput}
             className="w-full h-11 bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-bold rounded-xl text-xs shadow-md transition-all flex items-center justify-center gap-1.5 uppercase tracking-wider mt-4 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isLoading ? (
