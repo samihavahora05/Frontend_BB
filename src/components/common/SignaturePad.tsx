@@ -1,5 +1,5 @@
 ﻿import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { RotateCcw, CheckCircle2, AlertCircle, PenTool, Upload, Image as ImageIcon, X } from 'lucide-react';
+import { RotateCcw, CheckCircle2, AlertCircle, PenTool, Upload, X } from 'lucide-react';
 
 interface SignaturePadProps {
   onChange?: (dataUrlOrFile: string | File | null) => void;
@@ -20,13 +20,13 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
   height = 160,
   className = '',
   label = 'Digital Signature / Photo',
-  defaultMode = 'upload'
+  defaultMode = 'upload',
 }) => {
   const [mode, setMode] = useState<'upload' | 'draw'>(defaultMode);
   const [uploadedImagePreview, setUploadedImagePreview] = useState<string | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [isCompressing, setIsCompressing] = useState(false);
-  
+
   // Canvas state
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -36,17 +36,20 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
   const [lastPoint, setLastPoint] = useState<{ x: number; y: number } | null>(null);
 
   // Safe caller for onChange, onSignatureChange, or onSave prop
-  const triggerChange = useCallback((val: string | File | null) => {
-    if (typeof onChange === 'function') {
-      onChange(val);
-    }
-    if (typeof onSignatureChange === 'function') {
-      onSignatureChange(val);
-    }
-    if (typeof onSave === 'function') {
-      onSave(val);
-    }
-  }, [onChange, onSignatureChange, onSave]);
+  const triggerChange = useCallback(
+    (val: string | File | null) => {
+      if (typeof onChange === 'function') {
+        onChange(val);
+      }
+      if (typeof onSignatureChange === 'function') {
+        onSignatureChange(val);
+      }
+      if (typeof onSave === 'function') {
+        onSave(val);
+      }
+    },
+    [onChange, onSignatureChange, onSave]
+  );
 
   // Resize canvas to container with device pixel ratio compensation
   const resizeCanvas = useCallback(() => {
@@ -57,7 +60,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
 
     const rect = container.getBoundingClientRect();
     const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
-    
+
     let tempImg: ImageData | null = null;
     if (hasDrawn) {
       const ctx = canvas.getContext('2d');
@@ -110,7 +113,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
     reader.onload = (uploadEvent) => {
       const rawDataUrl = uploadEvent.target?.result as string;
       const img = new Image();
-      
+
       img.onload = () => {
         try {
           const maxWidth = 800;
@@ -262,12 +265,11 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
 
   return (
     <div className={space-y-3 }>
-      
       {/* Mode Switcher Tabs + Status Header */}
-      <div className=flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2>
-        <div className=flex items-center gap-1 bg-slate-100 p-1 rounded-xl>
+      <div className='flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2'>
+        <div className='flex items-center gap-1 bg-slate-100 p-1 rounded-xl'>
           <button
-            type=button
+            type='button'
             onClick={() => {
               setMode('upload');
               if (uploadedImagePreview) triggerChange(uploadedImagePreview);
@@ -280,7 +282,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
           </button>
 
           <button
-            type=button
+            type='button'
             onClick={() => {
               setMode('draw');
               setTimeout(resizeCanvas, 50);
@@ -295,13 +297,13 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
         </div>
 
         {/* Status indicator */}
-        <div className=flex items-center gap-2>
+        <div className='flex items-center gap-2'>
           {isSignatureReady ? (
-            <span className=inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200>
+            <span className='inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200'>
               <CheckCircle2 size={13} /> Signature Attached
             </span>
           ) : (
-            <span className=inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200>
+            <span className='inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200'>
               <AlertCircle size={13} /> Signature Required
             </span>
           )}
@@ -312,53 +314,53 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
       {mode === 'upload' && (
         <div>
           {uploadedImagePreview ? (
-            <div className=relative rounded-2xl border-2 border-emerald-300 bg-emerald-50/20 p-4 flex flex-col sm:flex-row items-center justify-between gap-4>
-              <div className=flex items-center gap-4>
-                <div className=w-28 h-20 bg-white border border-slate-200 rounded-xl p-1.5 flex items-center justify-center overflow-hidden shadow-xs shrink-0>
+            <div className='relative rounded-2xl border-2 border-emerald-300 bg-emerald-50/20 p-4 flex flex-col sm:flex-row items-center justify-between gap-4'>
+              <div className='flex items-center gap-4'>
+                <div className='w-28 h-20 bg-white border border-slate-200 rounded-xl p-1.5 flex items-center justify-center overflow-hidden shadow-xs shrink-0'>
                   <img
                     src={uploadedImagePreview}
-                    alt=Uploaded signature
-                    className=max-h-full max-w-full object-contain
+                    alt='Uploaded signature'
+                    className='max-h-full max-w-full object-contain'
                   />
                 </div>
                 <div>
-                  <div className=flex items-center gap-1.5 text-xs font-bold text-slate-800>
-                    <CheckCircle2 size={14} className=text-emerald-500 />
-                    <span>{uploadedFileName || Signature photo attached}</span>
+                  <div className='flex items-center gap-1.5 text-xs font-bold text-slate-800'>
+                    <CheckCircle2 size={14} className='text-emerald-500' />
+                    <span>{uploadedFileName || 'Signature photo attached'}</span>
                   </div>
-                  <p className=text-[11px] text-slate-500 mt-0.5>
+                  <p className='text-[11px] text-slate-500 mt-0.5'>
                     Your signature photo is verified and will be embedded into your official Appointment Letter.
                   </p>
                 </div>
               </div>
 
               <button
-                type=button
+                type='button'
                 onClick={handleClearUpload}
-                className=inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition-colors shrink-0 cursor-pointer
+                className='inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition-colors shrink-0 cursor-pointer'
               >
                 <X size={14} /> Remove / Replace
               </button>
             </div>
           ) : (
-            <div 
+            <div
               onClick={() => fileInputRef.current?.click()}
-              className=border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-[#1B2A6B] bg-slate-50/60 hover:bg-slate-50 transition-all cursor-pointer group
+              className='border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-[#1B2A6B] bg-slate-50/60 hover:bg-slate-50 transition-all cursor-pointer group'
             >
               <input
                 ref={fileInputRef}
-                type=file
-                accept=image/png,image/jpeg,image/jpg,image/webp
+                type='file'
+                accept='image/png,image/jpeg,image/jpg,image/webp'
                 onChange={handleFileUpload}
-                className=hidden
+                className='hidden'
               />
-              <div className=w-12 h-12 rounded-full bg-indigo-50 group-hover:bg-indigo-100 text-[#1B2A6B] flex items-center justify-center mx-auto mb-2 transition-colors>
+              <div className='w-12 h-12 rounded-full bg-indigo-50 group-hover:bg-indigo-100 text-[#1B2A6B] flex items-center justify-center mx-auto mb-2 transition-colors'>
                 <Upload size={22} />
               </div>
-              <p className=text-xs font-bold text-slate-800>
-                {isCompressing ? Processing signature... : Click or drag & drop to upload your signature photo}
+              <p className='text-xs font-bold text-slate-800'>
+                {isCompressing ? 'Processing signature...' : 'Click or drag & drop to upload your signature photo'}
               </p>
-              <p className=text-[11px] text-slate-500 mt-1 font-medium>
+              <p className='text-[11px] text-slate-500 mt-1 font-medium'>
                 Supports PNG, JPG, JPEG or WEBP (Auto-optimized) • Sign on paper and take a clear photo
               </p>
             </div>
@@ -368,22 +370,22 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
 
       {/* MODE 2: DRAW ON CANVAS */}
       {mode === 'draw' && (
-        <div className=space-y-2>
-          <div className=flex items-center justify-between text-[11px] text-slate-500 font-semibold px-1>
+        <div className='space-y-2'>
+          <div className='flex items-center justify-between text-[11px] text-slate-500 font-semibold px-1'>
             <span>Draw with your mouse, touchpad, or finger:</span>
             <button
-              type=button
+              type='button'
               onClick={handleClearDraw}
               disabled={!hasDrawn}
-              className=inline-flex items-center gap-1 font-bold text-slate-500 hover:text-rose-600 disabled:opacity-40 transition-colors cursor-pointer
+              className='inline-flex items-center gap-1 font-bold text-slate-500 hover:text-rose-600 disabled:opacity-40 transition-colors cursor-pointer'
             >
               <RotateCcw size={12} /> Clear Drawing
             </button>
           </div>
 
-          <div 
+          <div
             ref={containerRef}
-            className=w-full relative rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 hover:bg-slate-50 transition-all overflow-hidden focus-within:border-[#1B2A6B]
+            className='w-full relative rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 hover:bg-slate-50 transition-all overflow-hidden focus-within:border-[#1B2A6B]'
             style={{ minHeight: ${height}px }}
           >
             <canvas
@@ -396,24 +398,23 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
               onTouchMove={draw}
               onTouchEnd={stopDrawing}
               onTouchCancel={stopDrawing}
-              className=cursor-crosshair w-full block touch-none
+              className='cursor-crosshair w-full block touch-none'
             />
 
             {!hasDrawn && (
-              <div className=absolute inset-0 pointer-events-none flex flex-col items-center justify-center text-slate-400 gap-1.5 select-none>
-                <PenTool size={22} className=opacity-40 />
-                <p className=text-xs font-semibold>Sign inside this box</p>
+              <div className='absolute inset-0 pointer-events-none flex flex-col items-center justify-center text-slate-400 gap-1.5 select-none'>
+                <PenTool size={22} className='opacity-40' />
+                <p className='text-xs font-semibold'>Sign inside this box</p>
               </div>
             )}
 
-            <div className=absolute left-8 right-8 bottom-6 border-b border-slate-200 pointer-events-none flex justify-between items-center text-[10px] text-slate-300 font-bold uppercase tracking-widest px-1 select-none>
+            <div className='absolute left-8 right-8 bottom-6 border-b border-slate-200 pointer-events-none flex justify-between items-center text-[10px] text-slate-300 font-bold uppercase tracking-widest px-1 select-none'>
               <span>Sign Above Line</span>
               <span>✍️</span>
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 };
