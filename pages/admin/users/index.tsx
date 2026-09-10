@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
-import { Search, Filter, MoreHorizontal, UserPlus, Shield, GraduationCap, Building, Download, Mail, Check, X, ShieldAlert, Trash2, Users, RefreshCw } from "lucide-react";
+import { Search, Filter, MoreHorizontal, UserPlus, Shield, GraduationCap, Building, Download, Mail, Check, X, ShieldAlert, Trash2, Users, RefreshCw, Sparkles } from "lucide-react";
 import { Badge } from "../../../src/components/ui/Badge";
 import { useState, useRef, useEffect } from "react";
 import { useConfirm } from "../../../src/context/ConfirmContext";
@@ -160,10 +161,13 @@ export default function AdminUsersPage() {
           <h1 className="text-2xl font-black text-slate-800 mb-1">Universal User Management</h1>
           <p className="text-slate-500 font-medium text-sm">Manage, verify, and monitor all entities across the platform.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <button onClick={() => mutate()} className="bg-white border border-slate-200 text-slate-700 p-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button onClick={() => mutate()} className="bg-white border border-slate-200 text-slate-700 p-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors" title="Refresh">
             <RefreshCw size={16} />
           </button>
+          <Link href="/admin/role-requests" className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-2">
+            <Sparkles size={16} /> Role Requests
+          </Link>
           <button onClick={handleExportCSV} className="bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-2">
             <Download size={16} /> Export CSV
           </button>
