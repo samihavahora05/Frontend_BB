@@ -66,13 +66,13 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleVerify = async (id: number) => {
+  const handleVerify = async (id: number, role?: string) => {
     try {
-      await api.put(`/admin/verify-profile/${id}`);
+      const res = await api.put(`/admin/verify-profile/${id}`);
       mutate();
-      toast.success("Profile verified!");
-    } catch {
-      toast.error("Failed to verify profile.");
+      toast.success(res.data?.message || (role ? `${role.charAt(0).toUpperCase() + role.slice(1)} verified!` : "User activated successfully!"));
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to verify or activate user.");
     }
     setOpenDropdownId(null);
   };
@@ -267,7 +267,7 @@ export default function AdminUsersPage() {
                           <div className="fixed inset-0 z-20" onClick={() => setOpenDropdownId(null)} />
                           <div className="absolute right-6 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-30 py-1.5 overflow-hidden text-left animate-in fade-in slide-in-from-top-1 duration-150">
                             <button
-                              onClick={() => handleVerify(user.id)}
+                              onClick={() => handleVerify(user.id, userRole)}
                               className="w-full px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-2"
                             >
                               <Check size={16} className="text-emerald-500" />
