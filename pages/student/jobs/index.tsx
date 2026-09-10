@@ -119,7 +119,7 @@ export default function JobsPage() {
               : (item.skills ? item.skills.split(",") : []);
 
             return (
-              <AnimatedContent key={item.id} distance={20} direction="up" delay={idx * 0.05} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+              <AnimatedContent key={item.id} direction="up" delay={idx * 0.05} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
                 <div>
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-2.5">
