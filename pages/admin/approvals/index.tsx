@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
-import { 
-  UserCheck, UserX, CheckCircle2, Search, Filter, ShieldAlert, AlertCircle, 
-  RefreshCw, Mail, Calendar, Info, Eye, X, Phone, Globe, MapPin, Briefcase, 
+import {
+  UserCheck, UserX, CheckCircle2, Search, Filter, ShieldAlert, AlertCircle,
+  RefreshCw, Mail, Calendar, Info, Eye, X, Phone, Globe, MapPin, Briefcase,
   GraduationCap, Building2, User as UserIcon, Check, Clock, Sparkles
 } from 'lucide-react';
 
@@ -35,7 +35,7 @@ export default function AdminApprovalsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRole, setSelectedRole] = useState('all');
-  
+
   // Review Modal State
   const [reviewUser, setReviewUser] = useState<User | null>(null);
   const [loadingReview, setLoadingReview] = useState(false);
@@ -52,13 +52,13 @@ export default function AdminApprovalsPage() {
     try {
       const api = (await import('../../../src/lib/axios')).default;
       const { getActiveToken } = await import('../../../src/lib/authUtils');
-      
+
       const token = getActiveToken();
       if (!token) {
         router.push('/login');
         return;
       }
-      
+
       const response = await api.get('/admin/approvals');
       const fetchedData = response.data?.data?.data || response.data?.data || [];
       setUsers(Array.isArray(fetchedData) ? fetchedData : []);
@@ -104,7 +104,7 @@ export default function AdminApprovalsPage() {
     try {
       const api = (await import('../../../src/lib/axios')).default;
       await api.put(`/admin/approvals/${user.id}/approve`);
-      
+
       setUsers(prev => prev.filter(u => u.id !== user.id));
       if (reviewUser?.id === user.id) {
         setReviewUser(null);
@@ -127,13 +127,13 @@ export default function AdminApprovalsPage() {
 
     setIsSubmittingReject(true);
     const loadingToast = toast.loading('Rejecting application and sending email...');
-    
+
     try {
       const api = (await import('../../../src/lib/axios')).default;
       await api.put(`/admin/approvals/${rejectingUser.id}/reject`, {
         reason: rejectionReason.trim()
       });
-      
+
       setUsers(prev => prev.filter(u => u.id !== rejectingUser.id));
       if (reviewUser?.id === rejectingUser.id) {
         setReviewUser(null);
@@ -168,12 +168,12 @@ export default function AdminApprovalsPage() {
       </Head>
 
       <div className="max-w-full p-4 sm:p-6 space-y-6 font-inter">
-        
+
         {/* Header Banner */}
         <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#0d1635] via-[#1B2A6B] to-[#243580] px-7 py-8 shadow-xl">
           <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-white/5 pointer-events-none" />
           <div className="absolute top-4 right-32 w-20 h-20 rounded-full bg-[#C9A227]/10 pointer-events-none" />
-          
+
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A227]/20 text-[#C9A227] text-xs font-bold mb-3 border border-[#C9A227]/30">
@@ -184,20 +184,20 @@ export default function AdminApprovalsPage() {
                 Review and approve new Expert, College, and Company registrations. Only email-verified registrations can be approved. Approved users automatically receive a branded activation email.
               </p>
             </div>
-            
+
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => router.push('/admin/role-requests')}
+              <Link
+                href="/admin/role-requests"
                 className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 text-xs shadow-md cursor-pointer"
               >
-                <ShieldAlert size={14} /> 
+                <Sparkles size={14} />
                 Role Change Requests
-              </button>
-              <button 
+              </Link>
+              <button
                 onClick={fetchPendingApprovals}
                 className="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2.5 rounded-xl transition-colors flex items-center gap-2 text-xs font-bold shadow-sm cursor-pointer"
               >
-                <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> 
+                <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
                 Refresh List
               </button>
             </div>
@@ -206,7 +206,7 @@ export default function AdminApprovalsPage() {
 
         {/* Content Table Card */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-          
+
           {/* Table Filters & Toolbar */}
           <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
@@ -239,7 +239,7 @@ export default function AdminApprovalsPage() {
                 </select>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
               <div className="px-3.5 py-1.5 bg-white border border-slate-200 rounded-xl shadow-sm flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
@@ -341,13 +341,13 @@ export default function AdminApprovalsPage() {
                         {/* Applied Date */}
                         <td className="px-5 py-4">
                           <div className="text-xs font-bold text-slate-700">
-                            {new Date(user.created_at).toLocaleDateString('en-IN', { 
-                              day: 'numeric', month: 'short', year: 'numeric' 
+                            {new Date(user.created_at).toLocaleDateString('en-IN', {
+                              day: 'numeric', month: 'short', year: 'numeric'
                             })}
                           </div>
                           <div className="text-[10px] text-slate-400 mt-0.5">
-                            {new Date(user.created_at).toLocaleTimeString('en-IN', { 
-                              hour: '2-digit', minute: '2-digit' 
+                            {new Date(user.created_at).toLocaleTimeString('en-IN', {
+                              hour: '2-digit', minute: '2-digit'
                             })}
                           </div>
                         </td>
@@ -365,21 +365,20 @@ export default function AdminApprovalsPage() {
                             </button>
 
                             {/* Approve button */}
-                            <button 
+                            <button
                               onClick={() => handleApprove(user)}
                               disabled={!isEmailVerified}
-                              className={`px-3 py-1.5 rounded-lg font-bold text-xs transition-all inline-flex items-center gap-1 ${
-                                isEmailVerified
-                                  ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white border border-emerald-200 cursor-pointer shadow-sm'
-                                  : 'bg-slate-100 text-slate-400 cursor-not-allowed opacity-60'
-                              }`}
+                              className={`px-3 py-1.5 rounded-lg font-bold text-xs transition-all inline-flex items-center gap-1 ${isEmailVerified
+                                ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white border border-emerald-200 cursor-pointer shadow-sm'
+                                : 'bg-slate-100 text-slate-400 cursor-not-allowed opacity-60'
+                                }`}
                               title={isEmailVerified ? "Approve User" : "Email must be verified first"}
                             >
                               <UserCheck size={14} /> Approve
                             </button>
 
                             {/* Reject button */}
-                            <button 
+                            <button
                               onClick={() => handleOpenRejectModal(user)}
                               className="px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white border border-rose-200 rounded-lg font-bold text-xs transition-colors inline-flex items-center gap-1 cursor-pointer shadow-sm"
                               title="Reject with Reason"
@@ -395,7 +394,7 @@ export default function AdminApprovalsPage() {
               </tbody>
             </table>
           </div>
-          
+
           {/* Footer Guidelines */}
           <div className="bg-slate-50 border-t border-slate-100 p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-medium">
             <div className="flex items-center gap-2">
@@ -414,7 +413,7 @@ export default function AdminApprovalsPage() {
         {reviewUser && (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 flex flex-col">
-              
+
               {/* Modal Header */}
               <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/60 rounded-t-3xl">
                 <div className="flex items-center gap-3">
@@ -443,7 +442,7 @@ export default function AdminApprovalsPage() {
 
               {/* Modal Body */}
               <div className="p-6 space-y-6">
-                
+
                 {/* Verification Status Banner */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl">
@@ -587,11 +586,10 @@ export default function AdminApprovalsPage() {
                     type="button"
                     onClick={() => handleApprove(reviewUser)}
                     disabled={!reviewUser.email_verified_at}
-                    className={`px-5 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 shadow-md ${
-                      reviewUser.email_verified_at
-                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-emerald-600/20'
-                        : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                    }`}
+                    className={`px-5 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 shadow-md ${reviewUser.email_verified_at
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-emerald-600/20'
+                      : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                      }`}
                   >
                     <UserCheck size={14} /> Approve Account
                   </button>
