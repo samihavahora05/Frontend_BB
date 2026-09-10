@@ -371,7 +371,18 @@ export default function LMSPlayerPage() {
             {currentLesson?.videoUrl ? (
               <video
                 ref={videoRef}
-                src={currentLesson.videoUrl}
+                src={(() => {
+                  const url = currentLesson.videoUrl || currentLesson.video_url;
+                  if (!url) return '';
+                  if (url.includes('drive.google.com')) {
+                    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                    const fileId = match ? match[1] : null;
+                    if (fileId) {
+                      return `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/stream/google-drive/${fileId}`;
+                    }
+                  }
+                  return url;
+                })()}
                 className="w-full h-full object-contain"
                 onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={handleLoadedMetadata}
@@ -738,7 +749,37 @@ export default function LMSPlayerPage() {
                         <div className="flex-1 min-w-0">
                           <h3 className="text-xs font-bold text-white leading-tight mb-1 truncate">{module.module}</h3>
                           <p className="text-[10px] text-slate-500 font-semibold">
-                            {moduleLessonsCompleted} / {module.lessons.length} • {module.lessons.reduce((acc: number, l: any) => acc + parseInt(l.duration), 0)} min
+                            {moduleLessonsCompleted} / {module.lessons.length} • {module.lessons.reduce((acc: number, l: any) => {
+                              let minutes = 0;
+                              if (typeof l.duration === 'string') {
+                                if (l.duration.includes('s') && !l.duration.includes('m')) {
+                                  minutes += parseInt(l.duration) / 60;
+                                } else {
+                                  const mMatch = l.duration.match(/(\d+)m/);
+                                  if (mMatch) minutes += parseInt(mMatch[1]);
+                                  const hMatch = l.duration.match(/(\d+)h/);
+                                  if (hMatch) minutes += parseInt(hMatch[1]) * 60;
+                                }
+                              } else {
+                                minutes += parseInt(l.duration || '0');
+                              }
+                              return acc + minutes;
+                            }, 0) < 1 ? '< 1 min' : Math.round(module.lessons.reduce((acc: number, l: any) => {
+                              let minutes = 0;
+                              if (typeof l.duration === 'string') {
+                                if (l.duration.includes('s') && !l.duration.includes('m')) {
+                                  minutes += parseInt(l.duration) / 60;
+                                } else {
+                                  const mMatch = l.duration.match(/(\d+)m/);
+                                  if (mMatch) minutes += parseInt(mMatch[1]);
+                                  const hMatch = l.duration.match(/(\d+)h/);
+                                  if (hMatch) minutes += parseInt(hMatch[1]) * 60;
+                                }
+                              } else {
+                                minutes += parseInt(l.duration || '0');
+                              }
+                              return acc + minutes;
+                            }, 0)) + ' min'}
                           </p>
                         </div>
                         {expandedModules.includes(mIdx) ? (

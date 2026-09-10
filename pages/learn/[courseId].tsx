@@ -44,6 +44,17 @@ export default function CoursePlayerPage() {
 
   const [activeTab, setActiveTab] = useState('overview');
   const [expandedModules, setExpandedModules] = useState<number[]>([0]);
+  const [activeLesson, setActiveLesson] = useState<any>(null);
+
+  // Initialize active lesson if not set
+  React.useEffect(() => {
+    if (!activeLesson && course?.curriculum?.length > 0) {
+      const firstModuleWithItems = course.curriculum.find((m: any) => m.lessons?.length > 0);
+      if (firstModuleWithItems) {
+        setActiveLesson(firstModuleWithItems.lessons[0]);
+      }
+    }
+  }, [course, activeLesson]);
 
   const toggleModule = (index: number) => {
     setExpandedModules(prev => 
@@ -90,28 +101,41 @@ export default function CoursePlayerPage() {
         {/* Left Side: Player & Content */}
         <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-slate-50">
           {/* Video Player Area */}
-          <div className="w-full bg-black aspect-video relative group">
-            {/* Dummy Video Player */}
-            <img 
-              src={course?.thumbnail} 
-              alt="Video Thumbnail" 
-              className="w-full h-full object-cover opacity-60"
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <button className="w-16 h-16 sm:w-20 sm:h-20 bg-blue-600/90 hover:bg-blue-600 rounded-full flex items-center justify-center text-white backdrop-blur-sm transition-transform hover:scale-105 shadow-[0_0_30px_rgba(37,99,235,0.5)]">
-                <PlayCircle size={40} className="ml-2" />
-              </button>
-            </div>
-            
-            {/* Fake Video Controls */}
-            <div className="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center px-4 gap-4">
-              <button className="text-white hover:text-blue-400"><PlayCircle size={20} /></button>
-              <div className="flex-1 h-1 bg-white/30 rounded-full relative cursor-pointer">
-                <div className="absolute left-0 top-0 bottom-0 w-1/3 bg-blue-500 rounded-full" />
-              </div>
-              <span className="text-xs text-white font-medium">12:34 / 45:00</span>
-              <button className="text-white hover:text-blue-400"><Settings size={18} /></button>
-            </div>
+          <div className="w-full bg-black aspect-video relative group flex items-center justify-center">
+            {activeLesson?.video_url ? (
+              <video 
+                key={activeLesson.video_url}
+                controls 
+                autoPlay
+                className="w-full h-full object-contain"
+                src={(() => {
+                  const url = activeLesson.video_url || activeLesson.videoUrl;
+                  if (!url) return '';
+                  if (url.includes('drive.google.com')) {
+                    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                    const fileId = match ? match[1] : null;
+                    if (fileId) {
+                      return `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/stream/google-drive/${fileId}`;
+                    }
+                  }
+                  return url;
+                })()}
+              />
+            ) : (
+              <>
+                {/* Dummy Video Player Fallback */}
+                <img 
+                  src={course?.thumbnail || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97"} 
+                  alt="Video Thumbnail" 
+                  className="w-full h-full object-cover opacity-60"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <button className="w-16 h-16 sm:w-20 sm:h-20 bg-blue-600/90 hover:bg-blue-600 rounded-full flex items-center justify-center text-white backdrop-blur-sm transition-transform hover:scale-105 shadow-[0_0_30px_rgba(37,99,235,0.5)]">
+                    <PlayCircle size={40} className="ml-2" />
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Content Tabs */}
@@ -234,20 +258,26 @@ export default function CoursePlayerPage() {
                   >
                     <div>
                       <h3 className="text-sm font-bold text-slate-900 leading-tight mb-1">{module.title}</h3>
-                      <p className="text-xs text-slate-500 font-medium">0 / {module.items?.length || 0} • {module.duration || '45 min'}</p>
+                      <p className="text-xs text-slate-500 font-medium">0 / {module.lessons?.length || 0} • {module.duration || '45 min'}</p>
                     </div>
                     {expandedModules.includes(mIdx) ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
                   </button>
                   
                   {expandedModules.includes(mIdx) && (
                     <div className="bg-white">
-                      {module.items?.map((lesson: any, lIdx: number) => {
-                        const isCurrent = mIdx === 0 && lIdx === 1;
+                      {module.lessons?.map((lesson: any, lIdx: number) => {
+                        const isCurrent = activeLesson?.id === lesson.id || (activeLesson?.title === lesson.title);
                         const isLocked = !lesson.isFree && mIdx > 0;
-                        const isCompleted = mIdx === 0 && lIdx === 0;
+                        const isCompleted = false;
 
                         return (
-                          <div key={lIdx} className={`flex items-start gap-3 p-4 cursor-pointer transition-colors ${isCurrent ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}>
+                          <div 
+                            key={lIdx} 
+                            onClick={() => {
+                              if (!isLocked) setActiveLesson(lesson);
+                            }}
+                            className={`flex items-start gap-3 p-4 transition-colors ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer'} ${isCurrent ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}
+                          >
                             <div className="mt-0.5 shrink-0">
                               {isCompleted ? (
                                 <CheckCircle2 size={16} className="text-emerald-500" />

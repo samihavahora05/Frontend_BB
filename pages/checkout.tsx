@@ -80,7 +80,10 @@ export default function CheckoutPage() {
   const total = subtotal + tax - discount;
 
   const handlePay = async () => {
-    if (cartItems.length === 0) return;
+    if (cartItems.length === 0) {
+      toast.error("Your cart is empty! Please add some courses to proceed.");
+      return;
+    }
     setIsProcessing(true);
     setCheckoutError(null);
     setProcessingStep(0); // Initializing
