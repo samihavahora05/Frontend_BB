@@ -226,278 +226,8 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ internship, isOpen, onCl
         {/* Modal Body */}
         <div className="p-6 overflow-y-auto flex-1 space-y-6">
 
-          {user && !perm.canApply && step !== 3 ? (
-            <div className="py-6 text-center space-y-5">
-              <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto shadow-inner">
-                <ShieldAlert size={32} />
-              </div>
-              <div>
-                <h3 className="text-lg font-black text-slate-900 mb-1 font-sora">Internship Application Restricted</h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-md mx-auto leading-relaxed">
-                  {perm.message}
-                </p>
-              </div>
-
-              <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-4 text-left max-w-md mx-auto space-y-2 text-xs">
-                <div className="flex justify-between py-1 border-b border-amber-200/40">
-                  <span className="text-amber-800 font-medium">Your Current Role:</span>
-                  <span className="font-extrabold text-slate-800 uppercase tracking-wide">{user.role || 'Student'}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-amber-200/40">
-                  <span className="text-amber-800 font-medium">Required Role:</span>
-                  <span className="font-extrabold text-[#1B2A6B]">Intern</span>
-                </div>
-                <div className="flex justify-between py-1">
-                  <span className="text-amber-800 font-medium">Role Switch:</span>
-                  <span className="font-bold text-emerald-700">1-Click Fast-Track Request</span>
-                </div>
-              </div>
-
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
-                {perm.canRequestRoleChange && (
-                  <Button
-                    onClick={() => setShowRoleModal(true)}
-                    className="w-full sm:w-auto h-11 px-6 bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-extrabold rounded-xl text-xs shadow-md gap-2"
-                  >
-                    <Sparkles size={14} /> Request Role Change to Intern
-                  </Button>
-                )}
-                <Link href="/courses" onClick={onClose} className="w-full sm:w-auto">
-                  <Button
-                    variant="outline"
-                    className="w-full h-11 px-5 border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-bold"
-                  >
-                    Browse Courses (Open to All)
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <>
-              {/* ================= STEP 1: APPLICANT DETAILS & RESUME ================= */}
-              {step === 1 && (
-                <form id="step1-form" onSubmit={handleNextStep} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
-                    First Name <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="e.g. John"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="e.g. Doe"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
-                    Email Address <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="john@example.com"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
-                    Contact Phone / WhatsApp <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 9876543210"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
-                    Degree / Qualification
-                  </label>
-                  <input
-                    type="text"
-                    value={degree}
-                    onChange={(e) => setDegree(e.target.value)}
-                    placeholder="e.g. B.Tech Computer Science"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
-                    Graduation Year
-                  </label>
-                  <input
-                    type="text"
-                    value={graduationYear}
-                    onChange={(e) => setGraduationYear(e.target.value)}
-                    placeholder="e.g. 2026"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
-                  />
-                </div>
-              </div>
-
-              {/* Resume Upload */}
-              <div>
-                <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
-                  Updated Resume (PDF or DOCX) <span className="text-rose-500">*</span>
-                </label>
-                <div className="border-2 border-dashed border-slate-200 rounded-2xl p-4 text-center hover:border-[#1B2A6B] bg-slate-50/70 transition-colors relative cursor-pointer">
-                  <input 
-                    type="file" 
-                    accept=".pdf,.doc,.docx"
-                    required={!resumeFile}
-                    onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
-                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
-                  />
-                  <Upload size={22} className="text-[#1B2A6B] mx-auto mb-1" />
-                  <p className="text-xs font-bold text-slate-700">
-                    {resumeFile ? resumeFile.name : "Click or drag to upload your updated Resume / CV"}
-                  </p>
-                  <p className="text-[10px] text-slate-400 font-semibold mt-0.5">PDF or Word format (Max 10MB)</p>
-                </div>
-              </div>
-
-              {/* Portfolio Link */}
-              <div>
-                <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
-                  Portfolio / GitHub / LinkedIn URL (Optional)
-                </label>
-                <input 
-                  type="url"
-                  value={portfolioUrl}
-                  onChange={(e) => setPortfolioUrl(e.target.value)}
-                  placeholder="https://github.com/username or https://myportfolio.com"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
-                />
-              </div>
-
-              {/* Cover Letter */}
-              <div>
-                <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
-                  Cover Letter / Short Introduction
-                </label>
-                <textarea 
-                  rows={3}
-                  value={coverLetter}
-                  onChange={(e) => setCoverLetter(e.target.value)}
-                  placeholder="Briefly share why you are excited to join this internship role..."
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B] resize-none"
-                />
-              </div>
-            </form>
-          )}
-
-          {/* ================= STEP 2: TERMS & CONDITIONS + DIGITAL SIGNATURE ================= */}
-          {step === 2 && (
-            <form id="step2-form" onSubmit={handleSubmit} className="space-y-5">
-              
-              {/* Terms & Conditions Notice Box with PDF Download */}
-              <div className="bg-gradient-to-br from-indigo-50/80 via-blue-50/50 to-amber-50/50 border border-indigo-100 rounded-2xl p-4">
-                <div className="flex items-start justify-between gap-4 mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 bg-[#1B2A6B] text-white rounded-lg">
-                      <ShieldCheck size={18} />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-black text-[#0d1635] uppercase tracking-wide">
-                        Internship Terms & Conditions
-                      </h4>
-                      <p className="text-[11px] text-slate-500 font-semibold">
-                        Version 1.0 • Blueboxx Industrial Internship Policy
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handleDownloadTermsPdf}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-[#1B2A6B] text-xs font-bold rounded-xl shadow-xs transition-all hover:scale-[1.02] shrink-0"
-                  >
-                    <Download size={13} />
-                    <span>Download T&C PDF</span>
-                  </button>
-                </div>
-
-                {/* Key Summary bullet points */}
-                <div className="bg-white/80 border border-slate-200/80 rounded-xl p-3 text-[11px] text-slate-600 space-y-1.5 font-medium">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C9A227] shrink-0" />
-                    <span><strong>Conduct & Non-Disclosure:</strong> Confidential company data and source code must remain protected.</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C9A227] shrink-0" />
-                    <span><strong>Attendance & Deliverables:</strong> Regular milestone participation is required for successful completion.</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C9A227] shrink-0" />
-                    <span><strong>Appointment Letter:</strong> Upon admin approval, your official appointment letter will be generated automatically.</span>
-                  </div>
-                </div>
-
-                {/* Mandatory Agreement Checkbox */}
-                <label className="flex items-start gap-3 mt-3 cursor-pointer pt-1 select-none">
-                  <input
-                    type="checkbox"
-                    checked={termsAccepted}
-                    onChange={(e) => setTermsAccepted(e.target.checked)}
-                    className="mt-0.5 w-4 h-4 rounded border-slate-300 text-[#1B2A6B] focus:ring-[#1B2A6B] cursor-pointer"
-                  />
-                  <span className="text-xs font-bold text-slate-800 leading-snug">
-                    I have read, understood, and solemnly agree to the{" "}
-                    <button
-                      type="button"
-                      onClick={handleDownloadTermsPdf}
-                      className="text-[#1B2A6B] underline hover:text-[#0d1635]"
-                    >
-                      Blueboxx Internship Terms & Conditions
-                    </button>{" "}
-                    and certify that all submitted information is accurate. <span className="text-rose-500">*</span>
-                  </span>
-                </label>
-              </div>
-
-              {/* Digital Signature / Photo Section */}
-              <div className="bg-slate-50/70 p-4 rounded-2xl border border-slate-200">
-                <SignaturePad 
-                  height={150}
-                  defaultMode="upload"
-                  onChange={(sig) => setSignatureData(sig as string | null)} 
-                  onClear={() => setSignatureData(null)}
-                />
-              </div>
-
-            </form>
-          )}
-        </>
-      )}
-
-          {/* ================= STEP 3: SUBMITTED / SUCCESS VIEW ================= */}
-          {step === 3 && (
+          {step === 3 ? (
+            /* ================= STEP 3: SUBMITTED / SUCCESS VIEW ================= */
             <div className="py-6 text-center space-y-4">
               <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
                 <CheckCircle2 size={36} />
@@ -552,6 +282,270 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ internship, isOpen, onCl
                 </Button>
               </div>
             </div>
+          ) : user && !perm.canApply ? (
+            /* ================= ROLE RESTRICTION VIEW ================= */
+            <div className="py-6 text-center space-y-5">
+              <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto shadow-inner">
+                <ShieldAlert size={32} />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-slate-900 mb-1 font-sora">Internship Application Restricted</h3>
+                <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-md mx-auto leading-relaxed">
+                  {perm.message}
+                </p>
+              </div>
+
+              <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-4 text-left max-w-md mx-auto space-y-2 text-xs">
+                <div className="flex justify-between py-1 border-b border-amber-200/40">
+                  <span className="text-amber-800 font-medium">Your Current Role:</span>
+                  <span className="font-extrabold text-slate-800 uppercase tracking-wide">{user.role || 'Student'}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-amber-200/40">
+                  <span className="text-amber-800 font-medium">Required Role:</span>
+                  <span className="font-extrabold text-[#1B2A6B]">Intern</span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="text-amber-800 font-medium">Role Switch:</span>
+                  <span className="font-bold text-emerald-700">1-Click Fast-Track Request</span>
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+                {perm.canRequestRoleChange && (
+                  <Button
+                    onClick={() => setShowRoleModal(true)}
+                    className="w-full sm:w-auto h-11 px-6 bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-extrabold rounded-xl text-xs shadow-md gap-2"
+                  >
+                    <Sparkles size={14} /> Request Role Change to Intern
+                  </Button>
+                )}
+                <Link href="/courses" onClick={onClose} className="w-full sm:w-auto">
+                  <Button
+                    variant="outline"
+                    className="w-full h-11 px-5 border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-bold"
+                  >
+                    Browse Courses (Open to All)
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          ) : (
+            /* ================= STEP 1 & STEP 2 APPLICATION FORMS ================= */
+            <>
+              {/* Step 1: Applicant Details & Resume */}
+              {step === 1 && (
+                <form id="step1-form" onSubmit={handleNextStep} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                        First Name <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="e.g. John"
+                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                        Last Name
+                      </label>
+                      <input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="e.g. Doe"
+                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                        Email Address <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="john@example.com"
+                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                        Contact Phone / WhatsApp <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="+91 9876543210"
+                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                        Degree / Qualification
+                      </label>
+                      <input
+                        type="text"
+                        value={degree}
+                        onChange={(e) => setDegree(e.target.value)}
+                        placeholder="e.g. B.Tech Computer Science"
+                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                        Graduation Year
+                      </label>
+                      <input
+                        type="text"
+                        value={graduationYear}
+                        onChange={(e) => setGraduationYear(e.target.value)}
+                        placeholder="e.g. 2026"
+                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Resume Upload */}
+                  <div>
+                    <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                      Updated Resume (PDF or DOCX) <span className="text-rose-500">*</span>
+                    </label>
+                    <div className="border-2 border-dashed border-slate-200 rounded-2xl p-4 text-center hover:border-[#1B2A6B] bg-slate-50/70 transition-colors relative cursor-pointer">
+                      <input 
+                        type="file" 
+                        accept=".pdf,.doc,.docx"
+                        required={!resumeFile}
+                        onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
+                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
+                      />
+                      <Upload size={22} className="text-[#1B2A6B] mx-auto mb-1" />
+                      <p className="text-xs font-bold text-slate-700">
+                        {resumeFile ? resumeFile.name : "Click or drag to upload your updated Resume / CV"}
+                      </p>
+                      <p className="text-[10px] text-slate-400 font-semibold mt-0.5">PDF or Word format (Max 10MB)</p>
+                    </div>
+                  </div>
+
+                  {/* Portfolio Link */}
+                  <div>
+                    <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                      Portfolio / GitHub / LinkedIn URL (Optional)
+                    </label>
+                    <input 
+                      type="url" 
+                      value={portfolioUrl}
+                      onChange={(e) => setPortfolioUrl(e.target.value)}
+                      placeholder="https://github.com/username or https://myportfolio.com"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B]"
+                    />
+                  </div>
+
+                  {/* Cover Letter */}
+                  <div>
+                    <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                      Cover Letter / Short Introduction
+                    </label>
+                    <textarea 
+                      rows={3}
+                      value={coverLetter}
+                      onChange={(e) => setCoverLetter(e.target.value)}
+                      placeholder="Briefly share why you are excited to join this internship role..."
+                      className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1B2A6B] focus:ring-1 focus:ring-[#1B2A6B] resize-none"
+                    />
+                  </div>
+                </form>
+              )}
+
+              {/* Step 2: Terms & Conditions + Digital Signature */}
+              {step === 2 && (
+                <form id="step2-form" onSubmit={handleSubmit} className="space-y-5">
+                  <div className="bg-gradient-to-br from-indigo-50/80 via-blue-50/50 to-amber-50/50 border border-indigo-100 rounded-2xl p-4">
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 bg-[#1B2A6B] text-white rounded-lg">
+                          <ShieldCheck size={18} />
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-black text-[#0d1635] uppercase tracking-wide">
+                            Internship Terms & Conditions
+                          </h4>
+                          <p className="text-[11px] text-slate-500 font-semibold">
+                            Version 1.0 • Blueboxx Industrial Internship Policy
+                          </p>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleDownloadTermsPdf}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-[#1B2A6B] text-xs font-bold rounded-xl shadow-xs transition-all hover:scale-[1.02] shrink-0"
+                      >
+                        <Download size={13} />
+                        <span>Download T&C PDF</span>
+                      </button>
+                    </div>
+
+                    <div className="bg-white/80 border border-slate-200/80 rounded-xl p-3 text-[11px] text-slate-600 space-y-1.5 font-medium">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#C9A227] shrink-0" />
+                        <span><strong>Conduct & Non-Disclosure:</strong> Confidential company data and source code must remain protected.</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#C9A227] shrink-0" />
+                        <span><strong>Attendance & Deliverables:</strong> Regular milestone participation is required for successful completion.</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#C9A227] shrink-0" />
+                        <span><strong>Appointment Letter:</strong> Upon admin approval, your official appointment letter will be generated automatically.</span>
+                      </div>
+                    </div>
+
+                    <label className="flex items-start gap-3 mt-3 cursor-pointer pt-1 select-none">
+                      <input
+                        type="checkbox"
+                        checked={termsAccepted}
+                        onChange={(e) => setTermsAccepted(e.target.checked)}
+                        className="mt-0.5 w-4 h-4 rounded border-slate-300 text-[#1B2A6B] focus:ring-[#1B2A6B] cursor-pointer"
+                      />
+                      <span className="text-xs font-bold text-slate-800 leading-snug">
+                        I have read, understood, and solemnly agree to the{" "}
+                        <button
+                          type="button"
+                          onClick={handleDownloadTermsPdf}
+                          className="text-[#1B2A6B] underline hover:text-[#0d1635]"
+                        >
+                          Blueboxx Internship Terms & Conditions
+                        </button>{" "}
+                        and certify that all submitted information is accurate. <span className="text-rose-500">*</span>
+                      </span>
+                    </label>
+                  </div>
+
+                  <div className="bg-slate-50/70 p-4 rounded-2xl border border-slate-200">
+                    <SignaturePad 
+                      height={150}
+                      defaultMode="upload"
+                      onChange={(sig) => setSignatureData(sig as string | null)} 
+                      onClear={() => setSignatureData(null)}
+                    />
+                  </div>
+                </form>
+              )}
+            </>
           )}
 
         </div>
