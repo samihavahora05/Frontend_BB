@@ -4,9 +4,9 @@ export default function Document() {
   return (
     <Html lang="en" data-scroll-behavior="smooth">
       <Head>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="shortcut icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/favicon.png" />
+        <link rel="icon" href="/Boxxlogo.png" type="image/png" />
+        <link rel="shortcut icon" href="/Boxxlogo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/Boxxlogo.png" />
       </Head>
       <body>
         <Main />
