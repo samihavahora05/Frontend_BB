@@ -11,8 +11,8 @@ import api from '../../../src/lib/axios';
 interface RoleRequestItem {
   id: number;
   user_id: number;
-  current_role: string;
-  requested_role: string;
+  current_role: any;
+  requested_role: any;
   status: 'pending' | 'approved' | 'rejected' | 'cancelled';
   reason?: string;
   notes?: string;
@@ -21,22 +21,31 @@ interface RoleRequestItem {
   created_at: string;
   user?: {
     id: number;
-    first_name: string;
-    last_name: string;
+    first_name?: string;
+    last_name?: string;
     name?: string;
-    email: string;
+    email?: string;
     phone?: string;
-    status: string;
-    account_status: string;
+    status?: string;
+    account_status?: string;
   };
   reviewer?: {
-    id: number;
-    first_name: string;
-    last_name: string;
+    id?: number;
+    first_name?: string;
+    last_name?: string;
     name?: string;
-    email: string;
+    email?: string;
   };
 }
+
+const getRoleString = (role: any): string => {
+  if (!role) return '';
+  if (typeof role === 'string') return role;
+  if (typeof role === 'object') {
+    return role.name || role.title || role.guard_name || '';
+  }
+  return String(role);
+};
 
 export default function AdminRoleRequestsPage() {
   const [requests, setRequests] = useState<RoleRequestItem[]>([]);
@@ -71,7 +80,9 @@ export default function AdminRoleRequestsPage() {
 
   const handleApprove = async (requestItem: RoleRequestItem) => {
     const applicantName = requestItem.user?.name || `${requestItem.user?.first_name || ''} ${requestItem.user?.last_name || ''}`.trim() || 'User';
-    if (!window.confirm(`Are you sure you want to APPROVE role change for ${applicantName} to ${requestItem.requested_role}?`)) {
+    const reqRoleStr = getRoleString(requestItem.requested_role) || 'jobseeker';
+    
+    if (!window.confirm(`Are you sure you want to APPROVE role change for ${applicantName} to ${reqRoleStr}?`)) {
       return;
     }
 
@@ -79,7 +90,7 @@ export default function AdminRoleRequestsPage() {
     try {
       const res = await api.post(`/admin/role-requests/${requestItem.id}/approve`);
       if (res.data?.success || res.status === 200) {
-        toast.success(`Role change approved! ${applicantName} is now ${requestItem.requested_role}.`);
+        toast.success(`Role change approved! ${applicantName} is now ${reqRoleStr}.`);
         fetchRoleRequests();
       }
     } catch (err: any) {
@@ -135,9 +146,9 @@ export default function AdminRoleRequestsPage() {
       const userName = (item.user?.name || `${item.user?.first_name || ''} ${item.user?.last_name || ''}`).toLowerCase();
       const userEmail = (item.user?.email || '').toLowerCase();
       const userPhone = (item.user?.phone || '').toLowerCase();
-      const currentRole = (item.current_role || '').toLowerCase();
-      const requestedRole = (item.requested_role || '').toLowerCase();
-      const reason = (item.reason || '').toLowerCase();
+      const currentRole = getRoleString(item.current_role).toLowerCase();
+      const requestedRole = getRoleString(item.requested_role).toLowerCase();
+      const reason = typeof item.reason === 'string' ? item.reason.toLowerCase() : '';
 
       return userName.includes(q) || userEmail.includes(q) || userPhone.includes(q) || currentRole.includes(q) || requestedRole.includes(q) || reason.includes(q);
     }
@@ -270,8 +281,10 @@ export default function AdminRoleRequestsPage() {
                 <tbody className="divide-y divide-slate-100 text-xs font-semibold text-slate-700">
                   {filteredRequests.map((req) => {
                     const userName = req.user?.name || `${req.user?.first_name || ''} ${req.user?.last_name || ''}`.trim() || 'Anonymous';
-                    const currentRole = req.current_role || 'student';
-                    const requestedRole = req.requested_role || 'jobseeker';
+                    const currentRole = getRoleString(req.current_role) || 'student';
+                    const requestedRole = getRoleString(req.requested_role) || 'jobseeker';
+                    const reasonText = typeof req.reason === 'string' ? req.reason : (req.reason ? JSON.stringify(req.reason) : 'No specific reason provided.');
+                    const rejectionReasonText = typeof req.rejection_reason === 'string' ? req.rejection_reason : (req.rejection_reason ? JSON.stringify(req.rejection_reason) : '');
 
                     return (
                       <tr key={req.id} className="hover:bg-slate-50/80 transition-colors">
@@ -298,11 +311,11 @@ export default function AdminRoleRequestsPage() {
 
                         <td className="py-4 px-5 max-w-xs">
                           <p className="text-slate-600 line-clamp-2 text-xs leading-relaxed font-normal">
-                            {req.reason || 'No specific reason provided.'}
+                            {reasonText}
                           </p>
-                          {req.rejection_reason && (
+                          {rejectionReasonText && (
                             <div className="mt-1 text-[11px] text-rose-600 font-medium">
-                              <strong>Rejection reason:</strong> {req.rejection_reason}
+                              <strong>Rejection reason:</strong> {rejectionReasonText}
                             </div>
                           )}
                         </td>
@@ -387,7 +400,7 @@ export default function AdminRoleRequestsPage() {
 
             <h3 className="text-lg font-black text-slate-900 font-sora">Reject Role Change Request</h3>
             <p className="text-xs text-slate-500 mt-1 font-medium">
-              Please specify the reason for rejecting {rejectingItem.user?.name || 'this user'}'s request to become a {rejectingItem.requested_role}.
+              Please specify the reason for rejecting {rejectingItem.user?.name || 'this user'}'s request to become a {getRoleString(rejectingItem.requested_role)}.
             </p>
 
             <form onSubmit={handleConfirmReject} className="mt-5 space-y-4">
