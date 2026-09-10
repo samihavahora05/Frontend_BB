@@ -23,6 +23,7 @@ import { CustomCursor } from '../src/components/CustomCursor';
 import { ScrollProgressBar } from '../src/components/ScrollProgressBar';
 import { FloatingActions } from '../src/components/FloatingActions';
 import api from '../src/lib/axios';
+import useSWR from 'swr';
 
 // ─── FRAMER MOTION VARIANTS ───────────────────────────────────────────────────
 
@@ -646,6 +647,18 @@ function AnimatedProcessSection() {
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 
 export default function ServicesPortfolioPage() {
+  const fetcher = (url: string) => api.get(url).then(res => res.data.data);
+  const { data: stats } = useSWR('/public/stats', fetcher, {
+    revalidateOnFocus: false,
+    fallbackData: {
+      projects: 3000,
+      clients: 1500,
+      industries: 15,
+      experience_years: 12,
+      commitment_rate: 100
+    }
+  });
+
   const [activeTestimonialIdx, setActiveTestimonialIdx] = useState(0);
   const [activeProcessIdx, setActiveProcessIdx] = useState<number | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -868,11 +881,11 @@ export default function ServicesPortfolioPage() {
 
                 <div className="pt-2 flex flex-wrap gap-6">
                   <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-transform hover:-translate-y-1">
-                    <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-[#1b2a6b] to-[#c9a227] mb-1">12+</div>
+                    <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-[#1b2a6b] to-[#c9a227] mb-1">{stats?.experience_years || 12}+</div>
                     <div className="text-xs text-slate-500 font-bold tracking-wider uppercase">Years Experience</div>
                   </div>
                   <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-transform hover:-translate-y-1">
-                    <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-[#1b2a6b] to-[#c9a227] mb-1">100%</div>
+                    <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-[#1b2a6b] to-[#c9a227] mb-1">{stats?.commitment_rate || 100}%</div>
                     <div className="text-xs text-slate-500 font-bold tracking-wider uppercase">Client Commitment</div>
                   </div>
                 </div>
@@ -916,22 +929,22 @@ export default function ServicesPortfolioPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
-                  value={3000}
+                  value={stats?.projects || 3000}
                   label="Projects Delivered"
                   description="High-performance web apps, AI systems, custom CRM and ERP platforms successfully engineered and deployed."
                 />
                 <StatCard
-                  value={1500}
+                  value={stats?.clients || 1500}
                   label="Satisfied Clients"
                   description="Global startups, high-growth SMEs, and enterprise leaders who trust Blueboxx as their technology backbone."
                 />
                 <StatCard
-                  value={15}
+                  value={stats?.industries || 15}
                   label="Industries Served"
                   description="FinTech, Healthcare, EdTech, E-Commerce, Manufacturing, Real Estate, Logistics, and Enterprise IT sectors."
                 />
                 <StatCard
-                  value={12}
+                  value={stats?.experience_years || 12}
                   label="Years Experience"
                   description="Over a decade of continuous engineering excellence, digital transformation, and scalable software architecture."
                 />

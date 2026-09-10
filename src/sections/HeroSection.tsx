@@ -107,9 +107,13 @@ export const HeroSection = () => {
     revalidateOnFocus: false,
     fallbackData: {
       students: 5000,
-      placed: 1200,
+      placed: 4000,
       projects: 3000,
-      partners: 100
+      partners: 250,
+      clients: 1500,
+      industries: 15,
+      experience_years: 12,
+      commitment_rate: 100
     }
   });
 
@@ -206,10 +210,10 @@ export const HeroSection = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-4 border-t border-white/10 pt-4 sm:grid-cols-4">
-              <StatBlock end={5000} suffix="+" label="Students" />
-              <StatBlock end={stats.placed} suffix="+" label="Placed" />
-              <StatBlock end={stats.projects} suffix="+" label="Projects" />
-              <StatBlock end={stats.partners} suffix="+" label="Partners" />
+              <StatBlock end={stats?.projects || 3000} suffix="+" label="Projects Delivered" />
+              <StatBlock end={stats?.clients || 1500} suffix="+" label="Satisfied Clients" />
+              <StatBlock end={stats?.industries || 15} suffix="+" label="Industries Served" />
+              <StatBlock end={stats?.experience_years || 12} suffix="+" label="Years Experience" />
             </div>
           </motion.div>
 
