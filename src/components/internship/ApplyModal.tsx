@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { 
   X, Upload, Send, Building, MapPin, Download, CheckCircle2, 
-  FileText, ShieldCheck, PenTool, ArrowRight, ArrowLeft, ExternalLink 
+  FileText, ShieldCheck, PenTool, ArrowRight, ArrowLeft, ExternalLink,
+  ShieldAlert, Sparkles 
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -10,6 +11,8 @@ import { SignaturePad } from "../common/SignaturePad";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../lib/axios";
 import toast from "react-hot-toast";
+import { getOpportunityPermission } from "../../lib/opportunityPermissions";
+import { RoleChangeModal } from "../common/RoleChangeModal";
 
 interface ApplyModalProps {
   internship: any;
@@ -36,10 +39,12 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ internship, isOpen, onCl
   const [coverLetter, setCoverLetter] = useState("");
   const [resumeFile, setResumeFile] = useState<File | null>(null);
 
-  // Step 2 Fields: Terms & Signature
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [signatureData, setSignatureData] = useState<string | null>(null);
   const [submittedAppId, setSubmittedAppId] = useState<number | null>(null);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+
+  const perm = getOpportunityPermission(user?.role, 'internship');
 
   // Pre-fill user data when modal opens
   useEffect(() => {
@@ -73,6 +78,11 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ internship, isOpen, onCl
 
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
+    if (user && !perm.canApply) {
+      toast.error(perm.message);
+      setShowRoleModal(true);
+      return;
+    }
     if (!firstName.trim()) {
       toast.error("Please enter your first name.");
       return;
@@ -94,6 +104,12 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ internship, isOpen, onCl
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (user && !perm.canApply) {
+      toast.error(perm.message);
+      setShowRoleModal(true);
+      return;
+    }
 
     if (!termsAccepted) {
       toast.error("You must agree to the Terms & Conditions before submitting.");
@@ -210,9 +226,57 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ internship, isOpen, onCl
         {/* Modal Body */}
         <div className="p-6 overflow-y-auto flex-1 space-y-6">
 
-          {/* ================= STEP 1: APPLICANT DETAILS & RESUME ================= */}
-          {step === 1 && (
-            <form id="step1-form" onSubmit={handleNextStep} className="space-y-4">
+          {user && !perm.canApply && step !== 3 ? (
+            <div className="py-6 text-center space-y-5">
+              <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto shadow-inner">
+                <ShieldAlert size={32} />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-slate-900 mb-1 font-sora">Internship Application Restricted</h3>
+                <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-md mx-auto leading-relaxed">
+                  {perm.message}
+                </p>
+              </div>
+
+              <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-4 text-left max-w-md mx-auto space-y-2 text-xs">
+                <div className="flex justify-between py-1 border-b border-amber-200/40">
+                  <span className="text-amber-800 font-medium">Your Current Role:</span>
+                  <span className="font-extrabold text-slate-800 uppercase tracking-wide">{user.role || 'Student'}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-amber-200/40">
+                  <span className="text-amber-800 font-medium">Required Role:</span>
+                  <span className="font-extrabold text-[#1B2A6B]">Intern</span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="text-amber-800 font-medium">Role Switch:</span>
+                  <span className="font-bold text-emerald-700">1-Click Fast-Track Request</span>
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+                {perm.canRequestRoleChange && (
+                  <Button
+                    onClick={() => setShowRoleModal(true)}
+                    className="w-full sm:w-auto h-11 px-6 bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-extrabold rounded-xl text-xs shadow-md gap-2"
+                  >
+                    <Sparkles size={14} /> Request Role Change to Intern
+                  </Button>
+                )}
+                <Link href="/courses" onClick={onClose} className="w-full sm:w-auto">
+                  <Button
+                    variant="outline"
+                    className="w-full h-11 px-5 border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-bold"
+                  >
+                    Browse Courses (Open to All)
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* ================= STEP 1: APPLICANT DETAILS & RESUME ================= */}
+              {step === 1 && (
+                <form id="step1-form" onSubmit={handleNextStep} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">
@@ -429,6 +493,8 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ internship, isOpen, onCl
 
             </form>
           )}
+        </>
+      )}
 
           {/* ================= STEP 3: SUBMITTED / SUCCESS VIEW ================= */}
           {step === 3 && (
@@ -491,7 +557,7 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ internship, isOpen, onCl
         </div>
 
         {/* Modal Footer Controls */}
-        {step !== 3 && (
+        {step !== 3 && (!user || perm.canApply) && (
           <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0">
             {step === 1 ? (
               <Button 
@@ -535,6 +601,14 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ internship, isOpen, onCl
         )}
 
       </div>
+
+      <RoleChangeModal
+        isOpen={showRoleModal}
+        onClose={() => setShowRoleModal(false)}
+        currentRole={user?.role || 'student'}
+        targetRole="intern"
+        targetRoleDisplay="Intern"
+      />
     </div>
   );
 };

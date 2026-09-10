@@ -2,18 +2,25 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { StudentDashboardLayout } from "../../../src/layout/StudentDashboardLayout";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
-import { Briefcase, MapPin, Clock, IndianRupee, Search, Filter, ExternalLink, Bookmark } from "lucide-react";
+import { Briefcase, MapPin, Clock, IndianRupee, Search, Filter, ExternalLink, Bookmark, Sparkles, ShieldAlert } from "lucide-react";
 import toast from "react-hot-toast";
 import useSWR from "swr";
 import api from "../../../src/lib/axios";
+import { useAuth } from "../../../src/context/AuthContext";
+import { getOpportunityPermission } from "../../../src/lib/opportunityPermissions";
+import { RoleChangeModal } from "../../../src/components/common/RoleChangeModal";
 
 const fetcher = (url: string) => api.get(url).then(res => res.data);
 
 export default function InternshipsPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
   const [saving, setSaving] = useState<number | null>(null);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+
+  const perm = getOpportunityPermission(user?.role, 'internship');
 
   const { data: responseData, isLoading } = useSWR("/public/internships", fetcher);
   const internships = responseData?.data || [];
@@ -57,15 +64,42 @@ export default function InternshipsPage() {
   };
 
   const handleApply = (id: number) => {
+    if (user && !perm.canApply) {
+      toast.error(perm.message);
+      setShowRoleModal(true);
+      return;
+    }
     router.push(`/apply/internship/${id}`);
   };
 
   return (
     <StudentDashboardLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-black text-slate-800 mb-1">Internships</h1>
-        <p className="text-slate-500 text-sm font-medium">Discover internships matched to your profile and skills.</p>
+      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-black text-slate-800 mb-1">Internships</h1>
+          <p className="text-slate-500 text-sm font-medium">Discover internships matched to your profile and skills.</p>
+        </div>
       </div>
+
+      {/* Student Internship Permission Notice if user is student */}
+      {user && !perm.canApply && (
+        <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div className="flex items-start gap-3">
+            <ShieldAlert size={18} className="text-amber-700 shrink-0 mt-0.5" />
+            <p className="text-xs text-amber-900 font-medium leading-relaxed">
+              You are currently registered as a <strong>{user.role || 'Student'}</strong>. Student accounts can explore listings and courses. To apply directly for live internships, request a quick role change to <strong>Intern</strong>.
+            </p>
+          </div>
+          {perm.canRequestRoleChange && (
+            <button
+              onClick={() => setShowRoleModal(true)}
+              className="shrink-0 px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-xs inline-flex items-center gap-1.5 self-start sm:self-auto"
+            >
+              <Sparkles size={13} /> Request Role Change
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Search */}
       <div className="flex gap-3 mb-8">
@@ -151,6 +185,14 @@ export default function InternshipsPage() {
           })}
         </div>
       )}
+
+      <RoleChangeModal
+        isOpen={showRoleModal}
+        onClose={() => setShowRoleModal(false)}
+        currentRole={user?.role || 'student'}
+        targetRole="intern"
+        targetRoleDisplay="Intern"
+      />
     </StudentDashboardLayout>
   );
 }
