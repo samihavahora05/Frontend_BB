@@ -2,11 +2,13 @@ import { useState, useEffect, useRef, FormEvent } from "react";
 import { useRouter } from "next/router";
 import { MainLayout } from "../../../src/layout/MainLayout";
 import { motion } from "framer-motion";
-import { CheckCircle2, Upload, FileText, Briefcase, MapPin, Loader2, Download, ShieldCheck, PenTool } from "lucide-react";
+import { CheckCircle2, Upload, FileText, Briefcase, MapPin, Loader2, Download, ShieldCheck, PenTool, ShieldAlert, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../../../src/components/ui/Button";
 import { useAuth } from "../../../src/context/AuthContext";
 import { SignaturePad } from "../../../src/components/common/SignaturePad";
+import { getOpportunityPermission } from "../../../src/lib/opportunityPermissions";
+import { RoleChangeModal } from "../../../src/components/common/RoleChangeModal";
 import api from "../../../src/lib/axios";
 import toast from "react-hot-toast";
 
@@ -43,6 +45,7 @@ export default function ApplicationFlowPage() {
   const [countdown, setCountdown] = useState(4);
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showRoleModal, setShowRoleModal] = useState(false);
 
   // Form data captured across steps
   const [formData, setFormData] = useState({
@@ -237,6 +240,56 @@ export default function ApplicationFlowPage() {
             </div>
           </div>
         </div>
+      </MainLayout>
+    );
+  }
+
+  const oppType = type === "internship" ? "internship" : "job";
+  const perm = getOpportunityPermission(user?.role, oppType);
+
+  if (user && !perm.canApply && step < 4) {
+    return (
+      <MainLayout>
+        <div className="min-h-screen bg-transparent py-12 pt-28">
+          <div className="container mx-auto px-4 max-w-xl">
+            <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200 mb-8 text-center mt-6">
+              <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                <ShieldAlert size={32} />
+              </div>
+              <h2 className="text-xl font-black text-slate-900 mb-2 font-sora">Application Restricted</h2>
+              <p className="text-slate-600 text-xs sm:text-sm max-w-md mx-auto mb-6 leading-relaxed">
+                {perm.message}
+              </p>
+
+              <div className="space-y-3">
+                {perm.canRequestRoleChange && (
+                  <Button
+                    onClick={() => setShowRoleModal(true)}
+                    className="w-full bg-[#1B2A6B] hover:bg-[#0d1635] text-white py-3 rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-2"
+                  >
+                    <Sparkles size={16} /> Request Role Change to {perm.targetRoleDisplay}
+                  </Button>
+                )}
+                <Link href="/courses" className="block w-full">
+                  <Button variant="outline" className="w-full py-3 rounded-xl border-slate-200 text-slate-700 font-bold text-sm hover:bg-slate-50">
+                    Browse Courses (Available to All)
+                  </Button>
+                </Link>
+                <Link href={type === "internship" ? "/internships" : "/jobs"} className="inline-block text-xs font-bold text-slate-400 hover:text-slate-600 mt-2">
+                  &larr; Back to {type === "internship" ? "Internships" : "Jobs"}
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <RoleChangeModal
+          isOpen={showRoleModal}
+          onClose={() => setShowRoleModal(false)}
+          currentRole={user.role || 'student'}
+          targetRole={perm.targetRole || 'jobseeker'}
+          targetRoleDisplay={perm.targetRoleDisplay || 'Jobseeker'}
+        />
       </MainLayout>
     );
   }

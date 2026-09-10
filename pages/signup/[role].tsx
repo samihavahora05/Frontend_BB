@@ -79,44 +79,20 @@ export default function RoleSignupPage() {
 
     try {
       const api = (await import("../../src/lib/axios")).default;
-      // Send the role explicitly as the URL param (mapped to backend role)
+      const normalizedEmail = email.trim().toLowerCase();
       const backendRole = role === 'jobseeker' ? 'job-seeker' : role;
 
-      const response = await api.post("/register", {
-        name,
-        email,
-        phone,
+      await api.post("/register", {
+        name: name.trim(),
+        email: normalizedEmail,
+        phone: phone.trim(),
         password,
         password_confirmation: confirmPassword,
         role: backendRole,
       });
 
-      const token = response.data.token || response.data.data?.token || response.data.access_token || "";
-      const userData = response.data.user || response.data.data?.user || response.data.data || {};
-      
-      if (response.data.status === 'pending_approval' || userData.status === 'pending_approval') {
-        router.push('/pending-approval');
-      } else {
-        const userRole = (userData.roles && userData.roles.length > 0 ? userData.roles[0].name : (userData.role || backendRole)) || "student";
-        
-        const mappedUser = {
-          name: userData.name || `${userData.first_name || ""} ${userData.last_name || ""}`.trim() || name,
-          email: userData.email || email,
-          avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(userData.name || name)}`,
-          role: userRole
-        };
-        
-        login(mappedUser, token);
-        
-        // Redirect to appropriate dashboard based on role
-        const normalizedRole = String(userRole).toLowerCase();
-        if (normalizedRole === 'expert' || normalizedRole === 'mentor') router.push("/expert/dashboard");
-        else if (normalizedRole === 'company') router.push("/company/dashboard");
-        else if (normalizedRole === 'college') router.push("/college/dashboard");
-        else if (normalizedRole === 'intern') router.push("/intern/dashboard");
-        else if (normalizedRole === 'job-seeker' || normalizedRole === 'jobseeker') router.push("/jobseeker/dashboard");
-        else router.push("/student/dashboard");
-      }
+      // Always redirect to OTP verification page
+      router.push(`/verify-otp?email=${encodeURIComponent(normalizedEmail)}&role=${encodeURIComponent(backendRole)}`);
     } catch (err: any) {
       let errMsg = err.response?.data?.message;
       if (err.response?.data?.errors) {
@@ -183,8 +159,13 @@ export default function RoleSignupPage() {
           </motion.div>
 
           {error && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4 p-3 rounded-lg bg-rose-50 text-rose-600 text-sm font-semibold border border-rose-200">
-              {error}
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-3.5 rounded-xl bg-rose-50 text-rose-700 text-xs font-semibold border border-rose-200 leading-relaxed">
+              <p className="mb-1.5">{error}</p>
+              {error.toLowerCase().includes("already registered") && (
+                <Link href="/login" className="inline-flex items-center gap-1 font-extrabold text-[#1B2A6B] hover:underline">
+                  Go to Login &rarr;
+                </Link>
+              )}
             </motion.div>
           )}
 

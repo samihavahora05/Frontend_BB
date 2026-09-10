@@ -7,19 +7,25 @@ import { Card, CardContent } from "../../src/components/ui/Card";
 import { Badge } from "../../src/components/ui/Badge";
 import { 
   MapPin, Briefcase, DollarSign, Clock, Users, Building2, 
-  CheckCircle2, ChevronRight, Share2, Bookmark, FileText, Loader2
+  CheckCircle2, ChevronRight, Share2, Bookmark, FileText, Loader2,
+  Lock, Sparkles, ShieldAlert
 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { SEO } from "../../src/components/seo/SEO";
 import api from "../../src/lib/axios";
 import { mutate } from "swr";
+import { useAuth } from "../../src/context/AuthContext";
+import { getOpportunityPermission } from "../../src/lib/opportunityPermissions";
+import { RoleChangeModal } from "../../src/components/common/RoleChangeModal";
 
 export default function JobDetailPage() {
   const router = useRouter();
   const { id } = router.query;
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (!id) return;
@@ -71,6 +77,8 @@ export default function JobDetailPage() {
     );
   }
 
+  const perm = getOpportunityPermission(user?.role, 'job');
+
   return (
     <>
       <SEO 
@@ -112,16 +120,34 @@ export default function JobDetailPage() {
               <Button onClick={handleBookmark} variant="outline" className={`w-12 h-12 p-0 rounded-xl border-slate-200 shrink-0 ${job.is_bookmarked ? 'text-[#C9A227] bg-amber-50' : 'text-slate-400 hover:text-[#C9A227] hover:bg-amber-50'}`}>
                 <Bookmark size={20} className={job.is_bookmarked ? 'fill-current' : ''} />
               </Button>
+
               {job.has_applied ? (
                 <Button disabled className="flex-1 lg:w-48 bg-emerald-600 text-white font-black h-12 rounded-xl text-sm shadow-[0_4px_15px_rgba(16,185,129,0.2)] transition-all gap-2 uppercase tracking-wider">
                   <CheckCircle2 size={16} /> Applied
                 </Button>
-              ) : (
+              ) : !isAuthenticated ? (
+                <Link href="/login">
+                  <Button className="flex-1 lg:w-48 bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-black h-12 rounded-xl text-sm shadow-[0_4px_15px_rgba(27,42,107,0.2)] transition-all gap-2 uppercase tracking-wider">
+                    Log In to Apply <ChevronRight size={16} />
+                  </Button>
+                </Link>
+              ) : perm.canApply ? (
                 <Link href={`/apply/job/${job.id}`}>
                   <Button className="flex-1 lg:w-48 bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-black h-12 rounded-xl text-sm shadow-[0_4px_15px_rgba(27,42,107,0.2)] transition-all gap-2 uppercase tracking-wider">
                     Apply Now <ChevronRight size={16} />
                   </Button>
                 </Link>
+              ) : perm.canRequestRoleChange ? (
+                <Button 
+                  onClick={() => setShowRoleModal(true)}
+                  className="flex-1 lg:w-56 bg-amber-600 hover:bg-amber-700 text-white font-black h-12 rounded-xl text-xs shadow-[0_4px_15px_rgba(217,119,6,0.25)] transition-all gap-2 uppercase tracking-wider"
+                >
+                  <Sparkles size={16} /> Request Role Change
+                </Button>
+              ) : (
+                <Button disabled className="flex-1 lg:w-48 bg-slate-200 text-slate-500 font-bold h-12 rounded-xl text-xs cursor-not-allowed">
+                  <Lock size={14} className="mr-1" /> Not Eligible
+                </Button>
               )}
             </div>
 
@@ -136,6 +162,32 @@ export default function JobDetailPage() {
           {/* Left Column (Job Details) */}
           <div className="flex-1 lg:max-w-3xl space-y-12">
             
+            {/* Role-Specific Alert Banner if application restricted */}
+            {isAuthenticated && !perm.canApply && (
+              <div className="p-5 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-4 shadow-xs">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+                  <ShieldAlert size={20} />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-sm font-black text-amber-900 mb-1">Opportunity Application Notice</h4>
+                  <p className="text-xs text-amber-800 leading-relaxed font-medium">
+                    {perm.message}
+                  </p>
+                  {perm.canRequestRoleChange && (
+                    <div className="mt-3">
+                      <Button
+                        size="sm"
+                        onClick={() => setShowRoleModal(true)}
+                        className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-xs"
+                      >
+                        <Sparkles size={14} className="mr-1.5" /> Request Change to {perm.targetRoleDisplay}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {job.required_skills?.length > 0 && (
               <div>
                 <h2 className="text-lg font-black text-slate-800 mb-4">Required Skills</h2>
@@ -226,15 +278,32 @@ export default function JobDetailPage() {
                       <Button disabled className="w-full bg-emerald-600 text-white font-black h-14 rounded-xl text-sm shadow-[0_8px_20px_rgba(16,185,129,0.2)] transition-all gap-2 uppercase tracking-wider">
                         <CheckCircle2 size={18} /> You Have Applied
                       </Button>
-                    ) : (
+                    ) : !isAuthenticated ? (
+                      <Link href="/login">
+                        <Button className="w-full bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-black h-14 rounded-xl text-sm shadow-[0_8px_20px_rgba(27,42,107,0.2)] transition-all hover:-translate-y-1 gap-2 uppercase tracking-wider">
+                          Log In to Apply
+                        </Button>
+                      </Link>
+                    ) : perm.canApply ? (
                       <Link href={`/apply/job/${job.id}`}>
                         <Button className="w-full bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-black h-14 rounded-xl text-sm shadow-[0_8px_20px_rgba(27,42,107,0.2)] transition-all hover:-translate-y-1 gap-2 uppercase tracking-wider">
                           <FileText size={18} /> Apply with Profile
                         </Button>
                       </Link>
+                    ) : perm.canRequestRoleChange ? (
+                      <Button
+                        onClick={() => setShowRoleModal(true)}
+                        className="w-full bg-amber-600 hover:bg-amber-700 text-white font-black h-14 rounded-xl text-xs shadow-[0_8px_20px_rgba(217,119,6,0.25)] transition-all hover:-translate-y-1 gap-2 uppercase tracking-wider"
+                      >
+                        <Sparkles size={18} /> Request Role Change
+                      </Button>
+                    ) : (
+                      <Button disabled className="w-full bg-slate-200 text-slate-500 font-bold h-14 rounded-xl text-xs cursor-not-allowed">
+                        <Lock size={16} className="mr-1.5" /> Application Restricted
+                      </Button>
                     )}
                     <p className="text-center text-[11px] font-bold text-slate-400 mt-2">
-                      Uses your BlueBoxx student profile & resume.
+                      {perm.canApply ? 'Uses your verified profile & resume.' : 'Courses are open to all user roles.'}
                     </p>
                   </div>
                 </CardContent>
@@ -245,10 +314,12 @@ export default function JobDetailPage() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#C9A227]/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
                 <CardContent className="p-6 relative z-10">
                   <h3 className="font-black text-lg mb-2">Want to ace the interview?</h3>
-                  <p className="text-xs text-slate-300 font-medium mb-5 leading-relaxed">Book a 1:1 session with an expert who works at TechCorp.</p>
-                  <Button className="w-full h-10 text-[10px] font-black bg-[#C9A227] hover:bg-amber-400 text-[#0d1635] transition-all rounded-xl shadow-lg uppercase tracking-wider border-none">
-                    Find a Mentor
-                  </Button>
+                  <p className="text-xs text-slate-300 font-medium mb-5 leading-relaxed">Explore certified career tracks and courses to accelerate your career.</p>
+                  <Link href="/courses">
+                    <Button className="w-full h-10 text-[10px] font-black bg-[#C9A227] hover:bg-amber-400 text-[#0d1635] transition-all rounded-xl shadow-lg uppercase tracking-wider border-none">
+                      Explore Courses
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
 
@@ -257,6 +328,17 @@ export default function JobDetailPage() {
 
         </div>
       </div>
+
+      {/* Role Change Modal */}
+      {user && (
+        <RoleChangeModal
+          isOpen={showRoleModal}
+          onClose={() => setShowRoleModal(false)}
+          currentRole={user.role || 'student'}
+          targetRole="jobseeker"
+          targetRoleDisplay="Jobseeker"
+        />
+      )}
     </MainLayout>
     </>
   );

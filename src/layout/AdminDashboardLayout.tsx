@@ -15,7 +15,7 @@ import {
   Building2, Play, Plus, Trash2, Upload, Video, MessageSquare,
   FolderOpen, Fingerprint,
   Hammer, Loader, MapPin, ShieldBan, RotateCcw, BarChart, Layout,
-  Code, Trophy, CheckCircle2
+  Code, Trophy, CheckCircle2, Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NotificationService } from "../lib/api/admin/RealtimeNotificationService";
@@ -99,6 +99,8 @@ const getSidebarCategories = () => {
       title: "User Manager",
       icon: ShieldCheck,
       links: [
+        { name: "Account Approvals", href: "/admin/approvals", icon: CheckCircle2 },
+        { name: "Role Change Requests", href: "/admin/role-requests", icon: Sparkles },
         { name: "Roles", href: "/admin/roles", icon: ShieldCheck },
         { name: "Delete Request", href: "/admin/users/delete-requests", icon: Trash2 },
       ]

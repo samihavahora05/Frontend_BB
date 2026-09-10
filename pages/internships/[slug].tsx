@@ -5,7 +5,8 @@ import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import { 
   Building, MapPin, Clock, DollarSign, Briefcase, 
-  CheckCircle2, Share2, Bookmark, Loader2, ArrowRight
+  CheckCircle2, Share2, Bookmark, Loader2, ArrowRight,
+  Lock, Sparkles, ShieldAlert
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../../src/components/ui/Button";
@@ -15,12 +16,15 @@ import api from "../../src/lib/axios";
 import toast from "react-hot-toast";
 import { SEO } from "../../src/components/seo/SEO";
 import { useAuth } from "../../src/context/AuthContext";
+import { getOpportunityPermission } from "../../src/lib/opportunityPermissions";
+import { RoleChangeModal } from "../../src/components/common/RoleChangeModal";
 
 export default function InternshipDetailsPage() {
   const router = useRouter();
   const { slug: id } = router.query;
   const [internship, setInternship] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showRoleModal, setShowRoleModal] = useState(false);
   const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -42,11 +46,7 @@ export default function InternshipDetailsPage() {
 
   const handleBookmark = async () => {
     if (!isAuthenticated) {
-      toast.error("Please login as a student to save internships");
-      return;
-    }
-    if (user?.role !== 'student') {
-      toast.error("Only students can save internships");
+      toast.error("Please login to save internships");
       return;
     }
 
@@ -88,6 +88,7 @@ export default function InternshipDetailsPage() {
   const roleTitle = internship.title;
   const isExpired = internship.application_deadline && new Date(internship.application_deadline) < new Date(new Date().setHours(0,0,0,0));
   const isClosed = internship.status === 'closed' || isExpired;
+  const perm = getOpportunityPermission(user?.role, 'internship');
 
   return (
     <>
@@ -131,15 +132,54 @@ export default function InternshipDetailsPage() {
                     <Button disabled className="h-12 px-8 text-base shadow-lg bg-slate-200 text-slate-500 border border-slate-300 cursor-not-allowed">
                       Application Closed
                     </Button>
-                  ) : (
+                  ) : !isAuthenticated ? (
+                    <Link href="/login">
+                      <Button variant="primary" size="lg" className="h-12 px-8 text-base shadow-lg shadow-[#1B2A6B]/20 bg-[#1B2A6B] hover:bg-[#0d1635] text-white">
+                        Log In to Apply <ArrowRight size={18} className="ml-2" />
+                      </Button>
+                    </Link>
+                  ) : perm.canApply ? (
                     <Link href={`/apply/internship/${internship.id}`}>
                       <Button variant="primary" size="lg" className="h-12 px-8 text-base shadow-lg shadow-[#1B2A6B]/20 bg-[#1B2A6B] hover:bg-[#0d1635] text-white">
                         Apply Now <ArrowRight size={18} className="ml-2" />
                       </Button>
                     </Link>
+                  ) : perm.canRequestRoleChange ? (
+                    <Button 
+                      size="lg"
+                      onClick={() => setShowRoleModal(true)}
+                      className="h-12 px-8 text-base shadow-lg shadow-amber-600/20 bg-amber-600 hover:bg-amber-700 text-white font-bold"
+                    >
+                      <Sparkles size={18} className="mr-2" /> Request Role Change
+                    </Button>
+                  ) : (
+                    <Button disabled className="h-12 px-8 text-base shadow-lg bg-slate-200 text-slate-500 font-bold cursor-not-allowed">
+                      <Lock size={16} className="mr-2" /> Application Restricted
+                    </Button>
                   )}
                 </div>
               </div>
+
+              {/* Opportunity Alert if Restricted */}
+              {isAuthenticated && !perm.canApply && (
+                <div className="mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3.5 shadow-xs">
+                  <ShieldAlert size={20} className="text-amber-700 shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <h4 className="text-xs font-black text-amber-900 uppercase tracking-wider mb-0.5">Application Notice</h4>
+                    <p className="text-xs text-amber-800 font-medium leading-relaxed">
+                      {perm.message}
+                    </p>
+                    {perm.canRequestRoleChange && (
+                      <button
+                        onClick={() => setShowRoleModal(true)}
+                        className="mt-2 text-xs font-bold text-amber-900 underline hover:text-amber-950 inline-flex items-center gap-1"
+                      >
+                        <Sparkles size={12} /> Request Role Change to {perm.targetRoleDisplay} &rarr;
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Meta Row */}
               <div className="flex flex-wrap gap-x-8 gap-y-4 pt-6 border-t border-slate-100">
@@ -160,7 +200,7 @@ export default function InternshipDetailsPage() {
                   <div>
                     <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Stipend</div>
                     <div className="font-semibold text-emerald-600">
-                      {internship.is_paid && internship.stipend ? `₹${Number(internship.stipend).toLocaleString('en-IN')}` : (internship.stipend ? `₹${Number(internship.stipend).toLocaleString('en-IN')}` : "Performance Based")}
+                      {internship.stipend ? `₹${Number(internship.stipend).toLocaleString()}/month` : "Unpaid / Performance Stipend"}
                     </div>
                   </div>
                 </div>
@@ -171,7 +211,7 @@ export default function InternshipDetailsPage() {
                   </div>
                   <div>
                     <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Duration</div>
-                    <div className="font-semibold text-slate-800">{internship.duration || "3 Months"}</div>
+                    <div className="font-semibold text-slate-800">{internship.duration_weeks ? `${internship.duration_weeks} Weeks` : "Flexible"}</div>
                   </div>
                 </div>
 
@@ -180,53 +220,28 @@ export default function InternshipDetailsPage() {
                     <Briefcase size={18} className="text-slate-500" />
                   </div>
                   <div>
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mode</div>
-                    <div className="font-semibold text-slate-800">{internship.type || internship.mode || "Remote"}</div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Type</div>
+                    <div className="font-semibold text-slate-800">{internship.type || "Internship"}</div>
                   </div>
                 </div>
-
-                {internship.application_deadline && (
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
-                      <Clock size={18} className={isExpired ? "text-rose-500" : "text-slate-500"} />
-                    </div>
-                    <div>
-                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Deadline</div>
-                      <div className={`font-semibold ${isExpired ? 'text-rose-600 font-bold' : 'text-slate-800'}`}>
-                        {internship.application_deadline} {isExpired ? '(Expired)' : ''}
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             </motion.div>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="py-12 bg-slate-50">
-          <div className="container mx-auto px-4 max-w-5xl flex flex-col lg:flex-row gap-8">
+        {/* Content Body */}
+        <div className="container mx-auto px-4 max-w-5xl py-12">
+          <div className="flex flex-col lg:flex-row gap-12">
             
             {/* Left Column */}
             <div className="w-full lg:w-2/3 space-y-10">
               
-              {internship.company_description && (
-                <section>
-                  <h2 className="text-xl font-bold text-slate-900 mb-4">About {internship.company_name}</h2>
-                  <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line">
-                    {internship.company_description}
-                  </p>
-                </section>
-              )}
-
-              {internship.description && (
-                <section>
-                  <h2 className="text-xl font-bold text-slate-900 mb-4">About the Role</h2>
-                  <p className="text-slate-600 leading-relaxed text-sm mb-6 whitespace-pre-line">
-                    {internship.description}
-                  </p>
-                </section>
-              )}
+              <section>
+                <h2 className="text-xl font-bold text-slate-900 mb-4">About the Internship</h2>
+                <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line">
+                  {internship.description || "No description provided."}
+                </p>
+              </section>
 
               {internship.responsibilities && (
                 <section>
@@ -335,6 +350,17 @@ export default function InternshipDetailsPage() {
 
           </div>
         </div>
+
+        {/* Role Change Modal */}
+        {user && (
+          <RoleChangeModal
+            isOpen={showRoleModal}
+            onClose={() => setShowRoleModal(false)}
+            currentRole={user.role || 'student'}
+            targetRole="intern"
+            targetRoleDisplay="Intern"
+          />
+        )}
       </MainLayout>
     </>
   );
