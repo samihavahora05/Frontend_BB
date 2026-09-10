@@ -186,13 +186,13 @@ export default function AdminApprovalsPage() {
             </div>
             
             <div className="flex items-center gap-3">
-              <Link
-                href="/admin/role-requests"
+              <button
+                onClick={() => router.push('/admin/role-requests')}
                 className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 text-xs shadow-md cursor-pointer"
               >
-                <Sparkles size={14} /> 
+                <ShieldAlert size={14} /> 
                 Role Change Requests
-              </Link>
+              </button>
               <button 
                 onClick={fetchPendingApprovals}
                 className="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2.5 rounded-xl transition-colors flex items-center gap-2 text-xs font-bold shadow-sm cursor-pointer"
