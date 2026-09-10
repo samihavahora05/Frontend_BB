@@ -1,4 +1,4 @@
-﻿import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useAnimationFrame, useInView } from "framer-motion";
 import { useCountUp } from "../hooks/useAnimations";
 import {
@@ -174,7 +174,7 @@ export const ClientsSection = ({
   const currentStats = [
     { value: 5000, suffix: "+", label: "Students Trained", icon: GraduationCap },
     { value: partners.length || 41, suffix: "+", label: "Hiring Partners", icon: Users },
-    { value: statsData?.projects || 850, suffix: "+", label: "Live Projects", icon: Briefcase },
+    { value: statsData?.projects || 3000, suffix: "+", label: "Live Projects", icon: Briefcase },
     { value: 98.4, suffix: "%", label: "Placement Rate", icon: Star },
   ];
 
