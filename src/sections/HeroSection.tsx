@@ -108,7 +108,7 @@ export const HeroSection = () => {
     fallbackData: {
       students: 5000,
       placed: 1200,
-      projects: 850,
+      projects: 3000,
       partners: 100
     }
   });
