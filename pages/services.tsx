@@ -866,24 +866,24 @@ export default function ServicesPortfolioPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-16">
 
-              <div className="lg:col-span-6 space-y-6">
+              <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
                 <h4 className="text-[#c9a227] font-bold tracking-[0.2em] uppercase text-xs">About Blueboxx</h4>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0d1635] tracking-tight leading-tight font-sora">
                   Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1b2a6b] via-[#c9a227] to-[#e0b840]">Premium Partner</span> for Digital Transformation.
                 </h2>
-                <p className="text-slate-600 text-base sm:text-lg font-medium leading-relaxed font-inter">
+                <p className="text-slate-600 text-base sm:text-lg font-medium leading-relaxed font-inter text-justify lg:text-left">
                   Blueboxx isn't just a development agency—we are your execution partner. Since our inception, we have been obsessed with building scalable software architectures, intelligent AI automations, and enterprise-grade systems that drive real business results.
                 </p>
-                <p className="text-slate-600 text-base font-medium leading-relaxed font-inter">
+                <p className="text-slate-600 text-base font-medium leading-relaxed font-inter text-justify lg:text-left">
                   We bridge the gap between complex technology and business growth, empowering startups, SMEs, and large enterprises to outpace their competition in a digital-first world.
                 </p>
 
-                <div className="pt-2 flex flex-wrap gap-6">
-                  <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-transform hover:-translate-y-1">
+                <div className="pt-2 flex flex-wrap gap-4 sm:gap-6 justify-center lg:justify-start">
+                  <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-transform hover:-translate-y-1 text-center lg:text-left min-w-[140px]">
                     <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-[#1b2a6b] to-[#c9a227] mb-1">{stats?.experience_years || 12}+</div>
                     <div className="text-xs text-slate-500 font-bold tracking-wider uppercase">Years Experience</div>
                   </div>
-                  <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-transform hover:-translate-y-1">
+                  <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-transform hover:-translate-y-1 text-center lg:text-left min-w-[140px]">
                     <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-[#1b2a6b] to-[#c9a227] mb-1">{stats?.commitment_rate || 100}%</div>
                     <div className="text-xs text-slate-500 font-bold tracking-wider uppercase">Client Commitment</div>
                   </div>
@@ -986,9 +986,9 @@ export default function ServicesPortfolioPage() {
                     variants={hoverCardVariant}
                     initial="initial"
                     whileHover="hover"
-                    className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/80 shadow-[0_2px_15px_rgba(0,0,0,0.02)] hover:shadow-[0_16px_35px_rgba(27,42,107,0.08)] hover:border-[#c9a227]/50 transition-all duration-300 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
+                    className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/80 shadow-[0_2px_15px_rgba(0,0,0,0.02)] hover:shadow-[0_16px_35px_rgba(27,42,107,0.08)] hover:border-[#c9a227]/50 transition-all duration-300 flex flex-col items-center sm:items-start text-center sm:text-left justify-between group cursor-pointer relative overflow-hidden"
                   >
-                    <div className="w-11 h-11 rounded-xl bg-amber-50/80 border border-amber-200/50 flex items-center justify-center text-[#c9a227] group-hover:scale-110 group-hover:bg-[#1b2a6b] group-hover:text-white transition-all duration-300 mb-4 shadow-2xs">
+                    <div className="w-11 h-11 rounded-xl bg-amber-50/80 border border-amber-200/50 flex items-center justify-center text-[#c9a227] group-hover:scale-110 group-hover:bg-[#1b2a6b] group-hover:text-white transition-all duration-300 mb-4 shadow-2xs mx-auto sm:mx-0">
                       <IconComponent className="w-5 h-5 transition-colors duration-300 stroke-[2]" />
                     </div>
                     <span className="text-sm sm:text-[15px] font-bold text-slate-800 group-hover:text-[#1b2a6b] transition-colors leading-snug font-sora">
@@ -1056,7 +1056,7 @@ export default function ServicesPortfolioPage() {
                   />
                   {/* Floating Live Metric Pill */}
                   <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md text-white text-[10px] font-bold border border-white/10 flex items-center gap-1.5 shadow-lg">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400" /> $245,000 Pipeline
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400" /> ₹24,50,000 Pipeline
                   </div>
                 </div>
 
@@ -1556,28 +1556,28 @@ export default function ServicesPortfolioPage() {
             <div className="grid lg:grid-cols-2 gap-16">
 
               {/* Content */}
-              <div>
+              <div className="text-center lg:text-left">
                 <h4 className="text-[#c9a227] font-semibold tracking-wider uppercase text-sm mb-4">Get In Touch</h4>
                 <h2 className="text-4xl lg:text-5xl font-heading font-bold text-slate-900 mb-6 font-sora">
                   Let's Build Something <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1b2a6b] via-[#c9a227] to-[#e0b840]">Amazing</span>
                 </h2>
-                <p className="text-slate-600 text-lg mb-10 leading-relaxed font-inter">
+                <p className="text-slate-600 text-base sm:text-lg mb-10 leading-relaxed font-inter text-justify lg:text-left">
                   Whether you need a custom enterprise platform, an AI integration, or a dedicated development team, we're ready to execute. Fill out the form below to start the conversation.
                 </p>
 
-                <div className="space-y-6">
+                <div className="space-y-6 text-left">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-[#c9a227]">
-                      📍
+                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-[#1b2a6b] shrink-0">
+                      <MapPin size={20} className="text-[#1b2a6b]" />
                     </div>
                     <div>
-                      <h4 className="text-slate-900 font-semibold font-sora">Headquarters</h4>
+                      <h4 className="text-slate-900 font-semibold font-sora">Office</h4>
                       <p className="text-slate-600 text-sm font-inter">SF 02, INDIA BULLS MEGA MALL, Dinesh Mill Rd, Akota, Vadodara, Gujarat 390022</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-[#c9a227]">
-                      📧
+                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-[#1b2a6b] shrink-0">
+                      <Mail size={20} className="text-[#1b2a6b]" />
                     </div>
                     <div>
                       <h4 className="text-slate-900 font-semibold font-sora">Email Us</h4>
@@ -1585,8 +1585,8 @@ export default function ServicesPortfolioPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-[#c9a227]">
-                      📞
+                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-[#1b2a6b] shrink-0">
+                      <Phone size={20} className="text-[#1b2a6b]" />
                     </div>
                     <div>
                       <h4 className="text-slate-900 font-semibold font-sora">Call Us</h4>

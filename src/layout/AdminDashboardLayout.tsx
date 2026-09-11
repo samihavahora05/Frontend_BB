@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useAuth } from "../context/AuthContext";
 import { AuthGuard } from "../components/auth/AuthGuard";
 import {
-  LayoutDashboard, Users, BookOpen, Briefcase, Settings, LogOut,
+  LayoutDashboard, CheckSquare, Users, BookOpen, Briefcase, Settings, LogOut,
   Menu, X, Bell, Search, ShieldCheck, GraduationCap,
   FileText, ChevronRight, ChevronDown,
   ShieldAlert, Award, Book,
@@ -160,10 +160,12 @@ const getSidebarCategories = () => {
       isStandalone: true,
     },
     {
-      title: "MCQ Results",
-      icon: BarChart,
-      href: "/admin/mcq-results",
-      isStandalone: true,
+      title: "Assessments",
+      icon: CheckSquare,
+      links: [
+        { name: "Question Management", href: "/admin/assessments/questions", icon: CheckSquare },
+        { name: "Intern Results", href: "/admin/assessments", icon: BarChart },
+      ]
     },
     {
       title: "Enrollments",

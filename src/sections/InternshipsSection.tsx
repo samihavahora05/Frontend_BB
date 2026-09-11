@@ -67,7 +67,7 @@ export const InternshipsSection = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-60px" }}
-            className="w-full lg:w-5/12"
+            className="w-full lg:w-5/12 text-center lg:text-left"
           >
             <motion.p variants={staggerItem} className="text-xs font-bold tracking-widest uppercase text-[#C9A227] mb-3">
               Internships
@@ -79,7 +79,7 @@ export const InternshipsSection = () => {
               Gain practical experience by working on real projects with top companies. Build a portfolio that stands out.
             </motion.p>
 
-            <motion.ul variants={staggerContainer} className="space-y-3 mb-8">
+            <motion.ul variants={staggerContainer} className="space-y-3 mb-8 inline-block text-left">
               {features.map((f) => (
                 <motion.li
                   key={f.text}
@@ -94,7 +94,7 @@ export const InternshipsSection = () => {
               ))}
             </motion.ul>
 
-            <motion.div variants={staggerItem}>
+            <motion.div variants={staggerItem} className="flex justify-center lg:justify-start">
               <Link href="/internships" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg btn-primary font-medium text-sm">
                 Explore Internships <ArrowRight size={16} />
               </Link>

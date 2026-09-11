@@ -3,16 +3,17 @@ import { getImageUrl } from "../lib/imageUtils";
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { motion, Variants } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useStore } from '../store/useStore';
 import { useGlobalSettings } from '../contexts/SettingsContext';
 
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, ChevronDown } from 'lucide-react';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
 
   const { user, isAuthenticated, logout } = useAuth();
   const cartItemCount = useStore((state) => state.cart.length);
@@ -61,16 +62,6 @@ export default function Navbar() {
     },
     { label: 'Contact', href: '/contact' },
   ];
-
-  // Mobile menu motion variants
-  const menuContainer: Variants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.04 } },
-  };
-  const menuItem: Variants = {
-    hidden: { opacity: 0, y: 14 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
-  };
 
   // Dashboard link based on role
   const getDashboardLink = () => {
@@ -245,82 +236,129 @@ export default function Navbar() {
       </header>
 
       {/* Fullscreen Overlay Menu (mobile & tablet) */}
-      <motion.div
-        initial={false}
-        animate={isOpen ? 'open' : 'closed'}
-        variants={{ open: { clipPath: 'circle(150% at 100% 0%)', pointerEvents: 'auto' }, closed: { clipPath: 'circle(0% at 100% 0%)', pointerEvents: 'none' } }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed inset-0 z-50 bg-white/95 backdrop-blur-2xl p-6 sm:p-8 flex flex-col overflow-y-auto"
-      >
-        {/* Header Area */}
-        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-          <img 
-            src={getImageUrl(settings.main_logo || "/logoblue.png")} 
-            alt={settings.website_name || "BlueBoxx"} 
-            onError={(e: any) => {
-              if (!e.currentTarget.dataset.fallbackApplied) {
-                e.currentTarget.dataset.fallbackApplied = "true";
-                e.currentTarget.src = "/logoblue.png";
-              }
-            }}
-            className="h-9 w-auto object-contain" 
-          />
-          <button onClick={() => setIsOpen(false)} className="p-2 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer" aria-label="Close menu">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Centered Menu Links */}
-        <motion.nav className="flex flex-col items-center justify-center gap-3 sm:gap-4 my-auto py-6" variants={menuContainer} initial="hidden" animate={isOpen ? 'visible' : 'hidden'}>
-          {menuItems.map((item) => (
-            <motion.div key={item.label} variants={menuItem} className="text-center">
-              <Link href={item.href} onClick={() => setIsOpen(false)} className="group relative text-2xl sm:text-3xl font-extrabold transition-all duration-300 py-1 tracking-tight inline-block">
-                <span className="relative z-10 text-slate-900 group-hover:text-[#1B2A6B]">{item.label}</span>
-                <span className="absolute -bottom-1 left-1/2 w-0 h-1 bg-[#C9A227] transition-all duration-300 -translate-x-1/2 group-hover:w-full rounded-full opacity-0 group-hover:opacity-100"></span>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            key="mobile-nav-modal"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-50 bg-white flex flex-col justify-between overflow-y-auto overscroll-contain"
+          >
+            {/* Header Area */}
+            <div className="flex items-center justify-between px-5 sm:px-8 h-[68px] md:h-[74px] border-b border-slate-100 shrink-0 bg-white">
+              <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2">
+                <img 
+                  src={getImageUrl(settings.main_logo || "/logoblue.png")} 
+                  alt={settings.website_name || "BlueBoxx"} 
+                  onError={(e: any) => {
+                    if (!e.currentTarget.dataset.fallbackApplied) {
+                      e.currentTarget.dataset.fallbackApplied = "true";
+                      e.currentTarget.src = "/logoblue.png";
+                    }
+                  }}
+                  className="h-[42px] md:h-[48px] w-auto object-contain" 
+                />
               </Link>
-              {item.dropdown && (
-                <div className="flex items-center justify-center gap-3 mt-1.5">
-                  {item.dropdown.map((sub) => (
-                    <Link
-                      key={sub.label}
-                      href={sub.href}
-                      onClick={() => setIsOpen(false)}
-                      className="text-xs font-semibold text-slate-500 hover:text-[#1B2A6B] transition-colors"
-                    >
-                      {sub.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          ))}
-        </motion.nav>
-
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-center border-t border-slate-100 pt-5 pb-6">
-          {isAuthenticated ? (
-            <div className="flex flex-col w-full gap-3 max-w-sm mx-auto">
-              <Link href={getDashboardLink()} onClick={() => setIsOpen(false)} className="w-full text-center py-3 px-6 font-bold text-[#0d1635] bg-[#C9A227] hover:bg-[#b59123] rounded-xl shadow-md transition-all duration-200 text-sm">
-                Dashboard
-              </Link>
-              <button onClick={() => { logout(); setIsOpen(false); }} className="w-full text-center py-3 px-6 font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-200 text-sm cursor-pointer">
-                Sign Out
+              <button 
+                onClick={() => setIsOpen(false)} 
+                className="p-2.5 text-slate-700 hover:text-[#1B2A6B] rounded-xl bg-slate-100/80 hover:bg-slate-200/80 transition-colors cursor-pointer" 
+                aria-label="Close menu"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.4" stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
-          ) : (
-            <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm mx-auto">
-              <Link href="/login" onClick={() => setIsOpen(false)} className="flex-1 text-center py-3 px-6 font-bold text-slate-700 hover:text-[#1B2A6B] border border-slate-200 hover:border-[#1B2A6B]/30 rounded-xl transition-colors duration-200 text-sm">
-                Login
-              </Link>
-              <Link href="/signup/student" onClick={() => setIsOpen(false)} className="flex-1 text-center py-3 px-6 font-bold text-white bg-[#1B2A6B] hover:bg-[#C9A227] hover:text-[#0d1635] rounded-xl shadow-md transition-all duration-200 text-sm">
-                Sign Up
-              </Link>
+
+            {/* Centered Menu Links */}
+            <nav className="flex flex-col items-center justify-center gap-3.5 sm:gap-4 py-8 px-5 w-full max-w-md mx-auto my-auto shrink-0">
+              {menuItems.map((item) => (
+                <div key={item.label} className="text-center w-full">
+                  {item.dropdown ? (
+                    <div className="flex flex-col items-center w-full">
+                      <button
+                        type="button"
+                        onClick={() => setMobileExpanded(mobileExpanded === item.label ? null : item.label)}
+                        className="group relative text-2xl sm:text-3xl font-extrabold transition-all duration-200 py-1 tracking-tight inline-flex items-center justify-center gap-2 cursor-pointer text-slate-900 hover:text-[#1B2A6B]"
+                      >
+                        <span>{item.label}</span>
+                        <ChevronDown
+                          size={22}
+                          className={`text-[#C9A227] transition-transform duration-300 ${
+                            mobileExpanded === item.label ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+
+                      <AnimatePresence>
+                        {mobileExpanded === item.label && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.2, ease: "easeInOut" }}
+                            className="overflow-hidden flex flex-col items-center gap-1.5 mt-2.5 w-full max-w-xs bg-slate-50 border border-slate-200/80 rounded-2xl p-2.5 shadow-xs"
+                          >
+                            {item.dropdown.map((sub) => (
+                              <Link
+                                key={sub.label}
+                                href={sub.href}
+                                onClick={() => {
+                                  setIsOpen(false);
+                                  setMobileExpanded(null);
+                                }}
+                                className="w-full text-center py-2.5 px-3 text-sm font-bold text-slate-700 hover:text-[#1B2A6B] hover:bg-white rounded-xl transition-all"
+                              >
+                                {sub.label}
+                              </Link>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      onClick={() => {
+                        setIsOpen(false);
+                        setMobileExpanded(null);
+                      }}
+                      className="group relative text-2xl sm:text-3xl font-extrabold transition-all duration-200 py-1 tracking-tight inline-block text-slate-900 hover:text-[#1B2A6B]"
+                    >
+                      <span>{item.label}</span>
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </nav>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center border-t border-slate-100 p-5 sm:p-7 shrink-0 bg-white">
+              {isAuthenticated ? (
+                <div className="flex flex-col w-full gap-2.5 max-w-sm mx-auto">
+                  <Link href={getDashboardLink()} onClick={() => setIsOpen(false)} className="w-full text-center py-3 px-6 font-bold text-[#0d1635] bg-[#C9A227] hover:bg-[#b59123] rounded-xl shadow-md transition-all duration-200 text-sm">
+                    Dashboard
+                  </Link>
+                  <button onClick={() => { logout(); setIsOpen(false); }} className="w-full text-center py-3 px-6 font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-200 text-sm cursor-pointer">
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm mx-auto">
+                  <Link href="/login" onClick={() => setIsOpen(false)} className="flex-1 text-center py-3 px-6 font-bold text-slate-700 hover:text-[#1B2A6B] border border-slate-200 hover:border-[#1B2A6B]/30 rounded-xl transition-colors duration-200 text-sm">
+                    Login
+                  </Link>
+                  <Link href="/signup/student" onClick={() => setIsOpen(false)} className="flex-1 text-center py-3 px-6 font-bold text-white bg-[#1B2A6B] hover:bg-[#C9A227] hover:text-[#0d1635] rounded-xl shadow-md transition-all duration-200 text-sm">
+                    Sign Up
+                  </Link>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

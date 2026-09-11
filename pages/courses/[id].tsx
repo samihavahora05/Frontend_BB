@@ -247,17 +247,17 @@ export default function CourseDetailPage() {
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
             
             {/* Left Content (Text) */}
-            <div className="flex-1 lg:max-w-2xl">
-              <div className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-widest text-[#C9A227] mb-6">
+            <div className="flex-1 lg:max-w-2xl text-center lg:text-left">
+              <div className="flex items-center justify-center lg:justify-start gap-2 text-[11px] font-extrabold uppercase tracking-widest text-[#C9A227] mb-6">
                 <span>{course.category?.name || "Tech"}</span>
                 <span className="text-white/30">•</span>
                 <span>{course.level?.title || "All Levels"}</span>
               </div>
 
               <h1 className="text-3xl md:text-5xl font-black mb-4 leading-tight">{course.title}</h1>
-              <p className="text-lg text-slate-300 font-medium mb-6 leading-relaxed">{course.short_description}</p>
+              <p className="text-lg text-slate-300 font-medium mb-6 leading-relaxed text-justify lg:text-left">{course.short_description}</p>
 
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm mb-6">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-3 text-sm mb-6">
                 <div className="flex items-center gap-1.5 text-amber-400 font-black">
                   <Star size={16} className="fill-amber-400" />
                   <span>4.8</span>
@@ -268,7 +268,7 @@ export default function CourseDetailPage() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-slate-300">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-3 text-sm text-slate-300">
                 <div>Language <span className="text-white font-bold">{course.language || 'English'}</span></div>
                 <div className="flex items-center gap-1.5"><Clock size={16} className="text-slate-400"/> Duration {course.duration || 'Flexible'}</div>
               </div>
@@ -288,16 +288,16 @@ export default function CourseDetailPage() {
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
           
           {/* Left Column (Details) */}
-          <div className="flex-1 lg:max-w-2xl space-y-12">
+          <div className="flex-1 lg:max-w-2xl space-y-12 order-2 lg:order-1">
             
             {/* What you'll learn */}
             <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 shadow-sm">
-              <h2 className="text-2xl font-black text-slate-800 mb-6">What you'll learn</h2>
+              <h2 className="text-2xl font-black text-slate-800 mb-6 text-center lg:text-left">What you'll learn</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {whatYouWillLearn.map((item, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <CheckCircle2 size={20} className="text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-sm font-semibold text-slate-600 leading-relaxed">{item}</span>
+                    <span className="text-sm font-semibold text-slate-600 leading-relaxed text-justify md:text-left">{item}</span>
                   </div>
                 ))}
               </div>
@@ -305,8 +305,8 @@ export default function CourseDetailPage() {
 
             {/* Curriculum */}
             <div>
-              <h2 className="text-2xl font-black text-slate-800 mb-6">Course Content</h2>
-              <div className="flex justify-between items-center text-sm font-bold text-slate-500 mb-4 px-2">
+              <h2 className="text-2xl font-black text-slate-800 mb-6 text-center lg:text-left">Course Content</h2>
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-sm font-bold text-slate-500 mb-4 px-2 text-center sm:text-left">
                 <div>{course.curriculum?.length || 0} sections • {course.total_lessons || 0} topics • {Math.floor((course.total_minutes || 0)/60)}h {(course.total_minutes || 0)%60}m total length</div>
                 <button className="text-[#1B2A6B] hover:underline">Expand all sections</button>
               </div>
@@ -353,27 +353,27 @@ export default function CourseDetailPage() {
 
             {/* Description */}
             <div>
-              <h2 className="text-2xl font-black text-slate-800 mb-6">Description</h2>
+              <h2 className="text-2xl font-black text-slate-800 mb-6 text-center lg:text-left">Description</h2>
               <FormattedDescription content={course.description} />
             </div>
 
             {/* Instructor */}
             {course.instructor && (
               <div>
-                <h2 className="text-2xl font-black text-slate-800 mb-6">Instructor</h2>
-                <div className="flex items-start gap-6">
-                  <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(course.instructor.name)}&background=1B2A6B&color=fff`} alt={course.instructor.name} className="w-24 h-24 rounded-full shadow-lg" />
+                <h2 className="text-2xl font-black text-slate-800 mb-6 text-center lg:text-left">Instructor</h2>
+                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 bg-slate-50/80 p-6 rounded-2xl border border-slate-200/80">
+                  <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(course.instructor.name)}&background=1B2A6B&color=fff`} alt={course.instructor.name} className="w-24 h-24 rounded-full shadow-lg shrink-0" />
                   <div>
                     <h3 className="text-xl font-black text-slate-800 mb-1">{course.instructor.name}</h3>
                     <p className="text-sm font-extrabold text-slate-500 mb-3">{course.instructor.title}</p>
                     
-                    <div className="flex flex-wrap gap-4 text-xs font-bold text-slate-600 mb-4">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs font-bold text-slate-600 mb-4">
                       <span className="flex items-center gap-1.5"><Star size={14} className="text-[#C9A227]"/> 4.8 Rating</span>
                       <span className="flex items-center gap-1.5"><Award size={14} className="text-slate-400"/> 12,450 Reviews</span>
                       <span className="flex items-center gap-1.5"><Users size={14} className="text-slate-400"/> 85,200 Students</span>
                     </div>
 
-                    <p className="text-sm text-slate-600 font-medium leading-relaxed">
+                    <p className="text-sm text-slate-600 font-medium leading-relaxed text-justify sm:text-left">
                       Blueboxx DA expert instructors are industry veterans with years of hands-on experience at top product companies. They bring real-world insights and best practices directly into the classroom.
                     </p>
                   </div>
@@ -384,7 +384,7 @@ export default function CourseDetailPage() {
           </div>
 
           {/* Right Column (Floating/Sticky Card) */}
-          <div className="lg:absolute lg:top-[-280px] lg:right-4 w-full lg:w-[400px] z-20">
+          <div className="w-full lg:w-[400px] lg:absolute lg:top-[-280px] lg:right-4 z-20 order-1 lg:order-2">
             <Card className="bg-white border border-slate-100 shadow-[0_20px_40px_rgba(27,42,107,0.1)] rounded-3xl overflow-hidden sticky top-32">
               {/* Course Featured High-Definition Image */}
               <div className="relative aspect-video w-full bg-slate-900 group overflow-hidden rounded-t-3xl shadow-inner">

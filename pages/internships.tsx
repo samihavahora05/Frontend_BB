@@ -208,17 +208,17 @@ export default function InternshipsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
 
               {/* Left Column: Program Info & Cards */}
-              <div className="lg:col-span-7 space-y-6">
+              <div className="lg:col-span-7 space-y-6 text-center lg:text-left flex flex-col items-center lg:items-start">
 
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A227]/15 border border-[#C9A227]/30 text-[#C9A227] text-xs font-black uppercase tracking-wider shadow-xs">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A227]/15 border border-[#C9A227]/30 text-[#C9A227] text-xs font-black uppercase tracking-wider shadow-xs mx-auto lg:mx-0">
                   <ShieldCheck size={16} /> Government-certified ⭐ 4.8 Rating
                 </div>
 
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-black leading-tight tracking-tight">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-center lg:text-left">
                   <span className="text-[#C9A227]">Blueboxx</span> Internship Program for Career Growth
                 </h1>
 
-                <p className="text-slate-300 text-sm md:text-base font-medium leading-relaxed">
+                <p className="text-slate-300 text-sm md:text-base font-medium leading-relaxed text-justify lg:text-left max-w-xl mx-auto lg:mx-0">
                   Gain industry-driven hands-on experience working on live client projects. Build a portfolio that gets you hired.
                 </p>
 

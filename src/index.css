@@ -578,7 +578,7 @@
 
 @media print {
   @page {
-    margin: 1cm;
+    margin: 0.8cm;
     size: A4 portrait;
   }
 
@@ -594,7 +594,9 @@
   [class*="Sidebar"],
   [class*="Navbar"],
   [class*="Header"],
-  [class*="Footer"] {
+  [class*="Footer"],
+  [class*="FloatingActions"],
+  [class*="floating"] {
     display: none !important;
   }
 
@@ -603,6 +605,9 @@
     color: #0d1635 !important;
     margin: 0 !important;
     padding: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -620,12 +625,15 @@
     width: 100% !important;
     max-width: 680px !important;
     margin: 0 auto !important;
-    padding: 24px !important;
+    padding: 20px !important;
     border: 1px solid #cbd5e1 !important;
     border-radius: 16px !important;
     box-shadow: none !important;
     background: #ffffff !important;
     page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
 
   .w-full.lg\:w-1\/2:not(.resume-preview-print) {

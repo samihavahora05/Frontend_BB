@@ -64,6 +64,70 @@ export default function CheckoutPage() {
   const [processingStep, setProcessingStep] = useState(0);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    address: "",
+    state: "",
+    gst: "",
+    notes: "",
+  });
+
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (user) {
+      const nameParts = (user.name || "").trim().split(" ");
+      const fName = user.first_name || nameParts[0] || "";
+      const lName = user.last_name || nameParts.slice(1).join(" ") || "";
+      setFormData((prev) => ({
+        ...prev,
+        firstName: prev.firstName || fName,
+        lastName: prev.lastName || lName,
+        email: prev.email || user.email || "",
+        phone: prev.phone || user.phone || "",
+      }));
+    }
+  }, [user]);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (formErrors[field]) {
+      setFormErrors((prev) => {
+        const updated = { ...prev };
+        delete updated[field];
+        return updated;
+      });
+    }
+  };
+
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    if (!formData.firstName.trim()) errors.firstName = "First name is required";
+    if (!formData.lastName.trim()) errors.lastName = "Last name is required";
+    if (!formData.email.trim()) {
+      errors.email = "Email address is required";
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+      errors.email = "Please enter a valid email address";
+    }
+    if (!formData.phone.trim()) {
+      errors.phone = "Mobile number is required";
+    } else if (formData.phone.replace(/\D/g, '').length < 10) {
+      errors.phone = "Please enter a valid 10-digit mobile number";
+    }
+    if (!formData.address.trim()) {
+      errors.address = "Billing address is required";
+    }
+    if (!formData.state.trim()) {
+      errors.state = "State is required";
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   useEffect(() => {
     if (!isAuthReady) return;
 
@@ -71,7 +135,6 @@ export default function CheckoutPage() {
     if (!hasToken) {
       router.push('/login?redirect=/checkout');
     }
-    // Temporarily disabled role check to allow testing enrollment for all user types
   }, [isAuthReady, isAuthenticated, role, router]);
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price, 0);
@@ -84,6 +147,12 @@ export default function CheckoutPage() {
       toast.error("Your cart is empty! Please add some courses to proceed.");
       return;
     }
+
+    if (!validateForm()) {
+      toast.error("Please fill in all required fields marked with *");
+      return;
+    }
+
     setIsProcessing(true);
     setCheckoutError(null);
     setProcessingStep(0); // Initializing
@@ -159,8 +228,9 @@ export default function CheckoutPage() {
             }
           },
           prefill: {
-            name: user?.name || "",
-            email: user?.email || "",
+            name: `${formData.firstName} ${formData.lastName}`.trim() || user?.name || "",
+            email: formData.email || user?.email || "",
+            contact: formData.phone || user?.phone || "",
           },
           theme: { color: "#0d1635" },
           modal: {
@@ -233,23 +303,46 @@ export default function CheckoutPage() {
               clearCart();
               router.push({
                 pathname: '/payment-success',
-                query: { order_id: response.razorpay_order_id, amount: total }
+                query: { order_id: response.razorpay_order_id, payment_id: response.razorpay_payment_id, amount: total }
               });
             } else {
-              toast.error(verifyRes.data?.message || "Payment verification failed.");
-              router.push('/payment-failed');
+              const failReason = verifyRes.data?.message || "Payment verification failed.";
+              api.post("/checkout/payment-failed", {
+                order_id: data.razorpay_order_id,
+                amount: total,
+                reason: failReason,
+                item_title: cartItems.map((i: any) => i.title).join(', ')
+              }).catch(() => {});
+
+              toast.error(failReason);
+              router.push({
+                pathname: '/payment-failed',
+                query: { order_id: data.razorpay_order_id, reason: failReason }
+              });
             }
           } catch (err: any) {
             console.error("Payment verification failed", err);
-            toast.error(err.response?.data?.message || "Payment verification failed.");
-            router.push('/payment-failed');
+            const failReason = err.response?.data?.message || "Payment verification failed.";
+            api.post("/checkout/payment-failed", {
+              order_id: data.razorpay_order_id,
+              amount: total,
+              reason: failReason,
+              item_title: cartItems.map((i: any) => i.title).join(', ')
+            }).catch(() => {});
+
+            toast.error(failReason);
+            router.push({
+              pathname: '/payment-failed',
+              query: { order_id: data.razorpay_order_id, reason: failReason }
+            });
           } finally {
             setIsProcessing(false);
           }
         },
         prefill: {
-          name: user?.name || "",
-          email: user?.email || "",
+          name: `${formData.firstName} ${formData.lastName}`.trim() || user?.name || "",
+          email: formData.email || user?.email || "",
+          contact: formData.phone || user?.phone || "",
         },
         theme: {
           color: "#0d1635",
@@ -265,8 +358,24 @@ export default function CheckoutPage() {
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', function (resp: any) {
         setIsProcessing(false);
-        toast.error(resp?.error?.description || "Payment failed.");
-        router.push('/payment-failed');
+        const failReason = resp?.error?.description || "Payment failed or declined by bank.";
+        
+        api.post("/checkout/payment-failed", {
+          order_id: data.razorpay_order_id,
+          amount: total,
+          reason: failReason,
+          item_title: cartItems.map((i: any) => i.title).join(', ')
+        }).catch(() => {});
+
+        toast.error(failReason);
+        router.push({
+          pathname: '/payment-failed',
+          query: { 
+            order_id: data.razorpay_order_id, 
+            payment_id: resp?.error?.metadata?.payment_id,
+            reason: failReason 
+          }
+        });
       });
       rzp.open();
 
@@ -358,23 +467,63 @@ export default function CheckoutPage() {
                 <h2 className="font-extrabold text-white text-base mb-4">Contact Information</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">First Name</label>
-                    <input type="text" placeholder="Rahul" className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C9A227]/40 focus:border-[#C9A227]/50 transition-all font-medium text-white" />
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      First Name <span className="text-amber-400 font-bold">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      required
+                      placeholder="Rahul" 
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
+                      className={`w-full bg-white/5 border ${formErrors.firstName ? 'border-red-500 focus:ring-red-500/40' : 'border-white/10 focus:ring-[#C9A227]/40'} rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:border-[#C9A227]/50 transition-all font-medium text-white`} 
+                    />
+                    {formErrors.firstName && <p className="text-red-400 text-xs mt-1 font-semibold">{formErrors.firstName}</p>}
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">Last Name</label>
-                    <input type="text" placeholder="Sharma" className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C9A227]/40 focus:border-[#C9A227]/50 transition-all font-medium text-white" />
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      Last Name <span className="text-amber-400 font-bold">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      required
+                      placeholder="Sharma" 
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      className={`w-full bg-white/5 border ${formErrors.lastName ? 'border-red-500 focus:ring-red-500/40' : 'border-white/10 focus:ring-[#C9A227]/40'} rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:border-[#C9A227]/50 transition-all font-medium text-white`} 
+                    />
+                    {formErrors.lastName && <p className="text-red-400 text-xs mt-1 font-semibold">{formErrors.lastName}</p>}
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">Email Address</label>
-                    <input type="email" placeholder="rahul@example.com" className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C9A227]/40 focus:border-[#C9A227]/50 transition-all font-medium text-white" />
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      Email Address <span className="text-amber-400 font-bold">*</span>
+                    </label>
+                    <input 
+                      type="email" 
+                      required
+                      placeholder="rahul@example.com" 
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      className={`w-full bg-white/5 border ${formErrors.email ? 'border-red-500 focus:ring-red-500/40' : 'border-white/10 focus:ring-[#C9A227]/40'} rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:border-[#C9A227]/50 transition-all font-medium text-white`} 
+                    />
+                    {formErrors.email && <p className="text-red-400 text-xs mt-1 font-semibold">{formErrors.email}</p>}
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">Mobile Number</label>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      Mobile Number <span className="text-amber-400 font-bold">*</span>
+                    </label>
                     <div className="flex">
                       <span className="flex items-center px-3 border border-r-0 border-white/10 rounded-l-xl text-sm text-slate-400 bg-white/5 font-semibold">+91</span>
-                      <input type="tel" placeholder="98765 43210" className="flex-1 bg-white/5 border border-white/10 rounded-r-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C9A227]/40 focus:border-[#C9A227]/50 transition-all font-medium text-white" />
+                      <input 
+                        type="tel" 
+                        required
+                        placeholder="98765 43210" 
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        className={`flex-1 bg-white/5 border ${formErrors.phone ? 'border-red-500 focus:ring-red-500/40' : 'border-white/10 focus:ring-[#C9A227]/40'} rounded-r-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:border-[#C9A227]/50 transition-all font-medium text-white`} 
+                      />
                     </div>
+                    {formErrors.phone && <p className="text-red-400 text-xs mt-1 font-semibold">{formErrors.phone}</p>}
                   </div>
                 </div>
               </motion.div>
@@ -390,20 +539,52 @@ export default function CheckoutPage() {
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">Billing Address</label>
-                    <textarea rows={2} placeholder="Enter your full address" className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C9A227]/40 focus:border-[#C9A227]/50 transition-all font-medium text-white resize-none"></textarea>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      Billing Address <span className="text-amber-400 font-bold">*</span>
+                    </label>
+                    <textarea 
+                      rows={2} 
+                      required
+                      placeholder="Enter your full address" 
+                      value={formData.address}
+                      onChange={(e) => handleInputChange('address', e.target.value)}
+                      className={`w-full bg-white/5 border ${formErrors.address ? 'border-red-500 focus:ring-red-500/40' : 'border-white/10 focus:ring-[#C9A227]/40'} rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:border-[#C9A227]/50 transition-all font-medium text-white resize-none`}
+                    />
+                    {formErrors.address && <p className="text-red-400 text-xs mt-1 font-semibold">{formErrors.address}</p>}
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">State</label>
-                    <input type="text" placeholder="Maharashtra" className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C9A227]/40 focus:border-[#C9A227]/50 transition-all font-medium text-white" />
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      State <span className="text-amber-400 font-bold">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      required
+                      placeholder="Gujarat / Maharashtra" 
+                      value={formData.state}
+                      onChange={(e) => handleInputChange('state', e.target.value)}
+                      className={`w-full bg-white/5 border ${formErrors.state ? 'border-red-500 focus:ring-red-500/40' : 'border-white/10 focus:ring-[#C9A227]/40'} rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:border-[#C9A227]/50 transition-all font-medium text-white`} 
+                    />
+                    {formErrors.state && <p className="text-red-400 text-xs mt-1 font-semibold">{formErrors.state}</p>}
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-slate-300 mb-1.5">GST Number (Optional)</label>
-                    <input type="text" placeholder="27XXXXX1234X1ZX" className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C9A227]/40 focus:border-[#C9A227]/50 transition-all font-medium text-white" />
+                    <input 
+                      type="text" 
+                      placeholder="27XXXXX1234X1ZX" 
+                      value={formData.gst}
+                      onChange={(e) => handleInputChange('gst', e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C9A227]/40 focus:border-[#C9A227]/50 transition-all font-medium text-white" 
+                    />
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-semibold text-slate-300 mb-1.5">Order Notes (Optional)</label>
-                    <input type="text" placeholder="Any special requests or notes for us" className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C9A227]/40 focus:border-[#C9A227]/50 transition-all font-medium text-white" />
+                    <input 
+                      type="text" 
+                      placeholder="Any special requests or notes for us" 
+                      value={formData.notes}
+                      onChange={(e) => handleInputChange('notes', e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C9A227]/40 focus:border-[#C9A227]/50 transition-all font-medium text-white" 
+                    />
                   </div>
                 </div>
               </motion.div>

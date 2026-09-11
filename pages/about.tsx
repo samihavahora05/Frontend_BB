@@ -1,5 +1,6 @@
+import { useRef } from "react";
 import { MainLayout } from "../src/layout/MainLayout";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion";
 import {
   Users, Building2, Briefcase, Target, Star,
   Heart, TrendingUp, Award, BookOpen,
@@ -8,6 +9,7 @@ import {
 import { ClientsSection } from "../src/sections/ClientsSection";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
 import { TestimonialsSection } from "../src/sections/TestimonialsSection";
+import { SEO } from "../src/components/seo/SEO";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -22,7 +24,101 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
 };
 
-import { SEO } from "../src/components/seo/SEO";
+const timelineItems = [
+  { year: "2015", title: "The Beginning", desc: "Founded in Vadodara as a small creative studio focusing on 3D animation." },
+  { year: "2017", title: "Production House", desc: "Established our own full-scale production house for feature films and commercials." },
+  { year: "2020", title: "Digital Expansion", desc: "Launched comprehensive digital marketing and web development services." },
+  { year: "2023", title: "Education Hub", desc: "Started the Learn-Work-Earn initiative to bridge the industry skill gap." },
+  { year: "2026", title: "Global Reach", desc: "Partnering with 100+ companies globally for guaranteed placements." }
+];
+
+const TimelineItemRow = ({ item, i }: { item: any; i: number }) => {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(rowRef, { once: false, margin: "-20% 0px -20% 0px" });
+
+  return (
+    <motion.div 
+      ref={rowRef}
+      initial={{ opacity: 0, x: i % 2 === 0 ? 40 : -40, y: 20 }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.05 }}
+      className={`relative flex flex-col md:flex-row items-center justify-between mb-12 last:mb-0 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''} group`}
+    >
+      {/* Timeline Dot with dynamic glow when reached */}
+      <motion.div 
+        animate={{
+          scale: isInView ? 1.25 : 1,
+          borderColor: isInView ? "#C9A227" : "#1B2A6B",
+          boxShadow: isInView 
+            ? "0 0 0 6px rgba(201,162,39,0.3), 0 0 16px rgba(201,162,39,0.6)" 
+            : "0 0 0 4px rgba(27,42,107,0.1)",
+        }}
+        transition={{ duration: 0.3 }}
+        className="absolute left-[-11px] md:left-1/2 md:-translate-x-1/2 w-6 h-6 rounded-full bg-white border-4 border-[#1B2A6B] transition-all duration-300 z-10 mt-1 md:mt-0"
+      />
+      
+      {/* Content Box */}
+      <div className={`w-full pl-8 md:pl-0 md:w-5/12 ${i % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
+        <motion.div 
+          whileHover={{ scale: 1.02 }}
+          animate={{
+            borderColor: isInView ? "rgba(201,162,39,0.45)" : "rgba(226,232,240,0.8)",
+            backgroundColor: isInView ? "#ffffff" : "#f8fafc"
+          }}
+          transition={{ duration: 0.3 }}
+          className="bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-[#1B2A6B]/30 transition-all cursor-default"
+        >
+          <span className="text-[#C9A227] font-black text-xl mb-1 block">{item.year}</span>
+          <h4 className="text-lg font-bold text-slate-800 mb-2">{item.title}</h4>
+          <p className="text-slate-600 text-sm leading-relaxed">{item.desc}</p>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+};
+
+const OurJourneyTimeline = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 65%", "end 75%"],
+  });
+
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 24,
+    restDelta: 0.001
+  });
+
+  const lineHeight = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
+
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 p-8 md:p-12 shadow-sm mt-8">
+      <h2 className="text-3xl font-extrabold text-slate-900 mb-12 text-center font-sora">Our Journey</h2>
+      <div ref={containerRef} className="relative ml-3 md:mx-auto md:w-full md:max-w-3xl">
+        {/* Background Track Line */}
+        <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-1 bg-indigo-100/70 md:-translate-x-1/2 rounded-full"></div>
+        
+        {/* Scroll-Driven Animated Line that fills as you scroll down */}
+        <motion.div 
+          style={{ height: lineHeight }}
+          className="absolute left-0 md:left-1/2 top-0 w-1 bg-gradient-to-b from-[#1B2A6B] via-[#C9A227] to-[#1B2A6B] md:-translate-x-1/2 z-0 rounded-full shadow-[0_0_12px_rgba(201,162,39,0.7)]"
+        />
+
+        {/* Dynamic Leading Bead that rides the scroll-progress head */}
+        <motion.div
+          style={{ top: lineHeight }}
+          className="absolute left-[-4px] md:left-1/2 w-3 h-3 bg-[#C9A227] rounded-full shadow-[0_0_14px_4px_rgba(201,162,39,0.9)] md:-translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none"
+        />
+        
+        {timelineItems.map((item, i) => (
+          <TimelineItemRow key={i} item={item} i={i} />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default function AboutPage() {
   return (
@@ -146,9 +242,16 @@ export default function AboutPage() {
               <main className="flex-1 space-y-8">
 
                 {/* Company Overview */}
-                <div className="bg-white rounded-2xl border border-slate-200 p-8 md:p-12 shadow-sm">
-                  <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-3xl font-extrabold text-slate-900 mb-6">Company Overview</motion.h2>
-                  <div className="space-y-6 text-slate-600 text-lg leading-relaxed">
+                <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 md:p-12 shadow-sm">
+                  <motion.h2 
+                    initial={{ opacity: 0, y: 20 }} 
+                    whileInView={{ opacity: 1, y: 0 }} 
+                    viewport={{ once: true }} 
+                    className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-6 text-center md:text-left font-sora"
+                  >
+                    Company Overview
+                  </motion.h2>
+                  <div className="space-y-6 text-slate-600 text-base sm:text-lg leading-relaxed text-justify md:text-left">
                     <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
                       Established in 2015, Blueboxx DA is one of the finest advertising firms in Vadodara, Gujarat India. Being an advertising agency, Blueboxx DA, not only helps you promote your brand and business but also assists you with the Technical, Creative, and Production Talent ready to create the next generation creatives and characters for feature films, commercials, merchandise, and other related products.
                     </motion.p>
@@ -159,40 +262,40 @@ export default function AboutPage() {
                       Moreover, we have established our own production house. Blueboxx has built a creative team that includes highly skilled modelers, designers, developers, audio/video editors, and animators who are responsible for creating, developing, writing, and animating all produced films.
                     </motion.p>
 
-                    <h3 className="text-xl font-extrabold text-slate-900 mt-8 mb-4">Our Specialties</h3>
+                    <h3 className="text-xl font-extrabold text-slate-900 mt-8 mb-4 text-center md:text-left font-sora">Our Specialties</h3>
                     <motion.div 
                       variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
                       initial="hidden"
                       whileInView="show"
                       viewport={{ once: true, margin: "-50px" }}
-                      className="flex flex-wrap gap-2"
+                      className="flex flex-wrap justify-center md:justify-start gap-2"
                     >
                       {["Animation", "Media Production", "Video Services", "Training Specialist", "Advertising Expert", "Content Creation", "Computer Graphics", "Branding Specialist", "Designs", "Conceptualization", "Mobile and Website Development", "Creative Graphics", "Multimedia Training"].map((skill, i) => (
                         <motion.span 
                           variants={{ hidden: { opacity: 0, scale: 0.8 }, show: { opacity: 1, scale: 1, transition: { type: "spring" } } }}
                           whileHover={{ scale: 1.05, y: -2 }}
                           key={i} 
-                          className="px-3 py-1.5 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-200 shadow-sm cursor-pointer hover:bg-[#1B2A6B] hover:text-white hover:border-[#1B2A6B] transition-colors"
+                          className="px-3 py-1.5 bg-slate-100 text-slate-700 text-xs sm:text-sm font-bold rounded-lg border border-slate-200 shadow-xs cursor-pointer hover:bg-[#1B2A6B] hover:text-white hover:border-[#1B2A6B] transition-colors"
                         >
                           {skill}
                         </motion.span>
                       ))}
                     </motion.div>
 
-                    <h3 className="text-xl font-extrabold text-slate-900 mt-8 mb-4">Workplace & Locations</h3>
-                    <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h3 className="text-xl font-extrabold text-slate-900 mt-8 mb-4 text-center md:text-left font-sora">Workplace & Locations</h3>
+                    <div className="bg-slate-50 p-5 sm:p-6 rounded-2xl border border-slate-200">
                       <div className="flex items-start gap-3 mb-4">
-                        <Briefcase className="text-[#1B2A6B] shrink-0" size={20} />
+                        <Briefcase className="text-[#1B2A6B] shrink-0 mt-0.5" size={20} />
                         <div>
                           <div className="font-bold text-slate-900">Work Setup</div>
-                          <div className="text-sm text-slate-600">Hybrid workplace, Contract basis, Full time Basis, Work From Home. (Flexible Time on-site)</div>
+                          <div className="text-xs sm:text-sm text-slate-600 text-justify md:text-left">Hybrid workplace, Contract basis, Full time Basis, Work From Home. (Flexible Time on-site)</div>
                         </div>
                       </div>
                       <div className="flex items-start gap-3">
-                        <MapPin className="text-[#1B2A6B] shrink-0" size={20} />
+                        <MapPin className="text-[#1B2A6B] shrink-0 mt-0.5" size={20} />
                         <div>
                           <div className="font-bold text-slate-900">Primary Location (Akota)</div>
-                          <div className="text-sm text-slate-600">Near Jetalpur Bridge, Akota Road, Akota, Vadodara, FF 51, India Bulls Mega Mall, Vadodara, Gujarat 390020, IN</div>
+                          <div className="text-xs sm:text-sm text-slate-600 text-justify md:text-left">Near Jetalpur Bridge, Akota Road, Akota, Vadodara, FF 51, India Bulls Mega Mall, Vadodara, Gujarat 390020, IN</div>
                         </div>
                       </div>
                     </div>
@@ -213,13 +316,13 @@ export default function AboutPage() {
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.1 }}
                       whileHover={{ y: -5 }}
-                      className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all"
+                      className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all text-center md:text-left flex flex-col items-center md:items-start"
                     >
                       <div className={`w-12 h-12 rounded-xl bg-${card.color}-50 text-${card.color}-600 flex items-center justify-center mb-4`}>
                         <card.icon size={24} />
                       </div>
                       <h3 className="text-xl font-bold text-slate-900 mb-2">{card.title}</h3>
-                      <p className="text-slate-600 text-sm leading-relaxed">{card.desc}</p>
+                      <p className="text-slate-600 text-sm leading-relaxed text-justify md:text-left">{card.desc}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -289,44 +392,7 @@ export default function AboutPage() {
                 </div>
 
                 {/* --- OUR STORY TIMELINE --- */}
-                <div className="bg-white rounded-2xl border border-slate-200 p-8 md:p-12 shadow-sm mt-8">
-                  <h2 className="text-3xl font-extrabold text-slate-900 mb-12 text-center">Our Journey</h2>
-                  <div className="relative border-l-2 border-indigo-100 ml-3 md:mx-auto md:w-full md:max-w-3xl md:border-l-0">
-                    <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-indigo-100 -translate-x-1/2"></div>
-                    
-                    {[
-                      { year: "2015", title: "The Beginning", desc: "Founded in Vadodara as a small creative studio focusing on 3D animation." },
-                      { year: "2017", title: "Production House", desc: "Established our own full-scale production house for feature films and commercials." },
-                      { year: "2020", title: "Digital Expansion", desc: "Launched comprehensive digital marketing and web development services." },
-                      { year: "2023", title: "Education Hub", desc: "Started the Learn-Work-Earn initiative to bridge the industry skill gap." },
-                      { year: "2026", title: "Global Reach", desc: "Partnering with 100+ companies globally for guaranteed placements." }
-                    ].map((item, i) => (
-                      <motion.div 
-                        key={i}
-                        initial={{ opacity: 0, x: i % 2 === 0 ? 50 : -50, y: 20 }}
-                        whileInView={{ opacity: 1, x: 0, y: 0 }}
-                        viewport={{ once: true, margin: "-100px" }}
-                        transition={{ type: "spring", stiffness: 100, damping: 20, delay: i * 0.1 }}
-                        className={`relative flex flex-col md:flex-row items-center justify-between mb-12 last:mb-0 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''} group`}
-                      >
-                        {/* Timeline Dot */}
-                        <div className="absolute left-[-11px] md:left-1/2 md:-translate-x-1/2 w-6 h-6 rounded-full bg-white border-4 border-[#1B2A6B] shadow-[0_0_0_4px_rgba(27,42,107,0.1)] group-hover:shadow-[0_0_0_6px_rgba(201,162,39,0.2)] group-hover:border-[#C9A227] transition-all duration-300 z-10 mt-1 md:mt-0"></div>
-                        
-                        {/* Content Box */}
-                        <div className={`w-full pl-8 md:pl-0 md:w-5/12 ${i % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
-                          <motion.div 
-                            whileHover={{ scale: 1.02 }}
-                            className="bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-[#1B2A6B]/30 transition-all cursor-default"
-                          >
-                            <span className="text-[#C9A227] font-black text-xl mb-1 block">{item.year}</span>
-                            <h4 className="text-lg font-bold text-slate-800 mb-2">{item.title}</h4>
-                            <p className="text-slate-600 text-sm leading-relaxed">{item.desc}</p>
-                          </motion.div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
+                <OurJourneyTimeline />
 
               </main>
             </div>
@@ -416,14 +482,14 @@ export default function AboutPage() {
                 </div>
 
                 {/* RIGHT — Info Panel */}
-                <div className="flex-1 p-8 lg:p-10 flex flex-col justify-center">
+                <div className="flex-1 p-8 lg:p-10 flex flex-col justify-center text-center md:text-left">
 
                   {/* Header */}
-                  <div className="flex items-center gap-3 mb-5">
+                  <div className="flex items-center justify-center md:justify-start gap-3 mb-5">
                     <div className="w-9 h-9 rounded-xl bg-[#1B2A6B] flex items-center justify-center shadow-md shrink-0">
                       <Award size={16} className="text-[#C9A227]" />
                     </div>
-                    <div>
+                    <div className="text-left">
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">About the Founder</p>
                       <div className="w-16 h-0.5 bg-gradient-to-r from-[#1B2A6B] to-[#C9A227] rounded-full mt-1" />
                     </div>
@@ -435,7 +501,7 @@ export default function AboutPage() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.4 }}
-                    className="text-slate-600 text-base leading-relaxed mb-6"
+                    className="text-slate-600 text-base leading-relaxed mb-6 text-justify md:text-left"
                   >
                     A seasoned entrepreneur and creative technologist with over <span className="font-bold text-[#1B2A6B]">12 years of industry expertise</span> in EdTech, Advertising, and Digital Production. As the architect of the pioneering <span className="font-bold text-[#1B2A6B]">Learn-Work-Earn</span> model, Ankush has transformed how students transition into industry-ready professionals — bridging the gap between quality education and real-world career opportunities.
                   </motion.p>
@@ -468,11 +534,11 @@ export default function AboutPage() {
                   </div>
 
                   {/* Bottom CTA strip */}
-                  <div className="flex items-center gap-3 pt-5 border-t border-slate-100">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-5 border-t border-slate-100 text-center sm:text-left">
                     <div className="flex-1">
                       <p className="text-xs text-slate-400 font-medium">Established <span className="font-bold text-slate-600">2015</span> · Vadodara, Gujarat, India</p>
                     </div>
-                    <div className="flex items-center gap-1.5 px-4 py-2 bg-[#1B2A6B] text-white text-xs font-bold rounded-xl shadow-md hover:bg-[#0d1635] transition-colors cursor-pointer">
+                    <div className="flex items-center justify-center gap-1.5 px-4 py-2 bg-[#1B2A6B] text-white text-xs font-bold rounded-xl shadow-md hover:bg-[#0d1635] transition-colors cursor-pointer">
                       <TrendingUp size={13} />
                       <span>12+ Years of Excellence</span>
                     </div>

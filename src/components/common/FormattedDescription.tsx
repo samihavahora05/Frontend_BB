@@ -122,7 +122,7 @@ export const FormattedDescription: React.FC<FormattedDescriptionProps> = ({ cont
     // Standard paragraph line
     flushBullets();
     elements.push(
-      <p key={`p-${idx}`} className="text-slate-600 text-[15px] font-medium leading-relaxed mb-3">
+      <p key={`p-${idx}`} className="text-slate-600 text-[15px] font-medium leading-relaxed mb-3 text-justify md:text-left">
         {trimmed}
       </p>
     );

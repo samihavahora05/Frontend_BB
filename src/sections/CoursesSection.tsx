@@ -62,9 +62,9 @@ export const CoursesSection = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
-          className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6"
+          className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6 items-center md:items-start text-center md:text-left"
         >
-          <div className="max-w-xl">
+          <div className="max-w-xl text-center md:text-left mx-auto md:mx-0">
             <motion.p variants={fadeInUp} className="text-xs font-bold tracking-widest uppercase text-[#C9A227] mb-3">
               Programs
             </motion.p>
@@ -75,7 +75,7 @@ export const CoursesSection = () => {
               Curriculum built with top companies. Learn. Build. Get Hired.
             </motion.p>
           </div>
-          <motion.div variants={fadeInUp} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
+          <motion.div variants={fadeInUp} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="flex justify-center md:justify-start w-full md:w-auto">
             <Link
               href="/courses"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm shrink-0 border-2 border-[#1B2A6B] text-[#1B2A6B] hover:bg-[#1B2A6B] hover:text-white transition-all duration-200"

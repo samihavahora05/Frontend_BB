@@ -31,9 +31,9 @@ export const ExpertCard = ({ mentor, variants }: ExpertCardProps) => {
   const initials = getInitials(mentor.name);
   const designationText = mentor.designation || "Industry Expert";
   const ratingVal = Number(mentor.average_rating || 5.0).toFixed(1);
-  const specializationList = mentor.specialization
-    ? (Array.isArray(mentor.specialization) ? mentor.specialization : [mentor.specialization])
-    : ["Career Mentorship"];
+  const specializationList: string[] = Array.isArray(mentor.specialization) 
+    ? mentor.specialization 
+    : (typeof mentor.specialization === 'string' && mentor.specialization.trim() ? mentor.specialization.split(',').map((s: string) => s.trim()) : ["Career Mentorship"]);
 
   return (
     <Link href={`/experts/${mentor.id}`} className="block h-full">
@@ -161,8 +161,8 @@ export const MentorsSection = () => {
       <div className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-[#C9A227]/5 blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <div className="max-w-2xl">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6 items-center md:items-start text-center md:text-left">
+          <div className="max-w-2xl text-center md:text-left mx-auto md:mx-0">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B2A6B]/5 border border-[#1B2A6B]/15 text-[#1B2A6B] text-xs font-bold tracking-wider uppercase mb-4">
               <Sparkles size={14} className="text-[#C9A227]" />
               <span>1% Elite Mentorship</span>
@@ -175,13 +175,15 @@ export const MentorsSection = () => {
             </p>
           </div>
 
-          <Link
-            href="/experts"
-            className="inline-flex items-center gap-2 text-[#1B2A6B] font-bold text-sm hover:text-[#C9A227] transition-colors group self-start md:self-auto"
-          >
-            <span>Explore all verified experts</span>
-            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-          </Link>
+          <div className="flex justify-center md:justify-start w-full md:w-auto">
+            <Link
+              href="/experts"
+              className="inline-flex items-center gap-2 text-[#1B2A6B] font-bold text-sm hover:text-[#C9A227] transition-colors group self-center md:self-auto"
+            >
+              <span>Explore All Experts</span>
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </div>
 
         {isLoading ? (

@@ -4,13 +4,14 @@ import { useRouter } from "next/router";
 import { useAuth } from "../context/AuthContext";
 import { AuthGuard } from "../components/auth/AuthGuard";
 import { SEO } from "../components/seo/SEO";
-import { LayoutDashboard, Briefcase, FileText, Settings, LogOut, Menu, X, Search, Trophy, Users } from "lucide-react";
+import { LayoutDashboard, Briefcase, FileText, Settings, LogOut, Menu, X, Search, Trophy, Users, CheckSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NotificationDropdown } from "../components/NotificationDropdown";
 
 const SIDEBAR_LINKS = [
   { name: "Dashboard", href: "/intern/dashboard", icon: LayoutDashboard },
   { name: "My Applications", href: "/intern/applications", icon: Briefcase },
+  { name: "Assessments", href: "/intern/assessments", icon: CheckSquare },
   { name: "Scholarships", href: "/intern/scholarships", icon: Trophy },
   { name: "Expert Sessions", href: "/intern/mentor-sessions", icon: Users },
   { name: "Resume & Portfolio", href: "/intern/resume", icon: FileText },

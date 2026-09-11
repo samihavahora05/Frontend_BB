@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
-import { GraduationCap, Search, Download, Plus, MoreVertical, Edit2, Trash2, Key, Upload, RefreshCw, Star, CheckCircle, XCircle, Camera, Building2, Sparkles } from 'lucide-react';
+import { GraduationCap, Search, Download, Plus, MoreVertical, Edit2, Trash2, Key, Upload, RefreshCw, Star, CheckCircle, XCircle, Camera, Building2, Sparkles, FileSpreadsheet, Archive } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useConfirm } from '../../../src/context/ConfirmContext';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExpertService, ExpertData } from '../../../src/lib/api/ExpertService';
 import { getImageUrl } from '../../../src/lib/imageUtils';
+import { ExpertImportModal } from '../../../src/components/admin/ExpertImportModal';
 
 export default function InstructorsManager() {
   const router = useRouter();
@@ -19,6 +20,8 @@ export default function InstructorsManager() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedInstructor, setSelectedInstructor] = useState<ExpertData | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | number | null>(null);
 
@@ -142,6 +145,30 @@ export default function InstructorsManager() {
     );
   });
 
+  const handleExportZip = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    toast.loading('Exporting experts to Excel (.xlsx)...', { id: 'exp_zip' });
+    try {
+      await ExpertService.exportExpertsZip();
+      toast.success('Export completed! Saved as Excel spreadsheet.', { id: 'exp_zip' });
+    } catch (e: any) {
+      toast.error('Failed to export experts to Excel.', { id: 'exp_zip' });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleDownloadTemplate = async () => {
+    try {
+      toast.loading('Downloading Import Template Excel (.xlsx)...', { id: 'tmpl_dl' });
+      await ExpertService.downloadImportTemplate();
+      toast.success('Excel template downloaded successfully!', { id: 'tmpl_dl' });
+    } catch (e: any) {
+      toast.error('Failed to download template.', { id: 'tmpl_dl' });
+    }
+  };
+
   const totalPages = Math.ceil(filteredExperts.length / perPage) || 1;
   const paginatedExperts = filteredExperts.slice((page - 1) * perPage, page * perPage);
 
@@ -153,19 +180,56 @@ export default function InstructorsManager() {
 
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div>
             <h1 className="text-2xl font-black text-[#0d1635] flex items-center gap-2">
               <GraduationCap size={28} className="text-[#C9A227]" /> Expert Management
             </h1>
-            <p className="text-sm font-semibold text-slate-500 mt-1">Manage verified industry experts, profile details, photos, and 1:1 rates.</p>
+            <p className="text-sm font-semibold text-slate-500 mt-1">
+              Manage verified industry experts, profile details, photos, and 1:1 mentorship rates.
+            </p>
           </div>
-          <div className="flex gap-3">
-            <button onClick={loadExperts} className="bg-white border border-slate-200 text-slate-700 p-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors" title="Refresh List">
+
+          {/* Action Buttons Toolbar */}
+          <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
+            <button 
+              onClick={handleDownloadTemplate} 
+              className="px-3.5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-2 shrink-0 cursor-pointer"
+              title="Download Excel Template (.xlsx)"
+            >
+              <FileSpreadsheet size={15} className="text-emerald-600" />
+              <span>Template</span>
+            </button>
+
+            <button 
+              onClick={() => setIsImportModalOpen(true)} 
+              className="px-4 py-2.5 bg-white border border-slate-200 text-[#1B2A6B] hover:bg-slate-50 text-xs font-black rounded-xl shadow-xs transition-all flex items-center gap-2 shrink-0 cursor-pointer"
+              title="Import Experts from ZIP or Excel"
+            >
+              <Upload size={15} className="text-[#1B2A6B]" />
+              <span>Import Experts</span>
+            </button>
+
+            <button 
+              onClick={handleExportZip} 
+              disabled={isExporting}
+              className="px-4 py-2.5 bg-[#C9A227]/15 border border-[#C9A227]/40 text-[#917215] hover:bg-[#C9A227]/25 text-xs font-black rounded-xl shadow-xs transition-all flex items-center gap-2 shrink-0 disabled:opacity-50 cursor-pointer"
+              title="Export all Experts to Excel (.xlsx)"
+            >
+              {isExporting ? (
+                <RefreshCw size={15} className="animate-spin text-[#917215]" />
+              ) : (
+                <Download size={15} className="text-[#917215]" />
+              )}
+              <span>Export Experts (Excel)</span>
+            </button>
+
+            <button onClick={loadExperts} className="bg-white border border-slate-200 text-slate-700 p-2.5 rounded-xl text-sm font-bold shadow-xs hover:bg-slate-50 transition-colors" title="Refresh List">
               <RefreshCw size={16} />
             </button>
-            <button onClick={() => { setAddAvatarPreview(null); setIsAddModalOpen(true); }} className="flex items-center gap-2 px-5 py-2.5 bg-[#1B2A6B] hover:bg-[#121c47] text-white text-sm font-black rounded-xl shadow-md transition-colors">
-              <Plus size={18} /> Add Expert
+
+            <button onClick={() => { setAddAvatarPreview(null); setIsAddModalOpen(true); }} className="flex items-center gap-2 px-5 py-2.5 bg-[#1B2A6B] hover:bg-[#121c47] text-white text-xs font-black rounded-xl shadow-md transition-colors shrink-0">
+              <Plus size={16} /> Add Expert
             </button>
           </div>
         </div>
@@ -588,6 +652,15 @@ export default function InstructorsManager() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Expert Excel & Images Import Modal */}
+      <ExpertImportModal 
+        isOpen={isImportModalOpen} 
+        onClose={() => setIsImportModalOpen(false)} 
+        onSuccess={() => {
+          loadExperts();
+        }} 
+      />
     </AdminDashboardLayout>
   );
 }

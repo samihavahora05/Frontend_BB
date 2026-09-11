@@ -19,16 +19,17 @@ export const WhyChooseBlueboxxSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
+            className="text-center lg:text-left flex flex-col items-center lg:items-start"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">
               Why Choose <span className="text-[#2563EB]">Blueboxx?</span>
             </h2>
             
-            <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-8">
+            <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-8 text-justify lg:text-left">
               Blueboxx is more than just a learning platform – it&apos;s a career accelerator. With industry experts, live projects, and placement opportunities, we transform learners into professionals ready for tomorrow.
             </p>
 
-            <div className="space-y-4">
+            <div className="space-y-4 inline-block text-left mx-auto lg:mx-0">
               {highlights.map((item, index) => (
                 <div key={index} className="flex items-center gap-3">
                   <div className="w-6 h-6 rounded border border-emerald-500 bg-emerald-50 flex items-center justify-center shrink-0">

@@ -23,11 +23,13 @@ export default function ExpertDashboard() {
   const { data: sessionsRes, isLoading: isLoadingSessions, mutate: mutateSessions } = useSWR("/expert/sessions/upcoming", fetcher);
   const { data: chartRes, isLoading: isLoadingChart } = useSWR("/expert/earnings/chart", fetcher);
   const { data: requestsRes, mutate: mutateRequests } = useSWR("/expert/mentees/requests", fetcher);
+  const { data: profileRes } = useSWR("/expert/profile", fetcher);
 
   const metrics = metricsRes?.data || { active_mentees: 0, hours_mentored: 0, pending_payout: 0, average_rating: 0 };
   const upcomingSessions = sessionsRes?.data || [];
   const earningsData = chartRes?.data || [];
   const menteeRequests = requestsRes?.data || [];
+  const profileCompletion = profileRes?.data?.completion || { percentage: 100, completed_count: 0, total_count: 0, checklist: [] };
 
   const handleOpenJoinModal = (session: any) => {
     setActiveSession(session);
@@ -96,6 +98,7 @@ export default function ExpertDashboard() {
         </div>
       </div>
 
+      {/* Stats Cards */}
       <div id="tour-stats" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
           { label: "Active Mentees", value: isLoadingMetrics ? "-" : metrics.active_mentees.toString(), icon: Users, color: "text-blue-600", bg: "bg-blue-50" },

@@ -237,26 +237,26 @@ export default function InternshipDetailsPage() {
             <div className="w-full lg:w-2/3 space-y-10">
               
               <section>
-                <h2 className="text-xl font-bold text-slate-900 mb-4">About the Internship</h2>
-                <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line">
+                <h2 className="text-xl font-bold text-slate-900 mb-4 text-center md:text-left">About the Internship</h2>
+                <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line text-justify md:text-left">
                   {internship.description || "No description provided."}
                 </p>
               </section>
 
               {internship.responsibilities && (
                 <section>
-                  <h2 className="text-xl font-bold text-slate-900 mb-4">Responsibilities</h2>
+                  <h2 className="text-xl font-bold text-slate-900 mb-4 text-center md:text-left">Responsibilities</h2>
                   {Array.isArray(internship.responsibilities) ? (
                     <ul className="space-y-3">
                       {internship.responsibilities.map((item: string, i: number) => (
                         <li key={i} className="flex items-start gap-3">
                           <CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" />
-                          <span className="text-slate-600 text-sm">{item}</span>
+                          <span className="text-slate-600 text-sm text-justify md:text-left">{item}</span>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line">
+                    <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line text-justify md:text-left">
                       {internship.responsibilities}
                     </p>
                   )}
@@ -265,8 +265,8 @@ export default function InternshipDetailsPage() {
 
               {internship.learning_outcomes && (
                 <section>
-                  <h2 className="text-xl font-bold text-slate-900 mb-4">Learning Outcomes</h2>
-                  <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line">
+                  <h2 className="text-xl font-bold text-slate-900 mb-4 text-center md:text-left">Learning Outcomes</h2>
+                  <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line text-justify md:text-left">
                     {internship.learning_outcomes}
                   </p>
                 </section>
@@ -274,8 +274,8 @@ export default function InternshipDetailsPage() {
 
               {internship.eligibility && (
                 <section>
-                  <h2 className="text-xl font-bold text-slate-900 mb-4">Eligibility Criteria</h2>
-                  <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line">
+                  <h2 className="text-xl font-bold text-slate-900 mb-4 text-center md:text-left">Eligibility Criteria</h2>
+                  <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line text-justify md:text-left">
                     {internship.eligibility}
                   </p>
                 </section>
@@ -283,8 +283,8 @@ export default function InternshipDetailsPage() {
 
               {internship.skills_required?.length > 0 && (
                 <section>
-                  <h2 className="text-xl font-bold text-slate-900 mb-4">Required Skills</h2>
-                  <div className="flex flex-wrap gap-2">
+                  <h2 className="text-xl font-bold text-slate-900 mb-4 text-center md:text-left">Required Skills</h2>
+                  <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                     {internship.skills_required.map((skill: string, i: number) => (
                       <Badge key={i} variant="secondary" className="px-3 py-1 text-sm font-medium text-slate-700 bg-white border border-slate-200">
                         {skill}

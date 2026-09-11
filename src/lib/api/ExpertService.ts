@@ -16,6 +16,15 @@ export interface ExpertData {
   hourly_rate: number;
   avatar: string;
   profile_photo?: string;
+  bio?: string;
+  experience_years?: number;
+  highest_qualification?: string;
+  linkedin_url?: string;
+  github_url?: string;
+  portfolio_url?: string;
+  website?: string;
+  profile_completion_percentage?: number;
+  approval_status?: string;
   average_rating: number;
   total_reviews: number;
   is_available: boolean;
@@ -43,6 +52,7 @@ export const normalizeExpert = (item: any): ExpertData => {
       hourly_rate: 1500,
       avatar: "",
       profile_photo: "",
+      bio: "",
       average_rating: 5.0,
       total_reviews: 0,
       is_available: true,
@@ -79,6 +89,15 @@ export const normalizeExpert = (item: any): ExpertData => {
     hourly_rate: rate,
     avatar: avatarUrl,
     profile_photo: avatarUrl,
+    bio: item.bio || item.about || "",
+    experience_years: item.experience_years !== undefined ? Number(item.experience_years) : undefined,
+    highest_qualification: item.highest_qualification || "",
+    linkedin_url: item.linkedin_url || "",
+    github_url: item.github_url || "",
+    portfolio_url: item.portfolio_url || "",
+    website: item.website || "",
+    profile_completion_percentage: item.profile_completion_percentage !== undefined ? Number(item.profile_completion_percentage) : undefined,
+    approval_status: item.approval_status || (item.is_verified ? "approved" : "pending"),
     average_rating: Number(item.average_rating || 5.0),
     total_reviews: Number(item.total_reviews || 0),
     is_available: item.is_available !== undefined ? Boolean(item.is_available) : true,
@@ -315,4 +334,111 @@ export const ExpertService = {
     }
     return true;
   },
+
+  async exportExpertsExcel(): Promise<void> {
+    const res = await api.get(`/admin/instructors/export?_t=${Date.now()}`, {
+      responseType: 'blob',
+    });
+    
+    let filename = `experts_export_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    const disposition = typeof res.headers?.['content-disposition'] === 'string' ? res.headers['content-disposition'] : '';
+    if (disposition && disposition.includes('filename=')) {
+      const parts = disposition.split('filename=');
+      if (parts[1]) {
+        const raw = parts[1].split(';')[0].trim().replace(/^["']|["']$/g, '');
+        if (raw) filename = raw;
+      }
+    }
+
+    const contentType = typeof res.headers?.['content-type'] === 'string' 
+      ? res.headers['content-type'] 
+      : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      
+    const blob = new Blob([res.data], { type: contentType });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  },
+
+  async exportExpertsZip(): Promise<void> {
+    return this.exportExpertsExcel();
+  },
+
+  async downloadImportTemplate(): Promise<void> {
+    const res = await api.get(`/admin/instructors/sample-template?_t=${Date.now()}`, {
+      responseType: 'blob',
+    });
+
+    let filename = `experts_import_template.xlsx`;
+    const disposition = typeof res.headers?.['content-disposition'] === 'string' ? res.headers['content-disposition'] : '';
+    if (disposition && disposition.includes('filename=')) {
+      const parts = disposition.split('filename=');
+      if (parts[1]) {
+        const raw = parts[1].split(';')[0].trim().replace(/^["']|["']$/g, '');
+        if (raw) filename = raw;
+      }
+    }
+
+    const contentType = typeof res.headers?.['content-type'] === 'string'
+      ? res.headers['content-type']
+      : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      
+    const blob = new Blob([res.data], { type: contentType });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  },
+
+  async previewImport(file: File): Promise<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await api.post('/admin/instructors/import/preview', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data;
+  },
+
+  async confirmImport(rows: any[]): Promise<any> {
+    const res = await api.post('/admin/instructors/import/confirm', { rows });
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("bb_experts_updated"));
+    }
+    return res.data;
+  },
+
+  // Expert Dashboard Profile Methods
+  async getExpertProfile(): Promise<any> {
+    const res = await api.get('/expert/profile');
+    return res.data;
+  },
+
+  async updateExpertProfile(payload: any): Promise<any> {
+    const res = await api.put('/expert/profile', payload);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("bb_experts_updated"));
+    }
+    return res.data;
+  },
+
+  async uploadExpertPhoto(file: File): Promise<any> {
+    const formData = new FormData();
+    formData.append('photo', file);
+    const res = await api.post('/expert/profile/photo', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("bb_experts_updated"));
+    }
+    return res.data;
+  }
 };

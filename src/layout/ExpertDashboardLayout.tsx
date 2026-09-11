@@ -5,7 +5,8 @@ import { useAuth } from "../context/AuthContext";
 import { AuthGuard } from "../components/auth/AuthGuard";
 import { SEO } from "../components/seo/SEO";
 import { 
-  LayoutDashboard, 
+  LayoutDashboard,
+  User,
   Calendar, 
   DollarSign, 
   Settings, 
@@ -20,6 +21,7 @@ import { NotificationPopover } from "../components/ui/NotificationPopover";
 
 const sidebarLinks = [
   { name: "Overview", href: "/expert/dashboard", icon: LayoutDashboard },
+  { name: "Profile", href: "/expert/profile", icon: User },
   { name: "My Schedule", href: "/expert/schedule", icon: Calendar },
   { name: "Meetings", href: "/expert/mentees", icon: Users },
   { name: "Earnings", href: "/expert/earnings", icon: DollarSign },

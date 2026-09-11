@@ -60,7 +60,7 @@ export const FloatingActions = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[99] flex flex-col gap-4 items-end pointer-events-none">
+    <div className="fixed bottom-6 right-6 z-[99] flex flex-col gap-4 items-end pointer-events-none no-print print:hidden">
       
       {/* Inquiry Popup Form */}
       <AnimatePresence>

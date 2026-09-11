@@ -44,21 +44,44 @@ export default function StudentMentorSessionsPage() {
         const rawData = response.data?.data || response.data || [];
         const list = Array.isArray(rawData) ? rawData : [];
 
-        const mapped = list.map((s: any) => {
-          const dateStr = s.scheduled_at 
+        // Deduplicate by mentor and date/title, prioritizing actual scheduled timestamps over TBD
+        const sessionMap = new Map<string, any>();
+        
+        list.forEach((s: any) => {
+          const mentorName = s.mentor || (s.expert?.user ? `${s.expert.user.first_name || ""} ${s.expert.user.last_name || ""}`.trim() : (s.expert_name || "Expert Mentor"));
+          const hasValidDate = !!s.scheduled_at && s.scheduled_at !== "TBD";
+          const dedupeKey = mentorName.toLowerCase().trim();
+
+          if (!sessionMap.has(dedupeKey)) {
+            sessionMap.set(dedupeKey, s);
+          } else {
+            const existing = sessionMap.get(dedupeKey);
+            const existingHasDate = !!existing.scheduled_at && existing.scheduled_at !== "TBD";
+            // If current item has valid scheduled_at date and existing doesn't, replace it
+            if (hasValidDate && !existingHasDate) {
+              sessionMap.set(dedupeKey, s);
+            }
+          }
+        });
+
+        const dedupedList = Array.from(sessionMap.values());
+
+        const mapped = dedupedList.map((s: any) => {
+          const hasDate = s.scheduled_at && s.scheduled_at !== "TBD";
+          const dateStr = hasDate 
             ? new Date(s.scheduled_at).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })
             : (s.date || "TBD");
             
-          const timeStr = s.scheduled_at
+          const timeStr = hasDate
             ? new Date(s.scheduled_at).toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit' })
             : (s.time || "TBD");
 
-          const mentorName = s.expert?.user ? `${s.expert.user.first_name || ""} ${s.expert.user.last_name || ""}`.trim() : (s.expert_name || s.mentor || "Expert Mentor");
+          const mentorName = s.mentor || (s.expert?.user ? `${s.expert.user.first_name || ""} ${s.expert.user.last_name || ""}`.trim() : (s.expert_name || "Expert Mentor"));
 
           return {
             id: s.id,
             mentor: mentorName,
-            title: s.notes || s.topic || s.title || "1:1 Mentorship Session",
+            title: s.title || s.notes || s.topic || "1:1 Mentorship Session",
             date: dateStr,
             time: `${timeStr} (${s.duration_minutes || s.duration || 60} mins)`,
             status: s.status === "scheduled" || s.status === "upcoming" ? "Upcoming" : "Completed",
