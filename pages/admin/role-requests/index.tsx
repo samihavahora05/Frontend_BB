@@ -53,6 +53,9 @@ export default function AdminRoleRequestsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
 
+  // Details Modal State
+  const [viewingItem, setViewingItem] = useState<RoleRequestItem | null>(null);
+
   // Reject Modal State
   const [rejectingItem, setRejectingItem] = useState<RoleRequestItem | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
@@ -313,6 +316,13 @@ export default function AdminRoleRequestsPage() {
                           <p className="text-slate-600 line-clamp-2 text-xs leading-relaxed font-normal">
                             {reasonText}
                           </p>
+                          <button
+                            type="button"
+                            onClick={() => setViewingItem(req)}
+                            className="mt-1 text-[11px] text-[#1B2A6B] hover:text-[#C9A227] font-bold inline-flex items-center gap-1 transition-colors"
+                          >
+                            <Info size={12} /> View Full Details
+                          </button>
                           {rejectionReasonText && (
                             <div className="mt-1 text-[11px] text-rose-600 font-medium">
                               <strong>Rejection reason:</strong> {rejectionReasonText}
@@ -382,6 +392,112 @@ export default function AdminRoleRequestsPage() {
           )}
         </div>
       </div>
+
+      {/* View Details Modal */}
+      {viewingItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 p-6 overflow-hidden max-h-[90vh] flex flex-col">
+            <button
+              onClick={() => setViewingItem(null)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+            >
+              <X size={18} />
+            </button>
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-[#1B2A6B]/10 text-[#1B2A6B] flex items-center justify-center">
+                <UserCheck size={20} />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-slate-900 font-sora">Role Request Details</h3>
+                <p className="text-xs text-slate-500 font-medium">
+                  Applicant: <strong className="text-slate-800">{viewingItem.user?.name || `${viewingItem.user?.first_name || ''} ${viewingItem.user?.last_name || ''}`.trim() || 'User'}</strong>
+                </p>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+              <div className="grid grid-cols-2 gap-3 p-3.5 bg-slate-50 rounded-2xl border border-slate-100 text-xs">
+                <div>
+                  <span className="text-slate-400 font-bold uppercase text-[10px] block">Current Role</span>
+                  <span className="capitalize font-bold text-slate-800">{getRoleString(viewingItem.current_role) || 'student'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 font-bold uppercase text-[10px] block">Requested Role</span>
+                  <span className="capitalize font-black text-[#1B2A6B]">{getRoleString(viewingItem.requested_role) || 'expert'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 font-bold uppercase text-[10px] block">Email</span>
+                  <span className="font-semibold text-slate-800">{viewingItem.user?.email || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 font-bold uppercase text-[10px] block">Submitted Date</span>
+                  <span className="font-semibold text-slate-800">
+                    {new Date(viewingItem.created_at).toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1.5">
+                  Application Statement & Information
+                </label>
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-700 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto">
+                  {typeof viewingItem.reason === 'string' ? viewingItem.reason : JSON.stringify(viewingItem.reason, null, 2)}
+                </div>
+              </div>
+
+              {viewingItem.rejection_reason && (
+                <div className="p-3.5 bg-rose-50 border border-rose-100 rounded-2xl text-xs text-rose-700">
+                  <strong className="block mb-1 text-rose-800">Rejection Reason:</strong>
+                  {viewingItem.rejection_reason}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between gap-3 pt-4 mt-4 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setViewingItem(null)}
+                className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50"
+              >
+                Close
+              </button>
+
+              {viewingItem.status === 'pending' && (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const item = viewingItem;
+                      setViewingItem(null);
+                      handleOpenRejectModal(item);
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 font-bold text-xs hover:bg-rose-100"
+                  >
+                    Reject
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const item = viewingItem;
+                      setViewingItem(null);
+                      handleApprove(item);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 shadow-xs"
+                  >
+                    Approve Request
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Reject Modal */}
       {rejectingItem && (

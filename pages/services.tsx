@@ -662,7 +662,6 @@ export default function ServicesPortfolioPage() {
   const [activeTestimonialIdx, setActiveTestimonialIdx] = useState(0);
   const [activeProcessIdx, setActiveProcessIdx] = useState<number | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [fullscreenDashboard, setFullscreenDashboard] = useState<string | null>(null);
 
   // Form State
   const [formState, setFormState] = useState({
@@ -1004,6 +1003,259 @@ export default function ServicesPortfolioPage() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════════
+            SECTION: OUR CLIENTS & ENTERPRISE DEPLOYMENTS (LMS, HRMS, CRM, ERP)
+            - Clean, Professional, High-End Corporate Portfolio Format
+            - Uncropped, razor-sharp dashboard mockups in minimal Mac browser frames
+        ═══════════════════════════════════════════════════════════════════════ */}
+        <section id="clients-projects" className="py-20 lg:py-28 bg-slate-50/70 border-t border-slate-200/80 relative overflow-hidden">
+          <div className="container mx-auto px-4 md:px-6 max-w-7xl relative z-10">
+
+            {/* Header */}
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-200/70 text-[#c9a227] text-xs font-black uppercase tracking-widest mb-4">
+                <span className="w-2 h-2 rounded-full bg-[#c9a227]" /> PROVEN DEPLOYMENTS
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0d1635] tracking-tight leading-tight mb-4 font-sora">
+                Our Clients & <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1b2a6b] to-[#c9a227]">Enterprise Deployments</span>
+              </h2>
+              <p className="text-slate-600 text-base sm:text-lg font-medium leading-relaxed font-inter">
+                Explore real enterprise software, LMS, HRMS, CRM, and ERP systems engineered and deployed for our corporate clients.
+              </p>
+            </div>
+
+            {/* Modern Bento Showcase 4-Card Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+
+              {/* Bento Card 1: CRM Platform */}
+              <motion.div
+                variants={hoverCardVariant}
+                initial="initial"
+                whileHover="hover"
+                className="bg-white rounded-[2rem] border border-slate-200/90 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgba(37,99,235,0.12)] hover:border-blue-500/50 flex flex-col overflow-hidden transition-all duration-300 group"
+              >
+                {/* Bento Header */}
+                <div className="p-5 pb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-[11px] font-black uppercase tracking-wider whitespace-nowrap shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" /> B2B CRM System
+                    </span>
+                  </div>
+                  <span className="text-xs font-bold text-slate-400">
+                    Enterprise CRM
+                  </span>
+                </div>
+
+                {/* Dashboard Canvas Frame (Bento Inset Window) */}
+                <div
+                  className="mx-4 mb-4 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/80 shadow-inner relative aspect-[16/10]"
+                >
+                  <img
+                    src="/uploads/dashboards/dashboard-crm-v2.png"
+                    alt="CRM Sales & Pipeline Dashboard"
+                    className="w-full h-full object-cover block"
+                  />
+                  {/* Floating Live Metric Pill */}
+                  <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md text-white text-[10px] font-bold border border-white/10 flex items-center gap-1.5 shadow-lg">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400" /> $245,000 Pipeline
+                  </div>
+                </div>
+
+                {/* Bento Body */}
+                <div className="px-5 pb-5 flex-1 flex flex-col justify-between space-y-3.5">
+                  <div className="space-y-2">
+                    <h3 className="text-base font-bold text-[#0d1635] font-sora group-hover:text-blue-600 transition-colors leading-snug">
+                      Commercial CRM & Sales Pipeline Velocity Suite
+                    </h3>
+
+                    <p className="text-slate-500 text-xs leading-relaxed font-inter line-clamp-2">
+                      Commercial CRM platform engineered to streamline leads, multi-currency quotation lifecycles, and sales team velocity.
+                    </p>
+
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {['Pipeline Funnel', 'Source Analytics', 'Lead Tracking'].map((chip, idx) => (
+                        <span key={idx} className="px-2.5 py-0.5 rounded-md bg-blue-50/70 text-blue-800 text-[10px] font-semibold">
+                          {chip}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Bento Card 2: ERP Platform */}
+              <motion.div
+                variants={hoverCardVariant}
+                initial="initial"
+                whileHover="hover"
+                className="bg-white rounded-[2rem] border border-slate-200/90 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgba(201,162,39,0.12)] hover:border-amber-500/50 flex flex-col overflow-hidden transition-all duration-300 group"
+              >
+                {/* Bento Header */}
+                <div className="p-5 pb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[11px] font-black uppercase tracking-wider whitespace-nowrap shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" /> Enterprise ERP
+                    </span>
+                  </div>
+                  <span className="text-xs font-bold text-slate-400">
+                    Orion ERP
+                  </span>
+                </div>
+
+                {/* Dashboard Canvas Frame (Bento Inset Window) */}
+                <div
+                  className="mx-4 mb-4 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/80 shadow-inner relative aspect-[16/10]"
+                >
+                  <img
+                    src="/uploads/dashboards/dashboard-erp-v2.png"
+                    alt="Orion Enterprise ERP Dashboard"
+                    className="w-full h-full object-cover block"
+                  />
+                  {/* Floating Live Metric Pill */}
+                  <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md text-white text-[10px] font-bold border border-white/10 flex items-center gap-1.5 shadow-lg">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> ₹45,78,320 Revenue
+                  </div>
+                </div>
+
+                {/* Bento Body */}
+                <div className="px-5 pb-5 flex-1 flex flex-col justify-between space-y-3.5">
+                  <div className="space-y-2">
+                    <h3 className="text-base font-bold text-[#0d1635] font-sora group-hover:text-amber-600 transition-colors leading-snug">
+                      Enterprise Resource Planning & Operations Suite
+                    </h3>
+
+                    <p className="text-slate-500 text-xs leading-relaxed font-inter line-clamp-2">
+                      Comprehensive ERP platform uniting financial accounting, multi-warehouse inventory management, purchase orders, and sales telemetry.
+                    </p>
+
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {['Finance & Payroll', 'Inventory Sync', 'Orders & BI'].map((chip, idx) => (
+                        <span key={idx} className="px-2.5 py-0.5 rounded-md bg-amber-50/70 text-amber-800 text-[10px] font-semibold">
+                          {chip}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Bento Card 3: LMS Platform */}
+              <motion.div
+                variants={hoverCardVariant}
+                initial="initial"
+                whileHover="hover"
+                className="bg-white rounded-[2rem] border border-slate-200/90 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgba(99,102,241,0.12)] hover:border-indigo-500/50 flex flex-col overflow-hidden transition-all duration-300 group"
+              >
+                {/* Bento Header */}
+                <div className="p-5 pb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-[11px] font-black uppercase tracking-wider whitespace-nowrap shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" /> LMS Platform
+                    </span>
+                  </div>
+                  <span className="text-xs font-bold text-slate-400">
+                    EduLearn LMS
+                  </span>
+                </div>
+
+                {/* Dashboard Canvas Frame (Bento Inset Window) */}
+                <div
+                  className="mx-4 mb-4 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/80 shadow-inner relative aspect-[16/10]"
+                >
+                  <img
+                    src="/uploads/dashboards/dashboard-lms-v2.png"
+                    alt="EduLearn LMS Platform Dashboard"
+                    className="w-full h-full object-cover block"
+                  />
+                  {/* Floating Live Metric Pill */}
+                  <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md text-white text-[10px] font-bold border border-white/10 flex items-center gap-1.5 shadow-lg">
+                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" /> 4,850 Active Learners
+                  </div>
+                </div>
+
+                {/* Bento Body */}
+                <div className="px-5 pb-5 flex-1 flex flex-col justify-between space-y-3.5">
+                  <div className="space-y-2">
+                    <h3 className="text-base font-bold text-[#0d1635] font-sora group-hover:text-indigo-600 transition-colors leading-snug">
+                      Interactive LMS Platform & Video Curriculum Suite
+                    </h3>
+
+                    <p className="text-slate-500 text-xs leading-relaxed font-inter line-clamp-2">
+                      Modular EdTech ecosystem built with DRM video streaming, student progress tracking, quizzes, and automated certifications.
+                    </p>
+
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {['Course Catalog', 'Progress Tracking', 'Certificates'].map((chip, idx) => (
+                        <span key={idx} className="px-2.5 py-0.5 rounded-md bg-indigo-50/70 text-indigo-800 text-[10px] font-semibold">
+                          {chip}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Bento Card 4: HRMS Platform */}
+              <motion.div
+                variants={hoverCardVariant}
+                initial="initial"
+                whileHover="hover"
+                className="bg-white rounded-[2rem] border border-slate-200/90 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgba(16,185,129,0.12)] hover:border-emerald-500/50 flex flex-col overflow-hidden transition-all duration-300 group"
+              >
+                {/* Bento Header */}
+                <div className="p-5 pb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-black uppercase tracking-wider whitespace-nowrap shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" /> Enterprise HRMS
+                    </span>
+                  </div>
+                  <span className="text-xs font-bold text-slate-400">
+                    EmpowerHR
+                  </span>
+                </div>
+
+                {/* Dashboard Canvas Frame (Bento Inset Window) */}
+                <div
+                  className="mx-4 mb-4 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/80 shadow-inner relative aspect-[16/10]"
+                >
+                  <img
+                    src="/uploads/dashboards/dashboard-hrms-v2.png"
+                    alt="EmpowerHR HRMS & Payroll Dashboard"
+                    className="w-full h-full object-cover block"
+                  />
+                  {/* Floating Live Metric Pill */}
+                  <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md text-white text-[10px] font-bold border border-white/10 flex items-center gap-1.5 shadow-lg">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> 1,248 Employees Synced
+                  </div>
+                </div>
+
+                {/* Bento Body */}
+                <div className="px-5 pb-5 flex-1 flex flex-col justify-between space-y-3.5">
+                  <div className="space-y-2">
+                    <h3 className="text-base font-bold text-[#0d1635] font-sora group-hover:text-emerald-600 transition-colors leading-snug">
+                      Workforce HRMS & Payroll Intelligence Platform
+                    </h3>
+
+                    <p className="text-slate-500 text-xs leading-relaxed font-inter line-clamp-2">
+                      End-to-end workforce suite featuring biometric attendance sync, automated multi-tier payroll, leave approvals, and KPI matrices.
+                    </p>
+
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {['Attendance & Leave', 'Auto Payroll', 'Employee Lifecycle'].map((chip, idx) => (
+                        <span key={idx} className="px-2.5 py-0.5 rounded-md bg-emerald-50/70 text-emerald-800 text-[10px] font-semibold">
+                          {chip}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+            </div>
+
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════════════
             SECTION 4: INDUSTRIES WE SERVE — 16 SECTOR GRID (4x4)
         ═══════════════════════════════════════════════════════════════════════ */}
         <section id="industries" className="py-20 md:py-28 lg:py-32 bg-white relative">
@@ -1138,280 +1390,7 @@ export default function ServicesPortfolioPage() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════════
-            SECTION 8: OUR CLIENTS & ENTERPRISE DEPLOYMENTS (LMS, HRMS, CRM, ERP)
-            - Clean, Professional, High-End Corporate Portfolio Format
-            - Uncropped, razor-sharp dashboard mockups in minimal Mac browser frames
-        ═══════════════════════════════════════════════════════════════════════ */}
-        <section id="clients-projects" className="py-20 lg:py-28 bg-slate-50/70 border-t border-slate-200/80 relative overflow-hidden">
-          <div className="container mx-auto px-4 md:px-6 max-w-7xl relative z-10">
-
-            {/* Header */}
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-200/70 text-[#c9a227] text-xs font-black uppercase tracking-widest mb-4">
-                <span className="w-2 h-2 rounded-full bg-[#c9a227]" /> PROVEN DEPLOYMENTS
-              </div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0d1635] tracking-tight leading-tight mb-4 font-sora">
-                Our Clients & <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1b2a6b] to-[#c9a227]">Enterprise Deployments</span>
-              </h2>
-              <p className="text-slate-600 text-base sm:text-lg font-medium leading-relaxed font-inter">
-                Explore real enterprise software, LMS, HRMS, CRM, and ERP systems engineered and deployed for our corporate clients.
-              </p>
-            </div>
-
-            {/* Modern Bento Showcase 4-Card Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-
-              {/* Bento Card 1: CRM Platform */}
-              <motion.div
-                variants={hoverCardVariant}
-                initial="initial"
-                whileHover="hover"
-                className="bg-white rounded-[2rem] border border-slate-200/90 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgba(37,99,235,0.12)] hover:border-blue-500/50 flex flex-col overflow-hidden transition-all duration-300 group"
-              >
-                {/* Bento Header */}
-                <div className="p-5 pb-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-[11px] font-black uppercase tracking-wider whitespace-nowrap shrink-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" /> B2B CRM System
-                    </span>
-                  </div>
-                  <span className="text-xs font-bold text-slate-400">
-                    Enterprise CRM
-                  </span>
-                </div>
-
-                {/* Dashboard Canvas Frame (Bento Inset Window) */}
-                <div
-                  onClick={() => setFullscreenDashboard('/uploads/dashboards/dashboard-crm-v2.png')}
-                  className="mx-4 mb-4 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/80 shadow-inner relative aspect-[16/10] cursor-zoom-in group/canvas"
-                >
-                  <img
-                    src="/uploads/dashboards/dashboard-crm-v2.png"
-                    alt="CRM Sales & Pipeline Dashboard"
-                    className="w-full h-full object-cover group-hover/canvas:scale-105 transition-transform duration-500 block"
-                  />
-                  {/* Floating Live Metric Pill */}
-                  <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md text-white text-[10px] font-bold border border-white/10 flex items-center gap-1.5 shadow-lg">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400" /> $245,000 Pipeline
-                  </div>
-                  {/* Expand Prompt */}
-                  <div className="absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-slate-950/70 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover/canvas:opacity-100 transition-opacity">
-                    <Maximize2 size={12} />
-                  </div>
-                </div>
-
-                {/* Bento Body */}
-                <div className="px-5 pb-5 flex-1 flex flex-col justify-between space-y-3.5">
-                  <div className="space-y-2">
-                    <h3 className="text-base font-bold text-[#0d1635] font-sora group-hover:text-blue-600 transition-colors leading-snug">
-                      Commercial CRM & Sales Pipeline Velocity Suite
-                    </h3>
-
-                    <p className="text-slate-500 text-xs leading-relaxed font-inter line-clamp-2">
-                      Commercial CRM platform engineered to streamline leads, multi-currency quotation lifecycles, and sales team velocity.
-                    </p>
-
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {['Pipeline Funnel', 'Source Analytics', 'Lead Tracking'].map((chip, idx) => (
-                        <span key={idx} className="px-2.5 py-0.5 rounded-md bg-blue-50/70 text-blue-800 text-[10px] font-semibold">
-                          {chip}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Bento Card 2: ERP Platform */}
-              <motion.div
-                variants={hoverCardVariant}
-                initial="initial"
-                whileHover="hover"
-                className="bg-white rounded-[2rem] border border-slate-200/90 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgba(201,162,39,0.12)] hover:border-amber-500/50 flex flex-col overflow-hidden transition-all duration-300 group"
-              >
-                {/* Bento Header */}
-                <div className="p-5 pb-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[11px] font-black uppercase tracking-wider whitespace-nowrap shrink-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" /> Enterprise ERP
-                    </span>
-                  </div>
-                  <span className="text-xs font-bold text-slate-400">
-                    Orion ERP
-                  </span>
-                </div>
-
-                {/* Dashboard Canvas Frame (Bento Inset Window) */}
-                <div
-                  onClick={() => setFullscreenDashboard('/uploads/dashboards/dashboard-erp-v2.png')}
-                  className="mx-4 mb-4 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/80 shadow-inner relative aspect-[16/10] cursor-zoom-in group/canvas"
-                >
-                  <img
-                    src="/uploads/dashboards/dashboard-erp-v2.png"
-                    alt="Orion Enterprise ERP Dashboard"
-                    className="w-full h-full object-cover group-hover/canvas:scale-105 transition-transform duration-500 block"
-                  />
-                  {/* Floating Live Metric Pill */}
-                  <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md text-white text-[10px] font-bold border border-white/10 flex items-center gap-1.5 shadow-lg">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> ₹45,78,320 Revenue
-                  </div>
-                  {/* Expand Prompt */}
-                  <div className="absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-slate-950/70 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover/canvas:opacity-100 transition-opacity">
-                    <Maximize2 size={12} />
-                  </div>
-                </div>
-
-                {/* Bento Body */}
-                <div className="px-5 pb-5 flex-1 flex flex-col justify-between space-y-3.5">
-                  <div className="space-y-2">
-                    <h3 className="text-base font-bold text-[#0d1635] font-sora group-hover:text-amber-600 transition-colors leading-snug">
-                      Enterprise Resource Planning & Operations Suite
-                    </h3>
-
-                    <p className="text-slate-500 text-xs leading-relaxed font-inter line-clamp-2">
-                      Comprehensive ERP platform uniting financial accounting, multi-warehouse inventory management, purchase orders, and sales telemetry.
-                    </p>
-
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {['Finance & Payroll', 'Inventory Sync', 'Orders & BI'].map((chip, idx) => (
-                        <span key={idx} className="px-2.5 py-0.5 rounded-md bg-amber-50/70 text-amber-800 text-[10px] font-semibold">
-                          {chip}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Bento Card 3: LMS Platform */}
-              <motion.div
-                variants={hoverCardVariant}
-                initial="initial"
-                whileHover="hover"
-                className="bg-white rounded-[2rem] border border-slate-200/90 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgba(99,102,241,0.12)] hover:border-indigo-500/50 flex flex-col overflow-hidden transition-all duration-300 group"
-              >
-                {/* Bento Header */}
-                <div className="p-5 pb-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-[11px] font-black uppercase tracking-wider whitespace-nowrap shrink-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" /> LMS Platform
-                    </span>
-                  </div>
-                  <span className="text-xs font-bold text-slate-400">
-                    EduLearn LMS
-                  </span>
-                </div>
-
-                {/* Dashboard Canvas Frame (Bento Inset Window) */}
-                <div
-                  onClick={() => setFullscreenDashboard('/uploads/dashboards/dashboard-lms-v2.png')}
-                  className="mx-4 mb-4 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/80 shadow-inner relative aspect-[16/10] cursor-zoom-in group/canvas"
-                >
-                  <img
-                    src="/uploads/dashboards/dashboard-lms-v2.png"
-                    alt="EduLearn LMS Platform Dashboard"
-                    className="w-full h-full object-cover group-hover/canvas:scale-105 transition-transform duration-500 block"
-                  />
-                  {/* Floating Live Metric Pill */}
-                  <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md text-white text-[10px] font-bold border border-white/10 flex items-center gap-1.5 shadow-lg">
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" /> 4,850 Active Learners
-                  </div>
-                  {/* Expand Prompt */}
-                  <div className="absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-slate-950/70 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover/canvas:opacity-100 transition-opacity">
-                    <Maximize2 size={12} />
-                  </div>
-                </div>
-
-                {/* Bento Body */}
-                <div className="px-5 pb-5 flex-1 flex flex-col justify-between space-y-3.5">
-                  <div className="space-y-2">
-                    <h3 className="text-base font-bold text-[#0d1635] font-sora group-hover:text-indigo-600 transition-colors leading-snug">
-                      Interactive LMS Platform & Video Curriculum Suite
-                    </h3>
-
-                    <p className="text-slate-500 text-xs leading-relaxed font-inter line-clamp-2">
-                      Modular EdTech ecosystem built with DRM video streaming, student progress tracking, quizzes, and automated certifications.
-                    </p>
-
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {['Course Catalog', 'Progress Tracking', 'Certificates'].map((chip, idx) => (
-                        <span key={idx} className="px-2.5 py-0.5 rounded-md bg-indigo-50/70 text-indigo-800 text-[10px] font-semibold">
-                          {chip}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Bento Card 4: HRMS Platform */}
-              <motion.div
-                variants={hoverCardVariant}
-                initial="initial"
-                whileHover="hover"
-                className="bg-white rounded-[2rem] border border-slate-200/90 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgba(16,185,129,0.12)] hover:border-emerald-500/50 flex flex-col overflow-hidden transition-all duration-300 group"
-              >
-                {/* Bento Header */}
-                <div className="p-5 pb-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-black uppercase tracking-wider whitespace-nowrap shrink-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" /> Enterprise HRMS
-                    </span>
-                  </div>
-                  <span className="text-xs font-bold text-slate-400">
-                    EmpowerHR
-                  </span>
-                </div>
-
-                {/* Dashboard Canvas Frame (Bento Inset Window) */}
-                <div
-                  onClick={() => setFullscreenDashboard('/uploads/dashboards/dashboard-hrms-v2.png')}
-                  className="mx-4 mb-4 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/80 shadow-inner relative aspect-[16/10] cursor-zoom-in group/canvas"
-                >
-                  <img
-                    src="/uploads/dashboards/dashboard-hrms-v2.png"
-                    alt="EmpowerHR HRMS & Payroll Dashboard"
-                    className="w-full h-full object-cover group-hover/canvas:scale-105 transition-transform duration-500 block"
-                  />
-                  {/* Floating Live Metric Pill */}
-                  <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md text-white text-[10px] font-bold border border-white/10 flex items-center gap-1.5 shadow-lg">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> 1,248 Employees Synced
-                  </div>
-                  {/* Expand Prompt */}
-                  <div className="absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-slate-950/70 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover/canvas:opacity-100 transition-opacity">
-                    <Maximize2 size={12} />
-                  </div>
-                </div>
-
-                {/* Bento Body */}
-                <div className="px-5 pb-5 flex-1 flex flex-col justify-between space-y-3.5">
-                  <div className="space-y-2">
-                    <h3 className="text-base font-bold text-[#0d1635] font-sora group-hover:text-emerald-600 transition-colors leading-snug">
-                      Workforce HRMS & Payroll Intelligence Platform
-                    </h3>
-
-                    <p className="text-slate-500 text-xs leading-relaxed font-inter line-clamp-2">
-                      End-to-end workforce suite featuring biometric attendance sync, automated multi-tier payroll, leave approvals, and KPI matrices.
-                    </p>
-
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {['Attendance & Leave', 'Auto Payroll', 'Employee Lifecycle'].map((chip, idx) => (
-                        <span key={idx} className="px-2.5 py-0.5 rounded-md bg-emerald-50/70 text-emerald-800 text-[10px] font-semibold">
-                          {chip}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-            </div>
-
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════════
-            SECTION 9: CLIENT TESTIMONIALS (Verified Companies)
+            SECTION 8: CLIENT TESTIMONIALS (Verified Companies)
             - Separate section preserving client reviews and ratings
         ═══════════════════════════════════════════════════════════════════════ */}
         <section id="testimonials" className="py-24 lg:py-32 bg-slate-50/70 border-t border-slate-200/80 relative overflow-hidden">
@@ -1744,43 +1723,7 @@ export default function ServicesPortfolioPage() {
           </div>
         </section>
 
-        {/* Fullscreen High-Res Dashboard Lightbox Modal */}
-        <AnimatePresence>
-          {fullscreenDashboard && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8 bg-slate-950/90 backdrop-blur-xl">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="relative max-w-6xl w-full max-h-[92vh] bg-slate-900 border border-slate-700 rounded-3xl overflow-hidden shadow-2xl flex flex-col"
-              >
-                {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950">
-                  <div className="flex items-center gap-3">
-                    <span className="w-3 h-3 rounded-full bg-rose-500 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-amber-500 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" />
-                    <span className="text-xs font-mono text-slate-400 ml-2">High-Resolution Enterprise Architecture Preview</span>
-                  </div>
-                  <button
-                    onClick={() => setFullscreenDashboard(null)}
-                    className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-                {/* Image */}
-                <div className="flex-1 overflow-auto p-4 sm:p-6 bg-slate-950 flex items-center justify-center">
-                  <img
-                    src={fullscreenDashboard}
-                    alt="High-Resolution Architecture"
-                    className="max-w-full max-h-[78vh] object-contain rounded-xl border border-slate-800 shadow-2xl"
-                  />
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
+
 
         {/* ═══════════════════════════════════════════════════════════════════════
             TESTIMONIALS SECTION (SUCCESS STORIES)

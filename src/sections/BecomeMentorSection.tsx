@@ -1,7 +1,13 @@
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "../components/ui/Button";
 
-export const BecomeMentorSection = ({ onBecomeMentor }: { onBecomeMentor?: () => void }) => {
+export const BecomeMentorSection = ({ 
+  onBecomeMentor,
+  userRole 
+}: { 
+  onBecomeMentor?: () => void;
+  userRole?: string | null;
+}) => {
   return (
     <div className="bg-[#0d1635] text-white py-24 relative overflow-hidden">
       {/* Background image overlay */}
@@ -19,12 +25,17 @@ export const BecomeMentorSection = ({ onBecomeMentor }: { onBecomeMentor?: () =>
         <div className="flex flex-col lg:flex-row items-center gap-16">
           
           <div className="flex-1 space-y-8">
-            <h2 className="text-4xl md:text-5xl font-black mb-4">Become a Mentor</h2>
-            <p className="text-lg text-slate-300 max-w-lg">
-              Share your industry experience, guide aspiring learners, and make a real impact. Join our growing network of experts mentoring the next generation.
-            </p>
+            <div>
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[#C9A227] text-xs font-bold mb-4 uppercase tracking-wider">
+                Industry Mentorship Platform
+              </span>
+              <h2 className="text-4xl md:text-5xl font-black mb-4">Become a Mentor</h2>
+              <p className="text-lg text-slate-300 max-w-lg">
+                Share your industry experience, guide aspiring learners, and make a real impact. Join our growing network of experts mentoring the next generation.
+              </p>
+            </div>
             
-            <div className="space-y-4 pt-4">
+            <div className="space-y-4 pt-2">
               {[
                 "Conduct 1-on-1 mentorship & live sessions",
                 "Get paid for your time & expertise",
@@ -37,10 +48,17 @@ export const BecomeMentorSection = ({ onBecomeMentor }: { onBecomeMentor?: () =>
               ))}
             </div>
 
-            <div className="pt-8">
-              <Button onClick={onBecomeMentor} className="bg-transparent border-2 border-[#C9A227] text-[#C9A227] hover:bg-[#C9A227] hover:text-[#0d1635] font-black h-14 rounded-full px-10 transition-all uppercase tracking-wider">
-                Apply as a Mentor
-              </Button>
+            <div className="pt-6">
+              {userRole === 'student' && (
+                <div className="mb-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold">
+                  <span>ℹ️ Registered as Student? Role Exchange required to become an Expert</span>
+                </div>
+              )}
+              <div>
+                <Button onClick={onBecomeMentor} className="bg-transparent border-2 border-[#C9A227] text-[#C9A227] hover:bg-[#C9A227] hover:text-[#0d1635] font-black h-14 rounded-full px-10 transition-all uppercase tracking-wider cursor-pointer shadow-lg hover:scale-[1.02]">
+                  {userRole === 'expert' ? 'Manage Expert Profile' : 'Apply as a Mentor'}
+                </Button>
+              </div>
             </div>
           </div>
 
