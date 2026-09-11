@@ -150,13 +150,13 @@ export const HeroSection = () => {
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: EASE }}
-            className="relative z-10 overflow-visible"
+            className="relative z-10 overflow-visible flex flex-col items-center lg:items-start text-center lg:text-left"
           >
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: EASE }}
-              className="mb-4 overflow-visible text-[2.25rem] font-extrabold leading-[1.1] tracking-tight text-white sm:text-4xl md:text-[2.85rem] lg:text-5xl font-sora"
+              className="mb-4 overflow-visible text-[2.25rem] font-extrabold leading-[1.1] tracking-tight text-white sm:text-4xl md:text-[2.85rem] lg:text-5xl font-sora text-center lg:text-left"
             >
               {settings.hero_title ? (
                 <span className="block mb-2">{settings.hero_title}</span>
@@ -167,14 +167,14 @@ export const HeroSection = () => {
                   <span className="block mb-2">industry-aligned</span>
                 </>
               )}
-              <span className="inline-grid overflow-visible">
+              <span className="inline-grid overflow-visible justify-items-center lg:justify-items-start">
                 <span
                   className="invisible col-start-1 row-start-1 whitespace-nowrap text-[#C9A227] select-none pb-2"
                   aria-hidden="true"
                 >
                   Internships.
                 </span>
-                <span className="col-start-1 row-start-1 overflow-visible">
+                <span className="col-start-1 row-start-1 overflow-visible text-center lg:text-left">
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.span
                       key={wordIndex}
@@ -192,11 +192,11 @@ export const HeroSection = () => {
               </span>
             </motion.h1>
 
-            <p className="mb-5 max-w-[480px] text-[15px] leading-relaxed text-slate-300 sm:text-base sm:leading-[1.75]">
+            <p className="mb-5 max-w-[480px] text-[15px] leading-relaxed text-slate-300 sm:text-base sm:leading-[1.75] text-center lg:text-left mx-auto lg:mx-0">
               {settings.hero_subtitle || 'Master high-demand skills through expert-led programs, hands-on live projects, and guaranteed internship opportunities tailored for the modern workforce.'}
             </p>
 
-            <div className="mb-6 flex gap-2 sm:gap-3 w-full max-w-md">
+            <div className="mb-6 flex gap-2 sm:gap-3 w-full max-w-md justify-center lg:justify-start">
               <motion.div whileHover={{ scale: 1.025, y: -1 }} whileTap={{ scale: 0.97 }} className="flex-1">
                 <Link href="/courses" className="w-full px-2 sm:px-7 py-3 sm:py-3.5 text-xs sm:text-base inline-flex justify-center items-center gap-1.5 sm:gap-2 whitespace-nowrap bg-[#C9A227] hover:bg-[#b08d20] text-[#0d1635] font-black rounded-xl shadow-lg shadow-[#C9A227]/25 transition-all">
                   Explore Programs <ArrowRight size={14} className="sm:w-4 sm:h-4" />
@@ -209,7 +209,7 @@ export const HeroSection = () => {
               </motion.div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 border-t border-white/10 pt-4 sm:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 border-t border-white/10 pt-4 sm:grid-cols-4 w-full">
               <StatBlock end={stats?.projects || 3000} suffix="+" label="Projects Delivered" />
               <StatBlock end={stats?.clients || 1500} suffix="+" label="Satisfied Clients" />
               <StatBlock end={stats?.industries || 15} suffix="+" label="Industries Served" />
