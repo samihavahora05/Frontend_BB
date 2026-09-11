@@ -9,7 +9,7 @@ export const BecomeMentorSection = ({
   userRole?: string | null;
 }) => {
   return (
-    <div className="bg-[#0d1635] text-white py-24 relative overflow-hidden">
+    <div className="bg-[#0d1635] text-white py-16 sm:py-24 relative overflow-hidden">
       {/* Background image overlay */}
       <div 
         className="absolute inset-0 z-0 opacity-40 mix-blend-overlay"
@@ -22,20 +22,22 @@ export const BecomeMentorSection = ({
       <div className="absolute inset-0 bg-gradient-to-r from-[#0d1635] via-[#0d1635]/80 to-transparent z-0" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-16">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
           
-          <div className="flex-1 space-y-8">
-            <div>
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[#C9A227] text-xs font-bold mb-4 uppercase tracking-wider">
-                Industry Mentorship Platform
-              </span>
-              <h2 className="text-4xl md:text-5xl font-black mb-4">Become a Mentor</h2>
-              <p className="text-lg text-slate-300 max-w-lg">
+          <div className="flex-1 space-y-8 w-full text-center lg:text-left flex flex-col items-center lg:items-start">
+            <div className="w-full">
+              <div className="flex justify-center lg:justify-start w-full">
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[#C9A227] text-xs font-bold mb-4 uppercase tracking-wider">
+                  Industry Mentorship Platform
+                </span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-center lg:text-left">Become a Mentor</h2>
+              <p className="text-base sm:text-lg text-slate-300 max-w-lg mx-auto lg:mx-0 text-justify sm:text-center lg:text-left leading-relaxed">
                 Share your industry experience, guide aspiring learners, and make a real impact. Join our growing network of experts mentoring the next generation.
               </p>
             </div>
             
-            <div className="space-y-4 pt-2">
+            <div className="space-y-4 pt-2 w-full max-w-md mx-auto lg:mx-0 text-left">
               {[
                 "Conduct 1-on-1 mentorship & live sessions",
                 "Get paid for your time & expertise",
@@ -48,14 +50,14 @@ export const BecomeMentorSection = ({
               ))}
             </div>
 
-            <div className="pt-6">
+            <div className="pt-4 sm:pt-6 w-full flex flex-col items-center lg:items-start">
               {userRole === 'student' && (
-                <div className="mb-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold">
+                <div className="mb-4 inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold text-center max-w-md">
                   <span>ℹ️ Registered as Student? Role Exchange required to become an Expert</span>
                 </div>
               )}
-              <div>
-                <Button onClick={onBecomeMentor} className="bg-transparent border-2 border-[#C9A227] text-[#C9A227] hover:bg-[#C9A227] hover:text-[#0d1635] font-black h-14 rounded-full px-10 transition-all uppercase tracking-wider cursor-pointer shadow-lg hover:scale-[1.02]">
+              <div className="flex justify-center lg:justify-start w-full">
+                <Button onClick={onBecomeMentor} className="w-full sm:w-auto bg-transparent border-2 border-[#C9A227] text-[#C9A227] hover:bg-[#C9A227] hover:text-[#0d1635] font-black h-14 rounded-full px-10 transition-all uppercase tracking-wider cursor-pointer shadow-lg hover:scale-[1.02]">
                   {userRole === 'expert' ? 'Manage Expert Profile' : 'Apply as a Mentor'}
                 </Button>
               </div>
@@ -63,13 +65,13 @@ export const BecomeMentorSection = ({
           </div>
 
           <div className="w-full lg:w-[500px]">
-            <div className="bg-white rounded-3xl p-10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-              <h3 className="text-2xl font-black text-slate-900 mb-4">Who Can Become a Mentor?</h3>
-              <p className="text-slate-600 mb-8 font-semibold">
+            <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+              <h3 className="text-2xl font-black text-slate-900 mb-4 text-center lg:text-left">Who Can Become a Mentor?</h3>
+              <p className="text-slate-600 mb-8 font-semibold text-justify sm:text-center lg:text-left">
                 We are looking for professionals with real-world experience who are passionate about teaching and mentoring.
               </p>
               
-              <ul className="space-y-4 text-slate-700 font-bold">
+              <ul className="space-y-4 text-slate-700 font-bold text-left">
                 <li className="flex items-center gap-2 before:content-[''] before:w-1.5 before:h-1.5 before:bg-[#C9A227] before:rounded-full">
                   Working professionals & industry experts
                 </li>
