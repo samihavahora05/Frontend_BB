@@ -18,6 +18,7 @@ import { SEO } from "../../src/components/seo/SEO";
 import { useAuth } from "../../src/context/AuthContext";
 import { getOpportunityPermission } from "../../src/lib/opportunityPermissions";
 import { RoleChangeModal } from "../../src/components/common/RoleChangeModal";
+import { AuthRequiredModal } from "../../src/components/common/AuthRequiredModal";
 
 export default function InternshipDetailsPage() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export default function InternshipDetailsPage() {
   const [internship, setInternship] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showRoleModal, setShowRoleModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -71,6 +73,13 @@ export default function InternshipDetailsPage() {
         <div className="min-h-screen flex items-center justify-center pt-20">
           <Loader2 className="w-10 h-10 animate-spin text-[#1B2A6B]" />
         </div>
+        <AuthRequiredModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          actionType="internship"
+          itemTitle={internship?.title}
+          returnUrl={`/apply/internship/${internship?.id}`}
+        />
       </MainLayout>
     );
   }
@@ -81,6 +90,13 @@ export default function InternshipDetailsPage() {
         <div className="min-h-screen flex items-center justify-center pt-20">
           <h2 className="text-xl font-bold text-slate-800">Internship not found.</h2>
         </div>
+        <AuthRequiredModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          actionType="internship"
+          itemTitle={internship?.title}
+          returnUrl={`/apply/internship/${internship?.id}`}
+        />
       </MainLayout>
     );
   }
@@ -361,6 +377,13 @@ export default function InternshipDetailsPage() {
             targetRoleDisplay="Intern"
           />
         )}
+        <AuthRequiredModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          actionType="internship"
+          itemTitle={internship?.title}
+          returnUrl={`/apply/internship/${internship?.id}`}
+        />
       </MainLayout>
     </>
   );

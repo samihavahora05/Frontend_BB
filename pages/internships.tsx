@@ -13,6 +13,9 @@ import { AuthNoticeBanner } from "../src/components/common/AuthNoticeBanner";
 import useSWR, { mutate } from "swr";
 import toast from "react-hot-toast";
 import { ApplyModal } from "../src/components/internship/ApplyModal";
+import { AuthRequiredModal } from "../src/components/common/AuthRequiredModal";
+import { RoleChangeModal } from "../src/components/common/RoleChangeModal";
+import { getOpportunityPermission } from "../src/lib/opportunityPermissions";
 import { StudentsShowcaseSection } from "../src/sections/StudentsShowcaseSection";
 import { PartnersSection } from "../src/sections/PartnersSection";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
@@ -61,7 +64,9 @@ export default function InternshipsPage() {
   const [totalInternships, setTotalInternships] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const [authModalConfig, setAuthModalConfig] = useState<{ isOpen: boolean; itemTitle: string; returnUrl: string }>({ isOpen: false, itemTitle: '', returnUrl: '' });
+  const [showRoleModal, setShowRoleModal] = useState(false);
   const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
   const [saving, setSaving] = useState<number | null>(null);
 
@@ -750,6 +755,26 @@ export default function InternshipsPage() {
         {/* How to Earn With Us */}
         <InternshipEarnSection />
         <TestimonialsSection />
+
+        {/* Auth Required Modal */}
+        <AuthRequiredModal
+          isOpen={authModalConfig.isOpen}
+          onClose={() => setAuthModalConfig(prev => ({ ...prev, isOpen: false }))}
+          actionType="internship"
+          itemTitle={authModalConfig.itemTitle}
+          returnUrl={authModalConfig.returnUrl}
+        />
+
+        {/* Role Change Modal */}
+        {user && (
+          <RoleChangeModal
+            isOpen={showRoleModal}
+            onClose={() => setShowRoleModal(false)}
+            currentRole={user.role || 'student'}
+            targetRole="intern"
+            targetRoleDisplay="Intern"
+          />
+        )}
 
         {/* Application Modal */}
         <ApplyModal

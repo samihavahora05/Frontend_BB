@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { mutate } from "swr";
 import { getImageUrl } from "../../src/lib/imageUtils";
 import { FormattedDescription } from "../../src/components/common/FormattedDescription";
+import { AuthRequiredModal } from "../../src/components/common/AuthRequiredModal";
 
 export default function CourseDetailPage() {
   const router = useRouter();
@@ -27,6 +28,7 @@ export default function CourseDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isEnrollingFree, setIsEnrollingFree] = useState(false);
   const [enrollSuccess, setEnrollSuccess] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const addToCart = useStore(state => state.addToCart);
   const { user, isAuthenticated } = useAuth();
 
@@ -117,7 +119,14 @@ export default function CourseDetailPage() {
         <div className="min-h-[60vh] flex items-center justify-center">
           <Loader2 className="animate-spin text-[#1B2A6B] w-12 h-12" />
         </div>
-      </MainLayout>
+        <AuthRequiredModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        actionType="course"
+        itemTitle={course?.title}
+        returnUrl={`/courses/${id}`}
+      />
+    </MainLayout>
     );
   }
 
@@ -133,7 +142,14 @@ export default function CourseDetailPage() {
             </Button>
           </div>
         </div>
-      </MainLayout>
+        <AuthRequiredModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        actionType="course"
+        itemTitle={course?.title}
+        returnUrl={`/courses/${id}`}
+      />
+    </MainLayout>
     );
   }
 
@@ -564,6 +580,13 @@ export default function CourseDetailPage() {
           </div>
         </div>
       )}
+      <AuthRequiredModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        actionType="course"
+        itemTitle={course?.title}
+        returnUrl={`/courses/${id}`}
+      />
     </MainLayout>
     </>
   );

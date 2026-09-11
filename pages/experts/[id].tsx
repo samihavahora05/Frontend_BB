@@ -10,6 +10,7 @@ import api from "../../src/lib/axios";
 import { SEO } from "../../src/components/seo/SEO";
 import toast from "react-hot-toast";
 import { ExpertService } from "../../src/lib/api/ExpertService";
+import { AuthRequiredModal } from "../../src/components/common/AuthRequiredModal";
 import { getImageUrl } from "../../src/lib/imageUtils";
 
 export default function ExpertProfilePage() {
@@ -20,6 +21,7 @@ export default function ExpertProfilePage() {
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isPaying, setIsPaying] = useState<boolean>(false);
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
 
   const [expertRaw, setExpertRaw] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -794,6 +796,13 @@ export default function ExpertProfilePage() {
           </div>
         </div>
       )}
+      <AuthRequiredModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        actionType="expert"
+        itemTitle={expert?.name}
+        returnUrl={`/experts/${id}`}
+      />
     </MainLayout>
     </>
   );

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, FormEvent } from "react";
 import { useRouter } from "next/router";
 import { MainLayout } from "../../../src/layout/MainLayout";
 import { motion } from "framer-motion";
-import { CheckCircle2, Upload, FileText, Briefcase, MapPin, Loader2, Download, ShieldCheck, PenTool, ShieldAlert, Sparkles } from "lucide-react";
+import { CheckCircle2, Upload, FileText, Briefcase, MapPin, Loader2, Download, ShieldCheck, PenTool, ShieldAlert, Sparkles, Lock, LogIn } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../../../src/components/ui/Button";
 import { useAuth } from "../../../src/context/AuthContext";

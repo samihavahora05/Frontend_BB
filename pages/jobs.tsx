@@ -18,6 +18,10 @@ import api from "../src/lib/axios";
 import { fetcher } from "../src/lib/fetcher";
 import { useAuth } from "../src/context/AuthContext";
 import { AuthNoticeBanner } from "../src/components/common/AuthNoticeBanner";
+import { AuthRequiredModal } from "../src/components/common/AuthRequiredModal";
+import { RoleChangeModal } from "../src/components/common/RoleChangeModal";
+import { getOpportunityPermission } from "../src/lib/opportunityPermissions";
+import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import toast from "react-hot-toast";
 
@@ -31,7 +35,10 @@ export default function JobsPage() {
   const [totalJobs, setTotalJobs] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
+  const [authModalConfig, setAuthModalConfig] = useState<{ isOpen: boolean; itemTitle: string; returnUrl: string }>({ isOpen: false, itemTitle: '', returnUrl: '' });
+  const [showRoleModal, setShowRoleModal] = useState(false);
   const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
   const [saving, setSaving] = useState<number | null>(null);
 
@@ -45,6 +52,29 @@ export default function JobsPage() {
       }
     }
   });
+
+  const handleApplyClick = (jobItem: any) => {
+    if (!isAuthenticated) {
+      setAuthModalConfig({
+        isOpen: true,
+        itemTitle: jobItem.title,
+        returnUrl: `/apply/job/${jobItem.id}`
+      });
+      return;
+    }
+
+    const perm = getOpportunityPermission(user?.role, 'job');
+    if (!perm.canApply) {
+      if (perm.canRequestRoleChange) {
+        setShowRoleModal(true);
+      } else {
+        toast.error(perm.message);
+      }
+      return;
+    }
+
+    router.push(`/apply/job/${jobItem.id}`);
+  };
 
   const toggleSave = async (e: React.MouseEvent, id: number) => {
     e.preventDefault();
@@ -252,11 +282,13 @@ export default function JobsPage() {
                               <Clock size={10} /> POSTED {job.posted_at?.toUpperCase()}
                             </div>
                           </div>
-                          <Link href={`/apply/job/${job.id}`}>
-                            <Button variant="outline" className="h-8 text-xs font-bold border-slate-200 text-slate-700 bg-slate-50 group-hover:bg-[#1B2A6B] group-hover:text-white group-hover:border-[#1B2A6B] transition-colors shadow-2xs rounded-lg px-3.5 cursor-pointer">
-                              Apply
-                            </Button>
-                          </Link>
+                          <Button 
+                            variant="outline" 
+                            onClick={() => handleApplyClick(job)}
+                            className="h-8 text-xs font-bold border-slate-200 text-slate-700 bg-slate-50 group-hover:bg-[#1B2A6B] group-hover:text-white group-hover:border-[#1B2A6B] transition-colors shadow-2xs rounded-lg px-3.5 cursor-pointer"
+                          >
+                            Apply
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>
@@ -293,6 +325,26 @@ export default function JobsPage() {
         subtitle="Browse opportunities from 100+ hiring partners across industries" 
       />
       <TestimonialsSection />
+
+      {/* Auth Required Modal */}
+      <AuthRequiredModal
+        isOpen={authModalConfig.isOpen}
+        onClose={() => setAuthModalConfig(prev => ({ ...prev, isOpen: false }))}
+        actionType="job"
+        itemTitle={authModalConfig.itemTitle}
+        returnUrl={authModalConfig.returnUrl}
+      />
+
+      {/* Role Change Modal */}
+      {user && (
+        <RoleChangeModal
+          isOpen={showRoleModal}
+          onClose={() => setShowRoleModal(false)}
+          currentRole={user.role || 'student'}
+          targetRole="jobseeker"
+          targetRoleDisplay="Jobseeker"
+        />
+      )}
     </MainLayout>
     </>
   );

@@ -18,6 +18,7 @@ import { mutate } from "swr";
 import { useAuth } from "../../src/context/AuthContext";
 import { getOpportunityPermission } from "../../src/lib/opportunityPermissions";
 import { RoleChangeModal } from "../../src/components/common/RoleChangeModal";
+import { AuthRequiredModal } from "../../src/components/common/AuthRequiredModal";
 
 export default function JobDetailPage() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export default function JobDetailPage() {
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showRoleModal, setShowRoleModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -63,7 +65,15 @@ export default function JobDetailPage() {
         <div className="min-h-screen flex items-center justify-center pt-20">
           <Loader2 className="w-10 h-10 animate-spin text-[#1B2A6B]" />
         </div>
-      </MainLayout>
+        {/* Auth Required Modal */}
+      <AuthRequiredModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        actionType="job"
+        itemTitle={job?.title}
+        returnUrl={`/apply/job/${job?.id}`}
+      />
+    </MainLayout>
     );
   }
 
@@ -73,7 +83,15 @@ export default function JobDetailPage() {
         <div className="min-h-screen flex items-center justify-center pt-20">
           <h2 className="text-xl font-bold text-slate-800">Job not found.</h2>
         </div>
-      </MainLayout>
+        {/* Auth Required Modal */}
+      <AuthRequiredModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        actionType="job"
+        itemTitle={job?.title}
+        returnUrl={`/apply/job/${job?.id}`}
+      />
+    </MainLayout>
     );
   }
 
@@ -339,6 +357,14 @@ export default function JobDetailPage() {
           targetRoleDisplay="Jobseeker"
         />
       )}
+      {/* Auth Required Modal */}
+      <AuthRequiredModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        actionType="job"
+        itemTitle={job?.title}
+        returnUrl={`/apply/job/${job?.id}`}
+      />
     </MainLayout>
     </>
   );
