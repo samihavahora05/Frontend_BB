@@ -7,7 +7,6 @@ import {
   Briefcase,
   Star,
   Sparkles,
-  Building2,
 } from "lucide-react";
 import useSWR from "swr";
 import api from "../lib/axios";
@@ -246,14 +245,6 @@ export const ClientsSection = ({
           animate={isInView ? "visible" : "hidden"}
           className="text-center max-w-3xl mx-auto mb-12"
         >
-          <motion.div
-            variants={itemVariants}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 text-[#1B2A6B] border border-slate-200/80 text-xs font-black uppercase tracking-widest mb-4 shadow-sm"
-          >
-            <Building2 size={13} className="text-[#C9A227]" />
-            <span>Corporate Trust & Recruiter Network</span>
-          </motion.div>
-
           <motion.h2
             variants={itemVariants}
             className="text-[#0F172A] font-black text-3xl md:text-5xl tracking-tight mb-3 leading-tight"

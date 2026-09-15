@@ -295,6 +295,31 @@ export const InternshipService = {
   },
 
   // ─── Tasks ───────────────────────────────────────────────────────────────────
+  useGlobalTasks: (params: Record<string, any> = {}) => {
+    const query = new URLSearchParams(
+      Object.fromEntries(Object.entries(params).filter(([, v]) => v !== '' && v != null))
+    ).toString();
+    const url = `/admin/internships/tasks${query ? '?' + query : ''}`;
+    const { data, error, mutate, isLoading } = useSWR(url, fetcher, { keepPreviousData: true });
+    return {
+      data: extractArray(data),
+      meta: data?.data?.current_page ? data.data : (data?.current_page ? data : {}),
+      isLoading,
+      isError: !!error,
+      mutate,
+    };
+  },
+
+  useGlobalTaskStats: () => {
+    const { data, error, mutate, isLoading } = useSWR('/admin/internships/tasks/stats', fetcher);
+    return { data: data?.data || null, isLoading, isError: !!error, mutate };
+  },
+
+  useApprovedInterns: () => {
+    const { data, error, mutate, isLoading } = useSWR('/admin/internships/tasks/approved-interns', fetcher);
+    return { data: extractArray(data), isLoading, isError: !!error, mutate };
+  },
+
   useInternshipTasks: (internshipId: number | string) => {
     const url = internshipId ? `/admin/internships/${internshipId}/tasks` : null;
     const { data, error, mutate, isLoading } = useSWR(url, fetcher);
@@ -304,6 +329,11 @@ export const InternshipService = {
       isError: !!error,
       mutate,
     };
+  },
+
+  getTask: async (id: number | string) => {
+    const res = await api.get(`/admin/internships/tasks/${id}`);
+    return res.data;
   },
 
   createTask: async (data: Record<string, any>) => {
@@ -318,6 +348,14 @@ export const InternshipService = {
 
   deleteTask: async (id: number | string) => {
     const res = await api.delete(`/admin/internships/tasks/${id}`);
+    return res.data;
+  },
+
+  reviewTask: async (
+    taskId: number | string,
+    payload: { action: 'approve' | 'request_changes'; marks?: number; feedback?: string }
+  ) => {
+    const res = await api.post(`/admin/internships/tasks/${taskId}/review`, payload);
     return res.data;
   },
 
@@ -344,5 +382,25 @@ export const InternshipService = {
     const res = await api.put(`/admin/internships/submissions/${submissionId}/grade`, payload);
     return res.data;
   },
-};
 
+  // ─── Performance Tracking ──────────────────────────────────────────────────
+  usePerformance: (params: Record<string, any> = {}) => {
+    const query = new URLSearchParams(
+      Object.fromEntries(Object.entries(params).filter(([, v]) => v !== '' && v != null))
+    ).toString();
+    const url = `/admin/internships/performance${query ? '?' + query : ''}`;
+    const { data, error, mutate, isLoading } = useSWR(url, fetcher, { keepPreviousData: true });
+    return {
+      data: extractArray(data),
+      summary: data?.summary || null,
+      isLoading,
+      isError: !!error,
+      mutate,
+    };
+  },
+
+  getInternPerformance: async (internId: number | string) => {
+    const res = await api.get(`/admin/internships/performance/${internId}`);
+    return res.data;
+  },
+};

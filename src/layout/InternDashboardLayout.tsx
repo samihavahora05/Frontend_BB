@@ -4,12 +4,13 @@ import { useRouter } from "next/router";
 import { useAuth } from "../context/AuthContext";
 import { AuthGuard } from "../components/auth/AuthGuard";
 import { SEO } from "../components/seo/SEO";
-import { LayoutDashboard, Briefcase, FileText, Settings, LogOut, Menu, X, Search, Trophy, Users, CheckSquare } from "lucide-react";
+import { LayoutDashboard, ListTodo, Briefcase, FileText, Settings, LogOut, Menu, X, Search, Trophy, Users, CheckSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NotificationDropdown } from "../components/NotificationDropdown";
 
 const SIDEBAR_LINKS = [
   { name: "Dashboard", href: "/intern/dashboard", icon: LayoutDashboard },
+  { name: "My Tasks", href: "/intern/tasks", icon: ListTodo },
   { name: "My Applications", href: "/intern/applications", icon: Briefcase },
   { name: "Assessments", href: "/intern/assessments", icon: CheckSquare },
   { name: "Scholarships", href: "/intern/scholarships", icon: Trophy },
@@ -27,7 +28,6 @@ export const InternDashboardLayout = ({ children }: { children: React.ReactNode 
     logout();
     router.push("/login");
   };
-
 
   const initials = user?.name?.split(" ").map((w: string) => w[0]).join("").toUpperCase().slice(0, 2) ?? "IN";
 

@@ -88,8 +88,13 @@ export const AssessmentService = {
   },
 
   async saveAnswer(id: string | number, payload: { attempt_id: number; question_id: number; selected_answer: string | null }): Promise<any> {
-    const res = await api.post(`/intern/assessments/${id}/save-answer`, payload);
-    return res.data;
+    try {
+      const res = await api.post(`/intern/assessments/${id}/save-answer`, payload);
+      return res.data;
+    } catch (err: any) {
+      // Soft-catch so autosave never throws runtime popups if question record isn't in SQLite yet
+      return { success: false, error: err?.message || 'Autosave sync unavailable for this item.' };
+    }
   },
 
   async submitAssessment(id: string | number, payload: { attempt_id: number; answers?: Record<number, string> }): Promise<any> {

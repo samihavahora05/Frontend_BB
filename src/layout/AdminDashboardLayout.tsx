@@ -22,7 +22,6 @@ import { NotificationService } from "../lib/api/admin/RealtimeNotificationServic
 import { PreloaderAnimation } from "../components/ui/PreloaderAnimation";
 import { MessageService } from "../lib/api/admin/MessageService";
 import { SEO } from "../components/seo/SEO";
-
 import api from '../lib/axios';
 import { useGlobalSettings } from "../contexts/SettingsContext";
 
@@ -63,6 +62,7 @@ const getSidebarCategories = () => {
       icon: ClipboardList,
       links: [
         { name: "List Internships", href: "/admin/internships", icon: ClipboardList },
+        { name: "Internship Tasks", href: "/admin/internships/tasks", icon: CheckSquare },
         { name: "Applications & Approvals", href: "/admin/internships/applications", icon: CheckCircle2 },
         { name: "College Drives", href: "/admin/internship-drives", icon: BookOpen },
         { name: "Active Internships", href: "/admin/internships/active", icon: Briefcase },
@@ -120,7 +120,6 @@ const getSidebarCategories = () => {
         { name: "Q&A", href: "/admin/courses/qa", icon: HelpCircle },
       ]
     },
-
     {
       title: "Virtual Class",
       icon: Play,
@@ -177,13 +176,11 @@ const getSidebarCategories = () => {
       title: "CONTENT",
       isHeader: true,
     },
-
     {
       title: "Blogs",
       icon: FileText,
       links: [
         { name: "All Blogs", href: "/admin/cms/blogs", icon: FileText },
-
         { name: "Categories", href: "/admin/cms/blogs/categories", icon: Layers },
       ]
     },
@@ -194,7 +191,6 @@ const getSidebarCategories = () => {
         { name: "Companies & Projects", href: "/admin/companies", icon: Building2 },
       ]
     },
-
     {
       title: "COMMUNICATION",
       isHeader: true,
@@ -205,7 +201,6 @@ const getSidebarCategories = () => {
       href: "/admin/communication",
       isStandalone: true,
     },
-
     {
       title: "ADMINISTRATION",
       isHeader: true,
@@ -225,15 +220,8 @@ const getSidebarCategories = () => {
         { name: "Email Setup", href: "/admin/settings/email-setup", icon: Mail },
         { name: "Email Template", href: "/admin/settings/email-template", icon: FileText },
         { name: "Api Settings", href: "/admin/settings/api", icon: Code },
-
       ]
     },
-
-
-
-
-
-
     {
       title: "SECURITY",
       isHeader: true,
@@ -246,7 +234,6 @@ const getSidebarCategories = () => {
         { name: "Session Management", href: "/admin/security/sessions", icon: Fingerprint },
       ]
     },
-
     {
       title: "Backup",
       icon: RotateCcw,
@@ -301,13 +288,6 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
   // Real-Time Messages — only poll when authenticated
   const { data: messagesData } = MessageService.useUnreadSummary(isAuthenticated);
   const unreadMessagesCount = messagesData?.unread_count || 0;
-
-  // Notification Bell Dropdown State
-  // const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-
-
-
-
 
   // Derive user initials from name for avatar display
   const userInitials = user?.name
@@ -388,7 +368,6 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
       return acc;
     }, [] as { name: string, href: string, category: string }[]);
     return [...links, ...dummyDataLinks];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings?.crm_lead_categories]);
 
   const searchResults = searchQuery
@@ -468,7 +447,7 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
 
     if (activeCategory) {
       setExpandedGroups(prev => {
-        if (prev[activeCategory] && Object.keys(prev).filter(k => prev[k]).length === 1) return prev; // Already correct state
+        if (prev[activeCategory] && Object.keys(prev).filter(k => prev[k]).length === 1) return prev;
         const newState = { ...prev };
         Object.keys(newState).forEach(key => newState[key] = false);
         newState[activeCategory] = true;
@@ -476,7 +455,6 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
         return newState;
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.asPath, router.isReady]);
 
   // Handle Sidebar Scroll Position Restoration
@@ -504,7 +482,6 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
     let href = "/" + pathSegments.slice(0, index + 1).join("/");
     const label = segment.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
 
-    // Ensure the root 'admin' breadcrumb always navigates to the dashboard
     if (index === 0 && segment.toLowerCase() === 'admin') {
       href = "/admin/dashboard";
     }
@@ -520,7 +497,7 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
           selectedType={preloaderSettings?.selectedType || 'Blueboxx Logo Animation'}
           animationSpeed={preloaderSettings?.animationSpeed || 'Medium'}
           accentColor={preloaderSettings?.accentColor || '#1B2A6B'}
-          bgColor={preloaderSettings?.bgColor || '#0d1635'} // Dark theme background for admin by default
+          bgColor={preloaderSettings?.bgColor || '#0d1635'}
           loadingText={preloaderSettings?.loadingText || 'LOADING ADMIN PANEL...'}
         />
       );
@@ -543,7 +520,7 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
           selectedType={preloaderSettings?.selectedType || 'Blueboxx Logo Animation'}
           animationSpeed={preloaderSettings?.animationSpeed || 'Medium'}
           accentColor={preloaderSettings?.accentColor || '#1B2A6B'}
-          bgColor={preloaderSettings?.bgColor || '#0d1635'} // Dark theme background for admin by default
+          bgColor={preloaderSettings?.bgColor || '#0d1635'}
           loadingText="Redirecting..."
         />
       );
@@ -598,7 +575,6 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
                 const isActive = currentUrlPath === categoryPath;
                 const Icon = category.icon;
 
-                // Determine if this category needs a badge
                 let badgeCount = 0;
 
                 return (
@@ -664,26 +640,21 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
                         let isActive = false;
 
                         if (hasQueryParams) {
-                          // For links with query params, match the full asPath exactly
                           isActive = router.asPath === link.href;
-                          // If current URL has no query params, highlight first tab
                           if (!isActive && router.asPath.split("?")[0].replace(/\/$/, "") === linkPath && linkIndex === 0) {
                             const anyExactMatch = category.links.some(l => l.href.includes("?") && router.asPath === l.href);
                             if (!anyExactMatch) isActive = true;
                           }
                         } else {
-                          // Exact path match (with trailing slash normalization)
                           if (normalizedCurrent === linkPath) {
                             isActive = true;
                           } else if (normalizedCurrent.startsWith(linkPath + "/")) {
-                            // Only active if no sibling link is a closer/exact match
                             const hasCloserMatch = category.links.some(l => {
                               const lp = l.href.split("?")[0].replace(/\/$/, "");
                               return lp !== linkPath && (normalizedCurrent === lp || normalizedCurrent.startsWith(lp + "/")) && lp.length > linkPath.length;
                             });
                             if (!hasCloserMatch) isActive = true;
                           }
-                          // Special case: blog editor → highlight All Blogs
                           if (!isActive && linkPath === "/admin/cms/blogs" && normalizedCurrent.startsWith("/admin/cms/blog-editor")) {
                             isActive = true;
                           }
@@ -692,7 +663,6 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
                         const SubIcon = link.icon;
 
                         let badgeCount = 0;
-                        // Match exactly by link.name vs Lead types
                         if (link.name !== 'CRM Overview') {
                           badgeCount = badges[link.name] || 0;
                         }
@@ -724,8 +694,6 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
               );
             })}
           </div>
-
-
         </motion.aside>
 
         {/* Main Content Area */}
@@ -748,7 +716,6 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
                   placeholder="Global search..."
                   className="pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#C9A227]/50 focus:border-[#C9A227] w-96 font-medium text-slate-700 transition-all shadow-inner"
                 />
-                
 
                 {/* Inline Search Results Dropdown */}
                 <AnimatePresence>
@@ -972,8 +939,6 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
             {children}
           </main>
         </div>
-
-        {/* Removed the large search modal */}
 
         {/* Custom Scrollbar Styles for Sidebar */}
         <style dangerouslySetInnerHTML={{

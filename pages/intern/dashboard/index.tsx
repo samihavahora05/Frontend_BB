@@ -32,6 +32,9 @@ export default function InternDashboard() {
           <p className="text-slate-500 font-medium text-sm">Manage your internships, track hours, and submit your weekly tasks.</p>
         </div>
         <div className="flex gap-3">
+          <Link href="/intern/tasks" className="px-5 py-2.5 bg-[#C9A227] hover:bg-[#b08d22] text-[#0d1635] rounded-xl text-sm font-black shadow-md transition-all flex items-center gap-2">
+            <CheckCircle size={16} /> My Tasks
+          </Link>
           <Link href="/internships" className="px-5 py-2.5 bg-[#1B2A6B] text-white rounded-xl text-sm font-bold shadow-md hover:bg-[#0d1635] transition-all flex items-center gap-2">
             <Briefcase size={16} /> Find Internships
           </Link>

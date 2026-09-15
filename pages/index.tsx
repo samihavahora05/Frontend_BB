@@ -6,13 +6,13 @@ export default function IndexPage() {
   return (
     <>
       <SEO 
-        title="Blueboxx DA | Top EdTech Platform & IT Training Institute"
-        description="Blueboxx DA provides industry-leading online courses, full stack development training, AI internships, and 100% placement assistance for tech careers."
-        keywords="Online Courses, Internship Platform, Job Portal, Placement Assistance, AI Courses, Full Stack Development, Web Development, Python Course, Laravel Course, React Course, Campus Placements, Career Development, Skill Development, Online Learning Platform"
+        title="BlueBoxx | Leading Digital Marketing & IT Training Institute in Vadodara"
+        description="BlueBoxx is a leading digital marketing institute in Vadodara offering UI/UX, web development & marketing courses with practical training and career support."
+        keywords="digital marketing institute vadodara, BlueBoxx DA, UI/UX design vadodara, web development vadodara, IT training institute vadodara, best computer classes vadodara"
         schema={{
           "@context": "https://schema.org",
           "@type": "WebSite",
-          "name": "Blueboxx DA",
+          "name": "BlueBoxx",
           "url": "https://blueboxx.in",
           "potentialAction": {
             "@type": "SearchAction",

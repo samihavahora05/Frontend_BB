@@ -48,6 +48,7 @@ const PORTAL_PATHS = [
     '/expert/',
     '/college/',
     '/jobseeker/',
+    '/intern/',
 ];
 
 // Interceptor to handle errors and global 401 Unauthorized responses

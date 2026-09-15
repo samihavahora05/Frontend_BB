@@ -8,7 +8,7 @@ import { SEO } from "../components/seo/SEO";
 import { 
   LayoutDashboard, Briefcase, Settings, LogOut,
   Menu, X, Search, Building, Users, Clock,
-  MessageSquare, Plus
+  MessageSquare, Plus, CheckSquare
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCompanyStore } from "../store/useCompanyStore";
@@ -25,8 +25,11 @@ const SIDEBAR_CATEGORIES = [
     title: "Recruitment",
     links: [
       { name: "My Jobs", href: "/company/jobs", icon: Briefcase },
+      { name: "My Internships", href: "/company/internships", icon: Briefcase },
       { name: "Applicants", href: "/company/applicants", icon: Users },
       { name: "Interviews", href: "/company/interviews", icon: Clock },
+      { name: "Intern Tasks & Evaluation", href: "/company/tasks", icon: CheckSquare },
+      { name: "Intern Performance", href: "/company/interns/performance", icon: Users },
     ]
   },
   {

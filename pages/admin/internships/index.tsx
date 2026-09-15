@@ -1,18 +1,48 @@
+
+const perfCategoryColors: Record<string, { bg: string; text: string; border: string }> = {
+  'Excellent':         { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
+  'Very Good':         { bg: 'bg-blue-50',    text: 'text-blue-700',    border: 'border-blue-200' },
+  'Good':              { bg: 'bg-cyan-50',    text: 'text-cyan-700',    border: 'border-cyan-200' },
+  'Needs Improvement': { bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-200' },
+  'Poor':              { bg: 'bg-rose-50',    text: 'text-rose-700',    border: 'border-rose-200' },
+};
+
+function PerformanceBadgeTag({ category, score }: { category: string | null; score: number | null }) {
+  if (score === null || !category) {
+    return (
+      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-500 border border-slate-200">
+        No evaluated tasks yet
+      </span>
+    );
+  }
+  const conf = perfCategoryColors[category] || { bg: 'bg-slate-50', text: 'text-slate-700', border: 'border-slate-200' };
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold ${conf.bg} ${conf.text} border ${conf.border}`}>
+      <span className="w-1.5 h-1.5 rounded-full bg-current" />
+      {score}% • {category}
+    </span>
+  );
+}
+
 import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import useSWR from 'swr';
+import api from '../../../src/lib/axios';
 import { AdminDashboardLayout } from '../../../src/layout/AdminDashboardLayout';
 import {
   Briefcase, CheckCircle, XCircle, Search, Edit2,
   Trash2, Building2, FileText, Plus, Users,
   RefreshCw, Download, Upload, Check, X, ChevronLeft, ChevronRight, Loader2, AlertCircle as AlertIcon,
-  Eye, EyeOff, Sparkles, FileSpreadsheet
+  Eye, EyeOff, Sparkles, FileSpreadsheet, TrendingUp, Award, Star, ArrowUpRight, ArrowDownRight, Minus,
+  Github, Video, ExternalLink
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { InternshipService } from '../../../src/lib/api/admin/InternshipService';
 import { ExcelImportModal } from '../../../src/components/admin/internship/ExcelImportModal';
+import { getImageUrl } from '../../../src/lib/imageUtils';
 
-type Tab = 'Programs' | 'Applications' | 'Active Interns' | 'Task Submissions';
+type Tab = 'Programs' | 'Applications' | 'Active Interns' | 'Intern Performance';
 type AppStatus = 'pending' | 'under_review' | 'approved' | 'rejected' | 'completed' | 'cancelled';
 type SubStatus = 'pending' | 'approved' | 'rejected' | 'resubmit';
 
@@ -121,6 +151,12 @@ export default function InternshipManager() {
   const [reviewApp, setReviewApp] = useState<any>(null);
   const [assignTaskApp, setAssignTaskApp] = useState<any>(null);
   const [gradeSubmission, setGradeSubmission] = useState<any>(null);
+  const [checklistItems, setChecklistItems] = useState<string[]>([]);
+  const [checklistInput, setChecklistInput] = useState<string>('');
+
+  // Performance Filters & Detail
+  const [perfRange, setPerfRange] = useState<string>('all');
+  const [selectedPerfInternId, setSelectedPerfInternId] = useState<number | null>(null);
 
   const [isActionLoading, setIsActionLoading] = useState(false);
 
@@ -156,6 +192,19 @@ export default function InternshipManager() {
       page,
       per_page: 15,
     });
+
+  // ─── Performance SWR ───────────────────────────────────────────────────────
+  const { data: perfInterns, summary: perfSummary, isLoading: perfLoading, mutate: mutatePerf } =
+    InternshipService.usePerformance({
+      search: searchQuery || undefined,
+      performance_range: perfRange !== 'all' ? perfRange : undefined,
+    });
+
+  const { data: perfDetailData, isLoading: perfDetailLoading } =
+    useSWR(selectedPerfInternId ? `/admin/internships/performance/${selectedPerfInternId}` : null, (url: string) =>
+      api.get(url).then((r: any) => r.data)
+    );
+  const selectedPerfDetail = perfDetailData?.data || null;
 
   const handleTabChange = (tab: Tab) => {
     setActiveTab(tab);
@@ -199,17 +248,38 @@ export default function InternshipManager() {
     e.preventDefault();
     if (!assignTaskApp) return;
     const form = new FormData(e.currentTarget);
+    const assignedTo = assignTaskApp.user_id || assignTaskApp.user?.id;
+    if (!assignedTo) {
+      toast.error('Unable to assign task: No intern user account ID associated with this application.');
+      return;
+    }
     setIsActionLoading(true);
     try {
+      const instructionsText = (form.get('instructions') as string) || '';
+      const checklistStr = checklistItems.length > 0 
+        ? `\n\nChecklist Requirements:\n${checklistItems.map(item => `• [ ] ${item}`).join('\n')}` 
+        : '';
+      const fullInstructions = (instructionsText + checklistStr).trim();
+
       await InternshipService.createTask({
         internship_id: assignTaskApp.internship_id,
+        assigned_to: assignedTo,
+        company_id: assignTaskApp.company_id || assignTaskApp.internship?.company_id || undefined,
         title: form.get('title'),
-        description: form.get('description'),
-        total_marks: form.get('total_marks'),
-        deadline: form.get('deadline'),
+        priority: form.get('priority') || 'medium',
+        category: form.get('category') || 'General Task',
+        max_marks: Number(form.get('max_marks')) || 100,
+        due_date: form.get('due_date') || form.get('deadline'),
+        deadline: form.get('due_date') || form.get('deadline'),
+        description: instructionsText || form.get('title'),
+        instructions: fullInstructions,
+        expected_deliverable: form.get('expected_deliverable') || 'Complete tasks and submit deliverable proof',
       });
-      toast.success('Task assigned successfully!');
+      toast.success('Task created and assigned successfully!');
       setAssignTaskApp(null);
+      setChecklistItems([]);
+      setChecklistInput('');
+      mutateSubs();
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Failed to assign task');
     } finally {
@@ -248,13 +318,22 @@ export default function InternshipManager() {
     }
   };
 
+  const totalProgramsVal = stats?.total_internships ?? stats?.total ?? 0;
+  const activeProgramsVal = stats?.active_internships ?? stats?.active ?? stats?.open ?? 0;
+  const draftProgramsVal = stats?.draft ?? Math.max(0, totalProgramsVal - activeProgramsVal);
+  const totalAppsVal = stats?.total_applications ?? stats?.applications ?? 0;
+  const pendingAppsVal = stats?.under_review_applications ?? stats?.pending ?? 0;
+  const activeInternsVal = stats?.approved_applications ?? stats?.approved ?? 0;
+  const totalSubmissionsVal = stats?.total_submissions ?? stats?.submissions ?? (submissions?.length || 0);
+  const pendingSubmissionsVal = stats?.pending_submissions ?? (submissions?.filter((s: any) => s.status === 'pending')?.length || 0);
+
   const statCards = [
-    { label: 'Total Programs',     value: stats?.total ?? 0,        color: 'text-[#1B2A6B]' },
-    { label: 'Active / Published', value: stats?.active ?? 0,       color: 'text-emerald-600' },
-    { label: 'Draft Programs',     value: stats?.draft ?? 0,        color: 'text-slate-600' },
-    { label: 'Applications',       value: stats?.applications ?? 0, color: 'text-blue-600' },
-    { label: 'Pending Review',     value: stats?.pending ?? 0,      color: 'text-amber-600' },
-    { label: 'Active Interns',     value: stats?.approved ?? 0,     color: 'text-purple-600' },
+    { label: 'Total Programs',     value: totalProgramsVal,  color: 'text-[#1B2A6B]',  tab: 'Programs' as Tab,       status: '' },
+    { label: 'Active / Published', value: activeProgramsVal, color: 'text-emerald-600', tab: 'Programs' as Tab,       status: 'open' },
+    { label: 'Draft Programs',     value: draftProgramsVal,  color: 'text-slate-600',   tab: 'Programs' as Tab,       status: 'draft' },
+    { label: 'Applications',       value: totalAppsVal,      color: 'text-blue-600',    tab: 'Applications' as Tab,   status: '' },
+    { label: 'Pending Review',     value: pendingAppsVal,    color: 'text-amber-600',   tab: 'Applications' as Tab,   status: 'pending' },
+    { label: 'Active Interns',     value: activeInternsVal,  color: 'text-purple-600',  tab: 'Active Interns' as Tab, status: '' },
   ];
 
   return (
@@ -307,21 +386,27 @@ export default function InternshipManager() {
       </div>
 
       {/* ── Stats Dashboard ── */}
-      {stats && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
-          {statCards.map((s) => (
-            <div key={s.label} className="bg-white rounded-2xl border border-gray-200 p-4 shadow-xs">
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{s.label}</p>
-              <p className={`text-2xl font-black ${s.color}`}>{s.value}</p>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-6 gap-3 mb-6">
+        {statCards.map((s) => (
+          <div
+            key={s.label}
+            onClick={() => {
+              setActiveTab(s.tab);
+              setFilterStatus(s.status);
+              setPage(1);
+            }}
+            className="bg-white rounded-2xl border border-gray-200 p-4 shadow-xs hover:border-[#1B2A6B]/40 hover:shadow-sm transition-all cursor-pointer group"
+          >
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 group-hover:text-slate-600 transition-colors">{s.label}</p>
+            <p className={`text-2xl font-black ${s.color}`}>{s.value}</p>
+          </div>
+        ))}
+      </div>
 
       {/* ── Tabs ── */}
       <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-4 shadow-xs">
         <div className="flex overflow-x-auto border-b border-gray-200 admin-scrollbar">
-          {(['Programs', 'Applications', 'Active Interns', 'Task Submissions'] as Tab[]).map(tab => (
+          {(['Programs', 'Applications', 'Active Interns', 'Intern Performance'] as Tab[]).map(tab => (
             <button
               key={tab}
               onClick={() => handleTabChange(tab)}
@@ -547,12 +632,22 @@ export default function InternshipManager() {
                       <StatusBadge status={app.status} />
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Link
-                        href={`/admin/internships/applications?internshipId=${app.internship_id || ''}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1B2A6B] hover:bg-[#0d1635] text-white rounded-xl text-xs font-bold transition-all shadow-xs"
-                      >
-                        <Users size={13} /> Manage / Review
-                      </Link>
+                      <div className="flex items-center justify-end gap-2">
+                        {activeTab === 'Active Interns' && (
+                          <button
+                            onClick={() => setAssignTaskApp(app)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                          >
+                            <Plus size={13} /> Assign Task
+                          </button>
+                        )}
+                        <Link
+                          href={`/admin/internships/applications?internshipId=${app.internship_id || ''}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1B2A6B] hover:bg-[#0d1635] text-white rounded-xl text-xs font-bold transition-all shadow-xs"
+                        >
+                          <Users size={13} /> Manage / Review
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -627,49 +722,204 @@ export default function InternshipManager() {
         }}
       />
 
-      {/* ── Grade Submission Modal ── */}
-      {gradeSubmission && (
+      {/* ── Assign Task Modal ── */}
+      {assignTaskApp && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-gray-100 animate-in zoom-in-95 duration-150">
-            <h3 className="text-base font-black text-gray-900 mb-1">Grade Submission</h3>
-            <p className="text-xs text-gray-500 font-semibold mb-4">
-              Grade milestone deliverable submitted by {gradeSubmission.user?.name || 'Intern'}.
-            </p>
+          <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-gray-100 animate-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-5 pb-3 border-b border-gray-100">
+              <h3 className="text-base font-black text-gray-900">Admin Create & Assign Task with Marks</h3>
+              <button
+                type="button"
+                onClick={() => {
+                  setAssignTaskApp(null);
+                  setChecklistItems([]);
+                  setChecklistInput('');
+                }}
+                className="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-slate-100 cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
 
-            <form onSubmit={handleGrade} className="space-y-4">
+            <form onSubmit={handleAssignTask} className="space-y-4 text-xs">
+              {/* Assignee Selection */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Review Outcome</label>
-                <select name="status" defaultValue="approved" className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl font-bold text-gray-800">
-                  <option value="approved">Approve & Pass</option>
-                  <option value="resubmit">Request Resubmission</option>
-                  <option value="rejected">Reject</option>
+                <select
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-[#1B2A6B]"
+                  value={assignTaskApp.id}
+                  onChange={(e) => {
+                    const selected = apps?.find((a: any) => String(a.id) === e.target.value);
+                    if (selected) setAssignTaskApp(selected);
+                  }}
+                >
+                  <option value={assignTaskApp.id}>
+                    {assignTaskApp.applicant_name || assignTaskApp.user?.name || 'Intern'} ({assignTaskApp.internship?.title || 'Internship'} — {assignTaskApp.applicant_email || assignTaskApp.user?.email || 'Approved'})
+                  </option>
+                  {apps?.filter((a: any) => a.id !== assignTaskApp.id).map((a: any) => (
+                    <option key={a.id} value={a.id}>
+                      {a.applicant_name || a.user?.name || 'Intern'} ({a.internship?.title || 'Internship'} — {a.applicant_email || a.user?.email || 'Approved'})
+                    </option>
+                  ))}
                 </select>
               </div>
 
+              {/* Task Title */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Score / Marks (Out of 100)</label>
-                <input type="number" name="marks_obtained" defaultValue="85" min="0" max="100" className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl font-bold" />
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Task Title *</label>
+                <input
+                  type="text"
+                  name="title"
+                  required
+                  placeholder="e.g. Build User Authentication API"
+                  className="w-full px-3.5 py-2.5 text-xs border border-gray-200 rounded-xl font-semibold text-gray-800 focus:outline-none focus:border-[#1B2A6B]"
+                />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Mentor Feedback</label>
-                <textarea name="feedback" rows={3} placeholder="Provide constructive feedback on the deliverable..." className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl resize-none font-medium text-gray-800" />
+              {/* Row 1: Max Marks & Priority Level */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Maximum Evaluation Marks *</label>
+                  <input
+                    type="number"
+                    name="max_marks"
+                    required
+                    defaultValue="100"
+                    min="1"
+                    max="100"
+                    className="w-full px-3.5 py-2.5 text-xs border border-gray-200 rounded-xl font-bold text-gray-800 focus:outline-none focus:border-[#1B2A6B]"
+                  />
+                  <p className="text-[10px] text-slate-400 font-medium mt-1">Total possible marks admin can award</p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Priority Level</label>
+                  <select
+                    name="priority"
+                    defaultValue="medium"
+                    className="w-full px-3.5 py-2.5 text-xs border border-gray-200 rounded-xl font-bold text-gray-800 focus:outline-none focus:border-[#1B2A6B]"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
               </div>
 
-              <div className="flex gap-2 pt-2">
-                <button
-                  type="submit"
-                  disabled={isActionLoading}
-                  className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-md transition-colors cursor-pointer"
-                >
-                  {isActionLoading ? 'Saving Grade...' : 'Submit Grade'}
-                </button>
+              {/* Row 2: Category / Type & Due Date */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Category / Type</label>
+                  <select
+                    name="category"
+                    defaultValue="General Task"
+                    className="w-full px-3.5 py-2.5 text-xs border border-gray-200 rounded-xl font-bold text-gray-800 focus:outline-none focus:border-[#1B2A6B]"
+                  >
+                    <option value="General Task">General Task</option>
+                    <option value="Milestone Deliverable">Milestone Deliverable</option>
+                    <option value="Coding / Development">Coding / Development</option>
+                    <option value="Design / UI">Design / UI</option>
+                    <option value="Testing / QA">Testing / QA</option>
+                    <option value="Documentation">Documentation</option>
+                    <option value="Research & Analysis">Research & Analysis</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Due Date</label>
+                  <input
+                    type="date"
+                    name="due_date"
+                    required
+                    defaultValue={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                    className="w-full px-3.5 py-2.5 text-xs border border-gray-200 rounded-xl font-semibold text-gray-800 focus:outline-none focus:border-[#1B2A6B]"
+                  />
+                </div>
+              </div>
+
+              {/* Work Instructions & Deliverable Requirements */}
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Work Instructions & Deliverable Requirements</label>
+                <textarea
+                  name="instructions"
+                  required
+                  rows={4}
+                  placeholder="Describe the step-by-step instructions, expected outputs, and submission criteria..."
+                  className="w-full px-3.5 py-2.5 text-xs border border-gray-200 rounded-xl font-medium text-gray-800 resize-none focus:outline-none focus:border-[#1B2A6B]"
+                />
+              </div>
+
+              {/* Checklist Requirements (Optional) */}
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Checklist Requirements (Optional)</label>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={checklistInput}
+                    onChange={(e) => setChecklistInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (checklistInput.trim()) {
+                          setChecklistItems([...checklistItems, checklistInput.trim()]);
+                          setChecklistInput('');
+                        }
+                      }
+                    }}
+                    placeholder="Add a checklist requirement item..."
+                    className="flex-1 px-3.5 py-2 text-xs border border-gray-200 rounded-xl font-semibold text-gray-800 focus:outline-none focus:border-[#1B2A6B]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (checklistInput.trim()) {
+                        setChecklistItems([...checklistItems, checklistInput.trim()]);
+                        setChecklistInput('');
+                      }
+                    }}
+                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors cursor-pointer"
+                  >
+                    Add
+                  </button>
+                </div>
+
+                {checklistItems.length > 0 && (
+                  <div className="space-y-1.5 max-h-36 overflow-y-auto bg-slate-50 p-2.5 rounded-2xl border border-slate-200/80">
+                    {checklistItems.map((item, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-2 bg-white rounded-xl border border-slate-200 text-xs text-slate-800 font-medium">
+                        <span>{item}</span>
+                        <button
+                          type="button"
+                          onClick={() => setChecklistItems(checklistItems.filter((_, i) => i !== idx))}
+                          className="text-slate-400 hover:text-rose-500 p-0.5 rounded cursor-pointer"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-2 pt-3 border-t border-gray-100">
                 <button
                   type="button"
-                  onClick={() => setGradeSubmission(null)}
+                  onClick={() => {
+                    setAssignTaskApp(null);
+                    setChecklistItems([]);
+                    setChecklistInput('');
+                  }}
                   className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors cursor-pointer"
                 >
                   Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isActionLoading}
+                  className="px-6 py-2.5 bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-extrabold text-xs rounded-xl shadow-md transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  {isActionLoading ? 'Creating Task...' : 'Create & Assign Task'}
                 </button>
               </div>
             </form>

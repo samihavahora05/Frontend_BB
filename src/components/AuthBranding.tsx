@@ -1,22 +1,102 @@
 import { getImageUrl } from "../lib/imageUtils";
-import { motion } from "framer-motion";
-import { partnerCompanies } from "../data/companies";
+import { motion, useAnimationFrame } from "framer-motion";
+import { partnerCompanies, Company } from "../data/companies";
 import { CompanyService, CMSCompany } from "../lib/api/CompanyService";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
+
+function AuthCompanyLogo({ company }: { company: any }) {
+  const [imgError, setImgError] = useState(false);
+  const logo = company.logoUrl || company.logo_url || company.logo;
+
+  return (
+    <div className="flex items-center justify-center h-12 px-4 shrink-0 select-none">
+      {logo && !imgError ? (
+        <img
+          src={getImageUrl(logo)}
+          alt={company.name}
+          className="h-10 max-w-[140px] w-auto object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)] filter brightness-110"
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <span className="text-lg md:text-xl font-black tracking-tight font-sora text-white/90 whitespace-nowrap">
+          {company.name?.toUpperCase()}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function AuthMarquee({ companies, speed = 35 }: { companies: any[]; speed?: number }) {
+  const innerRef = useRef<HTMLDivElement>(null);
+  const xRef = useRef(0);
+  const isPaused = useRef(false);
+
+  useAnimationFrame((_, delta) => {
+    if (isPaused.current || !innerRef.current) return;
+    xRef.current -= (speed * delta) / 1000;
+    const halfWidth = innerRef.current.scrollWidth / 2;
+    if (halfWidth > 0 && xRef.current <= -halfWidth) {
+      xRef.current = 0;
+    }
+    innerRef.current.style.transform = `translateX(${xRef.current}px)`;
+  });
+
+  return (
+    <div
+      className="relative overflow-hidden w-full group py-1"
+      style={{
+        maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+        WebkitMaskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+      }}
+      onMouseEnter={() => (isPaused.current = true)}
+      onMouseLeave={() => (isPaused.current = false)}
+    >
+      <div ref={innerRef} className="flex will-change-transform gap-12 w-max items-center">
+        {companies.map((company, i) => (
+          <AuthCompanyLogo key={`a-${company.id || company.name}-${i}`} company={company} />
+        ))}
+        {companies.map((company, i) => (
+          <AuthCompanyLogo key={`b-${company.id || company.name}-${i}`} company={company} />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function AuthBranding() {
   const [companies, setCompanies] = useState<CMSCompany[]>([]);
 
   useEffect(() => {
-    setCompanies(CompanyService.getLocalCompanies());
+    // 1. Initialize immediately with local companies or default partnerCompanies
+    const local = CompanyService.getLocalCompanies();
+    if (local && local.length >= partnerCompanies.length) {
+      setCompanies(local);
+    } else {
+      setCompanies(partnerCompanies as any);
+    }
+
+    // 2. Fetch fresh dataset
+    CompanyService.getAll()
+      .then((res) => {
+        if (res && res.length > 0) {
+          setCompanies(res);
+        }
+      })
+      .catch(() => {});
+
     const unsubscribe = CompanyService.subscribe((updated) => {
-      setCompanies(updated);
+      if (updated && updated.length > 0) {
+        setCompanies(updated);
+      }
     });
     return () => unsubscribe();
   }, []);
 
-  const displayCompanies = (companies.length > 0 ? companies : partnerCompanies)
-    .filter((c: any) => !c.status || c.status === "published" || c.status === "active");
+  const displayCompanies = useMemo(() => {
+    const baseList = companies && companies.length >= partnerCompanies.length ? companies : partnerCompanies;
+    return baseList.filter((c: any) => !c.status || c.status === "published" || c.status === "active");
+  }, [companies]);
+
   return (
     <div className="hidden lg:flex flex-1 relative overflow-hidden bg-[#0d1635]">
       {/* Deep Blue Theme Background */}
@@ -64,8 +144,6 @@ export function AuthBranding() {
           backgroundSize: '60px 60px'
         }}
       />
-
-
 
       <div className="relative z-10 p-12 flex flex-col justify-center h-full w-full max-w-2xl mx-auto pb-32">
 
@@ -156,38 +234,7 @@ export function AuthBranding() {
           <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">
             Trusted by top companies
           </h4>
-          <div className="relative overflow-hidden w-full group mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)">
-            <motion.div
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ duration: 120, ease: "linear", repeat: Infinity }}
-              className="flex items-center gap-16 whitespace-nowrap text-white w-max"
-            >
-              <div className="flex items-center gap-16">
-                {displayCompanies.map((company, i) => (
-                  <div key={`a-${i}`} className="flex items-center justify-center h-12 px-4">
-                    {company.logoUrl ? (
-                      <img src={getImageUrl(company.logoUrl)} alt={company.name} className="h-full w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]" />
-                    ) : (
-                      <span className="text-xl md:text-2xl font-black tracking-tighter font-sora text-white">{company.name.toUpperCase()}</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Duplicate for infinite seamless scroll */}
-              <div className="flex items-center gap-16">
-                {displayCompanies.map((company, i) => (
-                  <div key={`b-${i}`} className="flex items-center justify-center h-12 px-4">
-                    {company.logoUrl ? (
-                      <img src={getImageUrl(company.logoUrl)} alt={company.name} className="h-full w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]" />
-                    ) : (
-                      <span className="text-xl md:text-2xl font-black tracking-tighter font-sora text-white">{company.name.toUpperCase()}</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
+          <AuthMarquee companies={displayCompanies} speed={35} />
         </motion.div>
 
       </div>
