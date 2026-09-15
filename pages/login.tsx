@@ -133,6 +133,12 @@ export default function LoginPage() {
           role: data?.role,
           reason: data?.reason,
         });
+
+        if (code === "EMAIL_NOT_VERIFIED") {
+          toast.error("Please verify your email address to log in.");
+        } else if (code === "PENDING_APPROVAL") {
+          toast.error("Account awaiting administrator approval.");
+        }
       } else {
         toast.error(message);
         const newAttempts = failedAttempts + 1;
