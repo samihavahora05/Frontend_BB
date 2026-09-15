@@ -63,23 +63,9 @@ api.interceptors.response.use(
                 ? endpoint 
                 : `${baseURL.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`;
             
-            // Check if it's an expected business code (e.g. email verification required, pending approval)
-            const isExpectedAuthGuard = error.response.status === 403 && (
-                error.response.data?.code === 'EMAIL_NOT_VERIFIED' || 
-                error.response.data?.code === 'PENDING_APPROVAL' ||
-                error.response.data?.code === 'ACCOUNT_SUSPENDED' ||
-                error.response.data?.code === 'ACCOUNT_REJECTED'
-            );
-
-            if (!isExpectedAuthGuard) {
-                console.error(`[Axios ${error.response.status}] ${method} ${fullUrl}`, {
-                    status: error.response.status,
-                    statusText: error.response.statusText,
-                    data: error.response.data,
-                    config: error.config,
-                });
-            } else {
-                console.warn(`[Auth Guard] ${error.response.data?.code}: ${error.response.data?.message || 'Action required'}`);
+            // Optional debug warning only in development if explicitly enabled
+            if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_DEBUG_AXIOS === 'true') {
+                console.warn(`[Axios ${error.response.status}] ${method} ${fullUrl}`, error.response.data);
             }
 
             // Provide a clear descriptive error message for Next.js error overlays & toast handlers
