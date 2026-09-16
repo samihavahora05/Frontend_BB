@@ -43,19 +43,10 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
       <ScrollProgressBar />
       <Navbar />
 
-      {/* Page transitions */}
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.main
-          key={router.pathname}
-          variants={pageVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          className="flex-1 flex flex-col relative"
-        >
-          {children}
-        </motion.main>
-      </AnimatePresence>
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col relative">
+        {children}
+      </main>
 
       <Footer />
       <FloatingActions />
