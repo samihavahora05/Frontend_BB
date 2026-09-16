@@ -2,8 +2,6 @@ import { useState, useCallback, useRef, useEffect, forwardRef, useImperativeHand
 import { Bold, Italic, Underline as UnderlineIcon, Strikethrough, Code, Link2, Image as ImageIcon, List, ListOrdered, Quote, AlignLeft, AlignCenter, AlignRight, Heading1, Heading2, Undo, Redo, Type, Minus } from "lucide-react";
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 import TextAlign from '@tiptap/extension-text-align';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -24,11 +22,12 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
-      StarterKit,
-      Underline,
-      Link.configure({
-        openOnClick: false,
+      StarterKit.configure({
+        link: {
+          openOnClick: false,
+        },
       }),
       Image.configure({
         inline: true,

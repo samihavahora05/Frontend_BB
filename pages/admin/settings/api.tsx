@@ -34,6 +34,7 @@ const AVAILABLE_APIS = [
   { id: 'twilio', name: 'Twilio', category: 'Communication', icon: MessageSquare },
   { id: 'whatsapp', name: 'WhatsApp Business', category: 'Communication', icon: MessageSquare },
   { id: 'recaptcha', name: 'Google reCAPTCHA', category: 'Security', icon: ShieldCheck },
+  { id: 'turnstile', name: 'Cloudflare Turnstile', category: 'Security', icon: ShieldCheck },
   { id: 'youtube', name: 'YouTube API', category: 'Media', icon: Play },
 ];
 

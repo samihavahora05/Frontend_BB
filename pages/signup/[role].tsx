@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Button } from "../../src/components/ui/Button";
-import { Mail, Lock, User, ChevronRight, Eye, EyeOff, CheckCircle2, ArrowLeft } from "lucide-react";
+import { Mail, Lock, User, ChevronRight, Eye, EyeOff, CheckCircle2, ArrowLeft, ShieldCheck } from "lucide-react";
 import { AuthBranding } from "../../src/components/AuthBranding";
 import { motion } from "framer-motion";
 import { useAuth } from "../../src/context/AuthContext";
 import { SEO } from "../../src/components/seo/SEO";
+import { TurnstileWidget } from "../../src/components/auth/TurnstileWidget";
 
 // Define allowed roles and their UI configurations
 const ROLE_CONFIG: Record<string, { title: string, nameLabel: string, namePlaceholder: string, icon: any }> = {
@@ -34,6 +35,8 @@ export default function RoleSignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -89,6 +92,7 @@ export default function RoleSignupPage() {
         password,
         password_confirmation: confirmPassword,
         role: backendRole,
+        turnstile_token: turnstileToken || undefined,
       });
 
       // Always redirect to OTP verification page
@@ -292,10 +296,37 @@ export default function RoleSignupPage() {
               )}
             </motion.div>
 
+            {/* Security Verification */}
+            <motion.div variants={item} className="space-y-1.5 pt-1">
+              <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-1.5">
+                <ShieldCheck size={13} className="text-[#1B2A6B]" /> Security Verification
+              </label>
+              <TurnstileWidget
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                theme="light"
+                onVerify={(token) => setTurnstileToken(token)}
+                onExpire={() => setTurnstileToken("")}
+              />
+            </motion.div>
+
+            {/* Terms and Conditions Checkbox */}
+            <motion.div variants={item} className="flex items-start gap-2.5 pt-1">
+              <input
+                type="checkbox"
+                id="agreeTerms"
+                checked={agreeTerms}
+                onChange={(e) => setAgreeTerms(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-slate-300 text-[#1B2A6B] focus:ring-[#1B2A6B] cursor-pointer"
+              />
+              <label htmlFor="agreeTerms" className="text-xs text-slate-600 font-medium cursor-pointer select-none leading-tight">
+                I agree to the <Link href="/terms" className="text-[#1B2A6B] font-bold hover:underline">Terms of Service</Link> and <Link href="/privacy-policy" className="text-[#1B2A6B] font-bold hover:underline">Privacy Policy</Link>.
+              </label>
+            </motion.div>
+
             <motion.div variants={item} className="pt-2">
               <Button
                 type="submit"
-                disabled={isLoading || !email || !password || !name || !passwordsMatch || strength < 50}
+                disabled={isLoading || !email || !password || !name || !passwordsMatch || strength < 50 || !agreeTerms || !turnstileToken}
                 className="w-full h-12 bg-[#1B2A6B] hover:bg-[#0d1635] text-white font-black rounded-xl text-sm shadow-[0_4px_15px_rgba(27,42,107,0.2)] transition-all group disabled:opacity-70 disabled:cursor-not-allowed uppercase tracking-wider"
               >
                 {isLoading ? (
@@ -310,10 +341,6 @@ export default function RoleSignupPage() {
                 )}
               </Button>
             </motion.div>
-
-            <motion.p variants={item} className="text-[10px] font-semibold text-slate-400 text-center pt-2">
-              By creating an account, you agree to our <Link href="/terms" className="text-[#1B2A6B] hover:underline">Terms</Link> and <Link href="/privacy-policy" className="text-[#1B2A6B] hover:underline">Privacy</Link>.
-            </motion.p>
           </motion.form>
         </div>
       </motion.div>

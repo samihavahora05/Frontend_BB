@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Styles>
+  <Style ss:ID="Header">
+   <Font ss:Bold="1" ss:Color="#FFFFFF"/>
+   <Interior ss:Color="#1B2A6B" ss:Pattern="Solid"/>
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+  </Style>
+  <Style ss:ID="Bold">
+   <Font ss:Bold="1"/>
+   <Alignment ss:Horizontal="Center"/>
+  </Style>
+  <Style ss:ID="Default">
+   <Alignment ss:Vertical="Center" ss:WrapText="1"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="100_MCQ_Question_Bank">
+  <Table>
+   <Column ss:Width="70"/>
+   <Column ss:Width="140"/>
+   <Column ss:Width="80"/>
+   <Column ss:Width="350"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="90"/>
+   <Column ss:Width="300"/>
+   <Row ss:Height="26">
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Question ID</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Category</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Difficulty</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Question Text</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Option A</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Option B</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Option C</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Option D</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Correct Answer</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Explanation</Data></Cell>
+   </Row>
+   <Row ss:Height="22">
+    <Cell ss:StyleID="Bold"><Data ss:Type="Number">1</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">HTML &amp; Web Design</Data></Cell>
+    <Cell ss:StyleID="Bold"><Data ss:Type="String">Easy</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Which HTML5 element is used to specify a footer for a document or section?</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">&lt;bottom&gt;</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">&lt;footer&gt;</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">&lt;section-footer&gt;</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">&lt;foot&gt;</Data></Cell>
+    <Cell ss:StyleID="Bold"><Data ss:Type="String">B</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">The &lt;footer&gt; tag defines a footer for a document or section.</Data></Cell>
+   </Row>
+   <Row ss:Height="22">
+    <Cell ss:StyleID="Bold"><Data ss:Type="Number">2</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">HTML &amp; Web Design</Data></Cell>
+    <Cell ss:StyleID="Bold"><Data ss:Type="String">Easy</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">What does the CSS 'box-sizing: border-box' property do?</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Excludes padding and border from the element total width</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Includes padding and border in the element total width and height</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Adds an extra margin around the border</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Renders a 3D box shadow around the element</Data></Cell>
+    <Cell ss:StyleID="Bold"><Data ss:Type="String">B</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">'border-box' ensures width and height properties include padding and borders.</Data></Cell>
+   </Row>
+   <Row ss:Height="22">
+    <Cell ss:StyleID="Bold"><Data ss:Type="Number">3</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">HTML &amp; Web Design</Data></Cell>
+    <Cell ss:StyleID="Bold"><Data ss:Type="String">Medium</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">In CSS Flexbox, which property aligns items along the cross axis?</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">justify-content</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">align-items</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">flex-direction</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">align-content</Data></Cell>
+    <Cell ss:StyleID="Bold"><Data ss:Type="String">B</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">'align-items' controls alignment along the cross axis.</Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+</Workbook>

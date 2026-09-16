@@ -288,6 +288,7 @@ export default function AdminPageEditor() {
   }, [pageId]);
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [StarterKit],
     content: pageData.contentHtml,
     onUpdate: ({ editor }) => {
