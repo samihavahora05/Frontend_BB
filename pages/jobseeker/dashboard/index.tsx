@@ -195,6 +195,22 @@ export default function JobseekerDashboard() {
               )}
             </div>
           </AnimatedContent>
+
+          <AnimatedContent direction="up" delay={0.6} className="bg-gradient-to-br from-[#0d1635] to-[#1B2A6B] rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+             <div className="relative z-10">
+                <span className="inline-block px-2.5 py-1 rounded-full bg-[#C9A227]/20 border border-[#C9A227]/40 text-[#C9A227] text-[10px] font-black uppercase tracking-wider mb-3">
+                  1:1 Expert Mentors
+                </span>
+                <h3 className="text-base font-black text-white mb-2 leading-tight">Prepare for Your Next Interview</h3>
+                <p className="text-xs text-slate-300 font-medium mb-4 leading-relaxed">
+                   Connect with industry leaders from top MNCs for mock interviews, portfolio audits, and career guidance.
+                </p>
+                <Link href="/experts" className="w-full flex items-center justify-center py-2.5 bg-[#C9A227] hover:bg-[#b08d22] text-[#0d1635] text-xs font-black rounded-xl transition-all shadow-sm">
+                   Find & Book Mentors
+                </Link>
+             </div>
+          </AnimatedContent>
+
         </div>
 
         {/* Right Column: Features Access & Action Center */}
@@ -245,6 +261,22 @@ export default function JobseekerDashboard() {
                Update Profile
              </Link>
           </AnimatedContent>
+
+          <AnimatedContent direction="up" delay={0.6} className="bg-gradient-to-br from-[#0d1635] to-[#1B2A6B] rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+             <div className="relative z-10">
+                <span className="inline-block px-2.5 py-1 rounded-full bg-[#C9A227]/20 border border-[#C9A227]/40 text-[#C9A227] text-[10px] font-black uppercase tracking-wider mb-3">
+                  1:1 Expert Mentors
+                </span>
+                <h3 className="text-base font-black text-white mb-2 leading-tight">Prepare for Your Next Interview</h3>
+                <p className="text-xs text-slate-300 font-medium mb-4 leading-relaxed">
+                   Connect with industry leaders from top MNCs for mock interviews, portfolio audits, and career guidance.
+                </p>
+                <Link href="/experts" className="w-full flex items-center justify-center py-2.5 bg-[#C9A227] hover:bg-[#b08d22] text-[#0d1635] text-xs font-black rounded-xl transition-all shadow-sm">
+                   Find & Book Mentors
+                </Link>
+             </div>
+          </AnimatedContent>
+
         </div>
       </div>
 

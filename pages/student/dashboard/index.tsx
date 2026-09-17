@@ -216,6 +216,34 @@ export default function StudentDashboardPage() {
               </div>
             </div>
           </AnimatedContent>
+
+          {/* 1:1 Expert Mentorship Widget */}
+          <AnimatedContent direction="up" delay={0.6} className="bg-gradient-to-br from-[#0d1635] to-[#1B2A6B] rounded-2xl p-5 text-white shadow-md relative overflow-hidden">
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#C9A227]/20 border border-[#C9A227]/40 text-[#C9A227] text-[10px] font-black uppercase tracking-wider mb-3">
+                <Star size={12} className="fill-current" /> 1:1 Mentorship
+              </div>
+              <h3 className="text-base font-black mb-1.5 leading-tight">Need Career or Tech Guidance?</h3>
+              <p className="text-xs text-slate-300 font-medium mb-4 leading-relaxed">
+                Book a 1:1 mock interview, resume review, or career guidance session with verified industry experts.
+              </p>
+              <div className="flex gap-2">
+                <Link
+                  href="/experts"
+                  className="flex-1 py-2.5 bg-[#C9A227] hover:bg-[#b08d20] text-[#0d1635] text-xs font-black rounded-xl text-center transition-all shadow-sm"
+                >
+                  Browse Experts
+                </Link>
+                <Link
+                  href="/student/mentor-sessions"
+                  className="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl text-center transition-all border border-white/10"
+                >
+                  My Sessions
+                </Link>
+              </div>
+            </div>
+          </AnimatedContent>
+
         </div>
 
         {/* Right: Applications + Quick Links */}
@@ -294,6 +322,34 @@ export default function StudentDashboardPage() {
               ))}
             </div>
           </AnimatedContent>
+
+          {/* 1:1 Expert Mentorship Widget */}
+          <AnimatedContent direction="up" delay={0.6} className="bg-gradient-to-br from-[#0d1635] to-[#1B2A6B] rounded-2xl p-5 text-white shadow-md relative overflow-hidden">
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#C9A227]/20 border border-[#C9A227]/40 text-[#C9A227] text-[10px] font-black uppercase tracking-wider mb-3">
+                <Star size={12} className="fill-current" /> 1:1 Mentorship
+              </div>
+              <h3 className="text-base font-black mb-1.5 leading-tight">Need Career or Tech Guidance?</h3>
+              <p className="text-xs text-slate-300 font-medium mb-4 leading-relaxed">
+                Book a 1:1 mock interview, resume review, or career guidance session with verified industry experts.
+              </p>
+              <div className="flex gap-2">
+                <Link
+                  href="/experts"
+                  className="flex-1 py-2.5 bg-[#C9A227] hover:bg-[#b08d20] text-[#0d1635] text-xs font-black rounded-xl text-center transition-all shadow-sm"
+                >
+                  Browse Experts
+                </Link>
+                <Link
+                  href="/student/mentor-sessions"
+                  className="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl text-center transition-all border border-white/10"
+                >
+                  My Sessions
+                </Link>
+              </div>
+            </div>
+          </AnimatedContent>
+
         </div>
       </div>
 

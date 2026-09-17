@@ -30,6 +30,7 @@ const SIDEBAR_CATEGORIES = [
       { name: "Jobs",           href: "/student/jobs",            icon: Briefcase },
       { name: "Internships",    href: "/student/internships",     icon: Briefcase },
       { name: "Applications",   href: "/student/applications",    icon: ClipboardList },
+      { name: "1:1 Experts",    href: "/experts",                 icon: Users },
       { name: "Scholarships",   href: "/student/scholarships",    icon: Trophy },
       { name: "Expert Sessions",href: "/student/mentor-sessions",  icon: Users },
     ],

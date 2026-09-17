@@ -20,6 +20,7 @@ import { NotificationDropdown } from "../components/NotificationDropdown";
 
 const SIDEBAR_LINKS = [
   { name: "Dashboard", href: "/companies/dashboard", icon: BarChart },
+  { name: "Industry Experts", href: "/experts", icon: Users },
   { name: "Job Postings", href: "/companies/jobs", icon: Briefcase },
   { name: "Applicants", href: "/companies/applicants", icon: Users },
   { name: "Company Profile", href: "/companies/profile", icon: Building2 },

@@ -14,6 +14,7 @@ const SIDEBAR_LINKS = [
   { name: "My Applications", href: "/intern/applications", icon: Briefcase },
   { name: "Assessments", href: "/intern/assessments", icon: CheckSquare },
   { name: "Scholarships", href: "/intern/scholarships", icon: Trophy },
+  { name: "1:1 Experts", href: "/experts", icon: Users },
   { name: "Expert Sessions", href: "/intern/mentor-sessions", icon: Users },
   { name: "Resume & Portfolio", href: "/intern/resume", icon: FileText },
   { name: "Settings", href: "/intern/settings", icon: Settings },

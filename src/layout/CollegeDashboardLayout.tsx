@@ -19,6 +19,7 @@ const SIDEBAR_CATEGORIES = [
     title: "Overview",
     links: [
       { name: "Dashboard", href: "/college/dashboard", icon: LayoutDashboard },
+      { name: "Industry Experts", href: "/experts", icon: Users },
     ]
   },
   {

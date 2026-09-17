@@ -23,6 +23,7 @@ const sidebarLinks = [
     { name: "Certificates", href: "/student/dashboard/certificates", icon: Award },
   ]},
   { group: "Career", items: [
+    { name: "1:1 Experts", href: "/experts", icon: User },
     { name: "My Internships", href: "/student/dashboard/my-internships", icon: Briefcase },
     { name: "Mentor Sessions", href: "/student/dashboard/mentor-sessions", icon: Calendar },
     { name: "Placement Progress", href: "/student/dashboard/placement-progress", icon: TrendingUp },

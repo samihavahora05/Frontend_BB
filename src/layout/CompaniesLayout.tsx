@@ -12,6 +12,7 @@ import { cn } from "../lib/utils";
 const sidebarLinks = [
   { group: "Recruitment", items: [
     { name: "Dashboard", href: "/companies", icon: LayoutDashboard },
+    { name: "Industry Experts", href: "/experts", icon: Users },
     { name: "Active Jobs", href: "/companies/jobs", icon: Briefcase },
     { name: "Post a Job", href: "/companies/post-job", icon: FileText },
   ]},

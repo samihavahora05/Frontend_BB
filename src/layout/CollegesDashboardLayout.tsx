@@ -9,6 +9,7 @@ import { NotificationPopover } from "../components/ui/NotificationPopover";
 
 const SIDEBAR_LINKS = [
   { name: "Dashboard", href: "/colleges/dashboard", icon: LayoutDashboard },
+  { name: "Industry Experts", href: "/experts", icon: Users },
   { name: "Students", href: "/colleges/students", icon: Users },
   { name: "Placements", href: "/colleges/placements", icon: BookOpen },
   { name: "Settings", href: "/colleges/settings", icon: Settings },

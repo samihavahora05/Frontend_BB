@@ -11,6 +11,7 @@ import { NotificationDropdown } from "../components/NotificationDropdown";
 const SIDEBAR_LINKS = [
   { name: "Dashboard",    href: "/jobseeker/dashboard",      icon: LayoutDashboard },
   { name: "Find Jobs",    href: "/jobseeker/jobs",           icon: Briefcase },
+  { name: "1:1 Experts",   href: "/experts",                  icon: User },
   { name: "Jobs Applied", href: "/jobseeker/applications",   icon: Target },
   { name: "Interviews",   href: "/jobseeker/interviews",     icon: Calendar },
   { name: "Offers",       href: "/jobseeker/offers",         icon: Gift },
