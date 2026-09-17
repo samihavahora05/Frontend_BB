@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { MainLayout } from "../src/layout/MainLayout";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -16,6 +16,14 @@ export default function PaymentSuccessPage() {
 
   const handlePrintInvoice = () => {
     if (typeof window !== 'undefined') {
+      try {
+        if (window.getSelection) {
+          window.getSelection()?.removeAllRanges();
+        }
+        if (document.activeElement && 'blur' in document.activeElement) {
+          (document.activeElement as HTMLElement).blur();
+        }
+      } catch (e) {}
       window.print();
     }
   };
@@ -97,14 +105,14 @@ export default function PaymentSuccessPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 pb-2.5 border-b border-slate-200/80">
                   <div>
                     <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Order ID</span>
-                    <span className="text-xs font-mono font-bold text-slate-800 bg-white px-2.5 py-1 rounded border border-slate-200 inline-block">
+                    <span className="text-xs font-mono font-bold text-slate-800 bg-white px-2.5 py-1 rounded border border-slate-200 inline-block select-none">
                       {order_id || 'ORD-VERIFIED'}
                     </span>
                   </div>
                   {payment_id && (
                     <div>
                       <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Payment ID</span>
-                      <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded border border-blue-200 inline-block">
+                      <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded border border-blue-200 inline-block select-none">
                         {payment_id}
                       </span>
                     </div>

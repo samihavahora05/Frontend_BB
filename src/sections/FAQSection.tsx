@@ -78,10 +78,11 @@ export const FAQSection = () => {
                     {faq.q}
                   </span>
                   <motion.div
-                    animate={{ rotate: isOpen ? 45 : 0, backgroundColor: isOpen ? "#1B2A6B" : "hsl(var(--muted))" }}
+                    animate={{ rotate: isOpen ? 45 : 0 }}
                     transition={{ duration: 0.22, ease: EASE_OUT_EXPO }}
-                    className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center"
-                    style={{ color: isOpen ? "white" : "hsl(var(--muted-foreground))" }}
+                    className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 ${
+                      isOpen ? "bg-[#1B2A6B] text-white" : "bg-muted text-muted-foreground"
+                    }`}
                   >
                     <Plus size={14} />
                   </motion.div>

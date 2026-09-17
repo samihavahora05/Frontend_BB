@@ -8,6 +8,9 @@ export default function Document() {
   return (
     <Html lang="en" data-scroll-behavior="smooth">
       <Head>
+        <meta httpEquiv="Permissions-Policy" content="accelerometer=*, gyroscope=*, magnetometer=*" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="icon" href="/Boxxlogo.png" type="image/png" />
         <link rel="shortcut icon" href="/Boxxlogo.png" type="image/png" />
         <link rel="apple-touch-icon" href="/Boxxlogo.png" />

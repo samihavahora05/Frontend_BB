@@ -25,6 +25,19 @@ const nextConfig = {
       }
     ],
   },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Permissions-Policy',
+            value: 'accelerometer=*, gyroscope=*, magnetometer=*',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

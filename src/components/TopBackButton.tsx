@@ -20,9 +20,9 @@ export const TopBackButton = () => {
       <div className="max-w-7xl mx-auto flex items-center">
         <button onClick={() => router.back()} className="appearance-none focus:outline-none">
           <motion.div 
-            whileHover={{ x: -4, backgroundColor: 'rgba(248, 250, 252, 1)' }}
+            whileHover={{ x: -4 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-2 text-slate-600 hover:text-[#1B2A6B] transition-colors group px-3 py-1.5 rounded-lg border border-transparent hover:border-slate-200"
+            className="inline-flex items-center gap-2 text-slate-600 hover:text-[#1B2A6B] hover:bg-slate-50 transition-colors group px-3 py-1.5 rounded-lg border border-transparent hover:border-slate-200"
           >
             <ArrowLeft size={16} className="text-slate-400 group-hover:text-[#1B2A6B] transition-colors" />
             <span className="text-sm font-bold tracking-wide">Go Back</span>

@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { MainLayout } from "../src/layout/MainLayout";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -16,6 +16,14 @@ export default function PaymentFailedPage() {
 
   const handlePrintNotice = () => {
     if (typeof window !== 'undefined') {
+      try {
+        if (window.getSelection) {
+          window.getSelection()?.removeAllRanges();
+        }
+        if (document.activeElement && 'blur' in document.activeElement) {
+          (document.activeElement as HTMLElement).blur();
+        }
+      } catch (e) {}
       window.print();
     }
   };
