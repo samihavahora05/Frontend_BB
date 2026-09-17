@@ -11,6 +11,10 @@ export default function Document() {
         <meta httpEquiv="Permissions-Policy" content="accelerometer=*, gyroscope=*, magnetometer=*" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@400;600;700;800&family=Great+Vibes&family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap"
+        />
         <link rel="icon" href="/Boxxlogo.png" type="image/png" />
         <link rel="shortcut icon" href="/Boxxlogo.png" type="image/png" />
         <link rel="apple-touch-icon" href="/Boxxlogo.png" />
