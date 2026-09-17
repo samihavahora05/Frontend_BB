@@ -6,8 +6,11 @@ export const LoadingScreen = ({ onComplete }: { onComplete?: () => void }) => {
   const [fadeOut, setFadeOut] = useState(false);
   const [mounted, setMounted] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const dismissedRef = useRef(false);
 
   const handleDismiss = () => {
+    if (dismissedRef.current) return;
+    dismissedRef.current = true;
     setFadeOut(true);
     setTimeout(() => {
       setShow(false);
@@ -25,53 +28,47 @@ export const LoadingScreen = ({ onComplete }: { onComplete?: () => void }) => {
     }
 
     const vid = videoRef.current;
-    let fallbackTimer: NodeJS.Timeout | null = null;
+    let durationTimer: NodeJS.Timeout | null = null;
 
     if (vid) {
       vid.muted = true;
       vid.defaultMuted = true;
       vid.playsInline = true;
 
-      const handleEnded = () => {
-        handleDismiss();
-      };
-
-      const handleMetadata = () => {
-        const durationMs = vid.duration && !isNaN(vid.duration) ? vid.duration * 1000 + 2000 : 12000;
-        if (fallbackTimer) clearTimeout(fallbackTimer);
-        fallbackTimer = setTimeout(handleDismiss, Math.max(durationMs, 8000));
+      const handleTimeUpdate = () => {
+        // Dismiss right as the clean logo completes (~4.25s), before the next scene/shadow cube enters
+        if (vid.currentTime >= 5.0) {
+          handleDismiss();
+        }
       };
 
       const handleCanPlay = () => {
         vid.play().catch(() => {
-          // Retry
-          setTimeout(() => vid.play().catch(() => {}), 200);
+          setTimeout(() => vid.play().catch(() => { }), 200);
         });
       };
 
-      vid.addEventListener("ended", handleEnded);
-      vid.addEventListener("loadedmetadata", handleMetadata);
+      vid.addEventListener("timeupdate", handleTimeUpdate);
       vid.addEventListener("canplay", handleCanPlay);
 
       // Trigger play immediately
-      vid.play().catch(() => {});
+      vid.play().catch(() => { });
 
-      // Generous fallback timer so slow connections have time to buffer
-      fallbackTimer = setTimeout(handleDismiss, 12000);
+      // Fallback timer for 4.3 seconds
+      durationTimer = setTimeout(handleDismiss, 5000);
 
       return () => {
-        if (fallbackTimer) clearTimeout(fallbackTimer);
-        vid.removeEventListener("ended", handleEnded);
-        vid.removeEventListener("loadedmetadata", handleMetadata);
+        if (durationTimer) clearTimeout(durationTimer);
+        vid.removeEventListener("timeupdate", handleTimeUpdate);
         vid.removeEventListener("canplay", handleCanPlay);
         if (typeof document !== "undefined") {
           document.body.style.overflow = "";
         }
       };
     } else {
-      fallbackTimer = setTimeout(handleDismiss, 4000);
+      durationTimer = setTimeout(handleDismiss, 5000);
       return () => {
-        if (fallbackTimer) clearTimeout(fallbackTimer);
+        if (durationTimer) clearTimeout(durationTimer);
       };
     }
   }, [mounted]);
@@ -85,9 +82,8 @@ export const LoadingScreen = ({ onComplete }: { onComplete?: () => void }) => {
   return (
     <div
       onClick={handleDismiss}
-      className={`fixed inset-0 z-[99999] flex items-center justify-center bg-white transition-opacity duration-500 ease-in-out cursor-pointer overflow-hidden ${
-        fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
-      }`}
+      className={`fixed inset-0 z-[99999] flex items-center justify-center bg-white transition-opacity duration-500 ease-in-out cursor-pointer overflow-hidden ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
     >
       <div className="relative w-full max-w-5xl lg:max-w-6xl max-h-[82vh] px-6 flex items-center justify-center">
         <video
@@ -102,14 +98,11 @@ export const LoadingScreen = ({ onComplete }: { onComplete?: () => void }) => {
           autoPlay
           muted
           playsInline
+          loop
           preload="auto"
           className="w-full h-auto max-h-[78vh] object-contain scale-90 md:scale-95"
-          style={{
-            maskImage: "radial-gradient(ellipse at center, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 95%)",
-            WebkitMaskImage: "radial-gradient(ellipse at center, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 95%)",
-          }}
           onError={() => {
-            handleDismiss();
+            setTimeout(handleDismiss, 4300);
           }}
         >
           <source src="/loading.mp4" type="video/mp4" />
