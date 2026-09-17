@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { useGlobalSettings } from "../contexts/SettingsContext";
-import { PreloaderAnimation } from "./ui/PreloaderAnimation";
 
 export const LoadingScreen = ({ onComplete }: { onComplete?: () => void }) => {
   const [show, setShow] = useState(true);
@@ -16,7 +15,7 @@ export const LoadingScreen = ({ onComplete }: { onComplete?: () => void }) => {
         document.body.style.overflow = "";
       }
       if (onComplete) onComplete();
-    }, 400);
+    }, 500);
   };
 
   useEffect(() => {
@@ -30,23 +29,30 @@ export const LoadingScreen = ({ onComplete }: { onComplete?: () => void }) => {
       }
 
       sessionStorage.setItem("hasSeenLoader", "true");
-      
-      // Auto-dismiss within 1.5s max to avoid trapping on white screen
-      const timer = setTimeout(() => {
-        handleDismiss();
-      }, 1500);
 
       const vid = videoRef.current;
       let onEnded: (() => void) | null = null;
+      let fallbackTimer: any = null;
+
       if (vid) {
         onEnded = () => {
           handleDismiss();
         };
         vid.addEventListener('ended', onEnded);
+        
+        // Play the video and let it complete naturally
+        vid.play().catch(() => {
+          fallbackTimer = setTimeout(handleDismiss, 3000);
+        });
+
+        // Safety fallback timer (6s) only if video stalls
+        fallbackTimer = setTimeout(handleDismiss, 6000);
+      } else {
+        fallbackTimer = setTimeout(handleDismiss, 3000);
       }
 
       return () => {
-        clearTimeout(timer);
+        if (fallbackTimer) clearTimeout(fallbackTimer);
         if (vid && onEnded) vid.removeEventListener('ended', onEnded);
         if (typeof document !== "undefined") {
           document.body.style.overflow = "";
@@ -77,6 +83,7 @@ export const LoadingScreen = ({ onComplete }: { onComplete?: () => void }) => {
           autoPlay
           muted
           playsInline
+          preload="auto"
           className="w-full h-full object-contain"
           onError={() => {
             handleDismiss();
