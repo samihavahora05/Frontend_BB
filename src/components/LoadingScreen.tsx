@@ -20,76 +20,113 @@ export const LoadingScreen = ({ onComplete }: { onComplete?: () => void }) => {
 
   useEffect(() => {
     setMounted(true);
-    try {
-      const hasSeen = typeof window !== "undefined" ? sessionStorage.getItem("hasSeenLoader") : null;
-      if (hasSeen) {
-        setShow(false);
-        if (onComplete) onComplete();
-        return;
-      }
+    if (typeof document !== "undefined") {
+      document.body.style.overflow = "hidden";
+    }
 
-      sessionStorage.setItem("hasSeenLoader", "true");
+    const vid = videoRef.current;
+    let fallbackTimer: NodeJS.Timeout | null = null;
 
-      const vid = videoRef.current;
-      let onEnded: (() => void) | null = null;
-      let fallbackTimer: any = null;
+    if (vid) {
+      vid.muted = true;
+      vid.defaultMuted = true;
+      vid.playsInline = true;
 
-      if (vid) {
-        onEnded = () => {
-          handleDismiss();
-        };
-        vid.addEventListener('ended', onEnded);
-        
-        // Play the video and let it complete naturally
+      const handleEnded = () => {
+        handleDismiss();
+      };
+
+      const handleMetadata = () => {
+        const durationMs = vid.duration && !isNaN(vid.duration) ? vid.duration * 1000 + 2000 : 12000;
+        if (fallbackTimer) clearTimeout(fallbackTimer);
+        fallbackTimer = setTimeout(handleDismiss, Math.max(durationMs, 8000));
+      };
+
+      const handleCanPlay = () => {
         vid.play().catch(() => {
-          fallbackTimer = setTimeout(handleDismiss, 3000);
+          // Retry
+          setTimeout(() => vid.play().catch(() => {}), 200);
         });
+      };
 
-        // Safety fallback timer (6s) only if video stalls
-        fallbackTimer = setTimeout(handleDismiss, 6000);
-      } else {
-        fallbackTimer = setTimeout(handleDismiss, 3000);
-      }
+      vid.addEventListener("ended", handleEnded);
+      vid.addEventListener("loadedmetadata", handleMetadata);
+      vid.addEventListener("canplay", handleCanPlay);
+
+      // Trigger play immediately
+      vid.play().catch(() => {});
+
+      // Generous fallback timer so slow connections have time to buffer
+      fallbackTimer = setTimeout(handleDismiss, 12000);
 
       return () => {
         if (fallbackTimer) clearTimeout(fallbackTimer);
-        if (vid && onEnded) vid.removeEventListener('ended', onEnded);
+        vid.removeEventListener("ended", handleEnded);
+        vid.removeEventListener("loadedmetadata", handleMetadata);
+        vid.removeEventListener("canplay", handleCanPlay);
         if (typeof document !== "undefined") {
           document.body.style.overflow = "";
         }
       };
-    } catch {
-      setShow(false);
+    } else {
+      fallbackTimer = setTimeout(handleDismiss, 4000);
+      return () => {
+        if (fallbackTimer) clearTimeout(fallbackTimer);
+      };
     }
-  }, []);
+  }, [mounted]);
 
   const { settings } = useGlobalSettings();
   const preloaderSettings = settings?.preloader || {};
-  const isEnabled = preloaderSettings?.isEnabled !== 'false';
+  const isEnabled = preloaderSettings?.isEnabled !== false && preloaderSettings?.isEnabled !== "false";
 
   if (!mounted || !show || !isEnabled) return null;
 
   return (
     <div
       onClick={handleDismiss}
-      className={`fixed inset-0 z-[99999] flex items-center justify-center bg-white transition-opacity duration-500 ease-in-out cursor-pointer ${
+      className={`fixed inset-0 z-[99999] flex items-center justify-center bg-white transition-opacity duration-500 ease-in-out cursor-pointer overflow-hidden ${
         fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >
-      <div className="relative w-[90%] max-w-xl aspect-video flex items-center justify-center bg-white">
+      <div className="relative w-full max-w-5xl lg:max-w-6xl max-h-[82vh] px-6 flex items-center justify-center">
         <video
-          ref={videoRef}
-          src="/loading.mp4"
+          ref={(el) => {
+            if (el) {
+              el.muted = true;
+              el.defaultMuted = true;
+              el.playsInline = true;
+              videoRef.current = el;
+            }
+          }}
           autoPlay
           muted
           playsInline
           preload="auto"
-          className="w-full h-full object-contain"
+          className="w-full h-auto max-h-[78vh] object-contain scale-90 md:scale-95"
+          style={{
+            maskImage: "radial-gradient(ellipse at center, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 95%)",
+            WebkitMaskImage: "radial-gradient(ellipse at center, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 95%)",
+          }}
           onError={() => {
             handleDismiss();
           }}
-        />
+        >
+          <source src="/loading.mp4" type="video/mp4" />
+        </video>
       </div>
+
+      {/* Skip button */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleDismiss();
+        }}
+        className="absolute bottom-6 right-6 z-10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-slate-400 hover:text-slate-700 bg-white/80 hover:bg-white border border-slate-200/60 rounded-full shadow-sm backdrop-blur-sm transition-all"
+      >
+        Skip
+      </button>
     </div>
   );
 };
