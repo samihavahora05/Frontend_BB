@@ -1,18 +1,46 @@
 # *
 User-agent: *
 Allow: /
+Disallow: /admin/
 Disallow: /admin
+Disallow: /student/
 Disallow: /student
+Disallow: /expert/
 Disallow: /expert
+Disallow: /company/
 Disallow: /company
+Disallow: /companies/dashboard/
+Disallow: /companies/applicants/
+Disallow: /companies/applications/
+Disallow: /companies/jobs/create
+Disallow: /companies/post-job
+Disallow: /companies/settings/
+Disallow: /jobseeker/
 Disallow: /jobseeker
+Disallow: /intern/
 Disallow: /intern
+Disallow: /college/
 Disallow: /college
+Disallow: /colleges/dashboard/
+Disallow: /colleges/placements/
+Disallow: /colleges/settings/
+Disallow: /colleges/students/
 Disallow: /cart
 Disallow: /checkout
+Disallow: /payment-failed
+Disallow: /payment-success
+Disallow: /verify-otp
+Disallow: /verification-pending
+Disallow: /pending-approval
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /onboarding
+Disallow: /auth
+Disallow: /api/
 
 # Host
 Host: https://blueboxx.in
 
 # Sitemaps
 Sitemap: https://blueboxx.in/sitemap.xml
+
