@@ -21,8 +21,23 @@ export default function BackupManagerPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedBackup, setSelectedBackup] = useState<any>(null);
 
-  const autoSchedule = settings?.auto_schedule === 'true' || settings?.auto_schedule === true;
+  const autoSchedule = settings?.auto_schedule === 'true' || settings?.auto_schedule === true || settings?.auto_schedule === '1' || settings?.auto_schedule === 1;
   const scheduleType = settings?.schedule_type || 'daily';
+  const scheduleDayOfWeek = settings?.schedule_day_of_week || 'sunday';
+  const scheduleDayOfMonth = settings?.schedule_day_of_month || '1';
+  const scheduleSpecificDate = settings?.schedule_specific_date || '';
+  const scheduleTime = settings?.schedule_time || '02:00';
+  const scheduleBackupType = settings?.schedule_backup_type || 'Complete';
+
+  const handleUpdateScheduleSetting = async (key: string, value: any) => {
+    try {
+      await BackupService.updateSettings({ [key]: value });
+      await mutateSettings();
+      toast.success('Schedule setting updated');
+    } catch (e) {
+      toast.error('Failed to update schedule setting');
+    }
+  };
 
   // SWR Polling effect
   useEffect(() => {
@@ -202,26 +217,15 @@ export default function BackupManagerPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-purple-50 text-purple-600">
-            <Calendar size={24} />
-          </div>
-          <div className="flex-1 flex justify-between items-center">
-            <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Auto Schedule</p>
-              <div className="flex items-center gap-2">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between gap-3 col-span-1 md:col-span-2 lg:col-span-1">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-purple-50 text-purple-600">
+                <Calendar size={20} />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Auto Schedule</p>
                 <h3 className="text-sm font-black text-slate-800 leading-none">{autoSchedule ? 'Enabled' : 'Disabled'}</h3>
-                {autoSchedule && (
-                  <select 
-                    value={scheduleType}
-                    onChange={handleScheduleTypeChange}
-                    className="text-[10px] font-bold text-slate-600 bg-slate-50 border border-slate-200 rounded px-1 py-0.5 outline-none"
-                  >
-                    <option value="daily">Daily (2:00 AM)</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                  </select>
-                )}
               </div>
             </div>
             <label className="flex items-center cursor-pointer gap-2">
@@ -232,6 +236,72 @@ export default function BackupManagerPage() {
               </div>
             </label>
           </div>
+
+          {autoSchedule && (
+            <div className="pt-2 border-t border-slate-100 flex flex-col gap-2 animate-in fade-in duration-200">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <select 
+                  value={scheduleType}
+                  onChange={(e) => handleUpdateScheduleSetting('schedule_type', e.target.value)}
+                  className="text-[11px] font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 outline-none flex-1"
+                >
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="specific_date">Specific Date</option>
+                </select>
+
+                {scheduleType === 'weekly' && (
+                  <select
+                    value={scheduleDayOfWeek}
+                    onChange={(e) => handleUpdateScheduleSetting('schedule_day_of_week', e.target.value)}
+                    className="text-[11px] font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 outline-none flex-1"
+                  >
+                    <option value="sunday">Sunday</option>
+                    <option value="monday">Monday</option>
+                    <option value="tuesday">Tuesday</option>
+                    <option value="wednesday">Wednesday</option>
+                    <option value="thursday">Thursday</option>
+                    <option value="friday">Friday</option>
+                    <option value="saturday">Saturday</option>
+                  </select>
+                )}
+
+                {scheduleType === 'monthly' && (
+                  <select
+                    value={scheduleDayOfMonth}
+                    onChange={(e) => handleUpdateScheduleSetting('schedule_day_of_month', e.target.value)}
+                    className="text-[11px] font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 outline-none flex-1"
+                  >
+                    <option value="1">Day 1</option>
+                    <option value="5">Day 5</option>
+                    <option value="10">Day 10</option>
+                    <option value="15">Day 15</option>
+                    <option value="20">Day 20</option>
+                    <option value="25">Day 25</option>
+                    <option value="28">Day 28 / Last</option>
+                  </select>
+                )}
+
+                {scheduleType === 'specific_date' && (
+                  <input
+                    type="date"
+                    value={scheduleSpecificDate}
+                    onChange={(e) => handleUpdateScheduleSetting('schedule_specific_date', e.target.value)}
+                    className="text-[11px] font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 outline-none flex-1"
+                  />
+                )}
+
+                <input
+                  type="time"
+                  value={scheduleTime}
+                  onChange={(e) => handleUpdateScheduleSetting('schedule_time', e.target.value)}
+                  className="text-[11px] font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 outline-none w-20"
+                  title="Execution Time"
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

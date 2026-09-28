@@ -43,4 +43,3 @@ Host: https://blueboxx.in
 
 # Sitemaps
 Sitemap: https://blueboxx.in/sitemap.xml
-
