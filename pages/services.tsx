@@ -734,9 +734,27 @@ export default function ServicesPortfolioPage() {
   return (
     <>
       <SEO
-        title="Digital Solutions, Web Development & AI Automation Services | Blueboxx DA"
-        description="Explore Blueboxx DA enterprise services including custom web development, mobile applications, CRM/ERP platforms, LMS systems, and AI business automation solutions."
-        keywords="web development company vadodara, custom CRM development, ERP solutions gujarat, AI automation services, LMS platform development, IT outsourcing india"
+        title="IT Services, Web & AI Solutions in Vadodara | Blueboxx DA"
+        description="Accelerate your enterprise with Blueboxx DA. We build custom websites, CRM/ERP platforms, LMS systems, and AI automation in Vadodara. Get a quote today!"
+        keywords="IT services vadodara, web development company vadodara, custom CRM development, ERP solutions gujarat, AI automation services, LMS platform development, software company vadodara"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "serviceType": "Enterprise Web Development, Custom Software & AI Automation",
+          "provider": {
+            "@type": "LocalBusiness",
+            "name": "Blueboxx DA",
+            "url": "https://blueboxx.in",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Vadodara",
+              "addressRegion": "Gujarat",
+              "addressCountry": "IN"
+            }
+          },
+          "areaServed": "Vadodara, Gujarat, India",
+          "description": "Custom enterprise web development, mobile applications, CRM/ERP platforms, LMS systems, and AI automation solutions in Vadodara."
+        }}
       />
 
       {/* Global Page UI Helpers */}
@@ -793,7 +811,7 @@ export default function ServicesPortfolioPage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-heading font-black text-[#0d1635] tracking-tight leading-[1.12] max-w-7xl mx-auto mb-9 font-sora"
             >
-              We Build <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1b2a6b] via-[#c9a227] to-[#e0b840]">Digital Solutions</span> That Scale Your Business
+              Enterprise <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1b2a6b] via-[#c9a227] to-[#e0b840]">Web Development</span>, Custom Software & AI Automation Solutions
             </motion.h1>
 
             {/* Sub-Headline */}

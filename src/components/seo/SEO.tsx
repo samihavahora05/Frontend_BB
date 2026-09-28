@@ -22,9 +22,9 @@ const DEFAULT_PAGE_SEO: Record<string, { title: string; description: string; key
     keywords: "Blueboxx DA, IT training institute vadodara, web development classes vadodara, UI UX design course, digital marketing training vadodara, best computer institute",
   },
   "/services": {
-    title: "Digital Solutions, Web Development & AI Automation Services | Blueboxx DA",
-    description: "Explore Blueboxx DA enterprise services including custom web development, mobile applications, CRM/ERP platforms, LMS systems, and AI business automation solutions.",
-    keywords: "web development company vadodara, custom CRM development, ERP solutions gujarat, AI automation services, LMS platform development, IT outsourcing india",
+    title: "IT Services, Web & AI Solutions in Vadodara | Blueboxx DA",
+    description: "Accelerate your enterprise with Blueboxx DA. We build custom websites, CRM/ERP platforms, LMS systems, and AI automation in Vadodara. Get a quote today!",
+    keywords: "IT services vadodara, web development company vadodara, custom CRM development, ERP solutions gujarat, AI automation services, LMS platform development, software company vadodara",
   },
   "/about": {
     title: "About Us | Blueboxx DA - Creative Production & EdTech Innovation",
