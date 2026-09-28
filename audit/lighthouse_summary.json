@@ -1,0 +1,92 @@
+{
+  "mobile": {
+    "scores": {
+      "performance": 32,
+      "accessibility": 85,
+      "best_practices": 79,
+      "seo": 100
+    },
+    "metrics": {
+      "lcp": "28.0\u00a0s",
+      "lcp_numeric_ms": 28003.352000000014,
+      "cls": "0.113",
+      "cls_numeric": 0.11265817067653246,
+      "tbt": "1,020\u00a0ms",
+      "tbt_numeric_ms": 1021,
+      "fcp": "5.4\u00a0s",
+      "speed_index": "8.7\u00a0s"
+    },
+    "top_opportunities": [
+      {
+        "title": "Defer offscreen images",
+        "savings_ms": 17910,
+        "displayValue": "Est savings of 3,657\u00a0KiB"
+      },
+      {
+        "title": "Serve images in next-gen formats",
+        "savings_ms": 16800,
+        "displayValue": "Est savings of 4,059\u00a0KiB"
+      },
+      {
+        "title": "Properly size images",
+        "savings_ms": 12620,
+        "displayValue": "Est savings of 2,473\u00a0KiB"
+      },
+      {
+        "title": "Eliminate render-blocking resources",
+        "savings_ms": 1482,
+        "displayValue": "Est savings of 1,480\u00a0ms"
+      },
+      {
+        "title": "Use HTTP/2",
+        "savings_ms": 880,
+        "displayValue": "39 requests not served via HTTP/2"
+      }
+    ]
+  },
+  "desktop": {
+    "scores": {
+      "performance": 62,
+      "accessibility": 85,
+      "best_practices": 78,
+      "seo": 100
+    },
+    "metrics": {
+      "lcp": "6.2\u00a0s",
+      "lcp_numeric_ms": 6204.162,
+      "cls": "0.099",
+      "cls_numeric": 0.09852221229898142,
+      "tbt": "30\u00a0ms",
+      "tbt_numeric_ms": 29,
+      "fcp": "1.5\u00a0s",
+      "speed_index": "2.8\u00a0s"
+    },
+    "top_opportunities": [
+      {
+        "title": "Defer offscreen images",
+        "savings_ms": 2630,
+        "displayValue": "Est savings of 3,644\u00a0KiB"
+      },
+      {
+        "title": "Serve images in next-gen formats",
+        "savings_ms": 2470,
+        "displayValue": "Est savings of 4,059\u00a0KiB"
+      },
+      {
+        "title": "Properly size images",
+        "savings_ms": 2470,
+        "displayValue": "Est savings of 3,453\u00a0KiB"
+      },
+      {
+        "title": "Eliminate render-blocking resources",
+        "savings_ms": 795,
+        "displayValue": "Est savings of 800\u00a0ms"
+      },
+      {
+        "title": "Reduce unused JavaScript",
+        "savings_ms": 80,
+        "displayValue": "Est savings of 154\u00a0KiB"
+      }
+    ]
+  }
+}

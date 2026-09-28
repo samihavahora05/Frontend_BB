@@ -1,0 +1,49 @@
+{
+  "robots_txt": {
+    "status_code": 200,
+    "services_disallowed": false,
+    "raw": "# *\nUser-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /admin\nDisallow: /student/\nDisallow: /student\nDisallow: /expert/\nDisallow: /expert\nDisallow: /company/\nDisallow: /company\nDisallow: /companies/dashboard/\nDisallow: /companies/applicants/\nDisallow: /companies/applications/\nDisallow: /companies/jobs/create\nDisallow: /companies/post-job\nDisallow: /companies/settings/\nDisallow: /jobseeker/\nDisallow: /jobseeker\nDisallow: /intern/\nDisallow: /intern\nDisallow: /college/\nDisallow: /college\nDisallow: "
+  },
+  "sitemap": {
+    "sitemap_xml_code": 200,
+    "sitemap0_xml_code": 200,
+    "services_in_sitemap": true
+  },
+  "redirects": {
+    "http://blueboxx.in/": {
+      "status": 301,
+      "location": "https://blueboxx.in/"
+    },
+    "http://www.blueboxx.in/": {
+      "status": 301,
+      "location": "https://www.blueboxx.in/"
+    },
+    "https://blueboxx.in/": {
+      "status": 200,
+      "location": "None (200 OK directly)"
+    },
+    "https://www.blueboxx.in/": {
+      "status": 200,
+      "location": "None (200 OK directly)"
+    }
+  },
+  "page_metadata_comparison": {
+    "homepage": {
+      "title": "BlueBoxx | Leading Digital Marketing & IT Training Institute in Vadodara",
+      "description": "BlueBoxx is a leading digital marketing institute in Vadodara offering UI/UX, web development & marketing courses with practical training and career support."
+    },
+    "about": {
+      "title": "About Blueboxx DA | Premier EdTech & Creative Production House",
+      "description": "Established in 2015, Blueboxx DA is Vadodara's premier Advertising Agency, Production House, and EdTech platform driving the Learn-Work-Earn model."
+    },
+    "services": {
+      "title": "Digital Solutions, Web Development & AI Automation Services | Blueboxx DA",
+      "description": "Explore Blueboxx DA enterprise services including custom web development, mobile applications, CRM/ERP platforms, LMS systems, and AI business automation solutions."
+    }
+  },
+  "blueboxxda_com": {
+    "status_code": 200,
+    "is_live": true,
+    "snippet": "<!DOCTYPE html><html lang=\"en\" class=\"inter_786c1081-module__J60SBq__variable outfit_2edbbf9e-module__Xf4ZLa__variable dark\"><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/><link rel=\"preload\" href=\"/_next/static/media/1b99372b3eaef0c8-s.p.1gsd1jahc5"
+  }
+}
