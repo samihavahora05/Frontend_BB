@@ -17,74 +17,34 @@ interface SEOProps {
 // Master Page SEO Configuration Dictionary
 const DEFAULT_PAGE_SEO: Record<string, { title: string; description: string; keywords: string }> = {
   "/": {
-    title: "BlueBoxx | Leading Digital Marketing & IT Training Institute in Vadodara",
-    description: "BlueBoxx is a leading digital marketing institute in Vadodara offering UI/UX, web development & marketing courses with practical training and career support.",
-    keywords: "digital marketing institute vadodara, BlueBoxx DA, UI/UX design vadodara, web development vadodara, IT training institute vadodara, best computer classes vadodara",
-  },
-  "/courses": {
-    title: "Online Digital Marketing, Web & Graphic Courses in Vadodara | BlueBoxx",
-    description: "Explore online courses in Vadodara including digital marketing, web development & graphic design with practical learning and certification at BlueBoxx.",
-    keywords: "online courses vadodara, digital marketing course vadodara, web development course vadodara, graphic design course vadodara, certified IT courses",
-  },
-  "/classes": {
-    title: "Live Interactive Classes in Vadodara | Web & Marketing | BlueBoxx",
-    description: "Join live classes in Vadodara for web development, graphic design & marketing with hands-on training and expert mentors at BlueBoxx.",
-    keywords: "live classes vadodara, live web development classes, graphic design live training, interactive digital marketing classes vadodara, live coding sessions",
-  },
-  "/virtual-classes": {
-    title: "Live Interactive Classes in Vadodara | Web & Marketing | BlueBoxx",
-    description: "Join live classes in Vadodara for web development, graphic design & marketing with hands-on training and expert mentors at BlueBoxx.",
-    keywords: "live classes vadodara, live web development classes, graphic design live training, interactive digital marketing classes vadodara, live coding sessions",
+    title: "Blueboxx DA | Leading IT Training & Digital Media Institute in Vadodara",
+    description: "Blueboxx DA is Gujarat's premier IT institute offering practical courses in Full Stack Web Development, UI/UX Design, AI/ML, and Digital Marketing with 100% placement support.",
+    keywords: "Blueboxx DA, IT training institute vadodara, web development classes vadodara, UI UX design course, digital marketing training vadodara, best computer institute",
   },
   "/services": {
-    title: "Career Training Services & Skill Acceleration in Vadodara | BlueBoxx",
-    description: "BlueBoxx offers career training services in Vadodara including internships, mentorship, live sessions and skill-based learning for real-world success.",
-    keywords: "career training services vadodara, professional IT mentorship, internship training, corporate digital training vadodara, job placement support",
-  },
-  "/community": {
-    title: "Skill Development Platform & Tech Learners Network in India | BlueBoxx",
-    description: "Join a leading skill development platform in India with hands-on projects, expert mentorship and career-focused training programs at BlueBoxx.",
-    keywords: "skill development platform india, student community vadodara, IT learners platform, career growth tech community, peer learning india",
-  },
-  "/our-learners": {
-    title: "Skill Development Platform & Tech Learners Network in India | BlueBoxx",
-    description: "Join a leading skill development platform in India with hands-on projects, expert mentorship and career-focused training programs at BlueBoxx.",
-    keywords: "skill development platform india, student community vadodara, IT learners platform, career growth tech community, peer learning india",
+    title: "Digital Solutions, Web Development & AI Automation Services | Blueboxx DA",
+    description: "Explore Blueboxx DA enterprise services including custom web development, mobile applications, CRM/ERP platforms, LMS systems, and AI business automation solutions.",
+    keywords: "web development company vadodara, custom CRM development, ERP solutions gujarat, AI automation services, LMS platform development, IT outsourcing india",
   },
   "/about": {
-    title: "About BlueBoxx | Digital Training Institute in India",
-    description: "BlueBoxx is a digital training institute in India offering skill-based education, mentorship and a learn-work-earn model for career growth.",
-    keywords: "digital training institute india, learn work earn model, tech education vadodara, IT career mentorship india, practical skills academy",
+    title: "About Us | Blueboxx DA - Creative Production & EdTech Innovation",
+    description: "Founded in 2015 in Vadodara, Blueboxx DA empowers students and enterprises through our Learn-Work-Earn model, industry mentorship, and cutting-edge digital production.",
+    keywords: "About Blueboxx DA, IT institute history, creative production house vadodara, Ankush Dubey, Learn Work Earn model",
+  },
+  "/courses": {
+    title: "Certified Professional IT & Design Courses | Blueboxx DA",
+    description: "Master high-demand tech skills with industry-designed courses in Full Stack, MERN, Python AI, Graphic Design, and Performance Marketing at Blueboxx DA.",
+    keywords: "certified IT courses, full stack developer course, MERN stack training vadodara, graphic design course, python AI machine learning",
   },
   "/internships": {
-    title: "Digital Marketing & Tech Internships in Vadodara with Stipend | BlueBoxx",
-    description: "Apply for digital marketing internship in Vadodara with live projects, real campaigns, mentorship and stipend opportunities at BlueBoxx.",
-    keywords: "digital marketing internship vadodara, web development internship, IT student internship vadodara, paid tech internship with stipend, live project training",
-  },
-  "/internship": {
-    title: "Digital Marketing & Tech Internships in Vadodara with Stipend | BlueBoxx",
-    description: "Apply for digital marketing internship in Vadodara with live projects, real campaigns, mentorship and stipend opportunities at BlueBoxx.",
-    keywords: "digital marketing internship vadodara, web development internship, IT student internship vadodara, paid tech internship with stipend, live project training",
+    title: "Industry Internships with Stipend & Live Projects | Blueboxx DA",
+    description: "Gain hands-on corporate experience with paid internships at Blueboxx DA. Work on live enterprise client projects with 1-on-1 expert mentor guidance.",
+    keywords: "IT internships vadodara, paid digital marketing internship, web development internship with stipend, live project training vadodara",
   },
   "/contact": {
-    title: "Contact BlueBoxx | Digital Marketing Institute in Vadodara",
-    description: "Contact BlueBoxx Vadodara for course details, fees, demo classes and career guidance. Call or visit our institute today.",
-    keywords: "contact digital marketing institute vadodara, IT training center address vadodara, book demo class vadodara, BlueBoxx phone number, career counselling center",
-  },
-  "/colleges": {
-    title: "Career Counselling & Top Degree Programs in Vadodara | BlueBoxx",
-    description: "Get career counselling in Vadodara and apply for top degree programs with expert guidance and academic support at BlueBoxx.",
-    keywords: "career counselling vadodara, college admission guidance, higher education degrees vadodara, academic career support, college counselling",
-  },
-  "/signup": {
-    title: "Join Industry-Demand Digital Courses in India | BlueBoxx",
-    description: "Join BlueBoxx and start learning industry-demand digital courses with expert guidance, practical training and career growth opportunities.",
-    keywords: "join digital courses india, enroll in IT training, student registration BlueBoxx, start digital marketing course, learn tech skills online",
-  },
-  "/join-us": {
-    title: "Join Industry-Demand Digital Courses in India | BlueBoxx",
-    description: "Join BlueBoxx and start learning industry-demand digital courses with expert guidance, practical training and career growth opportunities.",
-    keywords: "join digital courses india, enroll in IT training, student registration BlueBoxx, start digital marketing course, learn tech skills online",
+    title: "Contact Blueboxx DA | Admissions & Enterprise Inquiries",
+    description: "Get in touch with Blueboxx DA for course counseling, admissions, corporate training, or enterprise project development. Located at India Bulls Mega Mall, Vadodara.",
+    keywords: "contact Blueboxx DA, IT institute address vadodara, admission helpline, corporate training inquiry, demo class booking",
   },
 };
 
@@ -165,7 +125,7 @@ export function SEO({
   return (
     <Head>
       {/* Standard Meta Tags */}
-      <title>{activeTitle}</title>
+      <title key="page-title">{activeTitle}</title>
       <meta key="title" name="title" content={activeTitle} />
       <meta key="description" name="description" content={activeDesc} />
       <meta key="keywords" name="keywords" content={activeKeywords} />

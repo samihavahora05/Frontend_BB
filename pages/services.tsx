@@ -734,13 +734,10 @@ export default function ServicesPortfolioPage() {
   return (
     <>
       <SEO
-        title="Services & Portfolio | Digital Solutions, CRM, LMS, HRMS, ERP | Blueboxx DA"
-        description="Blueboxx is your premium technology partner. We build scalable websites, custom CRM systems, LMS platforms, HRMS platforms, and enterprise ERP solutions."
+        title="Digital Solutions, Web Development & AI Automation Services | Blueboxx DA"
+        description="Explore Blueboxx DA enterprise services including custom web development, mobile applications, CRM/ERP platforms, LMS systems, and AI business automation solutions."
+        keywords="web development company vadodara, custom CRM development, ERP solutions gujarat, AI automation services, LMS platform development, IT outsourcing india"
       />
-      <Head>
-        <title>Services & Portfolio | Digital Solutions, CRM, LMS, HRMS, ERP | Blueboxx DA</title>
-        <meta name="description" content="Explore Blueboxx end-to-end technology services, capability matrix, and enterprise digital solutions." />
-      </Head>
 
       {/* Global Page UI Helpers */}
       <CustomCursor />
