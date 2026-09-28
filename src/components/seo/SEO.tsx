@@ -188,8 +188,10 @@ export function SEO({
 
       {/* Search Engine Robots & Googlebot */}
       <meta key="theme-color" name="theme-color" content="#1B2A6B" />
-      <meta key="robots" name="robots" content={activeRobots} />
-      <meta key="googlebot" name="googlebot" content={activeRobots} />
+      <meta key="robots" name="robots" content={activeRobots === "index, follow" ? "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" : activeRobots} />
+      <meta key="googlebot" name="googlebot" content={activeRobots === "index, follow" ? "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" : activeRobots} />
+      <meta key="bingbot" name="bingbot" content={activeRobots === "index, follow" ? "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" : activeRobots} />
+      <meta key="google-extended" name="google-extended" content="index, follow" />
       
       {/* Favicons */}
       <link rel="icon" href="/Boxxlogo.png" type="image/png" />
