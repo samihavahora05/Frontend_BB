@@ -88,6 +88,8 @@ export default function BlogEditorPage() {
     formData.append("content", content);
     formData.append("category_id", categoryId);
     
+    formData.append("categories[]", categoryId);
+    
     // Format status to match Laravel validation: draft, published, archived
     let finalStatus = targetPublishStatus.toLowerCase();
     if (finalStatus === 'scheduled') {
@@ -97,7 +99,15 @@ export default function BlogEditorPage() {
     formData.append("visibility", visibility);
     
     if (tags) {
-      tags.split(",").map(t => t.trim()).filter(Boolean).forEach(t => formData.append("tags[]", t));
+      formData.append("keywords", tags);
+      tags.split(",")
+        .map(t => t.trim().replace(/^#/, ''))
+        .filter(Boolean)
+        .forEach(t => {
+          if (/^\d+$/.test(t)) {
+            formData.append("tags[]", t);
+          }
+        });
     }
     if (thumbnail) formData.append("thumbnail", thumbnail);
     if (excerpt) formData.append("excerpt", excerpt);
@@ -122,8 +132,10 @@ export default function BlogEditorPage() {
         await BlogService.updateBlog(id as string, formData);
         toast.success("Blog updated successfully!");
       }
-    } catch (error) {
-      toast.error("Failed to save blog");
+    } catch (error: any) {
+      console.error("Save blog error:", error);
+      const serverMsg = error?.response?.data?.message || (error?.response?.data?.errors ? Object.values(error.response.data.errors).flat().join(", ") : null);
+      toast.error(serverMsg || "Failed to save blog");
     } finally {
       setIsSaving(false);
     }
