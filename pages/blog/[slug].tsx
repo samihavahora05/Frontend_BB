@@ -173,7 +173,11 @@ export default function BlogDetailsPage() {
           {/* Thumbnail */}
           {blog.thumbnail && (
             <div className="mb-12 rounded-3xl overflow-hidden shadow-lg border border-slate-200">
-              <img src={`${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in'}/storage/${blog.thumbnail}`} alt={blog.title} className="w-full h-auto max-h-[500px] object-cover" />
+              <img 
+                src={blog.thumbnail.startsWith('http') ? blog.thumbnail : `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in'}/storage/${blog.thumbnail}`} 
+                alt={blog.title} 
+                className="w-full h-auto max-h-[500px] object-cover" 
+              />
             </div>
           )}
 

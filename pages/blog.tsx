@@ -170,7 +170,19 @@ export default function BlogPage() {
                   <Card className="overflow-hidden group hover:shadow-xl hover:border-[#1B2A6B]/30 transition-all duration-300">
                     <div className="flex flex-col lg:flex-row h-full">
                       <div className="w-full lg:w-1/2 aspect-[16/9] lg:aspect-auto relative overflow-hidden bg-slate-200">
-                        <Image src={featuredBlog.thumbnail ? `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in'}/storage/${featuredBlog.thumbnail}` : "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"} alt="Featured" fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width: 1024px) 100vw, 50vw" />
+                        <Image 
+                          src={
+                            featuredBlog.thumbnail 
+                              ? (featuredBlog.thumbnail.startsWith('http') 
+                                  ? featuredBlog.thumbnail 
+                                  : `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in'}/storage/${featuredBlog.thumbnail}`) 
+                              : "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
+                          } 
+                          alt="Featured" 
+                          fill 
+                          className="object-cover group-hover:scale-105 transition-transform duration-700" 
+                          sizes="(max-width: 1024px) 100vw, 50vw" 
+                        />
                       </div>
                       <CardContent className="w-full lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
                         <Badge variant="secondary" className="w-fit mb-4">{featuredBlog.categories?.[0] || "Blog"}</Badge>
@@ -204,7 +216,19 @@ export default function BlogPage() {
                   {remainingBlogs.map((blog: any) => (
                     <Card key={blog.id} className="overflow-hidden group hover:shadow-lg hover:border-[#1B2A6B]/30 transition-all duration-300 flex flex-col">
                       <div className="relative aspect-[16/9] overflow-hidden bg-slate-200">
-                        <Image src={blog.thumbnail ? `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in'}/storage/${blog.thumbnail}` : "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80"} alt={blog.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+                        <Image 
+                          src={
+                            blog.thumbnail 
+                              ? (blog.thumbnail.startsWith('http') 
+                                  ? blog.thumbnail 
+                                  : `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://backend.blueboxx.in'}/storage/${blog.thumbnail}`) 
+                              : "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80"
+                          } 
+                          alt={blog.title} 
+                          fill 
+                          className="object-cover group-hover:scale-105 transition-transform duration-700" 
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" 
+                        />
                         <Badge variant="secondary" className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm border-none text-slate-900 shadow-sm">{blog.categories?.[0] || "Blog"}</Badge>
                       </div>
                       <CardContent className="p-6 flex-1 flex flex-col">
