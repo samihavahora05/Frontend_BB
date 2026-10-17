@@ -50,6 +50,7 @@ export default function Navbar() {
     { label: 'Internships', href: '/internships' },
     { label: 'Jobs', href: '/jobs' },
     { label: 'Experts', href: '/experts' },
+    { label: 'Freelancers', href: '/freelancers' },
     { label: 'Blogs', href: '/blog' },
     {
       label: 'Our Partners',

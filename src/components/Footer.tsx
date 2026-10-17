@@ -18,6 +18,7 @@ const footerLinks = {
   registerAs: [
     { label: "Intern", href: "/signup/intern" },
     { label: "Job Seeker", href: "/signup/jobseeker" },
+    { label: "Freelancer", href: "/freelancers" },
     { label: "Company", href: "/signup/company" },
     { label: "College", href: "/signup/college" },
     { label: "Expert", href: "/signup/expert" },
