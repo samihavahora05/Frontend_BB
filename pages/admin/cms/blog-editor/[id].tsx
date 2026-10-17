@@ -55,7 +55,8 @@ export default function BlogEditorPage() {
       setMetaTitle(data.meta_title || "");
       setMetaDescription(data.meta_description || "");
       setCanonicalUrl(data.canonical_url || "");
-      setMetaKeywords(data.meta_keywords ? data.meta_keywords.join(", ") : "");
+      const kws = data.keywords || (Array.isArray(data.meta_keywords) ? data.meta_keywords.join(", ") : data.meta_keywords) || "";
+      setMetaKeywords(kws);
       setStatus(data.status || "draft");
       setVisibility(data.visibility || "public");
       setScheduledAt(data.scheduled_at ? new Date(data.scheduled_at).toISOString().slice(0, 16) : "");
@@ -99,7 +100,6 @@ export default function BlogEditorPage() {
     formData.append("visibility", visibility);
     
     if (tags) {
-      formData.append("keywords", tags);
       tags.split(",")
         .map(t => t.trim().replace(/^#/, ''))
         .filter(Boolean)
@@ -109,6 +109,12 @@ export default function BlogEditorPage() {
           }
         });
     }
+
+    const finalKeywords = metaKeywords || tags;
+    if (finalKeywords) {
+      formData.append("keywords", finalKeywords);
+      formData.append("meta_keywords", finalKeywords);
+    }
     if (thumbnail) formData.append("thumbnail", thumbnail);
     if (excerpt) formData.append("excerpt", excerpt);
     if (videoUrl) formData.append("video_url", videoUrl);
@@ -117,7 +123,6 @@ export default function BlogEditorPage() {
     formData.append("is_trending", isTrending ? "1" : "0");
     if (metaTitle) formData.append("meta_title", metaTitle);
     if (metaDescription) formData.append("meta_description", metaDescription);
-    if (metaKeywords) formData.append("meta_keywords", metaKeywords);
     if (canonicalUrl) formData.append("canonical_url", canonicalUrl);
     if (targetPublishStatus === 'Scheduled' && scheduledAt) {
       formData.append("scheduled_at", scheduledAt);
