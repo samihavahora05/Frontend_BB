@@ -415,14 +415,14 @@ export default function FreelancersPage() {
               <p className="text-slate-300 text-sm md:text-base leading-relaxed mb-8">
                 Get discovered by top startups, companies, and clients seeking verified talent. Build your verified portfolio with Blueboxx.
               </p>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4 items-center">
                 <Link href="/contact?subject=FreelancerApplication">
-                  <Button variant="secondary" className="gap-2 bg-[#F2C94C] hover:bg-[#C9A227] text-slate-950 font-extrabold">
+                  <Button variant="secondary" className="gap-2 bg-[#F2C94C] hover:bg-[#C9A227] text-slate-950 font-extrabold px-6 py-3 h-auto shadow-lg">
                     Apply as a Freelancer <ArrowRight size={16} />
                   </Button>
                 </Link>
                 <Link href="/services">
-                  <Button variant="outline" className="text-white border-white/20 hover:bg-white/10">
+                  <Button variant="outline" className="text-white border-2 border-white/60 bg-white/10 hover:bg-white hover:text-[#0d1635] font-bold px-6 py-3 h-auto backdrop-blur-md transition-all">
                     Explore Our Agency Services
                   </Button>
                 </Link>
