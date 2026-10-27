@@ -61,6 +61,41 @@ const DEFAULT_PAGE_SEO: Record<string, { title: string; description: string; key
     description: "Read the official Terms and Conditions, platform usage policies, verification guidelines, fee structure, and student agreements for BlueBoxx.",
     keywords: "Terms and Conditions, Terms of Service, Blueboxx User Agreement, Platform Policy, Student Code of Conduct, Refund Policy Terms",
   },
+  "/signup": {
+    title: "Create an Account | Student & Professional Registration | BlueBoxx",
+    description: "Sign up for BlueBoxx to start your journey in tech courses, live industrial internships, corporate recruitment, and career mentorship.",
+    keywords: "signup BlueBoxx, register account, student registration, tech career portal",
+  },
+  "/signup/student": {
+    title: "Student Registration | Learn Tech & AI Skills with BlueBoxx",
+    description: "Create your student account on BlueBoxx. Access live tech classes, project-based IT curriculum, mentor support, and placement drives in Vadodara.",
+    keywords: "student registration, tech student signup, learn coding vadodara, IT courses enrollment, Blueboxx student account",
+  },
+  "/signup/intern": {
+    title: "Intern Registration | Paid Tech Internships with Stipend | BlueBoxx",
+    description: "Apply for live industry internships at BlueBoxx. Work on real enterprise client projects, earn stipends, and get 1-on-1 expert mentor evaluations.",
+    keywords: "intern registration, IT internship signup, paid internship application, web development intern, live project internship vadodara",
+  },
+  "/signup/jobseeker": {
+    title: "Job Seeker Registration | IT & Tech Placement Portal | BlueBoxx",
+    description: "Register as a job seeker on BlueBoxx. Discover exclusive tech job openings, apply in 1-click, and connect with 100+ verified corporate hiring partners.",
+    keywords: "job seeker registration, IT jobs signup, tech placement portal, software developer registration, hire freshers vadodara",
+  },
+  "/signup/company": {
+    title: "Corporate Partner Registration | Hire Trained Tech Talent | BlueBoxx",
+    description: "Register your company or startup with BlueBoxx. Post jobs, hire pre-vetted developer talent, and collaborate on corporate enterprise projects.",
+    keywords: "company registration, hire developers, corporate hiring partner, employer signup, campus recruitment vadodara",
+  },
+  "/signup/college": {
+    title: "College & Institute Partnership | Campus Placement Drives | BlueBoxx",
+    description: "Partner your educational institution with BlueBoxx. Organize campus placement drives, live industrial workshops, and expert tech bootcamps.",
+    keywords: "college partnership, university MOU, campus placement drives, academic IT training, engineering college collaboration",
+  },
+  "/signup/expert": {
+    title: "Expert & Instructor Onboarding | Teach & Mentor on BlueBoxx",
+    description: "Join BlueBoxx as an industry expert or mentor. Conduct 1:1 career consultations, lead specialized tech bootcamps, and guide learners.",
+    keywords: "expert registration, become an instructor, tech mentor signup, teach programming, career counselor onboarding",
+  },
   "/internships": {
     title: "Industry Internships with Stipend & Live Projects | Blueboxx DA",
     description: "Gain hands-on corporate experience with paid internships at Blueboxx DA. Work on live enterprise client projects with 1-on-1 expert mentor guidance.",

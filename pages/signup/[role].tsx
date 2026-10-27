@@ -10,14 +10,78 @@ import { SEO } from "../../src/components/seo/SEO";
 import { TurnstileWidget } from "../../src/components/auth/TurnstileWidget";
 
 // Define allowed roles and their UI configurations
-const ROLE_CONFIG: Record<string, { title: string, nameLabel: string, namePlaceholder: string, icon: any }> = {
-  student: { title: "Student", nameLabel: "Full Name", namePlaceholder: "e.g. Rahul Sharma", icon: User },
-  intern: { title: "Intern", nameLabel: "Full Name", namePlaceholder: "e.g. Rahul Sharma", icon: User },
-  jobseeker: { title: "Job Seeker", nameLabel: "Full Name", namePlaceholder: "e.g. Rahul Sharma", icon: User },
-  "job-seeker": { title: "Job Seeker", nameLabel: "Full Name", namePlaceholder: "e.g. Rahul Sharma", icon: User },
-  company: { title: "Company", nameLabel: "Company Name", namePlaceholder: "e.g. Blueboxx Technologies", icon: User },
-  college: { title: "College/University", nameLabel: "Institution Name", namePlaceholder: "e.g. IIT Delhi", icon: User },
-  expert: { title: "Expert/Instructor", nameLabel: "Full Name", namePlaceholder: "e.g. Dr. Rahul Sharma", icon: User },
+const ROLE_CONFIG: Record<string, { 
+  title: string; 
+  nameLabel: string; 
+  namePlaceholder: string; 
+  icon: any;
+  seoTitle: string;
+  seoDescription: string;
+  seoKeywords: string;
+}> = {
+  student: { 
+    title: "Student", 
+    nameLabel: "Full Name", 
+    namePlaceholder: "e.g. Rahul Sharma", 
+    icon: User,
+    seoTitle: "Student Registration | Learn Tech & AI Skills with BlueBoxx",
+    seoDescription: "Create your student account on BlueBoxx. Access live tech classes, project-based IT curriculum, mentor support, and placement drives in Vadodara.",
+    seoKeywords: "student registration, tech student signup, learn coding vadodara, IT courses enrollment, Blueboxx student account",
+  },
+  intern: { 
+    title: "Intern", 
+    nameLabel: "Full Name", 
+    namePlaceholder: "e.g. Rahul Sharma", 
+    icon: User,
+    seoTitle: "Intern Registration | Paid Tech Internships with Stipend | BlueBoxx",
+    seoDescription: "Apply for live industry internships at BlueBoxx. Work on real enterprise client projects, earn stipends, and get 1-on-1 expert mentor evaluations.",
+    seoKeywords: "intern registration, IT internship signup, paid internship application, web development intern, live project internship vadodara",
+  },
+  jobseeker: { 
+    title: "Job Seeker", 
+    nameLabel: "Full Name", 
+    namePlaceholder: "e.g. Rahul Sharma", 
+    icon: User,
+    seoTitle: "Job Seeker Registration | IT & Tech Placement Portal | BlueBoxx",
+    seoDescription: "Register as a job seeker on BlueBoxx. Discover exclusive tech job openings, apply in 1-click, and connect with 100+ verified corporate hiring partners.",
+    seoKeywords: "job seeker registration, IT jobs signup, tech placement portal, software developer registration, hire freshers vadodara",
+  },
+  "job-seeker": { 
+    title: "Job Seeker", 
+    nameLabel: "Full Name", 
+    namePlaceholder: "e.g. Rahul Sharma", 
+    icon: User,
+    seoTitle: "Job Seeker Registration | IT & Tech Placement Portal | BlueBoxx",
+    seoDescription: "Register as a job seeker on BlueBoxx. Discover exclusive tech job openings, apply in 1-click, and connect with 100+ verified corporate hiring partners.",
+    seoKeywords: "job seeker registration, IT jobs signup, tech placement portal, software developer registration, hire freshers vadodara",
+  },
+  company: { 
+    title: "Company", 
+    nameLabel: "Company Name", 
+    namePlaceholder: "e.g. Blueboxx Technologies", 
+    icon: User,
+    seoTitle: "Corporate Partner Registration | Hire Trained Tech Talent | BlueBoxx",
+    seoDescription: "Register your company or startup with BlueBoxx. Post jobs, hire pre-vetted developer talent, and collaborate on corporate enterprise projects.",
+    seoKeywords: "company registration, hire developers, corporate hiring partner, employer signup, campus recruitment vadodara",
+  },
+  college: { 
+    title: "College/University", 
+    nameLabel: "Institution Name", 
+    namePlaceholder: "e.g. IIT Delhi", 
+    icon: User,
+    seoTitle: "College & Institute Partnership | Campus Placement Drives | BlueBoxx",
+    seoDescription: "Partner your educational institution with BlueBoxx. Organize campus placement drives, live industrial workshops, and expert tech bootcamps.",
+    seoKeywords: "college partnership, university MOU, campus placement drives, academic IT training, engineering college collaboration",
+  },
+  expert: { 
+    title: "Expert/Instructor", 
+    nameLabel: "Full Name", 
+    namePlaceholder: "e.g. Dr. Rahul Sharma", 
+    icon: User,
+    seoTitle: "Expert & Instructor Onboarding | Teach & Mentor on BlueBoxx",
+    seoDescription: "Join BlueBoxx as an industry expert or mentor. Conduct 1:1 career consultations, lead specialized tech bootcamps, and guide learners.",
+    seoKeywords: "expert registration, become an instructor, tech mentor signup, teach programming, career counselor onboarding",
+  },
 };
 
 export default function RoleSignupPage() {
@@ -127,7 +191,11 @@ export default function RoleSignupPage() {
 
   return (
     <div className="min-h-screen bg-white flex">
-      <SEO title={`${config.title} Registration | Blueboxx DA`} description={`Register as a ${config.title} at Blueboxx DA to explore premium IT training, internships, and job opportunities.`} />
+      <SEO 
+        title={config.seoTitle} 
+        description={config.seoDescription}
+        keywords={config.seoKeywords}
+      />
 
       {/* Left Column - Form */}
       <motion.div
