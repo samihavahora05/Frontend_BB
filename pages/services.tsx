@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useInView, useScroll, Variants } from 'framer-motion';
 import {
   ArrowRight, CheckCircle2, Star, Quote,
@@ -1549,6 +1550,12 @@ export default function ServicesPortfolioPage() {
                     Start Your Project
                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                   </a>
+                  <Link
+                    href="/book-consultation"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-[#C9A227] text-slate-900 font-bold hover:bg-[#d8af2c] transition-all duration-300 shadow-md cursor-pointer"
+                  >
+                    Book Consultation
+                  </Link>
                   <a
                     href="mailto:info.blueboxx@gmail.com"
                     className="w-full sm:w-auto flex items-center justify-center px-8 py-4 rounded-full bg-transparent border border-slate-300 text-slate-800 font-semibold hover:bg-slate-100 transition-all duration-300 cursor-pointer"

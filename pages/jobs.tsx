@@ -1,7 +1,7 @@
 import { getImageUrl } from "../src/lib/imageUtils";
 import { useState, useEffect, useMemo } from "react";
 import { MainLayout } from "../src/layout/MainLayout";
-import { Briefcase, Clock, Building, Loader2 } from "lucide-react";
+import { Briefcase, Clock, Building, Loader2, Award, Sparkles, ArrowRight, ExternalLink } from "lucide-react";
 import { TopSearchBar } from "../src/components/ui/TopSearchBar";
 import { Pagination } from "../src/components/ui/Pagination";
 import { Card, CardContent } from "../src/components/ui/Card";
@@ -155,8 +155,8 @@ export default function JobsPage() {
   return (
     <>
       <SEO 
-        title="Find Top IT Jobs & Placements | Blueboxx DA"
-        description="Browse hundreds of curated job openings from top product companies and fast-growing startups. 100% placement assistance available."
+        title="IT Jobs & Fresher Placement Opportunities in Vadodara | BlueBoxx"
+        description="Explore latest IT jobs, software developer vacancies, full-stack openings, and verified fresher placement opportunities with top hiring partners in Vadodara."
         keywords="Blueboxx Placement, Blueboxx Jobs, IT Jobs Vadodara, Software Developer Jobs, Placement Assistance, Campus Placement, Job Portal, Hiring Platform, Career Opportunities, Job Ready Program"
       />
       <MainLayout>
@@ -179,8 +179,22 @@ export default function JobsPage() {
             transition={{ delay: 0.1 }}
             className="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed"
           >
-            Browse hundreds of curated job openings from top product companies and fast-growing startups.
+            Browse curated IT openings, connect with hiring companies, and fast-track your tech career with 100% placement support.
           </motion.p>
+          <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+            <Link 
+              href="/placements" 
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition-all backdrop-blur-xs"
+            >
+              <Award size={14} className="text-[#C9A227]" /> View Hiring Companies & Records
+            </Link>
+            <Link 
+              href="/courses" 
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition-all backdrop-blur-xs"
+            >
+              <Sparkles size={14} className="text-[#C9A227]" /> Job-Ready Training Programs
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -252,9 +266,16 @@ export default function JobsPage() {
                           </div>
                         </div>
 
-                        <h3 className="text-base font-extrabold text-slate-900 mb-1 group-hover:text-[#1B2A6B] transition-colors leading-tight line-clamp-1">{job.title}</h3>
+                        <Link href={`/jobs/${job.id}`} className="block">
+                          <h3 className="text-base font-extrabold text-slate-900 mb-1 hover:text-[#1B2A6B] transition-colors leading-tight line-clamp-1">{job.title}</h3>
+                        </Link>
                         <p className="text-xs font-bold text-slate-500 mb-3.5 flex items-center gap-1.5">
-                          <Building size={13} className="text-slate-400" /> {job.company_name} • {job.location}
+                          <Building size={13} className="text-slate-400" />
+                          <Link href="/placements" className="hover:text-[#1B2A6B] hover:underline transition-colors">
+                            {job.company_name}
+                          </Link>
+                          <span>•</span>
+                          <span>{job.location}</span>
                         </p>
 
                         <div className="flex flex-wrap items-center gap-1.5 mb-4">
@@ -313,6 +334,48 @@ export default function JobsPage() {
           </main>
         </div>
       </div>
+      {/* Placement & Partner Companies Navigation Bar */}
+      <section className="bg-white border-y border-slate-200/80 py-10">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="bg-gradient-to-br from-[#0d1635] via-[#1B2A6B] to-[#0a1029] rounded-3xl p-8 md:p-10 text-white relative overflow-hidden shadow-xl">
+            <div className="absolute right-0 top-0 w-96 h-96 bg-[#C9A227]/10 rounded-full blur-3xl pointer-events-none" />
+            
+            <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 text-center lg:text-left">
+              <div className="max-w-2xl">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] flex items-center justify-center lg:justify-start gap-1.5 mb-2">
+                  <Award size={14} /> 100% Placement Record & Verified Hiring Network
+                </span>
+                <h3 className="text-2xl md:text-3xl font-black mb-2">Explore Our Partner Companies & Placements</h3>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  Over 100+ top IT organizations hire directly from Blueboxx DA. View hiring companies, past packages, student placements, and industry recruiters.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-3 shrink-0">
+                <Link
+                  href="/placements"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#C9A227] text-slate-900 font-extrabold text-xs hover:bg-[#d8af2c] shadow-lg hover:shadow-xl transition-all"
+                >
+                  <Award size={15} /> All Hiring Companies
+                </Link>
+                <Link
+                  href="/placement-partners"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs transition-all"
+                >
+                  <Building size={15} /> Placement Partners
+                </Link>
+                <Link
+                  href="/courses"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs transition-all"
+                >
+                  Job-Ready Courses <ArrowRight size={14} />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <StudentsShowcaseSection 
         title="STUDENTS WHO GOT JOB OFFERS"
         tag="Recent Placements & Selections"

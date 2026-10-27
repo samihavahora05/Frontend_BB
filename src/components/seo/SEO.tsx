@@ -36,6 +36,21 @@ const DEFAULT_PAGE_SEO: Record<string, { title: string; description: string; key
     description: "Master high-demand tech skills with industry-designed courses in Full Stack, MERN, Python AI, Graphic Design, and Performance Marketing at Blueboxx DA.",
     keywords: "certified IT courses vadodara, full stack developer course, MERN stack training vadodara, graphic design course, python AI machine learning",
   },
+  "/jobs": {
+    title: "IT Jobs & Fresher Placement Opportunities in Vadodara | BlueBoxx",
+    description: "Explore latest IT jobs, software developer vacancies, full-stack openings, and verified fresher placement opportunities with top hiring partners in Vadodara.",
+    keywords: "IT jobs Vadodara, tech placements, software engineer jobs, fresher IT jobs, MERN developer openings, placement assistance institute, hiring partners Vadodara",
+  },
+  "/companies": {
+    title: "Corporate Hiring Partners & Client Projects | BlueBoxx",
+    description: "Explore top corporate hiring partners, student placement recruiters, and enterprise client projects delivered with Blueboxx DA.",
+    keywords: "Corporate Hiring Partners, Client Projects, IT Placement Network, Hire Developers, Hire Interns, Recruit Freshers, Blueboxx DA",
+  },
+  "/book-consultation": {
+    title: "Book Free Career Consultation & Mentorship Session | BlueBoxx",
+    description: "Book a free 1:1 career consultation and mentorship session with industry experts at Blueboxx Vadodara. Get personalized guidance for IT courses and tech placements.",
+    keywords: "Book Career Consultation, Free Career Guidance Vadodara, IT Mentorship Session, Tech Career Advice, Blueboxx Consultation",
+  },
   "/internships": {
     title: "Industry Internships with Stipend & Live Projects | Blueboxx DA",
     description: "Gain hands-on corporate experience with paid internships at Blueboxx DA. Work on live enterprise client projects with 1-on-1 expert mentor guidance.",

@@ -1,6 +1,7 @@
 import { MainLayout } from "../src/layout/MainLayout";
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock, MessageSquare, Send } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, MessageSquare, Send, Calendar, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { Card, CardContent } from "../src/components/ui/Card";
 import { Button } from "../src/components/ui/Button";
 import { Input } from "../src/components/ui/Input";
@@ -180,6 +181,25 @@ export default function ContactPage() {
                       <h4 className="font-bold text-slate-900">Live Support</h4>
                       <p className="text-sm text-slate-500">Available 24/7 on WhatsApp</p>
                     </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-[#0d1635] to-[#1B2A6B] text-white border-none shadow-md overflow-hidden relative">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#C9A227]/20 rounded-full blur-2xl pointer-events-none" />
+                  <CardContent className="p-6 relative z-10">
+                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center mb-3 text-[#C9A227]">
+                      <Calendar size={20} />
+                    </div>
+                    <h4 className="font-bold text-white text-base mb-1">Career Consultation</h4>
+                    <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                      Need 1-on-1 guidance with our senior tech mentors? Book a 30-min slot.
+                    </p>
+                    <Link
+                      href="/book-consultation"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C9A227] hover:text-white transition-colors"
+                    >
+                      Book Free Session <ArrowRight size={14} />
+                    </Link>
                   </CardContent>
                 </Card>
               </div>

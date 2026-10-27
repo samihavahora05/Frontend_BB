@@ -1,4 +1,4 @@
-﻿import { getImageUrl } from "../../src/lib/imageUtils";
+import { getImageUrl } from "../../src/lib/imageUtils";
 import React, { useState, useMemo, useEffect } from "react";
 import { MainLayout } from "../../src/layout/MainLayout";
 import { partnerCompanies } from "../../src/data/companies";
@@ -340,9 +340,9 @@ export default function CompaniesPublicPage() {
   return (
     <>
       <SEO
-        title="Top Corporate Hiring Partners & Client Projects | Blueboxx DA"
-        description="Explore 60+ top corporate hiring partners, client project deliverables, and career placement networks with Blueboxx DA."
-        keywords="Hire Developers, Hire Interns, Campus Hiring, Recruit Freshers, Client Projects, Corporate Partners, Blueboxx DA"
+        title="Corporate Hiring Partners & Client Projects | BlueBoxx"
+        description="Explore top corporate hiring partners, student placement recruiters, and enterprise client projects delivered with Blueboxx DA."
+        keywords="Corporate Hiring Partners, Client Projects, IT Placement Network, Hire Developers, Hire Interns, Recruit Freshers, Blueboxx DA"
       />
       <MainLayout>
         {/* HERO SECTION */}

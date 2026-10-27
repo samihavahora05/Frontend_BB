@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Clock, Video, User, CheckCircle2, ChevronRight, ChevronLeft, 
   GraduationCap, Star, Building2, Sparkles, Search, Check, AlertCircle, RefreshCw,
-  ChevronDown, X, Briefcase, Award
+  ChevronDown, X, Briefcase, Award, Home, MessageSquare, ArrowRight, Layers
 } from "lucide-react";
+import Link from "next/link";
 import { Card, CardContent } from "../src/components/ui/Card";
 import { Button } from "../src/components/ui/Button";
 import { Input } from "../src/components/ui/Input";
@@ -188,8 +189,9 @@ export default function BookConsultationPage() {
   return (
     <MainLayout>
       <SEO 
-        title="Book a Free Career Consultation | Blueboxx DA" 
-        description="Book a free 1:1 career consultation session with real verified industry experts at Blueboxx DA. Get a personalized roadmap for your career." 
+        title="Book Free Career Consultation & Mentorship Session | BlueBoxx" 
+        description="Book a free 1:1 career consultation and mentorship session with industry experts at Blueboxx Vadodara. Get personalized guidance for IT courses and tech placements."
+        keywords="Book Career Consultation, Free Career Guidance Vadodara, IT Mentorship Session, Tech Career Advice, Blueboxx Consultation" 
       />
       <div className="bg-[#0d1635] min-h-screen pt-24 pb-20 relative overflow-hidden text-white">
         <motion.div 
@@ -272,6 +274,33 @@ export default function BookConsultationPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+
+                {/* Internal Links for Quick Navigation */}
+                <div className="pt-8 border-t border-white/10 mt-8">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-3">
+                    Explore BlueBoxx Ecosystem
+                  </span>
+                  <div className="flex flex-wrap gap-2.5">
+                    <Link
+                      href="/"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white text-xs font-semibold transition-all"
+                    >
+                      <Home size={14} className="text-[#C9A227]" /> Home
+                    </Link>
+                    <Link
+                      href="/contact"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white text-xs font-semibold transition-all"
+                    >
+                      <MessageSquare size={14} className="text-[#C9A227]" /> Contact Us
+                    </Link>
+                    <Link
+                      href="/services"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white text-xs font-semibold transition-all"
+                    >
+                      <Layers size={14} className="text-[#C9A227]" /> Enterprise Services
+                    </Link>
+                  </div>
                 </div>
 
               </motion.div>
