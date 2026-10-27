@@ -56,6 +56,11 @@ const DEFAULT_PAGE_SEO: Record<string, { title: string; description: string; key
     description: "Explore internal careers, instructor positions, and team opportunities at BlueBoxx Vadodara. Work with passionate educators, engineers, and mentors.",
     keywords: "Careers at Blueboxx, Team Opportunities, EdTech Jobs Vadodara, IT Trainer Jobs, Join Blueboxx Team, Work with us Vadodara",
   },
+  "/terms": {
+    title: "Terms & Conditions of Service & Platform Use | BlueBoxx",
+    description: "Read the official Terms and Conditions, platform usage policies, verification guidelines, fee structure, and student agreements for BlueBoxx.",
+    keywords: "Terms and Conditions, Terms of Service, Blueboxx User Agreement, Platform Policy, Student Code of Conduct, Refund Policy Terms",
+  },
   "/internships": {
     title: "Industry Internships with Stipend & Live Projects | Blueboxx DA",
     description: "Gain hands-on corporate experience with paid internships at Blueboxx DA. Work on live enterprise client projects with 1-on-1 expert mentor guidance.",

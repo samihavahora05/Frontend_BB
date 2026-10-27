@@ -295,7 +295,11 @@ export default function TermsPage() {
 
   return (
     <MainLayout>
-      <SEO title="Terms & Conditions | Blueboxx DA" description="Read the official terms and conditions for using the Blueboxx DA platform." />
+      <SEO 
+        title="Terms & Conditions of Service & Platform Use | BlueBoxx" 
+        description="Read the official Terms and Conditions, platform usage policies, verification guidelines, fee structure, and student agreements for BlueBoxx."
+        keywords="Terms and Conditions, Terms of Service, Blueboxx User Agreement, Platform Policy, Student Code of Conduct, Refund Policy Terms"
+      />
       <div className="pt-32 pb-24 bg-transparent min-h-screen">
         <div className="container mx-auto px-4 md:px-6 max-w-5xl">
           {/* Header */}
