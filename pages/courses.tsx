@@ -161,8 +161,8 @@ export default function CoursesPage() {
   return (
     <>
       <SEO 
-        title="Premium Tech Courses & Programs | Blueboxx DA"
-        description="Browse our industry-aligned curriculum built by experts from top product companies. Master Full Stack, AI/ML, and more with 100% placement support."
+        title="Certified IT, Design & AI Courses in Vadodara | BlueBoxx"
+        description="Browse industry-aligned IT curriculum in Full Stack, UI/UX, Python AI, and Digital Marketing with live projects and 100% placement support in Vadodara."
         keywords="Web Development Course Vadodara, Full Stack Development Course, MERN Stack Course, React JS Training Vadodara, Artificial Intelligence Course, Machine Learning Course, Graphic Design Course, UI UX Design Course, Digital Marketing Course, Mobile App Development Course, SEO Training, Best Full Stack Development Course in Vadodara, Learn Web Development from Industry Experts"
       />
       <MainLayout>

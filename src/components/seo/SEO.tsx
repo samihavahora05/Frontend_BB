@@ -32,9 +32,9 @@ const DEFAULT_PAGE_SEO: Record<string, { title: string; description: string; key
     keywords: "About Blueboxx DA, IT institute history, creative production house vadodara, Ankush Dubey, Learn Work Earn model",
   },
   "/courses": {
-    title: "Certified Professional IT & Design Courses | Blueboxx DA",
+    title: "Certified IT, Design & AI Courses in Vadodara | BlueBoxx",
     description: "Master high-demand tech skills with industry-designed courses in Full Stack, MERN, Python AI, Graphic Design, and Performance Marketing at Blueboxx DA.",
-    keywords: "certified IT courses, full stack developer course, MERN stack training vadodara, graphic design course, python AI machine learning",
+    keywords: "certified IT courses vadodara, full stack developer course, MERN stack training vadodara, graphic design course, python AI machine learning",
   },
   "/internships": {
     title: "Industry Internships with Stipend & Live Projects | Blueboxx DA",

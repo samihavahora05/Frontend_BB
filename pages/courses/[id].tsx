@@ -5,8 +5,9 @@ import { Button } from "../../src/components/ui/Button";
 import { Card, CardContent } from "../../src/components/ui/Card";
 import { 
   PlayCircle, Star, Users, Clock, FileText, Smartphone, Award, 
-  CheckCircle2, ChevronDown, ChevronUp, X, Loader2
+  CheckCircle2, ChevronDown, ChevronUp, X, Loader2, ArrowRight, Sparkles
 } from "lucide-react";
+import Link from "next/link";
 import { useStore } from "../../src/store/useStore";
 import { useAuth } from "../../src/context/AuthContext";
 import api from "../../src/lib/axios";
@@ -25,6 +26,7 @@ export default function CourseDetailPage() {
   const [openModule, setOpenModule] = useState<number | null>(null);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [course, setCourse] = useState<any>(null);
+  const [relatedCourses, setRelatedCourses] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEnrollingFree, setIsEnrollingFree] = useState(false);
   const [enrollSuccess, setEnrollSuccess] = useState(false);
@@ -99,6 +101,22 @@ export default function CourseDetailPage() {
           if (courseData.curriculum?.length > 0) {
             setOpenModule(courseData.curriculum[0].id);
           }
+
+          // Fetch related courses in same category or general courses
+          try {
+            const relRes = await api.get('/public/courses', { 
+              params: { 
+                per_page: 6,
+                category: courseData.category?.slug || courseData.category?.name || undefined
+              } 
+            }).catch(() => api.get('/courses'));
+
+            const rawRel = relRes?.data?.data?.data || relRes?.data?.data || relRes?.data?.courses || (Array.isArray(relRes?.data) ? relRes.data : []);
+            if (Array.isArray(rawRel)) {
+              const filtered = rawRel.filter((c: any) => String(c.id) !== String(courseData.id) && String(c.slug) !== String(courseData.slug)).slice(0, 3);
+              setRelatedCourses(filtered);
+            }
+          } catch {}
         } else {
           setCourse(null);
         }
@@ -393,6 +411,57 @@ export default function CourseDetailPage() {
                       Blueboxx DA expert instructors are industry veterans with years of hands-on experience at top product companies. They bring real-world insights and best practices directly into the classroom.
                     </p>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Related Courses (Internal Linking) */}
+            {relatedCourses.length > 0 && (
+              <div className="pt-8 border-t border-slate-200">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] flex items-center gap-1.5 mb-1">
+                      <Sparkles size={14} /> Recommended Pathways
+                    </span>
+                    <h2 className="text-2xl font-black text-slate-800">Related Courses</h2>
+                  </div>
+                  <Link href="/courses" className="text-xs font-bold text-[#1B2A6B] hover:text-[#C9A227] transition-colors flex items-center gap-1">
+                    All Courses <ArrowRight size={14} />
+                  </Link>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {relatedCourses.map((rel: any) => (
+                    <Link
+                      key={rel.id}
+                      href={`/courses/${rel.slug || rel.id}`}
+                      className="group bg-slate-50 hover:bg-white p-4 rounded-2xl border border-slate-200 hover:border-[#1B2A6B]/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+                    >
+                      <div className="flex gap-3 mb-3">
+                        <div className="relative w-20 h-16 rounded-xl overflow-hidden shrink-0 bg-slate-200">
+                          <img 
+                            src={getCourseImageUrl(rel)} 
+                            alt={rel.title} 
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform" 
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <span className="text-[10px] font-bold text-[#C9A227] uppercase tracking-wider block truncate">
+                            {rel.category?.name || "Course"}
+                          </span>
+                          <h3 className="font-bold text-slate-900 group-hover:text-[#1B2A6B] text-sm leading-snug line-clamp-2 transition-colors">
+                            {rel.title}
+                          </h3>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs font-bold">
+                        <span className="text-slate-800 font-extrabold">₹{Number(rel.discount_price || rel.price || 0).toLocaleString()}</span>
+                        <span className="text-[#C9A227] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                          View Course <ArrowRight size={12} />
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
               </div>
             )}
