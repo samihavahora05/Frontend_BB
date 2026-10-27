@@ -614,8 +614,15 @@ export default function AboutPage() {
 
                   {/* Bottom CTA strip */}
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-5 border-t border-slate-100 text-center sm:text-left">
-                    <div className="flex-1">
-                      <p className="text-xs text-slate-400 font-medium">Established <span className="font-bold text-slate-600">2015</span> · Vadodara, Gujarat, India</p>
+                    <div className="flex-1 flex flex-wrap items-center gap-3 justify-center sm:justify-start">
+                      <p className="text-xs text-slate-400 font-medium">Established <span className="font-bold text-slate-600">2015</span> · Vadodara</p>
+                      <Link href="/portfolio" className="text-xs font-bold text-[#1B2A6B] hover:text-[#C9A227] hover:underline transition-colors">
+                        View Portfolio
+                      </Link>
+                      <span className="text-slate-300">•</span>
+                      <Link href="/press-kit" className="text-xs font-bold text-[#1B2A6B] hover:text-[#C9A227] hover:underline transition-colors">
+                        Press Kit
+                      </Link>
                     </div>
                     <div className="flex items-center justify-center gap-1.5 px-4 py-2 bg-[#1B2A6B] text-white text-xs font-bold rounded-xl shadow-md hover:bg-[#0d1635] transition-colors cursor-pointer">
                       <TrendingUp size={13} />

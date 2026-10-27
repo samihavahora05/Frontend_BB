@@ -650,15 +650,20 @@ export default function CompaniesPublicPage() {
                   </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 shrink-0">
-                  <Link href="/contact">
-                    <button className="px-6 py-3.5 rounded-xl bg-[#C9A227] text-slate-950 font-black text-xs uppercase tracking-wider hover:bg-amber-400 transition-all shadow-lg hover:scale-105">
-                      Become a Partner
+                <div className="flex flex-col sm:flex-row flex-wrap gap-3 shrink-0">
+                  <Link href="/companies/jobs">
+                    <button className="px-5 py-3 rounded-xl bg-[#C9A227] text-slate-950 font-black text-xs uppercase tracking-wider hover:bg-amber-400 transition-all shadow-lg hover:scale-105 cursor-pointer">
+                      Manage Company Jobs
                     </button>
                   </Link>
-                  <Link href="/book-consultation">
-                    <button className="px-6 py-3.5 rounded-xl bg-white/10 text-white font-extrabold text-xs uppercase tracking-wider hover:bg-white/20 transition-all border border-white/20">
-                      Request Consultation
+                  <Link href="/companies/profile">
+                    <button className="px-5 py-3 rounded-xl bg-white/10 text-white font-extrabold text-xs uppercase tracking-wider hover:bg-white/20 transition-all border border-white/20 cursor-pointer">
+                      Company Profile
+                    </button>
+                  </Link>
+                  <Link href="/contact">
+                    <button className="px-5 py-3 rounded-xl bg-white/10 text-white font-extrabold text-xs uppercase tracking-wider hover:bg-white/20 transition-all border border-white/20 cursor-pointer">
+                      Become a Partner
                     </button>
                   </Link>
                 </div>

@@ -39,7 +39,11 @@ export default function PlacementPartnersPage() {
 
   return (
     <>
-      <SEO title="Our Placement Partners & Top Recruiters | Blueboxx DA" description="Discover the elite hiring network and placement partners working with Blueboxx DA to hire our top talent." />
+      <SEO 
+        title="Our Elite Placement Partners & Corporate Recruiters | BlueBoxx" 
+        description="Discover the verified hiring network and corporate recruiters collaborating with BlueBoxx to hire skilled full-stack developers, designers, and AI specialists." 
+        keywords="placement partners, corporate recruiters, hiring companies, tech recruitment network, Blueboxx recruiters"
+      />
       <MainLayout>
         {/* Hero Section */}
       <div className="pt-24 pb-16 bg-[#0d1635] text-white relative overflow-hidden">

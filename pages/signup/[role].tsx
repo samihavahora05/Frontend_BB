@@ -223,7 +223,7 @@ export default function RoleSignupPage() {
             <motion.div variants={item} className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#1B2A6B]/10 text-[#1B2A6B] text-[10px] font-black uppercase tracking-widest mb-3">
               {config.title} Registration
             </motion.div>
-            <motion.h2 variants={item} className="text-2xl font-black text-slate-800 mb-1 font-sora">Create an account</motion.h2>
+            <motion.h1 variants={item} className="text-2xl font-black text-slate-800 mb-1 font-sora">Create a {config.title} Account</motion.h1>
             <motion.p variants={item} className="text-xs text-slate-500 font-medium mb-2">Join BlueBoxx and start building your future.</motion.p>
             <motion.p variants={item} className="text-sm font-medium text-slate-600 mt-2">
               Already have an account? <Link href="/login" className="font-extrabold text-[#1B2A6B] hover:text-[#0d1635] underline decoration-2 underline-offset-2">Log in</Link>

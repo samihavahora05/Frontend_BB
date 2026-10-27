@@ -9,6 +9,7 @@ import { useAuth } from "../src/context/AuthContext";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { SEO } from "../src/components/seo/SEO";
+import Link from "next/link";
 
 export default function CommunityPage() {
   const router = useRouter();
@@ -69,7 +70,11 @@ export default function CommunityPage() {
 
   return (
     <MainLayout>
-      <SEO title="Community & Hackathons | Blueboxx DA" description="Join the Blueboxx DA community, participate in hackathons, and connect with peers and experts." />
+      <SEO 
+        title="BlueBoxx Tech Community, Hackathons & Events | BlueBoxx" 
+        description="Join thousands of aspiring developers, designers, mentors, and alumni in the BlueBoxx community. Participate in live hackathons, coding contests, and peer discussions." 
+        keywords="Blueboxx community, tech hackathons, coding contests, developer community vadodara, alumni network"
+      />
       {/* Hero Section */}
       <div className="pt-24 pb-20 bg-[#0d1635] text-white relative overflow-hidden">
         <motion.div 
@@ -97,9 +102,15 @@ export default function CommunityPage() {
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ delay: 0.2 }}
-            className="mt-8"
+            className="mt-8 flex flex-wrap items-center justify-center gap-3"
           >
             <Button variant="gold" size="lg" className="px-8 font-bold">Join Discord Server</Button>
+            <Link href="/contests" className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm transition-all">
+              Live Contests & Hackathons
+            </Link>
+            <Link href="/courses" className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm transition-all">
+              Explore Courses
+            </Link>
           </motion.div>
         </div>
       </div>

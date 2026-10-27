@@ -152,7 +152,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#0d1635] flex items-center justify-center p-4 relative overflow-hidden font-inter">
-      <SEO title="Login | Sarvakshetra" description="Sign in to your Sarvakshetra account to access your dashboard, courses, and job applications." />
+      <SEO title="Login | BlueBoxx Career & Learning Portal" description="Sign in to your BlueBoxx account to access your courses, live internships, placements dashboard, and mentorship sessions." />
       
       {/* Background glowing orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -189,12 +189,12 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex justify-center mb-4">
           <Link href="/">
-            <img src="/Boxxlogo.png" alt="Sarvakshetra" className="h-9 w-auto object-contain" />
+            <img src="/Boxxlogo.png" alt="BlueBoxx" className="h-9 w-auto object-contain" />
           </Link>
         </div>
 
         <div className="text-center mb-4">
-          <h2 className="text-xl font-black text-slate-800 leading-tight font-sora">Welcome back</h2>
+          <h1 className="text-xl font-black text-slate-800 leading-tight font-sora">Welcome back to BlueBoxx</h1>
           <p className="text-xs text-slate-500 font-semibold mt-0.5">Please enter your credentials to log in.</p>
         </div>
 
@@ -342,7 +342,7 @@ export default function LoginPage() {
               Don't have an account? <Link href="/signup/student" className="font-bold text-[#1B2A6B] hover:underline">Register as Student</Link>
             </p>
             <p className="text-[10px] font-medium text-slate-400">
-              Other Roles: 
+              <Link href="/signup" className="text-[#1B2A6B] font-bold hover:underline mr-1">All Roles:</Link>
               <Link href="/signup/intern" className="hover:text-[#1B2A6B] hover:underline mx-1">Intern</Link>|
               <Link href="/signup/jobseeker" className="hover:text-[#1B2A6B] hover:underline mx-1">Job Seeker</Link>|
               <Link href="/signup/company" className="hover:text-[#1B2A6B] hover:underline mx-1">Company</Link>|

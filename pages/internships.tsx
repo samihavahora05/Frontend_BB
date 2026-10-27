@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { MainLayout } from "../src/layout/MainLayout";
 import { Briefcase, Clock, ArrowRight, Building, Loader2, Search, MapPin, CheckCircle2, Play, X, Star, ShieldCheck } from "lucide-react";
 import { Pagination } from "../src/components/ui/Pagination";
@@ -261,6 +262,15 @@ export default function InternshipsPage() {
                   <p className="text-[11px] text-slate-400 font-semibold italic">
                     Next Batch starts: {card3Months.nextBatchStartFormatted}
                   </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <Link href="/signup/intern" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#C9A227] text-slate-900 text-xs font-bold hover:bg-amber-400 transition-all shadow-md">
+                    Apply as Intern (Registration)
+                  </Link>
+                  <Link href="/courses" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 text-white text-xs font-semibold hover:bg-white/20 border border-white/20 transition-all">
+                    Explore Preparatory Courses
+                  </Link>
                 </div>
 
               </div>

@@ -10,10 +10,15 @@ const footerLinks = {
     { label: "Contact us", href: "/contact" },
     { label: "Careers & Team Hiring", href: "/careers" },
     { label: "Explore Services", href: "/services" },
+    { label: "Client Portfolio", href: "/portfolio" },
+    { label: "Press Kit & Media", href: "/press-kit" },
   ],
   supportZone: [
     { label: "Help and Support", href: "/contact" },
+    { label: "Student Login", href: "/login" },
     { label: "Join Us", href: "/signup/student" },
+    { label: "All Registration Roles", href: "/signup" },
+    { label: "Refund Policy", href: "/refund-policy" },
   ],
   registerAs: [
     { label: "Intern", href: "/signup/intern" },
@@ -25,8 +30,13 @@ const footerLinks = {
   ],
   unlockPotential: [
     { label: "Learn with Blueboxx", href: "/courses" },
-    { label: "Teach on Blueboxx", href: "/contact" },
-    { label: "Contests / Hackathons", href: "/student/contests" },
+    { label: "Industry Mentors", href: "/mentors" },
+    { label: "Internship Programs", href: "/internship" },
+    { label: "Corporate Placements", href: "/placements" },
+    { label: "Scholarships & Grants", href: "/scholarships" },
+    { label: "Developer Community", href: "/community" },
+    { label: "Contests & Hackathons", href: "/contests" },
+    { label: "Student Success Stories", href: "/success-stories" },
   ],
   featuredCourses: [
     { label: "View All Courses", href: "/courses" },
@@ -34,6 +44,7 @@ const footerLinks = {
   legal: [
     { label: "Terms and conditions", href: "/terms" },
     { label: "Privacy policy", href: "/privacy-policy" },
+    { label: "Refund Policy", href: "/refund-policy" },
     { label: "Cookie policy", href: "/privacy-policy#cookies" },
     { label: "Harassment policy", href: "/harassment-policy" },
   ],

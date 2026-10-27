@@ -5,9 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "../src/components/ui/C
 import { Badge } from "../src/components/ui/Badge";
 import { Button } from "../src/components/ui/Button";
 
+import { SEO } from "../src/components/seo/SEO";
+
 export default function PublicProfilePage() {
   return (
     <MainLayout>
+      <SEO 
+        title="Member Profile | BlueBoxx" 
+        description="Public user profile overview on BlueBoxx."
+        robots="noindex, nofollow"
+      />
       <div className="bg-transparent min-h-screen pt-24 pb-20">
         
         {/* Profile Header Background */}

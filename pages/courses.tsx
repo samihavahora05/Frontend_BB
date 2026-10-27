@@ -15,6 +15,7 @@ import { StudentsShowcaseSection } from '../src/sections/StudentsShowcaseSection
 import { TestimonialsSection } from '../src/sections/TestimonialsSection';
 import { SEO } from '../src/components/seo/SEO';
 import Image from 'next/image';
+import Link from 'next/link';
 import useSWR, { mutate } from 'swr';
 import api from '../src/lib/axios';
 import { useAuth } from '../src/context/AuthContext';
@@ -187,6 +188,20 @@ export default function CoursesPage() {
           >
             Industry-aligned curriculum built by experts from top product companies.
           </motion.p>
+          <div className="flex flex-wrap items-center justify-center gap-2.5 mt-6">
+            <Link href="/mentors" className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-all">
+              Top Mentors
+            </Link>
+            <Link href="/contests" className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-all">
+              Contests & Hackathons
+            </Link>
+            <Link href="/scholarships" className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-all">
+              Scholarships
+            </Link>
+            <Link href="/success-stories" className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-all">
+              Success Stories
+            </Link>
+          </div>
         </div>
       </div>
 

@@ -45,7 +45,8 @@ export default {
     '/forgot-password',
     '/onboarding',
     '/auth',
-    '/book_consultation'
+    '/book_consultation',
+    '/profile'
   ],
   robotsTxtOptions: {
     policies: [

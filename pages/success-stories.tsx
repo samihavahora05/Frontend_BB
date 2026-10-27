@@ -93,7 +93,11 @@ export default function SuccessStoriesPage() {
 
   return (
     <MainLayout>
-      <SEO title="Success Stories & Alumni Network | Blueboxx DA" description="Read how thousands of students have transformed their careers, cracked FAANG interviews, and achieved incredible salary hikes with Blueboxx DA." />
+      <SEO 
+        title="Student Success Stories & Placed Alumni Network | BlueBoxx" 
+        description="Explore real student success stories, high salary placement outcomes, and inspiring career transformations in tech, design, and AI with BlueBoxx." 
+        keywords="student success stories, placement reviews, alumni testimonials, tech career transformation, Blueboxx reviews"
+      />
       {/* Hero Section */}
       <div className="pt-24 pb-16 bg-[#0d1635] text-white relative overflow-hidden">
         <motion.div 

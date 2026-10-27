@@ -103,7 +103,11 @@ export default function PrivacyPolicyPage() {
 
   return (
     <MainLayout>
-      <SEO title="Privacy Policy | Blueboxx DA" description="Read our privacy policy to understand how Blueboxx DA handles your personal and academic data." />
+      <SEO 
+        title="Privacy Policy & Data Protection | BlueBoxx Vadodara" 
+        description="Learn how BlueBoxx collects, uses, protects, and manages your personal, academic, and application data across our training and internship platform." 
+        keywords="Blueboxx privacy policy, data protection, student data privacy, security policy, user agreement"
+      />
       <div className="pt-32 pb-24 bg-transparent min-h-screen">
         <div className="container mx-auto px-4 md:px-6 max-w-5xl">
           {/* Header */}

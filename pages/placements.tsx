@@ -9,6 +9,7 @@ import { Input } from "../src/components/ui/Input";
 import { partnerCompanies, INDUSTRIES } from "../src/data/companies";
 import { CompanyService, CMSCompany } from "../src/lib/api/CompanyService";
 import { SEO } from "../src/components/seo/SEO";
+import Link from "next/link";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
 import { TestimonialsSection } from "../src/sections/TestimonialsSection";
 
@@ -99,7 +100,11 @@ export default function CompaniesPage() {
 
   return (
     <MainLayout>
-      <SEO title="Our Partner Companies & Recruiters | Blueboxx DA" description="Explore the wide range of top product companies and startups that hire our talented students through Blueboxx DA." />
+      <SEO 
+        title="Partner Companies & Placement Network | BlueBoxx Vadodara" 
+        description="Explore our partner companies, corporate recruiters, and hiring network offering real-world projects, industrial internships, and job placements for BlueBoxx graduates." 
+        keywords="Blueboxx partner companies, placement network, hiring partners vadodara, tech recruiting partners, student placement companies"
+      />
       {/* Hero Section */}
       <div className="pt-24 pb-16 bg-[#0d1635] text-white relative overflow-hidden">
         <motion.div 
@@ -124,10 +129,22 @@ export default function CompaniesPage() {
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.1 }}
-              className="text-slate-300 text-lg mb-12 max-w-2xl mx-auto"
+              className="text-slate-300 text-lg mb-6 max-w-2xl mx-auto"
             >
               We collaborate with industry leaders and fast-growing startups to bring you real-world projects, internships, and full-time opportunities.
             </motion.p>
+
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
+              <Link href="/jobs" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#C9A227] text-slate-900 text-xs font-bold hover:bg-amber-400 transition-all shadow-md">
+                <Briefcase size={14} /> Browse Live Tech Jobs
+              </Link>
+              <Link href="/placement-partners" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-all">
+                <Building2 size={14} className="text-[#C9A227]" /> Placement Partners
+              </Link>
+              <Link href="/success-stories" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-all">
+                <Award size={14} className="text-[#C9A227]" /> Student Placed Stories
+              </Link>
+            </div>
             
             {/* Search Bar */}
             <motion.div 
