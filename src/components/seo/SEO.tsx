@@ -17,7 +17,7 @@ interface SEOProps {
 // Master Page SEO Configuration Dictionary
 const DEFAULT_PAGE_SEO: Record<string, { title: string; description: string; keywords: string }> = {
   "/": {
-    title: "Blueboxx DA | Leading IT Training & Digital Media Institute in Vadodara",
+    title: "BlueBoxx | Best IT & Digital Marketing Institute Vadodara",
     description: "Blueboxx DA is Gujarat's premier IT institute offering practical courses in Full Stack Web Development, UI/UX Design, AI/ML, and Digital Marketing with 100% placement support.",
     keywords: "Blueboxx DA, IT training institute vadodara, web development classes vadodara, UI UX design course, digital marketing training vadodara, best computer institute",
   },
@@ -49,10 +49,10 @@ const DEFAULT_PAGE_SEO: Record<string, { title: string; description: string; key
 };
 
 function generateFallbackTitle(path: string) {
-  if (!path || path === "/") return "BlueBoxx | Leading Digital Marketing & IT Training Institute in Vadodara";
+  if (!path || path === "/") return "BlueBoxx | Best IT & Digital Marketing Institute Vadodara";
   const segments = path.split("?")[0].split("/").filter(Boolean);
   const lastSegment = segments[segments.length - 1];
-  if (!lastSegment) return "BlueBoxx | Leading Digital Marketing & IT Training Institute in Vadodara";
+  if (!lastSegment) return "BlueBoxx | Best IT & Digital Marketing Institute Vadodara";
   
   const formatted = lastSegment
     .split("-")

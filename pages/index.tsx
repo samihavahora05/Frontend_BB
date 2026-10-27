@@ -6,7 +6,7 @@ export default function IndexPage() {
   return (
     <>
       <SEO 
-        title="BlueBoxx | Leading Digital Marketing & IT Training Institute in Vadodara"
+        title="BlueBoxx | Best IT & Digital Marketing Institute Vadodara"
         description="BlueBoxx is a leading digital marketing institute in Vadodara offering UI/UX, web development & marketing courses with practical training and career support."
         keywords="digital marketing institute vadodara, BlueBoxx DA, UI/UX design vadodara, web development vadodara, IT training institute vadodara, best computer classes vadodara"
         schema={{
