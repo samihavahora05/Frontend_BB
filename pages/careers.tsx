@@ -8,7 +8,11 @@ import { SEO } from "../src/components/seo/SEO";
 export default function CareersPage() {
   return (
     <MainLayout>
-      <SEO title="Careers at Blueboxx DA | Join Our Team" description="Join a passionate team of educators, engineers, and designers on a mission to democratize premium tech education globally." />
+      <SEO 
+        title="Careers & Team Opportunities at BlueBoxx | Join Our Team" 
+        description="Explore internal careers, instructor positions, and team opportunities at BlueBoxx Vadodara. Work with passionate educators, engineers, and mentors." 
+        keywords="Careers at Blueboxx, Team Opportunities, EdTech Jobs Vadodara, IT Trainer Jobs, Join Blueboxx Team, Work with us Vadodara"
+      />
       {/* Hero Section */}
       <div className="pt-24 pb-20 bg-[#0d1635] text-white relative overflow-hidden">
         <motion.div 

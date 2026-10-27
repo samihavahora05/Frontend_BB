@@ -114,7 +114,7 @@ The page demonstrates strict semantic heading hierarchy with **exactly one H1 ta
 - **`https://blueboxx.in/robots.txt`**: Returns `HTTP 200 OK`. Grants explicit permissions to `Googlebot`, `Google-Extended`, `GPTBot`, `ClaudeBot`, `PerplexityBot`, and `Bingbot`.
 - **`https://blueboxx.in/sitemap.xml`**: Returns `HTTP 200 OK` index pointing to `sitemap-0.xml`, which includes `<loc>https://blueboxx.in/services/</loc>` with priority `0.90`.
 - **Cross-Page Metadata Duplication Check:**
-  - **Homepage (`/`):** `Blueboxx DA | Leading IT Training & Digital Media Institute in Vadodara`
+  - **Homepage (`/`):** `BlueBoxx | Leading IT Services & Digital Solutions Company Vadodara`
   - **About Page (`/about`):** `About Us | Blueboxx DA - Creative Production & EdTech Innovation`
   - **Services Page (`/services`):** `Digital Solutions, Web Development & AI Automation Services | Blueboxx DA`
   - **Result:** **100% Unique**. Zero duplicate titles or meta descriptions across core pages.

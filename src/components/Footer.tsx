@@ -8,7 +8,7 @@ const footerLinks = {
     { label: "About us", href: "/about" },
     { label: "Blogs", href: "/blog" },
     { label: "Contact us", href: "/contact" },
-    { label: "Work With Us", href: "/careers" },
+    { label: "Careers & Team Hiring", href: "/careers" },
     { label: "Explore Services", href: "/services" },
   ],
   supportZone: [

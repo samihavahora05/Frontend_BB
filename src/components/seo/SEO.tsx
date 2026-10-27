@@ -51,6 +51,11 @@ const DEFAULT_PAGE_SEO: Record<string, { title: string; description: string; key
     description: "Book a free 1:1 career consultation and mentorship session with industry experts at Blueboxx Vadodara. Get personalized guidance for IT courses and tech placements.",
     keywords: "Book Career Consultation, Free Career Guidance Vadodara, IT Mentorship Session, Tech Career Advice, Blueboxx Consultation",
   },
+  "/careers": {
+    title: "Careers & Team Opportunities at BlueBoxx | Join Our Team",
+    description: "Explore internal careers, instructor positions, and team opportunities at BlueBoxx Vadodara. Work with passionate educators, engineers, and mentors.",
+    keywords: "Careers at Blueboxx, Team Opportunities, EdTech Jobs Vadodara, IT Trainer Jobs, Join Blueboxx Team, Work with us Vadodara",
+  },
   "/internships": {
     title: "Industry Internships with Stipend & Live Projects | Blueboxx DA",
     description: "Gain hands-on corporate experience with paid internships at Blueboxx DA. Work on live enterprise client projects with 1-on-1 expert mentor guidance.",
@@ -69,10 +74,10 @@ const DEFAULT_PAGE_SEO: Record<string, { title: string; description: string; key
 };
 
 function generateFallbackTitle(path: string) {
-  if (!path || path === "/") return "BlueBoxx | Best IT & Digital Marketing Institute Vadodara";
+  if (!path || path === "/") return "BlueBoxx | Leading IT Services & Digital Solutions Company Vadodara";
   const segments = path.split("?")[0].split("/").filter(Boolean);
   const lastSegment = segments[segments.length - 1];
-  if (!lastSegment) return "BlueBoxx | Best IT & Digital Marketing Institute Vadodara";
+  if (!lastSegment) return "BlueBoxx | Leading IT Services & Digital Solutions Company Vadodara";
   
   const formatted = lastSegment
     .split("-")
