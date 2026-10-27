@@ -27,7 +27,7 @@ const DEFAULT_PAGE_SEO: Record<string, { title: string; description: string; key
     keywords: "IT services vadodara, web development company vadodara, custom CRM development, ERP solutions gujarat, AI automation services, LMS platform development, software company vadodara",
   },
   "/about": {
-    title: "About Us | Blueboxx DA - Creative Production & EdTech Innovation",
+    title: "About Us | Blueboxx Creative Production & EdTech Vadodara",
     description: "Founded in 2015 in Vadodara, Blueboxx DA empowers students and enterprises through our Learn-Work-Earn model, industry mentorship, and cutting-edge digital production.",
     keywords: "About Blueboxx DA, IT institute history, creative production house vadodara, Ankush Dubey, Learn Work Earn model",
   },

@@ -1,10 +1,11 @@
 import { useRef } from "react";
+import Link from "next/link";
 import { MainLayout } from "../src/layout/MainLayout";
 import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion";
 import {
   Users, Building2, Briefcase, Target, Star,
   Heart, TrendingUp, Award, BookOpen,
-  Globe, Phone, MapPin, Calendar
+  Globe, Phone, MapPin, Calendar, ArrowRight, Laptop, Sparkles, MessageSquare
 } from "lucide-react";
 import { ClientsSection } from "../src/sections/ClientsSection";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
@@ -124,7 +125,7 @@ export default function AboutPage() {
   return (
     <>
       <SEO 
-        title="About Blueboxx DA | Premier EdTech & Creative Production House"
+        title="About Us | Blueboxx Creative Production & EdTech Vadodara"
         description="Established in 2015, Blueboxx DA is Vadodara's premier Advertising Agency, Production House, and EdTech platform driving the Learn-Work-Earn model."
         keywords="About Blueboxx, Advertising Agency Vadodara, Production House Gujarat, EdTech Company Vadodara, Ankush Dubey, Blueboxx Founder"
         schema={{
@@ -253,13 +254,13 @@ export default function AboutPage() {
                   </motion.h2>
                   <div className="space-y-6 text-slate-600 text-base sm:text-lg leading-relaxed text-justify md:text-left">
                     <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
-                      Established in 2015, Blueboxx DA is one of the finest advertising firms in Vadodara, Gujarat India. Being an advertising agency, Blueboxx DA, not only helps you promote your brand and business but also assists you with the Technical, Creative, and Production Talent ready to create the next generation creatives and characters for feature films, commercials, merchandise, and other related products.
+                      Established in 2015, Blueboxx DA is one of the finest advertising firms and IT training institutes in Vadodara, Gujarat India. Being an advertising agency, Blueboxx DA not only helps you promote your brand and business with end-to-end <Link href="/services" className="text-[#1B2A6B] font-bold underline hover:text-[#C9A227] transition-colors">IT & creative services</Link>, but also assists you with the Technical, Creative, and Production Talent ready to create the next generation creatives for global enterprises.
                     </motion.p>
                     <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
-                      Over the past few years, we aimed to put the best efforts ever to produce high-quality work for our clients. Blueboxx DA’s main products are design & development, corporate brand identity, media planning & releases, 3D animation, 2D animation, animation for specific purposes, video editing, visual effects, web designing & development, SEO, SMM, YouTube marketing.
+                      Over the past few years, we aimed to put the best efforts ever to produce high-quality work for our clients. Alongside our agency services, our dedicated academy provides career-transforming <Link href="/courses" className="text-[#1B2A6B] font-bold underline hover:text-[#C9A227] transition-colors">professional certified courses</Link> in Full Stack Web Development, UI/UX, Python AI, and Digital Marketing.
                     </motion.p>
                     <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}>
-                      Moreover, we have established our own production house. Blueboxx has built a creative team that includes highly skilled modelers, designers, developers, audio/video editors, and animators who are responsible for creating, developing, writing, and animating all produced films.
+                      Moreover, we have established our own production house with a highly skilled creative team. Have questions or looking to collaborate? Feel free to <Link href="/contact" className="text-[#1B2A6B] font-bold underline hover:text-[#C9A227] transition-colors">contact our team</Link> for admission guidance or corporate inquiries.
                     </motion.p>
 
                     <h3 className="text-xl font-extrabold text-slate-900 mt-8 mb-4 text-center md:text-left font-sora">Our Specialties</h3>
@@ -388,6 +389,84 @@ export default function AboutPage() {
                         <span className="font-extrabold text-slate-800 text-lg group-hover:text-[#1B2A6B] transition-colors">{feature.title}</span>
                       </motion.div>
                     ))}
+                  </div>
+                </div>
+
+                {/* --- EXPLORE PATHWAYS & SERVICES --- */}
+                <div className="bg-gradient-to-br from-[#0d1635] via-[#1B2A6B] to-[#0d1635] rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-[#C9A227]/10 rounded-full blur-3xl pointer-events-none" />
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-2">
+                      <Sparkles size={14} /> Connect & Grow With Us
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 font-sora">
+                      Explore Our Offerings & Get in Touch
+                    </h3>
+                    <p className="text-slate-300 text-sm sm:text-base max-w-2xl mb-6">
+                      Whether you are an aspiring student aiming to upskill or an enterprise seeking modern digital solutions, discover our tailored pathways.
+                    </p>
+
+                    <div className="grid sm:grid-cols-3 gap-4">
+                      <Link 
+                        href="/courses" 
+                        className="group bg-white/10 hover:bg-white/15 border border-white/15 hover:border-[#C9A227]/60 rounded-xl p-4 transition-all duration-300 flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="w-10 h-10 rounded-lg bg-[#C9A227]/20 border border-[#C9A227]/30 flex items-center justify-center text-[#C9A227] mb-3">
+                            <BookOpen size={20} />
+                          </div>
+                          <h4 className="text-base font-bold text-white mb-1 group-hover:text-[#C9A227] transition-colors">
+                            Professional Courses
+                          </h4>
+                          <p className="text-xs text-slate-300 leading-relaxed">
+                            Full Stack, UI/UX, Python AI & Digital Marketing certifications.
+                          </p>
+                        </div>
+                        <div className="mt-4 flex items-center gap-1.5 text-xs font-bold text-[#C9A227]">
+                          View Courses <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </Link>
+
+                      <Link 
+                        href="/services" 
+                        className="group bg-white/10 hover:bg-white/15 border border-white/15 hover:border-[#C9A227]/60 rounded-xl p-4 transition-all duration-300 flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-blue-300 mb-3">
+                            <Laptop size={20} />
+                          </div>
+                          <h4 className="text-base font-bold text-white mb-1 group-hover:text-[#C9A227] transition-colors">
+                            IT & Media Services
+                          </h4>
+                          <p className="text-xs text-slate-300 leading-relaxed">
+                            Web apps, CRM/ERP platforms, 3D animation & digital branding.
+                          </p>
+                        </div>
+                        <div className="mt-4 flex items-center gap-1.5 text-xs font-bold text-[#C9A227]">
+                          Explore Services <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </Link>
+
+                      <Link 
+                        href="/contact" 
+                        className="group bg-white/10 hover:bg-white/15 border border-white/15 hover:border-[#C9A227]/60 rounded-xl p-4 transition-all duration-300 flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="w-10 h-10 rounded-lg bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 mb-3">
+                            <MessageSquare size={20} />
+                          </div>
+                          <h4 className="text-base font-bold text-white mb-1 group-hover:text-[#C9A227] transition-colors">
+                            Contact & Support
+                          </h4>
+                          <p className="text-xs text-slate-300 leading-relaxed">
+                            Speak with counselors, visit our Vadodara office or request demos.
+                          </p>
+                        </div>
+                        <div className="mt-4 flex items-center gap-1.5 text-xs font-bold text-[#C9A227]">
+                          Get In Touch <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </Link>
+                    </div>
                   </div>
                 </div>
 
