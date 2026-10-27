@@ -46,6 +46,11 @@ const DEFAULT_PAGE_SEO: Record<string, { title: string; description: string; key
     description: "Get in touch with Blueboxx DA for course counseling, admissions, corporate training, or enterprise project development. Located at India Bulls Mega Mall, Vadodara.",
     keywords: "contact Blueboxx DA, IT institute address vadodara, admission helpline, corporate training inquiry, demo class booking",
   },
+  "/blog": {
+    title: "Tech, Design & Career Insights | Blueboxx Blog Vadodara",
+    description: "Explore tutorials, industry trends, tech career advice, and student guides on web development, UI/UX design, and AI from Blueboxx mentors.",
+    keywords: "tech blog vadodara, IT tutorials, web development tips, UI UX design trends, digital marketing guide, career insights",
+  },
 };
 
 function generateFallbackTitle(path: string) {

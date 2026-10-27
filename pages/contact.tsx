@@ -76,7 +76,18 @@ export default function ContactPage() {
 
   return (
     <MainLayout>
-      <SEO title="Contact Us | Blueboxx DA" description="Get in touch with Blueboxx DA for any inquiries regarding courses, internships, and placements." />
+      <SEO 
+        title="Contact Blueboxx DA | Admissions & Enterprise Inquiries" 
+        description="Connect with Blueboxx DA in Vadodara for course counseling, admissions, corporate training, demo classes, and enterprise IT project inquiries."
+        keywords="contact Blueboxx DA, IT institute vadodara contact, admission counseling, course inquiries, demo classes vadodara"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "name": "Contact Blueboxx DA",
+          "url": "https://blueboxx.in/contact",
+          "description": "Get in touch with Blueboxx DA for admissions, counseling, and enterprise partnerships."
+        }}
+      />
       {/* Hero Section */}
       <div className="pt-24 pb-16 bg-[#0d1635] text-white relative overflow-hidden">
         <motion.div 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { MainLayout } from "../src/layout/MainLayout";
 import { motion } from "framer-motion";
-import { Calendar, Clock, ArrowRight, Search } from "lucide-react";
+import { Calendar, Clock, ArrowRight, Search, BookOpen, Sparkles, GraduationCap, Laptop, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "../src/components/ui/Card";
 import { Badge } from "../src/components/ui/Badge";
 import { Button } from "../src/components/ui/Button";
@@ -12,6 +12,7 @@ import Image from "next/image";
 import useSWR from "swr";
 import api from "../src/lib/axios";
 import toast from "react-hot-toast";
+import { SEO } from "../src/components/seo/SEO";
 import { WhyChooseBlueboxxSection } from "../src/sections/WhyChooseBlueboxxSection";
 import { TestimonialsSection } from "../src/sections/TestimonialsSection";
 
@@ -69,9 +70,22 @@ export default function BlogPage() {
   const remainingBlogs = featuredBlog ? blogs.slice(1) : blogs;
 
   return (
-    <MainLayout>
-      {/* Hero Section */}
-      <div className="pt-24 pb-12 bg-[#0d1635] text-white relative overflow-hidden border-b border-white/10">
+    <>
+      <SEO 
+        title="Tech, Design & Career Insights | Blueboxx Blog Vadodara"
+        description="Explore in-depth tutorials, tech career roadmaps, web development guides, and UI/UX insights curated by Blueboxx industry mentors in Vadodara."
+        keywords="Blueboxx blog, IT blog vadodara, web development tutorials, UI UX design trends, programming guides, digital marketing tips"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          "name": "Blueboxx DA Blog",
+          "url": "https://blueboxx.in/blog",
+          "description": "Tech, Design & Career Insights from industry leaders at Blueboxx Vadodara."
+        }}
+      />
+      <MainLayout>
+        {/* Hero Section */}
+        <div className="pt-24 pb-12 bg-[#0d1635] text-white relative overflow-hidden border-b border-white/10">
         <motion.div 
           animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
@@ -264,10 +278,86 @@ export default function BlogPage() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="mb-24">
+                <div className="mb-16">
                   <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
                 </div>
               )}
+
+              {/* Recommended Career Courses & Pathways (Internal Linking) */}
+              <div className="bg-white rounded-3xl p-8 md:p-12 border border-slate-200 shadow-sm mb-16">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 text-[#C9A227] text-xs font-bold uppercase tracking-wider mb-2">
+                      <Sparkles size={14} /> Turn Knowledge Into Careers
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-sora">
+                      Accelerate Your Career with Certified Courses
+                    </h2>
+                    <p className="text-slate-600 text-sm sm:text-base mt-1">
+                      Learned from our articles? Take the next step with mentor-led practical training & live projects.
+                    </p>
+                  </div>
+                  <Link 
+                    href="/courses" 
+                    className="inline-flex items-center gap-2 text-sm font-bold text-[#1B2A6B] hover:text-[#C9A227] transition-colors whitespace-nowrap"
+                  >
+                    View All 15+ Courses <ChevronRight size={16} />
+                  </Link>
+                </div>
+
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {[
+                    {
+                      title: "Full Stack Development",
+                      desc: "MERN stack, Next.js, REST APIs & live cloud deployments.",
+                      link: "/courses?category=development",
+                      badge: "Trending"
+                    },
+                    {
+                      title: "UI/UX & Product Design",
+                      desc: "Figma wireframing, UX heuristics, micro-interactions & case studies.",
+                      link: "/courses?category=design",
+                      badge: "High Demand"
+                    },
+                    {
+                      title: "Python AI & Data Science",
+                      desc: "Machine Learning models, Pandas, Deep Learning & LLM tools.",
+                      link: "/courses?category=ai-ml",
+                      badge: "Future-Ready"
+                    },
+                    {
+                      title: "Digital & Growth Marketing",
+                      desc: "SEO, Meta Ads, Google Analytics & ROI campaign strategies.",
+                      link: "/courses?category=marketing",
+                      badge: "100% Practical"
+                    }
+                  ].map((course, i) => (
+                    <Link
+                      key={i}
+                      href={course.link}
+                      className="group p-5 rounded-2xl border border-slate-200 hover:border-[#1B2A6B]/40 hover:shadow-md transition-all duration-300 bg-slate-50/60 hover:bg-white flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-50 text-[#1B2A6B]">
+                            {course.badge}
+                          </span>
+                          <GraduationCap size={16} className="text-slate-400 group-hover:text-[#C9A227] transition-colors" />
+                        </div>
+                        <h3 className="font-bold text-slate-900 group-hover:text-[#1B2A6B] text-base mb-1.5 transition-colors">
+                          {course.title}
+                        </h3>
+                        <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                          {course.desc}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1 text-xs font-bold text-[#C9A227] group-hover:translate-x-1 transition-transform">
+                        Explore Syllabus <ArrowRight size={12} />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </>
           )}
 
@@ -303,5 +393,6 @@ export default function BlogPage() {
       <WhyChooseBlueboxxSection />
       <TestimonialsSection />
     </MainLayout>
+    </>
   );
 }
