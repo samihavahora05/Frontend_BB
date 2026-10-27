@@ -32,14 +32,25 @@ Allow: /
 # General Search Engines
 User-agent: *
 Allow: /
+Allow: /colleges
+Allow: /colleges/*
+Allow: /experts
+Allow: /experts/*
+Allow: /internships
+Allow: /internships/*
+Allow: /internship
+Allow: /companies
+Allow: /companies/*
+Allow: /jobs
+Allow: /jobs/*
+
+# Private Dashboards & Portal Areas (Trailing slash prevents blocking public plural URLs)
 Disallow: /admin/
-Disallow: /admin
+Disallow: /admin$
 Disallow: /student/
-Disallow: /student
+Disallow: /student$
 Disallow: /expert/
-Disallow: /expert
 Disallow: /company/
-Disallow: /company
 Disallow: /companies/dashboard/
 Disallow: /companies/applicants/
 Disallow: /companies/applications/
@@ -47,11 +58,8 @@ Disallow: /companies/jobs/create
 Disallow: /companies/post-job
 Disallow: /companies/settings/
 Disallow: /jobseeker/
-Disallow: /jobseeker
 Disallow: /intern/
-Disallow: /intern
 Disallow: /college/
-Disallow: /college
 Disallow: /colleges/dashboard/
 Disallow: /colleges/placements/
 Disallow: /colleges/settings/
