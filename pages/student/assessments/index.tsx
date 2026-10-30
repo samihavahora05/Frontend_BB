@@ -34,7 +34,7 @@ export default function StudentAssessmentsPage() {
 
       let items: AssessmentItem[] = [];
       if (assessRes.status === "fulfilled" && assessRes.value?.data?.length > 0) {
-        items = assessRes.value.data;
+        items = assessRes.value.data.filter((a: any) => a.total_questions > 0 && a.slug !== '100-mcq-internship-assessment');
       }
 
       // If backend didn't return the 50 MCQ assessment, add fallback
