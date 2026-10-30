@@ -8,7 +8,7 @@ import { SEO } from "../components/seo/SEO";
 import {
   LayoutDashboard, BookOpen, Briefcase, Settings, LogOut,
   Menu, X, Search, Video, Award, User,
-  ClipboardList, Trophy, Users, Bookmark, CreditCard
+  ClipboardList, Trophy, Users, Bookmark, CreditCard, CheckSquare
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NotificationDropdown } from "../components/NotificationDropdown";
@@ -18,6 +18,7 @@ const SIDEBAR_CATEGORIES = [
     title: "Learning",
     links: [
       { name: "My Dashboard",   href: "/student/dashboard",       icon: LayoutDashboard },
+      { name: "MCQ Assessment", href: "/student/assessments",     icon: CheckSquare },
       { name: "My Courses",     href: "/student/courses",         icon: BookOpen },
       { name: "Contests",       href: "/student/contests",        icon: Trophy },
       { name: "Virtual Classes",href: "/student/virtual-classes", icon: Video },

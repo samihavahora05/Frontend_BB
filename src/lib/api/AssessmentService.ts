@@ -72,44 +72,99 @@ export interface AnswerReviewItem {
 }
 
 export const AssessmentService = {
+  getBasePath(): string {
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/student")) {
+      return "/student";
+    }
+    return "/intern";
+  },
+
   async getAssessments(): Promise<{ success: boolean; data: AssessmentItem[] }> {
-    const res = await api.get('/intern/assessments');
-    return res.data;
+    const base = this.getBasePath();
+    try {
+      const res = await api.get(`${base}/assessments`);
+      return res.data;
+    } catch {
+      const fallback = base === "/student" ? "/intern" : "/student";
+      const res = await api.get(`${fallback}/assessments`);
+      return res.data;
+    }
   },
 
   async getAssessment(id: string | number): Promise<any> {
-    const res = await api.get(`/intern/assessments/${id}`);
-    return res.data;
+    const base = this.getBasePath();
+    try {
+      const res = await api.get(`${base}/assessments/${id}`);
+      return res.data;
+    } catch {
+      const fallback = base === "/student" ? "/intern" : "/student";
+      const res = await api.get(`${fallback}/assessments/${id}`);
+      return res.data;
+    }
   },
 
   async startAssessment(id: string | number): Promise<any> {
-    const res = await api.post(`/intern/assessments/${id}/start`);
-    return res.data;
+    const base = this.getBasePath();
+    try {
+      const res = await api.post(`${base}/assessments/${id}/start`);
+      return res.data;
+    } catch {
+      const fallback = base === "/student" ? "/intern" : "/student";
+      const res = await api.post(`${fallback}/assessments/${id}/start`);
+      return res.data;
+    }
   },
 
   async saveAnswer(id: string | number, payload: { attempt_id: number; question_id: number; selected_answer: string | null }): Promise<any> {
+    const base = this.getBasePath();
     try {
-      const res = await api.post(`/intern/assessments/${id}/save-answer`, payload);
+      const res = await api.post(`${base}/assessments/${id}/save-answer`, payload);
       return res.data;
-    } catch (err: any) {
-      // Soft-catch so autosave never throws runtime popups if question record isn't in SQLite yet
-      return { success: false, error: err?.message || 'Autosave sync unavailable for this item.' };
+    } catch {
+      const fallback = base === "/student" ? "/intern" : "/student";
+      try {
+        const res = await api.post(`${fallback}/assessments/${id}/save-answer`, payload);
+        return res.data;
+      } catch (err: any) {
+        return { success: false, error: err?.message || 'Autosave sync unavailable for this item.' };
+      }
     }
   },
 
   async submitAssessment(id: string | number, payload: { attempt_id: number; answers?: Record<number, string> }): Promise<any> {
-    const res = await api.post(`/intern/assessments/${id}/submit`, payload);
-    return res.data;
+    const base = this.getBasePath();
+    try {
+      const res = await api.post(`${base}/assessments/${id}/submit`, payload);
+      return res.data;
+    } catch {
+      const fallback = base === "/student" ? "/intern" : "/student";
+      const res = await api.post(`${fallback}/assessments/${id}/submit`, payload);
+      return res.data;
+    }
   },
 
   async getResult(id: string | number, attemptId: string | number): Promise<any> {
-    const res = await api.get(`/intern/assessments/${id}/result/${attemptId}`);
-    return res.data;
+    const base = this.getBasePath();
+    try {
+      const res = await api.get(`${base}/assessments/${id}/result/${attemptId}`);
+      return res.data;
+    } catch {
+      const fallback = base === "/student" ? "/intern" : "/student";
+      const res = await api.get(`${fallback}/assessments/${id}/result/${attemptId}`);
+      return res.data;
+    }
   },
 
   async getHistory(): Promise<{ success: boolean; data: AttemptItem[] }> {
-    const res = await api.get('/intern/assessments/history');
-    return res.data;
+    const base = this.getBasePath();
+    try {
+      const res = await api.get(`${base}/assessments/history`);
+      return res.data;
+    } catch {
+      const fallback = base === "/student" ? "/intern" : "/student";
+      const res = await api.get(`${fallback}/assessments/history`);
+      return res.data;
+    }
   },
 
   // Admin APIs: Results

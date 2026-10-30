@@ -35,9 +35,13 @@ export default function StudentMCQResultsPage() {
     try {
       let response;
       try {
-        response = await api.get("/student/mcq-results");
+        response = await api.get("/student/assessments/history");
       } catch {
-        response = await api.get("/student/quiz-results");
+        try {
+          response = await api.get("/student/mcq-results");
+        } catch {
+          response = await api.get("/student/quiz-results");
+        }
       }
       const rawData = response?.data?.data?.data || response?.data?.data || response?.data || [];
       const list = Array.isArray(rawData) ? rawData : [];

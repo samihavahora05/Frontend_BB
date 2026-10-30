@@ -1,0 +1,660 @@
+{
+  "title": "Common IT & Digital Skills Assessment",
+  "subtitle": "50 Multiple-Choice Questions",
+  "totalQuestions": 50,
+  "totalMarks": 50,
+  "durationMinutes": 40,
+  "negativeMarking": false,
+  "questions": [
+    {
+      "id": 1,
+      "category": "Computer Fundamentals",
+      "question": "Which component is commonly known as the brain of a computer?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "RAM",
+        "B": "CPU",
+        "C": "Hard Disk",
+        "D": "Monitor"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "id": 2,
+      "category": "Computer Fundamentals",
+      "question": "Which of the following is an operating system?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "Adobe Photoshop",
+        "B": "Google Chrome",
+        "C": "Microsoft Windows",
+        "D": "Microsoft Word"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "id": 3,
+      "category": "Computer Fundamentals",
+      "question": "What is the primary purpose of RAM?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "Permanent file storage",
+        "B": "Temporary working memory",
+        "C": "Printing documents",
+        "D": "Connecting to Wi-Fi"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "id": 4,
+      "category": "Computer Fundamentals",
+      "question": "Which file extension is commonly used for a PDF document?",
+      "difficulty": "Easy",
+      "options": {
+        "A": ".jpg",
+        "B": ".mp3",
+        "C": ".pdf",
+        "D": ".exe"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "id": 5,
+      "category": "Computer Fundamentals",
+      "question": "Which device is used to connect multiple devices within a local network?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Switch",
+        "B": "Scanner",
+        "C": "Projector",
+        "D": "Plotter"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 6,
+      "category": "Computer Fundamentals",
+      "question": "What does 'open-source software' generally mean?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Software that is always free of cost",
+        "B": "Software whose source code can be inspected and modified under its license",
+        "C": "Software that works only online",
+        "D": "Software that cannot be updated"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "id": 7,
+      "category": "Computer Fundamentals",
+      "question": "Which of these is an example of cloud storage?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "Google Drive",
+        "B": "Notepad",
+        "C": "Calculator",
+        "D": "Paint"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 8,
+      "category": "Computer Fundamentals",
+      "question": "Which number system do computers fundamentally use to represent data?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Decimal",
+        "B": "Binary",
+        "C": "Roman",
+        "D": "Octal only"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "id": 9,
+      "category": "Internet & Networking",
+      "question": "What does URL stand for?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "Uniform Resource Locator",
+        "B": "Universal Record Link",
+        "C": "Unified Routing Language",
+        "D": "User Reference Location"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 10,
+      "category": "Internet & Networking",
+      "question": "Which protocol is commonly used to load web pages securely?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "FTP",
+        "B": "HTTP",
+        "C": "HTTPS",
+        "D": "SMTP"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "id": 11,
+      "category": "Internet & Networking",
+      "question": "What is the main role of DNS?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Encrypt files",
+        "B": "Translate domain names into IP addresses",
+        "C": "Design web pages",
+        "D": "Block all advertisements"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "id": 12,
+      "category": "Internet & Networking",
+      "question": "What does an IP address identify on an IP network?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "A device or network interface",
+        "B": "A website's logo",
+        "C": "A file format",
+        "D": "A browser theme"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 13,
+      "category": "Internet & Networking",
+      "question": "Which device forwards data between different networks?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "Router",
+        "B": "Keyboard",
+        "C": "Monitor",
+        "D": "Microphone"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 14,
+      "category": "Internet & Networking",
+      "question": "What is bandwidth in networking commonly used to describe?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "The physical length of a cable",
+        "B": "The data-carrying capacity of a connection",
+        "C": "The number of files on a computer",
+        "D": "The strength of a password"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "id": 15,
+      "category": "Internet & Networking",
+      "question": "Which protocol is commonly used to securely access a remote command-line server?",
+      "difficulty": "Hard",
+      "options": {
+        "A": "SSH",
+        "B": "HTTP",
+        "C": "POP3",
+        "D": "DHCP"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 16,
+      "category": "Programming & Web Development",
+      "question": "Which language is primarily used to structure the content of web pages?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "CSS",
+        "B": "HTML",
+        "C": "SQL",
+        "D": "Python"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "id": 17,
+      "category": "Programming & Web Development",
+      "question": "Which technology is mainly used to style web pages?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "HTML",
+        "B": "CSS",
+        "C": "FTP",
+        "D": "DNS"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "id": 18,
+      "category": "Programming & Web Development",
+      "question": "Which language is commonly used to add interactivity to web pages in the browser?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "JavaScript",
+        "B": "SQL",
+        "C": "XML",
+        "D": "Bash"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 19,
+      "category": "Programming & Web Development",
+      "question": "What does a database primarily help an application do?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Store and organize data",
+        "B": "Increase monitor brightness",
+        "C": "Compress images only",
+        "D": "Replace the operating system"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 20,
+      "category": "Programming & Web Development",
+      "question": "In web development, what does API commonly stand for?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Application Programming Interface",
+        "B": "Automated Program Installation",
+        "C": "Advanced Page Internet",
+        "D": "Application Process Indicator"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 21,
+      "category": "Programming & Web Development",
+      "question": "What is the main purpose of responsive web design?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Make a website work well across different screen sizes",
+        "B": "Make every website use animation",
+        "C": "Prevent search engines from indexing a site",
+        "D": "Store passwords in the browser"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 22,
+      "category": "Programming & Web Development",
+      "question": "Which of these is a version control system commonly used by developers?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Git",
+        "B": "Figma",
+        "C": "Google Ads",
+        "D": "MySQL Workbench"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 23,
+      "category": "Programming & Web Development",
+      "question": "What is the purpose of input validation on a website?",
+      "difficulty": "Hard",
+      "options": {
+        "A": "To check that submitted data meets expected rules",
+        "B": "To make images load faster",
+        "C": "To change the website's domain name",
+        "D": "To automatically create backups"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 24,
+      "category": "Cybersecurity",
+      "question": "What is phishing?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "A method of creating vector graphics",
+        "B": "A fraudulent attempt to trick people into revealing sensitive information",
+        "C": "A type of database",
+        "D": "A website layout technique"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "id": 25,
+      "category": "Cybersecurity",
+      "question": "Which password is generally the strongest?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "12345678",
+        "B": "password123",
+        "C": "Harshil2026",
+        "D": "A long, unique passphrase with varied characters"
+      },
+      "correct_answer": "D"
+    },
+    {
+      "id": 26,
+      "category": "Cybersecurity",
+      "question": "What does two-factor authentication (2FA) add to account security?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "A second verification step",
+        "B": "A second username",
+        "C": "An automatic public profile",
+        "D": "A faster internet connection"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 27,
+      "category": "Cybersecurity",
+      "question": "What is malware?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Software designed to harm, disrupt, or gain unauthorized access",
+        "B": "A tool for editing photographs",
+        "C": "A secure backup format",
+        "D": "A programming language"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 28,
+      "category": "Cybersecurity",
+      "question": "Why should software and operating systems be updated regularly?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Updates can fix security vulnerabilities and bugs",
+        "B": "Updates always increase screen resolution",
+        "C": "Updates remove the need for passwords",
+        "D": "Updates make backups unnecessary"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 29,
+      "category": "Cybersecurity",
+      "question": "What is the principle of least privilege?",
+      "difficulty": "Hard",
+      "options": {
+        "A": "Give every user administrator access",
+        "B": "Give users only the access needed for their tasks",
+        "C": "Share one account among all employees",
+        "D": "Disable access logs"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "id": 30,
+      "category": "Cybersecurity",
+      "question": "What should you do if you receive an unexpected email asking you to open an attachment and enter your password?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Open it immediately",
+        "B": "Forward it to all contacts",
+        "C": "Verify the sender through a trusted channel and report it if suspicious",
+        "D": "Reply with your password"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "id": 31,
+      "category": "Graphic Designing & UI/UX",
+      "question": "Which software is commonly used to create vector graphics?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "Adobe Illustrator",
+        "B": "Microsoft Excel",
+        "C": "VLC Media Player",
+        "D": "Notepad"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 32,
+      "category": "Graphic Designing & UI/UX",
+      "question": "Which colour mode is generally preferred for designs intended for commercial printing?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "RGB",
+        "B": "CMYK",
+        "C": "HEX only",
+        "D": "HSL only"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "id": 33,
+      "category": "Graphic Designing & UI/UX",
+      "question": "What does typography mainly deal with?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "Arranging and styling text",
+        "B": "Editing audio",
+        "C": "Managing databases",
+        "D": "Creating network connections"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 34,
+      "category": "Graphic Designing & UI/UX",
+      "question": "What is the main purpose of whitespace in a design?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "To improve clarity, spacing, and visual hierarchy",
+        "B": "To make every design look unfinished",
+        "C": "To reduce image resolution",
+        "D": "To replace all text"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 35,
+      "category": "Graphic Designing & UI/UX",
+      "question": "In UI design, what does consistency help users do?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Predict how similar elements will behave",
+        "B": "Avoid reading all labels",
+        "C": "Increase file size",
+        "D": "Disable navigation"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 36,
+      "category": "Graphic Designing & UI/UX",
+      "question": "Which file format is commonly suitable for a logo that needs a transparent background and raster output?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "PNG",
+        "B": "TXT",
+        "C": "MP3",
+        "D": "CSV"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 37,
+      "category": "Graphic Designing & UI/UX",
+      "question": "What is a wireframe in UI/UX design?",
+      "difficulty": "Hard",
+      "options": {
+        "A": "A basic structural layout of a page or screen",
+        "B": "A final high-resolution photograph",
+        "C": "A website's source-code compiler",
+        "D": "A social media advertising report"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 38,
+      "category": "Digital Marketing",
+      "question": "What does SEO stand for?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "Search Engine Optimization",
+        "B": "Social Engagement Output",
+        "C": "Search Email Operation",
+        "D": "Sales Experience Overview"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 39,
+      "category": "Digital Marketing",
+      "question": "What is the primary goal of a call-to-action (CTA)?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "Encourage the audience to take a specific action",
+        "B": "Hide the page title",
+        "C": "Reduce website accessibility",
+        "D": "Automatically write a blog"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 40,
+      "category": "Digital Marketing",
+      "question": "What does PPC commonly mean in online advertising?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Pay Per Click",
+        "B": "Post Per Customer",
+        "C": "Page Performance Code",
+        "D": "Public Promotion Channel"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 41,
+      "category": "Digital Marketing",
+      "question": "Which metric measures the percentage of users who click an ad after seeing it?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "CTR",
+        "B": "CPU",
+        "C": "RAM",
+        "D": "DNS"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 42,
+      "category": "Digital Marketing",
+      "question": "What is the purpose of a landing page in a marketing campaign?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Guide visitors toward a specific campaign goal or conversion",
+        "B": "Store a computer's operating system",
+        "C": "Replace the company's domain registrar",
+        "D": "Manage office hardware"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 43,
+      "category": "Digital Marketing",
+      "question": "An email campaign is sent to 1,000 people and 200 people open it. What is the open rate?",
+      "difficulty": "Hard",
+      "options": {
+        "A": "10%",
+        "B": "20%",
+        "C": "25%",
+        "D": "40%"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "id": 44,
+      "category": "Digital Marketing",
+      "question": "Which practice is most likely to improve the quality of an email marketing list?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Buying an unrelated email list",
+        "B": "Adding people without consent",
+        "C": "Collecting opt-ins and removing invalid or unsubscribed addresses",
+        "D": "Sending the same email repeatedly every hour"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "id": 45,
+      "category": "AI & Emerging Technologies",
+      "question": "What does AI stand for?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "Automated Internet",
+        "B": "Artificial Intelligence",
+        "C": "Advanced Integration",
+        "D": "Application Interface"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "id": 46,
+      "category": "AI & Emerging Technologies",
+      "question": "Which of the following is an example of a generative AI task?",
+      "difficulty": "Easy",
+      "options": {
+        "A": "Generating a draft of text from a prompt",
+        "B": "Physically repairing a keyboard",
+        "C": "Replacing a router cable",
+        "D": "Increasing monitor size"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 47,
+      "category": "AI & Emerging Technologies",
+      "question": "What is a prompt in the context of generative AI?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "An instruction or input given to an AI system",
+        "B": "A computer's power cable",
+        "C": "A type of image file",
+        "D": "A network address"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 48,
+      "category": "AI & Emerging Technologies",
+      "question": "What is machine learning?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "A method where systems learn patterns from data",
+        "B": "A technique for cleaning computer screens",
+        "C": "A type of printer",
+        "D": "A manual method of sorting paper files"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 49,
+      "category": "AI & Emerging Technologies",
+      "question": "Why should AI-generated information be checked before it is used?",
+      "difficulty": "Hard",
+      "options": {
+        "A": "AI outputs can contain errors or unsupported claims",
+        "B": "AI outputs are always legally approved",
+        "C": "AI cannot generate text",
+        "D": "Checking information reduces internet speed"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "id": 50,
+      "category": "AI & Emerging Technologies",
+      "question": "Which technology is commonly used to identify objects or patterns in images?",
+      "difficulty": "Medium",
+      "options": {
+        "A": "Computer vision",
+        "B": "Spreadsheet formatting",
+        "C": "DNS caching",
+        "D": "Audio equalization"
+      },
+      "correct_answer": "A"
+    }
+  ]
+}

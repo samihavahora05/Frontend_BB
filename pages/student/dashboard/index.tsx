@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { StudentDashboardLayout } from "../../../src/layout/StudentDashboardLayout";
-import { Calendar, Trophy, Briefcase, ChevronRight, FileEdit, ArrowRight, Bell, Star, Upload, X, Gift } from "lucide-react";
+import { Calendar, Trophy, Briefcase, ChevronRight, FileEdit, ArrowRight, Bell, Star, Upload, X, Gift, CheckSquare, Clock } from "lucide-react";
 import { AnimatedContent } from "../../../src/components/reactbits/AnimatedContent";
 import { useAuth } from "../../../src/context/AuthContext";
 import { AnimatePresence, motion } from "framer-motion";
@@ -186,6 +186,44 @@ export default function StudentDashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
+
+          {/* 50 MCQ Assessment Spotlight Banner */}
+          <AnimatedContent direction="up" delay={0.2} className="bg-gradient-to-br from-[#0d1635] via-[#1B2A6B] to-[#25398d] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+            <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-[#C9A227]/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C9A227]/20 border border-[#C9A227]/40 text-[#C9A227] text-[11px] font-black uppercase tracking-wider">
+                  <CheckSquare size={13} className="fill-current" /> Skill Assessment
+                </div>
+                <h3 className="text-xl font-black text-white">Common IT & Digital Skills Assessment</h3>
+                <p className="text-xs text-slate-300 max-w-lg leading-relaxed">
+                  50 Multiple-Choice Questions covering Computer Fundamentals, Networking, Programming, Cybersecurity, UI/UX, Digital Marketing, and AI. Benchmark your score and qualify for placement shortlists.
+                </p>
+                <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] text-slate-300 font-semibold">
+                  <span className="flex items-center gap-1">⏱️ 40 Mins</span>
+                  <span>•</span>
+                  <span>50 Marks (No Negative Marking)</span>
+                  <span>•</span>
+                  <span>7 Core Tech Tracks</span>
+                </div>
+              </div>
+
+              <div className="flex md:flex-col gap-2 shrink-0">
+                <Link
+                  href="/student/assessments"
+                  className="px-5 py-3 bg-[#C9A227] hover:bg-[#b08d20] text-[#0d1635] text-xs font-black rounded-xl text-center transition-all shadow-md flex items-center justify-center gap-2 whitespace-nowrap"
+                >
+                  Start Assessment <ArrowRight size={14} />
+                </Link>
+                <Link
+                  href="/student/mcq-results"
+                  className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl text-center transition-all border border-white/10 whitespace-nowrap"
+                >
+                  View Past Results
+                </Link>
+              </div>
+            </div>
+          </AnimatedContent>
 
           {/* Explore Opportunities */}
           <AnimatedContent direction="up" delay={0.3} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
