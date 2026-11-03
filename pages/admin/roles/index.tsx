@@ -65,20 +65,37 @@ export default function AdminRolesPage() {
 
   const roles = rolesData || [];
 
-  // Clean roles: Remove duplicates (keep the one with users if duplicate exists, or first one) and filter
+  // Clean roles: Remove duplicates, merge Admin & Super Admin, and keep active role
   const cleanedRoles = React.useMemo(() => {
     if (!roles || !Array.isArray(roles)) return [];
     
     // Group by normalized name
     const roleMap: Record<string, any> = {};
     for (const r of roles) {
-      const key = (r.name || '').toLowerCase().trim().replace(/[-_]/g, ' ');
+      let key = (r.name || '').toLowerCase().trim().replace(/[-_]/g, ' ');
+      // Merge "Super Admin" and "Admin" into single "admin"
+      if (key === 'super admin' || key === 'superadmin' || key === 'admin') {
+        key = 'admin';
+      }
+
       if (!roleMap[key]) {
-        roleMap[key] = r;
+        roleMap[key] = {
+          ...r,
+          // If it was super admin or admin, standardize display title to "Admin"
+          name: key === 'admin' ? 'Admin' : r.name
+        };
       } else {
-        // If duplicate exists, keep the one with higher users_count
-        if ((r.users_count || 0) > (roleMap[key].users_count || 0)) {
-          roleMap[key] = r;
+        // If duplicate exists, accumulate users_count or keep the one with higher count
+        const prevUsers = roleMap[key].users_count || 0;
+        const currentUsers = r.users_count || 0;
+        if (currentUsers > prevUsers) {
+          roleMap[key] = {
+            ...r,
+            name: key === 'admin' ? 'Admin' : r.name,
+            users_count: prevUsers + currentUsers
+          };
+        } else {
+          roleMap[key].users_count = prevUsers + currentUsers;
         }
       }
     }
