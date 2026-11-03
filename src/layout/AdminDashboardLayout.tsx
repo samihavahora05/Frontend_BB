@@ -646,7 +646,7 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
                     </div>
                     <div className="flex items-center gap-2">
                       {badges[category.title] > 0 && (
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${hasActiveChild ? 'bg-[#0d1635] text-[#C9A227]' : 'bg-red-500 text-white'}`}>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-red-500 text-white shadow-xs">
                           {badges[category.title]}
                         </span>
                       )}

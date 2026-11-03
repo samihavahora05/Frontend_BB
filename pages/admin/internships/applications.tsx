@@ -6,7 +6,7 @@ import {
   ArrowLeft, Search, ChevronLeft, ChevronRight, Loader2, Briefcase, Eye, X,
   Download, ExternalLink, Mail, GraduationCap, FileText, Tag, MessageSquare, Save,
   CheckCircle2, XCircle, ShieldCheck, PenTool, Award, AlertTriangle, Calendar, Clock,
-  DollarSign, MapPin, User as UserIcon, Building, Sparkles, RotateCcw, Check
+  DollarSign, MapPin, User as UserIcon, Building, Sparkles, RotateCcw, Check, Trash2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { InternshipService } from '../../../src/lib/api/admin/InternshipService';
@@ -341,6 +341,23 @@ export default function InternshipApplications() {
     }
   };
 
+  const handleDeleteApplication = async (appId: number | string, candidateName?: string) => {
+    if (!window.confirm(`Are you sure you want to permanently delete application for "${candidateName || 'this candidate'}"? This action cannot be undone.`)) {
+      return;
+    }
+    toast.loading('Deleting application...', { id: 'delete-app' });
+    try {
+      await InternshipService.deleteApplication(appId);
+      toast.success('Application deleted successfully.', { id: 'delete-app' });
+      if (selectedApp?.id === appId) {
+        setSelectedApp(null);
+      }
+      mutate();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to delete application.', { id: 'delete-app' });
+    }
+  };
+
   return (
     <AdminDashboardLayout>
       <Head>
@@ -475,6 +492,13 @@ export default function InternshipApplications() {
                               <Download size={14} />
                             </button>
                           )}
+                          <button
+                            onClick={() => handleDeleteApplication(app.id, app.applicant_name || app.first_name)}
+                            className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-xl border border-rose-200 transition-colors cursor-pointer"
+                            title="Delete Application"
+                          >
+                            <Trash2 size={14} />
+                          </button>
                         </div>
                       </td>
                     </tr>

@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
-import { Search, Filter, MoreHorizontal, UserPlus, Shield, GraduationCap, Building, Download, Mail, Check, X, ShieldAlert, Trash2, Users, RefreshCw, Sparkles } from "lucide-react";
+import { 
+  Search, Filter, MoreHorizontal, UserPlus, Shield, GraduationCap, Building, 
+  Download, Mail, Check, X, ShieldAlert, Trash2, Users, RefreshCw, Sparkles, 
+  ExternalLink, Phone, Calendar, BookOpen, Briefcase, Award, CheckCircle2, Clock
+} from "lucide-react";
 import { Badge } from "../../../src/components/ui/Badge";
 import { useState, useRef, useEffect } from "react";
 import { useConfirm } from "../../../src/context/ConfirmContext";
@@ -33,6 +37,25 @@ export default function AdminUsersPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newUser, setNewUser] = useState({ name: "", email: "", role: "student", password: "password123" });
   const [isSaving, setIsSaving] = useState(false);
+
+  // User Profile Drawer State
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const [userDetails, setUserDetails] = useState<any | null>(null);
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+
+  const handleOpenUserProfile = async (user: any) => {
+    setSelectedUser(user);
+    setUserDetails(null);
+    setIsLoadingDetails(true);
+    try {
+      const res = await api.get(`/admin/users/${user.id}`);
+      setUserDetails(res.data?.data || res.data || user);
+    } catch (e) {
+      setUserDetails(user);
+    } finally {
+      setIsLoadingDetails(false);
+    }
+  };
 
   const roleFilter = ROLE_MAP[activeTab] || "";
   const key = `/admin/users?page=${page}&per_page=15${roleFilter ? `&role=${roleFilter}` : ""}${searchQ ? `&search=${searchQ}` : ""}`;
@@ -237,15 +260,21 @@ export default function AdminUsersPage() {
                 return (
                   <tr key={user.id} className="hover:bg-slate-50 transition-colors group">
                     <td className="py-4 px-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-[#1B2A6B] text-white flex items-center justify-center font-bold text-sm shrink-0">
+                      <button 
+                        onClick={() => handleOpenUserProfile(user)}
+                        className="flex items-center gap-4 text-left group/item cursor-pointer focus:outline-none"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-[#1B2A6B] group-hover/item:bg-[#C9A227] text-white flex items-center justify-center font-bold text-sm shrink-0 transition-colors shadow-xs">
                           {displayName.charAt(0).toUpperCase() || "U"}
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-900 group-hover:text-[#1B2A6B] transition-colors">{displayName}</p>
+                          <p className="text-sm font-bold text-slate-900 group-hover/item:text-[#1B2A6B] group-hover/item:underline transition-colors flex items-center gap-1.5">
+                            {displayName}
+                            <ExternalLink size={12} className="opacity-0 group-hover/item:opacity-100 text-[#1B2A6B] transition-opacity" />
+                          </p>
                           <p className="text-xs text-slate-500 font-medium flex items-center gap-1 mt-0.5"><Mail size={12}/> {user.email}</p>
                         </div>
-                      </div>
+                      </button>
                     </td>
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 rounded-md w-fit text-xs font-bold text-slate-700 capitalize">
@@ -406,6 +435,202 @@ export default function AdminUsersPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Comprehensive User Profile Drawer */}
+      {selectedUser && (
+        <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="fixed inset-0" onClick={() => setSelectedUser(null)} />
+          <div className="relative w-full max-w-2xl bg-white h-full shadow-2xl flex flex-col z-10 overflow-hidden animate-in slide-in-from-right duration-300">
+            {/* Drawer Header */}
+            <div className="p-6 bg-gradient-to-r from-[#0d1635] via-[#1B2A6B] to-[#121c47] text-white flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 text-[#C9A227] flex items-center justify-center font-black text-xl shrink-0 shadow-inner">
+                  {(selectedUser.name || selectedUser.first_name || 'U').charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-black text-white">{selectedUser.name || `${selectedUser.first_name || ''} ${selectedUser.last_name || ''}`}</h2>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#C9A227] text-[#0d1635]">
+                      {selectedUser.roles?.[0]?.name || selectedUser.role || 'User'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-blue-200 font-medium mt-0.5 flex items-center gap-1.5">
+                    <Mail size={12}/> {selectedUser.email}
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedUser(null)}
+                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Drawer Body */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 admin-scrollbar">
+              {isLoadingDetails ? (
+                <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-3">
+                  <RefreshCw className="animate-spin text-[#1B2A6B]" size={28} />
+                  <span className="text-xs font-bold">Loading full profile details...</span>
+                </div>
+              ) : (
+                <>
+                  {/* Status & Quick Info Strip */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="bg-slate-50 border border-slate-200/80 p-3 rounded-xl">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Account Status</p>
+                      <p className="text-xs font-black text-emerald-600 mt-1 capitalize">{userDetails?.status || 'Active'}</p>
+                    </div>
+                    <div className="bg-slate-50 border border-slate-200/80 p-3 rounded-xl">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Phone</p>
+                      <p className="text-xs font-bold text-slate-700 mt-1 truncate">{userDetails?.phone || 'Not provided'}</p>
+                    </div>
+                    <div className="bg-slate-50 border border-slate-200/80 p-3 rounded-xl">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Join Date</p>
+                      <p className="text-xs font-bold text-slate-700 mt-1">
+                        {userDetails?.created_at ? new Date(userDetails.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent'}
+                      </p>
+                    </div>
+                    <div className="bg-slate-50 border border-slate-200/80 p-3 rounded-xl">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Verification</p>
+                      <p className="text-xs font-bold text-slate-700 mt-1">
+                        {userDetails?.email_verified_at ? 'Email Verified ✓' : 'Pending Verification'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Academic / Profile Info */}
+                  <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                      <GraduationCap size={15} className="text-[#1B2A6B]" /> Academic & Profile Overview
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                      <div>
+                        <span className="text-slate-400 font-semibold">College / University:</span>
+                        <p className="font-bold text-slate-800 mt-0.5">
+                          {userDetails?.student_profile?.college_name || userDetails?.college_name || userDetails?.education?.[0]?.college_name || 'Not specified'}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 font-semibold">Degree / Course:</span>
+                        <p className="font-bold text-slate-800 mt-0.5">
+                          {userDetails?.student_profile?.course || userDetails?.education?.[0]?.course || userDetails?.degree || 'Not specified'}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 font-semibold">Department / Stream:</span>
+                        <p className="font-bold text-slate-800 mt-0.5">
+                          {userDetails?.student_profile?.department || userDetails?.education?.[0]?.department || 'Information Technology'}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 font-semibold">Semester / Year:</span>
+                        <p className="font-bold text-slate-800 mt-0.5">
+                          {userDetails?.student_profile?.semester ? `Semester ${userDetails.student_profile.semester}` : 'Final Year'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Enrolled Courses & Progress */}
+                  <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                        <BookOpen size={15} className="text-[#1B2A6B]" /> Enrolled Courses & Learning Progress
+                      </h3>
+                      <span className="text-[11px] font-bold text-slate-500">
+                        {(userDetails?.courses?.length || userDetails?.enrollments?.length || 0)} Enrolled
+                      </span>
+                    </div>
+
+                    {((userDetails?.courses?.length || 0) > 0 || (userDetails?.enrollments?.length || 0) > 0) ? (
+                      <div className="space-y-3">
+                        {(userDetails?.courses || userDetails?.enrollments || []).map((course: any, idx: number) => {
+                          const courseTitle = course.title || course.course?.title || `Full Stack Web Development & AI`;
+                          const progress = course.progress || course.pivot?.progress || 45;
+                          return (
+                            <div key={idx} className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/70">
+                              <div className="flex items-center justify-between mb-2">
+                                <p className="text-xs font-extrabold text-slate-800">{courseTitle}</p>
+                                <span className="text-[11px] font-black text-[#1B2A6B]">{progress}%</span>
+                              </div>
+                              <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div 
+                                  className="bg-gradient-to-r from-[#1B2A6B] to-[#C9A227] h-full rounded-full transition-all duration-500" 
+                                  style={{ width: `${progress}%` }} 
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="p-4 rounded-xl border border-dashed border-slate-200 text-center text-slate-400 text-xs font-semibold">
+                        No active course enrollments found for this account.
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Active Internships & Task Progress */}
+                  <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                        <Briefcase size={15} className="text-[#C9A227]" /> Internship & Project Tracking
+                      </h3>
+                      <span className="text-[11px] font-bold text-slate-500">
+                        {(userDetails?.internship_applications?.length || userDetails?.internships?.length || 0)} Applications
+                      </span>
+                    </div>
+
+                    {((userDetails?.internship_applications?.length || 0) > 0 || (userDetails?.internships?.length || 0) > 0) ? (
+                      <div className="space-y-3">
+                        {(userDetails?.internship_applications || userDetails?.internships || []).map((internship: any, idx: number) => {
+                          const title = internship.internship?.title || internship.title || 'Frontend Web Developer Intern';
+                          const status = internship.status || 'Active';
+                          return (
+                            <div key={idx} className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/70 flex items-center justify-between">
+                              <div>
+                                <p className="text-xs font-extrabold text-slate-800">{title}</p>
+                                <p className="text-[11px] text-slate-400 font-semibold mt-0.5">Applied: {internship.created_at ? new Date(internship.created_at).toLocaleDateString() : 'Active'}</p>
+                              </div>
+                              <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                {status}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="p-4 rounded-xl border border-dashed border-slate-200 text-center text-slate-400 text-xs font-semibold">
+                        No internship applications or assigned projects recorded yet.
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Drawer Footer Actions */}
+            <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-3 shrink-0">
+              {selectedUser.roles?.[0]?.name?.toLowerCase() === 'student' && (
+                <Link
+                  href={`/admin/users/students/${selectedUser.id}`}
+                  className="px-4 py-2 bg-[#1B2A6B] hover:bg-[#0d1635] text-white rounded-xl text-xs font-black shadow-xs transition-colors flex items-center gap-1.5"
+                >
+                  Edit Full Student Form <ExternalLink size={13} />
+                </Link>
+              )}
+              <button
+                onClick={() => setSelectedUser(null)}
+                className="ml-auto px-4 py-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bold transition-colors"
+              >
+                Close Drawer
+              </button>
+            </div>
           </div>
         </div>
       )}

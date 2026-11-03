@@ -254,6 +254,11 @@ export const InternshipService = {
     return res.data;
   },
 
+  deleteApplication: async (id: number | string) => {
+    const res = await api.delete(`/admin/internships/applications/${id}`);
+    return res.data;
+  },
+
   downloadAppointmentLetter: async (id: number | string) => {
     try {
       const response = await api.get(`/admin/internships/applications/${id}/appointment-letter?t=${Date.now()}`, {
