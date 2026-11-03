@@ -109,6 +109,7 @@ export default function LoginPage() {
         intern:      '/intern/dashboard',
         'job-seeker':'/jobseeker/dashboard',
         jobseeker:   '/jobseeker/dashboard',
+        freelancer:  '/freelancer/dashboard',
       };
       
       const { redirect, returnUrl } = router.query;
@@ -344,6 +345,7 @@ export default function LoginPage() {
             <p className="text-[10px] font-medium text-slate-400">
               <Link href="/signup" className="text-[#1B2A6B] font-bold hover:underline mr-1">All Roles:</Link>
               <Link href="/signup/intern" className="hover:text-[#1B2A6B] hover:underline mx-1">Intern</Link>|
+              <Link href="/signup/freelancer" className="hover:text-[#1B2A6B] hover:underline mx-1 font-semibold text-[#1B2A6B]">Freelancer</Link>|
               <Link href="/signup/jobseeker" className="hover:text-[#1B2A6B] hover:underline mx-1">Job Seeker</Link>|
               <Link href="/signup/company" className="hover:text-[#1B2A6B] hover:underline mx-1">Company</Link>|
               <Link href="/signup/college" className="hover:text-[#1B2A6B] hover:underline mx-1">College</Link>|

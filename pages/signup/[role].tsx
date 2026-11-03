@@ -82,6 +82,15 @@ const ROLE_CONFIG: Record<string, {
     seoDescription: "Join BlueBoxx as an industry expert or mentor. Conduct 1:1 career consultations, lead specialized tech bootcamps, and guide learners.",
     seoKeywords: "expert registration, become an instructor, tech mentor signup, teach programming, career counselor onboarding",
   },
+  freelancer: { 
+    title: "Freelancer", 
+    nameLabel: "Full Name", 
+    namePlaceholder: "e.g. Rahul Sharma", 
+    icon: User,
+    seoTitle: "Freelancer Registration | Work on Client Gigs & Projects | BlueBoxx",
+    seoDescription: "Register as a verified freelance developer, designer, or AI engineer on BlueBoxx. Pick client gigs, deliver milestones, and earn fast payouts.",
+    seoKeywords: "freelancer registration, freelance developer signup, tech gigs vadodara, remote developer projects, hire freelancers",
+  },
 };
 
 export default function RoleSignupPage() {

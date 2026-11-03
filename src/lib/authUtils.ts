@@ -1,4 +1,4 @@
-﻿import { UserRole } from "../context/AuthContext";
+import { UserRole } from "../context/AuthContext";
 
 export const getActiveRoleFromUrl = (path: string): UserRole | 'public' | 'auth' => {
   if (path.startsWith('/admin') || path.startsWith('/super_admin')) return 'admin';
@@ -8,6 +8,7 @@ export const getActiveRoleFromUrl = (path: string): UserRole | 'public' | 'auth'
   if (path.startsWith('/college') && !path.startsWith('/colleges')) return 'college';
   if (path.startsWith('/intern') && !path.startsWith('/internships')) return 'intern';
   if (path.startsWith('/jobseeker')) return 'job-seeker';
+  if (path.startsWith('/freelancer') && !path.startsWith('/freelancers')) return 'freelancer';
   
   if (path.startsWith('/checkout') || path.startsWith('/cart')) return 'student';
   

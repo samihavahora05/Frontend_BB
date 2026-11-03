@@ -4,7 +4,7 @@ import api from "../lib/axios";
 import { getActiveRoleFromUrl, getActiveToken, saveSession, clearSession, migrateLegacyToken, getSessions } from "../lib/authUtils";
 import { useStore } from "../store/useStore";
 
-export type UserRole = "student" | "expert" | "company" | "admin" | "super_admin" | "college" | "intern" | "job-seeker" | null;
+export type UserRole = "student" | "expert" | "company" | "admin" | "super_admin" | "college" | "intern" | "job-seeker" | "freelancer" | null;
 
 export interface User {
   id?: number | string;

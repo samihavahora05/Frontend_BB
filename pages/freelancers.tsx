@@ -212,7 +212,7 @@ export default function FreelancersPage() {
             </p>
 
             {/* Quick Stat Pill */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-slate-300">
+            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-slate-300 mb-8">
               <div className="flex items-center gap-2">
                 <ShieldCheck size={18} className="text-[#F2C94C]" /> 100% Vetted Portfolios
               </div>
@@ -222,6 +222,16 @@ export default function FreelancersPage() {
               <div className="flex items-center gap-2">
                 <Award size={18} className="text-[#F2C94C]" /> Guaranteed Quality Deliverables
               </div>
+            </div>
+
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link 
+                href="/signup/freelancer"
+                className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#C9A227] to-[#F2C94C] text-[#0d1635] font-black text-sm shadow-lg hover:shadow-[#C9A227]/30 hover:scale-105 transition-all inline-flex items-center gap-2"
+              >
+                <Sparkles size={16} /> Join as a Freelancer
+              </Link>
             </div>
           </motion.div>
         </div>
