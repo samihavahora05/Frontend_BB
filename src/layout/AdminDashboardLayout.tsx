@@ -695,12 +695,11 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
 
                         if (hasQueryParams) {
                           isActive = router.asPath === link.href;
-                          if (!isActive && router.asPath.split("?")[0].replace(/\/$/, "") === linkPath && linkIndex === 0) {
-                            const anyExactMatch = category.links.some(l => l.href.includes("?") && router.asPath === l.href);
-                            if (!anyExactMatch) isActive = true;
-                          }
                         } else {
-                          if (normalizedCurrent === linkPath) {
+                          // If current page has query params (e.g. ?role=intern), do not highlight generic base path links
+                          if (router.asPath.includes("?")) {
+                            isActive = false;
+                          } else if (normalizedCurrent === linkPath) {
                             isActive = true;
                           } else if (normalizedCurrent.startsWith(linkPath + "/")) {
                             const hasCloserMatch = category.links.some(l => {
