@@ -27,6 +27,7 @@ const ICONS: Record<string, any> = {
   "Super Admin": Shield, "Admin": ShieldAlert, "Employee": Users,
   "Student": GraduationCap, "Expert": UserCheck, "Company": Building2,
   "College": Building, "Intern": UserCog, "Job Seeker": Briefcase,
+  "Jobseeker": Briefcase, "Freelancer": Users,
   "Mentor": MonitorPlay, "Support": Headset, "Content Manager": FileText,
   "HR": Users, "Finance": Banknote, "Marketing": Megaphone,
   "default": HelpCircle
@@ -66,19 +67,40 @@ export default function AdminRolesPage() {
 
   // Update selected role when data changes
   useEffect(() => {
-    if (roles.length > 0 && !selectedRole) {
-      setSelectedRole(roles[0]);
-    } else if (roles.length > 0 && selectedRole) {
-      const updated = roles.find((r: any) => r.id === selectedRole.id);
+    if (cleanedRoles.length > 0 && !selectedRole) {
+      setSelectedRole(cleanedRoles[0]);
+    } else if (cleanedRoles.length > 0 && selectedRole) {
+      const updated = cleanedRoles.find((r: any) => r.id === selectedRole.id);
       if (updated) setSelectedRole(updated);
+      else setSelectedRole(cleanedRoles[0]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roles]);
+  }, [cleanedRoles]);
 
   const { data: auditLogsData } = UserManagerService.useRoleAuditLogs(activeTab === 'Audit' ? selectedRole?.id : undefined);
   const auditLogs = auditLogsData || [];
 
-  const filteredRoles = roles.filter((r: any) => r.name.toLowerCase().includes(searchRole.toLowerCase()));
+  // Clean roles: Remove duplicates (keep the one with users if duplicate exists, or first one) and filter
+  const cleanedRoles = React.useMemo(() => {
+    if (!roles || !Array.isArray(roles)) return [];
+    
+    // Group by normalized name
+    const roleMap: Record<string, any> = {};
+    for (const r of roles) {
+      const key = (r.name || '').toLowerCase().trim().replace(/[-_]/g, ' ');
+      if (!roleMap[key]) {
+        roleMap[key] = r;
+      } else {
+        // If duplicate exists, keep the one with higher users_count
+        if ((r.users_count || 0) > (roleMap[key].users_count || 0)) {
+          roleMap[key] = r;
+        }
+      }
+    }
+    return Object.values(roleMap);
+  }, [roles]);
+
+  const filteredRoles = cleanedRoles.filter((r: any) => r.name.toLowerCase().includes(searchRole.toLowerCase()));
 
   // Map permissions from array to nested object for UI
   const getMappedPermissions = (role: any) => {
@@ -333,7 +355,7 @@ export default function AdminRolesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0"><Shield size={24}/></div>
-          <div><p className="text-xs font-black text-gray-400 uppercase tracking-widest">Total Roles</p><h2 className="text-2xl font-black text-gray-800">{roles.length}</h2></div>
+          <div><p className="text-xs font-black text-gray-400 uppercase tracking-widest">Total Roles</p><h2 className="text-2xl font-black text-gray-800">{cleanedRoles.length}</h2></div>
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0"><CheckCircle2 size={24}/></div>
