@@ -460,22 +460,36 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
 
   // Auto-expand the active section group
   useEffect(() => {
-    if (!router.isReady) return;
+    const fullPath = router.asPath;
     const currentPath = router.asPath.split("?")[0];
     let activeCategory = "";
 
     const dynamicSidebar = getSidebarCategories();
-    dynamicSidebar.forEach(category => {
+    // 1st pass: Look for exact match with query parameters (e.g. /admin/users?role=freelancer)
+    for (const category of dynamicSidebar) {
       if (category.links) {
-        const hasActive = category.links.some(link => {
-          const linkPath = link.href.split("?")[0];
-          return currentPath === linkPath || currentPath.startsWith(linkPath + "/");
-        });
-        if (hasActive) {
+        const exactMatch = category.links.some(link => link.href === fullPath);
+        if (exactMatch) {
           activeCategory = category.title;
+          break;
         }
       }
-    });
+    }
+
+    // 2nd pass: Fallback to pathname matching if no exact query match
+    if (!activeCategory) {
+      dynamicSidebar.forEach(category => {
+        if (category.links) {
+          const hasActive = category.links.some(link => {
+            const linkPath = link.href.split("?")[0];
+            return currentPath === linkPath || currentPath.startsWith(linkPath + "/");
+          });
+          if (hasActive) {
+            activeCategory = category.title;
+          }
+        }
+      });
+    }
 
     if (activeCategory) {
       setExpandedGroups(prev => {
@@ -632,8 +646,16 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
               }
 
               const isExpanded = !!expandedGroups[category.title];
+              const fullPath = router.asPath;
               const hasActiveChild = category.links?.some(
                 (link) => {
+                  if (link.href.includes("?")) {
+                    return fullPath === link.href;
+                  }
+                  // If current path has query params but link does not, don't blindly match base path if another link matches fullPath
+                  if (fullPath.includes("?")) {
+                    return false;
+                  }
                   const linkPath = link.href.split("?")[0];
                   return currentUrlPath === linkPath || currentUrlPath.startsWith(`${linkPath}/`);
                 }
