@@ -65,21 +65,6 @@ export default function AdminRolesPage() {
 
   const roles = rolesData || [];
 
-  // Update selected role when data changes
-  useEffect(() => {
-    if (cleanedRoles.length > 0 && !selectedRole) {
-      setSelectedRole(cleanedRoles[0]);
-    } else if (cleanedRoles.length > 0 && selectedRole) {
-      const updated = cleanedRoles.find((r: any) => r.id === selectedRole.id);
-      if (updated) setSelectedRole(updated);
-      else setSelectedRole(cleanedRoles[0]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cleanedRoles]);
-
-  const { data: auditLogsData } = UserManagerService.useRoleAuditLogs(activeTab === 'Audit' ? selectedRole?.id : undefined);
-  const auditLogs = auditLogsData || [];
-
   // Clean roles: Remove duplicates (keep the one with users if duplicate exists, or first one) and filter
   const cleanedRoles = React.useMemo(() => {
     if (!roles || !Array.isArray(roles)) return [];
@@ -99,6 +84,21 @@ export default function AdminRolesPage() {
     }
     return Object.values(roleMap);
   }, [roles]);
+
+  // Update selected role when data changes
+  useEffect(() => {
+    if (cleanedRoles.length > 0 && !selectedRole) {
+      setSelectedRole(cleanedRoles[0]);
+    } else if (cleanedRoles.length > 0 && selectedRole) {
+      const updated = cleanedRoles.find((r: any) => r.id === selectedRole.id);
+      if (updated) setSelectedRole(updated);
+      else setSelectedRole(cleanedRoles[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cleanedRoles]);
+
+  const { data: auditLogsData } = UserManagerService.useRoleAuditLogs(activeTab === 'Audit' ? selectedRole?.id : undefined);
+  const auditLogs = auditLogsData || [];
 
   const filteredRoles = cleanedRoles.filter((r: any) => r.name.toLowerCase().includes(searchRole.toLowerCase()));
 
