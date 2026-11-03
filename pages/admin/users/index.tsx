@@ -12,14 +12,17 @@ import toast from "react-hot-toast";
 import useSWR from "swr";
 import api from "../../../src/lib/axios";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 const fetcher = (url: string) => api.get(url).then(r => r.data);
 
-const ROLE_TABS = ["All Users", "Students", "Experts", "Companies", "Colleges", "Admins"];
+const ROLE_TABS = ["All Users", "Students", "Interns", "Freelancers", "Experts", "Companies", "Colleges", "Admins"];
 
 const ROLE_MAP: Record<string, string> = {
   "All Users": "",
   "Students": "student",
+  "Interns": "intern",
+  "Freelancers": "freelancer",
   "Experts": "expert",
   "Companies": "company",
   "Colleges": "college",
@@ -27,7 +30,16 @@ const ROLE_MAP: Record<string, string> = {
 };
 
 export default function AdminUsersPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("All Users");
+
+  useEffect(() => {
+    if (router.query.role) {
+      const qRole = String(router.query.role).toLowerCase();
+      const matched = ROLE_TABS.find(t => ROLE_MAP[t] === qRole);
+      if (matched) setActiveTab(matched);
+    }
+  }, [router.query.role]);
   const [searchQ, setSearchQ] = useState("");
   const [page, setPage] = useState(1);
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
@@ -77,6 +89,8 @@ export default function AdminUsersPage() {
       case "college": return <GraduationCap size={12} />;
       case "expert": return <Shield size={12} />;
       case "student": return <GraduationCap size={12} />;
+      case "intern": return <Briefcase size={12} />;
+      case "freelancer": return <Sparkles size={12} />;
       default: return <Users size={12} />;
     }
   };

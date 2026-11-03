@@ -63,6 +63,7 @@ const getSidebarCategories = () => {
       icon: ClipboardList,
       links: [
         { name: "List Internships", href: "/admin/internships", icon: ClipboardList },
+        { name: "All Interns", href: "/admin/users?role=intern", icon: Users },
         { name: "Internship Tasks", href: "/admin/internships/tasks", icon: CheckSquare },
         { name: "Applications & Approvals", href: "/admin/internships/applications", icon: CheckCircle2 },
         { name: "College Drives", href: "/admin/internship-drives", icon: BookOpen },
@@ -94,6 +95,13 @@ const getSidebarCategories = () => {
       links: [
         { name: "All Experts", href: "/admin/instructors", icon: Book },
         { name: "Mentor Bookings", href: "/admin/mentor-bookings", icon: Users },
+      ]
+    },
+    {
+      title: "Freelancers",
+      icon: Sparkles,
+      links: [
+        { name: "Freelancers List", href: "/admin/users?role=freelancer", icon: Users },
       ]
     },
     {
