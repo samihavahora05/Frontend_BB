@@ -1,5 +1,6 @@
 import { getImageUrl } from "../lib/imageUtils";
 import React, { useState, useEffect } from "react";
+import useSWR from "swr";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuth } from "../context/AuthContext";
@@ -283,7 +284,30 @@ export const AdminDashboardLayout = ({ children }: { children: React.ReactNode }
 
   // Real-Time Notifications & Badges
   const { notifications, unreadCount, markAllRead, markAsRead } = NotificationService.useNotifications(isAuthenticated);
-  const { badges } = NotificationService.useBadges(isAuthenticated);
+  const { badges: rawBadges } = NotificationService.useBadges(isAuthenticated);
+
+  // Fetch pending account approvals count
+  const { data: pendingApprovalsRes } = useSWR(
+    isAuthenticated ? '/admin/approvals' : null,
+    async (url) => {
+      const res = await api.get(url);
+      const list = res.data?.data?.data || res.data?.data || [];
+      return Array.isArray(list) ? list.length : 0;
+    },
+    { refreshInterval: isAuthenticated ? 30000 : 0, revalidateOnFocus: true }
+  );
+  const pendingApprovalsCount = typeof pendingApprovalsRes === 'number' ? pendingApprovalsRes : 0;
+
+  // Merge pending approvals into badges
+  const badges = React.useMemo(() => {
+    const b = { ...(rawBadges || {}) };
+    const currentApprovalsBadge = b['Account Approvals'] || 0;
+    const finalApprovals = Math.max(currentApprovalsBadge, pendingApprovalsCount);
+    
+    b['Account Approvals'] = finalApprovals;
+    b['User Manager'] = (b['User Manager'] || 0) + (finalApprovals > currentApprovalsBadge ? (finalApprovals - currentApprovalsBadge) : 0);
+    return b;
+  }, [rawBadges, pendingApprovalsCount]);
 
   // Real-Time Messages — only poll when authenticated
   const { data: messagesData } = MessageService.useUnreadSummary(isAuthenticated);
