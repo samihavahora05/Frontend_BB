@@ -890,7 +890,7 @@ if (is_dir('c:/Users/Lenovo/Documents/Downloads/backend_BB_fixed_v5/public')) {
     file_put_contents('c:/Users/Lenovo/Documents/Downloads/backend_BB_fixed_v5/public/100_MCQ_Question_Bank.xls', $xml);
 }
 
-echo "Successfully generated 100 MCQs in CSV and Excel formats!\n";
+echo "Successfully generated 50 MCQs in CSV and Excel formats!\n";
 echo "Files:\n";
 echo "1. {$csvPath}\n";
 echo "2. {$xlsPath}\n";

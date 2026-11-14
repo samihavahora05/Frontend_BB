@@ -62,7 +62,7 @@ export default function AdminAssessmentsPage() {
           <div>
             <h1 className="text-2xl font-black text-[#0d1635] flex items-center gap-2">
               <CheckSquare className="text-[#1B2A6B]" size={26} />
-              Intern 100 MCQ Assessments
+              Intern 50 MCQ Assessments
             </h1>
             <p className="text-xs text-slate-500 font-medium">Monitor intern test scores, completion rates, and answer key performance.</p>
           </div>
@@ -131,7 +131,7 @@ export default function AdminAssessmentsPage() {
                           <p className="font-bold text-[#0d1635] text-sm">{fullName}</p>
                           <p className="text-xs text-slate-400">{u.email}</p>
                         </td>
-                        <td className="px-6 py-4 font-semibold text-slate-700">100 MCQ Assessment</td>
+                        <td className="px-6 py-4 font-semibold text-slate-700">50 MCQ Assessment</td>
                         <td className="px-6 py-4 font-black text-[#0d1635]">
                           {att.status === 'completed' ? `${att.score} / 100` : '-'}
                         </td>

@@ -87,12 +87,12 @@ export default function TakeAssessmentPage() {
       setQuestions(BASELINE_100_QUESTIONS);
       setAssessment({
         id: 1,
-        title: "100 MCQ Internship Assessment",
+        title: "50 MCQ Internship Assessment",
         total_questions: 100,
         total_marks: 100,
         duration_minutes: 60,
       });
-      toast.error(err.response?.data?.message || "Connected with 100 MCQ baseline suite.");
+      toast.error(err.response?.data?.message || "Connected with 50 MCQ baseline suite.");
     } finally {
       setIsLoading(false);
     }
@@ -192,7 +192,7 @@ export default function TakeAssessmentPage() {
       <div className="min-h-screen bg-slate-900 flex items-center justify-center text-white">
         <div className="text-center space-y-4">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm font-bold text-slate-300">Loading 100 MCQ Assessment Room...</p>
+          <p className="text-sm font-bold text-slate-300">Loading 50 MCQ Assessment Room...</p>
         </div>
       </div>
     );
@@ -201,7 +201,7 @@ export default function TakeAssessmentPage() {
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col">
       <Head>
-        <title>{assessment?.title || "100 MCQ Assessment"} | BlueBoxx</title>
+        <title>{assessment?.title || "50 MCQ Assessment"} | BlueBoxx</title>
       </Head>
 
       {/* Top Fixed Header */}
@@ -212,7 +212,7 @@ export default function TakeAssessmentPage() {
           </Link>
           <div className="h-5 w-[1px] bg-white/20" />
           <div>
-            <h1 className="text-base font-black tracking-tight">{assessment?.title || "100 MCQ Internship Assessment"}</h1>
+            <h1 className="text-base font-black tracking-tight">{assessment?.title || "50 MCQ Internship Assessment"}</h1>
             <p className="text-xs text-blue-200">Total: {totalQuestions} Questions • {totalQuestions} Marks</p>
           </div>
         </div>

@@ -226,7 +226,7 @@ export default function AdminQuestionsManagementPage() {
           <div>
             <h1 className="text-2xl font-black text-[#0d1635] flex items-center gap-2">
               <CheckSquare className="text-[#1B2A6B]" size={26} />
-              100 MCQ Database Question Bank
+              50 MCQ Database Question Bank
             </h1>
             <p className="text-xs text-slate-500 font-medium mt-1">
               Authoritative database storage of questions, options, and server-side answer keys.
@@ -517,7 +517,7 @@ export default function AdminQuestionsManagementPage() {
             <div className="flex justify-between items-center pb-4 mb-6 border-b border-slate-100">
               <div>
                 <h3 className="text-xl font-black text-[#0d1635]">Import Questions to Database</h3>
-                <p className="text-xs text-slate-500 font-medium">Upload Excel (.xlsx, .csv, .json) file containing 100 MCQs.</p>
+                <p className="text-xs text-slate-500 font-medium">Upload Excel (.xlsx, .csv, .json) file containing 50 MCQs.</p>
               </div>
               <button onClick={() => setIsImportModalOpen(false)} className="text-slate-400 hover:text-slate-700">
                 <X size={20} />

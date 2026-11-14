@@ -102,7 +102,7 @@ export default function InternAssessmentsPage() {
                       <div>
                         <div className="flex flex-wrap items-center gap-2.5 mb-2">
                           <span className="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold rounded-full">
-                            100 MCQs • 100 Marks
+                            50 MCQs • 50 Marks
                           </span>
                           <span className="px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold rounded-full flex items-center gap-1">
                             <Clock size={12} /> {item.duration_minutes || 120} Minutes
@@ -225,7 +225,7 @@ export default function InternAssessmentsPage() {
                   {history.map((att) => (
                     <tr key={att.id} className="hover:bg-slate-50/80 transition-colors">
                       <td className="py-4 font-mono text-xs font-bold text-slate-500">#{att.id}</td>
-                      <td className="py-4 font-bold text-[#0d1635]">100 MCQ Assessment</td>
+                      <td className="py-4 font-bold text-[#0d1635]">50 MCQ Assessment</td>
                       <td className="py-4 text-xs text-slate-500 font-medium">
                         {att.submitted_at 
                           ? new Date(att.submitted_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })

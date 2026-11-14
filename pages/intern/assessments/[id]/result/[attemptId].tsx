@@ -105,7 +105,7 @@ export default function AssessmentResultPage() {
                 <span>Assessment Completed</span>
               </div>
               <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                100 MCQ Assessment Result
+                50 MCQ Assessment Result
               </h1>
               <p className="text-sm text-blue-100 max-w-md">
                 Detailed performance scorecard across Web Development, Digital Marketing, and Graphic Designing.
