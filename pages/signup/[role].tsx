@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
 import { Button } from "../../src/components/ui/Button";
 import { Mail, Lock, User, ChevronRight, Eye, EyeOff, CheckCircle2, ArrowLeft, ShieldCheck } from "lucide-react";
@@ -93,13 +94,13 @@ const ROLE_CONFIG: Record<string, {
   },
 };
 
-export default function RoleSignupPage() {
+export default function RoleSignupPage({ initialRole }: { initialRole?: string }) {
   const router = useRouter();
   const { login } = useAuth();
   
-  // Extract role from URL
+  // Extract role from URL or static props
   const { role: rawRole } = router.query;
-  const role = typeof rawRole === 'string' ? rawRole.toLowerCase() : '';
+  const role = (typeof rawRole === 'string' ? rawRole : (initialRole || '')).toLowerCase();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -428,3 +429,30 @@ export default function RoleSignupPage() {
     </div>
   );
 }
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const paths = Object.keys(ROLE_CONFIG).map((role) => ({
+    params: { role },
+  }));
+
+  return {
+    paths,
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const role = typeof params?.role === 'string' ? params.role.toLowerCase() : '';
+
+  if (!role || !ROLE_CONFIG[role]) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      initialRole: role,
+    },
+  };
+};

@@ -113,9 +113,19 @@ const DEFAULT_PAGE_SEO: Record<string, { title: string; description: string; key
   },
 };
 
+function normalizePath(rawPath: string): string {
+  if (!rawPath) return "/";
+  const pathOnly = rawPath.split("?")[0].trim();
+  if (!pathOnly || pathOnly === "/") return "/";
+  // Remove trailing slashes (e.g. "/signup/intern/" -> "/signup/intern")
+  const stripped = pathOnly.replace(/\/+$/, "");
+  return stripped || "/";
+}
+
 function generateFallbackTitle(path: string) {
-  if (!path || path === "/") return "BlueBoxx | Leading IT Services & Digital Solutions Company Vadodara";
-  const segments = path.split("?")[0].split("/").filter(Boolean);
+  const normalized = normalizePath(path);
+  if (!normalized || normalized === "/") return "BlueBoxx | Leading IT Services & Digital Solutions Company Vadodara";
+  const segments = normalized.split("/").filter(Boolean);
   const lastSegment = segments[segments.length - 1];
   if (!lastSegment) return "BlueBoxx | Leading IT Services & Digital Solutions Company Vadodara";
   
@@ -125,6 +135,23 @@ function generateFallbackTitle(path: string) {
     .join(" ");
     
   return `${formatted} | BlueBoxx`;
+}
+
+function generateFallbackDescription(path: string) {
+  const normalized = normalizePath(path).toLowerCase();
+  if (normalized.includes("/intern")) {
+    return "Apply for live industry internships at BlueBoxx. Work on real enterprise client projects, earn stipends, and get 1-on-1 expert mentor evaluations.";
+  }
+  if (normalized.includes("/jobseeker") || normalized.includes("/jobs")) {
+    return "Discover exclusive tech job openings, apply in 1-click, and connect with 100+ verified corporate hiring partners on BlueBoxx.";
+  }
+  if (normalized.includes("/company") || normalized.includes("/employer")) {
+    return "Partner with BlueBoxx to hire pre-vetted developer talent, post jobs, and collaborate on corporate enterprise projects.";
+  }
+  if (normalized.includes("/college") || normalized.includes("/university")) {
+    return "Partner your educational institution with BlueBoxx. Organize campus placement drives, live industrial workshops, and expert tech bootcamps.";
+  }
+  return "BlueBoxx offers premium training in Full Stack Development, AI/ML, Data Science, Graphic Design, and Digital Marketing with 100% placement assistance.";
 }
 
 export function SEO({
@@ -139,12 +166,12 @@ export function SEO({
 }: SEOProps) {
   const router = useRouter();
   const canonicalUrl = `https://blueboxx.in${router.asPath}`;
-  const currentPath = router.asPath.split('?')[0];
+  const currentPath = normalizePath(router.asPath);
 
   // Lookup Path Specific Default SEO
   const pathConfig = DEFAULT_PAGE_SEO[currentPath] || {
     title: generateFallbackTitle(currentPath),
-    description: "BlueBoxx offers premium training in Full Stack Development, AI/ML, Data Science, Graphic Design, and Digital Marketing with 100% placement assistance.",
+    description: generateFallbackDescription(currentPath),
     keywords: "BlueBoxx, IT training institute vadodara, digital marketing vadodara",
   };
 
