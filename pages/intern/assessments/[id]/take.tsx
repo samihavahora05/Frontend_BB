@@ -44,35 +44,14 @@ export default function TakeAssessmentPage() {
         // Fetch questions from backend API
         const serverQuestions: AssessmentQuestionItem[] = res.data.questions || [];
 
-        // If backend returns fewer than 100 questions, merge with baseline 100 questions
+        // If backend returns questions, use them; otherwise fallback to baseline 50 questions
         let completeQuestions: AssessmentQuestionItem[] = [];
-        if (serverQuestions.length >= 100) {
+        if (serverQuestions.length >= 50) {
+          completeQuestions = serverQuestions;
+        } else if (serverQuestions.length > 0) {
           completeQuestions = serverQuestions;
         } else {
-          // Map existing server questions by order or ID
-          const serverMapByOrder = new Map<number, AssessmentQuestionItem>();
-          serverQuestions.forEach((q) => {
-            if (q.order) serverMapByOrder.set(q.order, q);
-          });
-
-          completeQuestions = BASELINE_100_QUESTIONS.map((baseQ) => {
-            const serverMatch = serverMapByOrder.get(baseQ.order);
-            if (serverMatch) {
-              return {
-                ...baseQ,
-                id: serverMatch.id,
-                order: serverMatch.order,
-                category: serverMatch.category || baseQ.category,
-                question: serverMatch.question || baseQ.question,
-                option_a: serverMatch.option_a || baseQ.option_a,
-                option_b: serverMatch.option_b || baseQ.option_b,
-                option_c: serverMatch.option_c || baseQ.option_c,
-                option_d: serverMatch.option_d || baseQ.option_d,
-                marks: serverMatch.marks || baseQ.marks,
-              };
-            }
-            return baseQ;
-          });
+          completeQuestions = BASELINE_100_QUESTIONS;
         }
 
         setQuestions(completeQuestions);
@@ -83,14 +62,14 @@ export default function TakeAssessmentPage() {
       }
     } catch (err: any) {
       console.error(err);
-      // Fallback to baseline 100 questions if API network error occurs
+      // Fallback to baseline 50 questions if API network error occurs
       setQuestions(BASELINE_100_QUESTIONS);
       setAssessment({
         id: 1,
         title: "50 MCQ Internship Assessment",
-        total_questions: 100,
-        total_marks: 100,
-        duration_minutes: 60,
+        total_questions: 50,
+        total_marks: 50,
+        duration_minutes: 40,
       });
       toast.error(err.response?.data?.message || "Connected with 50 MCQ baseline suite.");
     } finally {
@@ -161,7 +140,7 @@ export default function TakeAssessmentPage() {
   };
 
   // Safe question calculations
-  const totalQuestions = questions.length > 0 ? questions.length : 100;
+  const totalQuestions = questions.length > 0 ? questions.length : 50;
   const currentQ = questions[currentIndex] || questions[0];
   const answeredCount = useMemo(() => {
     return Object.keys(answers).filter((k) => Boolean(answers[Number(k)])).length;
@@ -173,16 +152,10 @@ export default function TakeAssessmentPage() {
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {
       All: questions.length,
-      "Web Development": 0,
-      "Digital Marketing": 0,
-      "Graphic Designing": 0,
     };
     questions.forEach((q) => {
-      if (counts[q.category] !== undefined) {
-        counts[q.category]++;
-      } else {
-        counts[q.category] = 1;
-      }
+      const cat = q.category || "General";
+      counts[cat] = (counts[cat] || 0) + 1;
     });
     return counts;
   }, [questions]);
@@ -389,12 +362,15 @@ export default function TakeAssessmentPage() {
             </div>
 
             {/* Category Filter Tabs */}
-            <div className="flex flex-wrap gap-1.5 mb-4 pb-3 border-b border-slate-100">
+            <div className="flex flex-wrap gap-1.5 mb-4 pb-3 border-b border-slate-100 max-h-24 overflow-y-auto">
               {[
                 { label: "All", count: categoryCounts["All"] || questions.length },
-                { label: "Web Development", short: "Web Dev", count: categoryCounts["Web Development"] || 40 },
-                { label: "Digital Marketing", short: "Marketing", count: categoryCounts["Digital Marketing"] || 30 },
-                { label: "Graphic Designing", short: "Design", count: categoryCounts["Graphic Designing"] || 30 },
+                ...Object.keys(categoryCounts)
+                  .filter((cat) => cat !== "All")
+                  .map((cat) => ({
+                    label: cat,
+                    count: categoryCounts[cat] || 0,
+                  })),
               ].map((tab) => (
                 <button
                   key={tab.label}
@@ -405,7 +381,7 @@ export default function TakeAssessmentPage() {
                       : "bg-slate-100 hover:bg-slate-200 text-slate-600"
                   }`}
                 >
-                  <span>{tab.short || tab.label}</span>
+                  <span className="truncate max-w-[120px]">{tab.label}</span>
                   <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                     selectedCategory === tab.label ? "bg-white/20 text-white" : "bg-slate-200 text-slate-700"
                   }`}>
@@ -480,7 +456,7 @@ export default function TakeAssessmentPage() {
               <p className="text-sm text-slate-500 mb-6">
                 {remainingCount > 0 
                   ? `You currently have ${remainingCount} unanswered question${remainingCount === 1 ? "" : "s"}. Are you sure you want to submit? Once submitted, your score will be calculated immediately.`
-                  : "You have answered all 100 questions! Are you ready to submit and calculate your final score?"}
+                  : `You have answered all ${totalQuestions} questions! Are you ready to submit and calculate your final score?`}
               </p>
 
               <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 mb-6 space-y-2 text-xs">

@@ -133,7 +133,7 @@ export default function AdminAssessmentsPage() {
                         </td>
                         <td className="px-6 py-4 font-semibold text-slate-700">50 MCQ Assessment</td>
                         <td className="px-6 py-4 font-black text-[#0d1635]">
-                          {att.status === 'completed' ? `${att.score} / 100` : '-'}
+                          {att.status === 'completed' ? `${att.score} / ${att.assessment?.total_marks || 50}` : '-'}
                         </td>
                         <td className="px-6 py-4 font-black">
                           {att.status === 'completed' ? (
@@ -199,7 +199,7 @@ export default function AdminAssessmentsPage() {
             <div className="grid grid-cols-4 gap-3 mb-6">
               <div className="bg-slate-50 p-3 rounded-xl text-center border border-slate-100">
                 <span className="text-[10px] uppercase font-bold text-slate-400">Score</span>
-                <p className="text-xl font-black text-[#0d1635]">{selectedAttempt.attempt?.score}/100</p>
+                <p className="text-xl font-black text-[#0d1635]">{selectedAttempt.attempt?.score}/{selectedAttempt.attempt?.assessment?.total_marks || 50}</p>
               </div>
               <div className="bg-emerald-50 p-3 rounded-xl text-center border border-emerald-100">
                 <span className="text-[10px] uppercase font-bold text-emerald-600">Correct</span>

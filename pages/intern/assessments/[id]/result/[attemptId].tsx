@@ -83,7 +83,7 @@ export default function AssessmentResultPage() {
   return (
     <InternDashboardLayout>
       <Head>
-        <title>Assessment Result | {attempt.score}/100 | BlueBoxx</title>
+        <title>Assessment Result | {attempt.score}/{attempt.assessment?.total_marks || 50} | BlueBoxx</title>
       </Head>
 
       <div className="max-w-5xl mx-auto space-y-8 pb-16">
@@ -108,7 +108,7 @@ export default function AssessmentResultPage() {
                 50 MCQ Assessment Result
               </h1>
               <p className="text-sm text-blue-100 max-w-md">
-                Detailed performance scorecard across Web Development, Digital Marketing, and Graphic Designing.
+                Detailed performance scorecard across Common IT, Programming, Cybersecurity, Design, and Digital Skills.
               </p>
             </div>
 
@@ -116,7 +116,7 @@ export default function AssessmentResultPage() {
             <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 text-center min-w-[220px] shadow-lg">
               <span className="text-xs font-bold uppercase tracking-wider text-blue-200">Your Score</span>
               <div className="text-5xl font-black tracking-tight my-1 text-white">
-                {attempt.score} <span className="text-xl font-bold text-blue-200">/ 100</span>
+                {attempt.score} <span className="text-xl font-bold text-blue-200">/ {attempt.assessment?.total_marks || 50}</span>
               </div>
               <div className="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-black mt-2">
                 {attempt.percentage}% • {isPassed ? "PASSED" : "NEEDS IMPROVEMENT"}

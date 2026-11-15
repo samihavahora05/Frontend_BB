@@ -240,7 +240,7 @@ export default function AdminQuestionsManagementPage() {
             </div>
             <div className="bg-purple-50 border border-purple-100 rounded-2xl px-4 py-2.5 text-center">
               <span className="text-[10px] uppercase font-bold text-purple-600">Total Marks</span>
-              <p className="text-xl font-black text-[#0d1635]">{assessment?.total_marks || 100}</p>
+              <p className="text-xl font-black text-[#0d1635]">{assessment?.total_marks || 50}</p>
             </div>
           </div>
         </div>
@@ -292,7 +292,7 @@ export default function AdminQuestionsManagementPage() {
                 onClick={() => setIsImportModalOpen(true)}
                 className="px-4 py-2 bg-[#1B2A6B] text-white text-xs font-bold rounded-xl"
               >
-                Import 100 Questions File
+                Import Questions File
               </button>
             </div>
           ) : (

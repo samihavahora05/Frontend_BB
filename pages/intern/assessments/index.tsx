@@ -59,7 +59,7 @@ export default function InternAssessmentsPage() {
               Intern Assessment Center
             </h1>
             <p className="text-blue-100 text-sm lg:text-base leading-relaxed">
-              Validate your technical expertise across industry core tracks: Web Development, Digital Marketing, and Graphic Designing. Complete assessments to earn verified performance ratings and accelerate your career.
+              Validate your technical expertise across IT & Digital Skills including Computer Fundamentals, Internet & Networking, Web Development, Cybersecurity, Design, Digital Marketing, and AI. Complete assessments to earn verified performance ratings and accelerate your career.
             </p>
           </div>
         </div>
@@ -109,7 +109,7 @@ export default function InternAssessmentsPage() {
                           </span>
                           {item.best_score !== undefined && item.best_score !== null && (
                             <span className="px-3 py-1 bg-purple-50 text-purple-700 border border-purple-200 text-xs font-bold rounded-full flex items-center gap-1">
-                              <Trophy size={12} /> Best: {item.best_score}/100 ({item.best_percentage}%)
+                              <Trophy size={12} /> Best: {item.best_score}/{item.total_marks || 50} ({item.best_percentage}%)
                             </span>
                           )}
                         </div>
@@ -138,44 +138,29 @@ export default function InternAssessmentsPage() {
                     {/* Category Breakdown Cards */}
                     <div className="pt-6">
                       <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-4">
-                        Assessment Syllabus & Weightage Breakdown
+                        Assessment Syllabus & Weightage Breakdown (50 Questions)
                       </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex items-center justify-between">
-                          <div>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Track 1</span>
-                            <h5 className="text-sm font-bold text-[#0d1635]">Web Development</h5>
-                            <p className="text-xs text-slate-500 font-medium">HTML, CSS, JS, React, REST APIs, SQL</p>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                        {(item.category_breakdown && item.category_breakdown.length > 0 ? item.category_breakdown : [
+                          { category: "Computer Fundamentals", count: 8 },
+                          { category: "Internet & Networking", count: 7 },
+                          { category: "Programming & Web Development", count: 8 },
+                          { category: "Cybersecurity", count: 7 },
+                          { category: "Graphic Designing & UI/UX", count: 7 },
+                          { category: "Digital Marketing", count: 7 },
+                          { category: "AI & Emerging Technologies", count: 6 },
+                        ]).map((cat: any, cIdx: number) => (
+                          <div key={cIdx} className="bg-slate-50 rounded-2xl p-3.5 border border-slate-100 flex items-center justify-between">
+                            <div className="pr-2">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 block">Section {cIdx + 1}</span>
+                              <h5 className="text-xs font-bold text-[#0d1635] line-clamp-1">{cat.category}</h5>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <span className="text-base font-black text-[#0d1635]">{cat.count}</span>
+                              <p className="text-[9px] font-semibold text-slate-400">MCQs</p>
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <span className="text-lg font-black text-[#0d1635]">35</span>
-                            <p className="text-[10px] font-semibold text-slate-400">Questions</p>
-                          </div>
-                        </div>
-
-                        <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex items-center justify-between">
-                          <div>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600">Track 2</span>
-                            <h5 className="text-sm font-bold text-[#0d1635]">Digital Marketing</h5>
-                            <p className="text-xs text-slate-500 font-medium">SEO, PPC, Social Ads, GA4, Funnels</p>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-lg font-black text-[#0d1635]">35</span>
-                            <p className="text-[10px] font-semibold text-slate-400">Questions</p>
-                          </div>
-                        </div>
-
-                        <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex items-center justify-between">
-                          <div>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-pink-600">Track 3</span>
-                            <h5 className="text-sm font-bold text-[#0d1635]">Graphic Designing</h5>
-                            <p className="text-xs text-slate-500 font-medium">Color, Typography, UI/UX, Vector/Raster</p>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-lg font-black text-[#0d1635]">30</span>
-                            <p className="text-[10px] font-semibold text-slate-400">Questions</p>
-                          </div>
-                        </div>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -241,7 +226,7 @@ export default function InternAssessmentsPage() {
                         </span>
                       </td>
                       <td className="py-4 font-bold text-[#0d1635]">
-                        {att.status === 'completed' ? `${att.score} / 100` : '-'}
+                        {att.status === 'completed' ? `${att.score} / ${att.assessment?.total_marks || 50}` : '-'}
                       </td>
                       <td className="py-4 font-black">
                         {att.status === 'completed' ? (
