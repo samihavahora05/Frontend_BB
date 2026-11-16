@@ -53,6 +53,16 @@ export interface AttemptItem {
   percentage: number;
   status: 'in_progress' | 'completed' | 'abandoned';
   category_scores?: Record<string, { total: number; correct: number; wrong: number; unanswered: number; score: number }>;
+  assessment?: {
+    id: number;
+    title: string;
+    total_marks?: number;
+    total_questions?: number;
+  };
+  is_qualified?: boolean;
+  meet_link?: string;
+  interview_scheduled_at?: string;
+  interview_status?: string;
 }
 
 export interface AnswerReviewItem {
