@@ -249,4 +249,9 @@ export const AssessmentService = {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
   },
+
+  async resendInterview(attemptId: number | string, payload?: { meet_link?: string }): Promise<any> {
+    const res = await api.post(`/admin/assessments/results/${attemptId}/resend-interview`, payload || {});
+    return res.data;
+  },
 };

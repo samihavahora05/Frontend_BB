@@ -78,6 +78,28 @@ export default function AdminAssessmentsPage() {
     }
   };
 
+  const handleResendInterview = async (attemptId: number) => {
+    const customLink = prompt("Enter specific Google Meet link (leave blank to auto-generate):");
+    if (customLink === null) return;
+
+    try {
+      setActionLoading(true);
+      const res = await AssessmentService.resendInterview(attemptId, { meet_link: customLink.trim() || undefined });
+      if (res.success) {
+        toast.success(res.message || "Interview link updated and resent via Email & WhatsApp!");
+        handleViewDetail(attemptId);
+        loadResults();
+      } else {
+        toast.error(res.message || "Failed to update interview.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.response?.data?.message || "Failed to resend interview.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handleApproveInternship = async (attemptId: number) => {
     if (!confirm("Are you sure you want to approve this candidate's internship and send the official Offer Letter via email?")) {
       return;
@@ -96,6 +118,28 @@ export default function AdminAssessmentsPage() {
     } catch (err: any) {
       console.error(err);
       toast.error(err?.response?.data?.message || "Approval failed.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleResendInterview = async (attemptId: number) => {
+    const customLink = prompt("Enter specific Google Meet link (leave blank to auto-generate):");
+    if (customLink === null) return;
+
+    try {
+      setActionLoading(true);
+      const res = await AssessmentService.resendInterview(attemptId, { meet_link: customLink.trim() || undefined });
+      if (res.success) {
+        toast.success(res.message || "Interview link updated and resent via Email & WhatsApp!");
+        handleViewDetail(attemptId);
+        loadResults();
+      } else {
+        toast.error(res.message || "Failed to update interview.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.response?.data?.message || "Failed to resend interview.");
     } finally {
       setActionLoading(false);
     }
@@ -362,6 +406,14 @@ export default function AdminAssessmentsPage() {
                 </div>
 
                 <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    onClick={() => handleResendInterview(selectedAttempt.attempt?.id)}
+                    disabled={actionLoading}
+                    className="px-3.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 rounded-xl text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-sm"
+                  >
+                    <Video size={14} /> Resend / Update Meet Link
+                  </button>
+
                   {selectedAttempt.is_signed && (
                     <button
                       onClick={() => handleDownloadAppointment(selectedAttempt.attempt?.id)}
