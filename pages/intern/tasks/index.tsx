@@ -69,6 +69,15 @@ export default function InternTasksPage() {
   const [selectedTask, setSelectedTask] = useState<TaskItem | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [isSelfAnalysisModalOpen, setIsSelfAnalysisModalOpen] = useState(false);
+
+  // Self Analysis form state
+  const [selfAnalysisText, setSelfAnalysisText] = useState("");
+  const [selfAnalysisLoading, setSelfAnalysisLoading] = useState(false);
+  const [analysisTimer, setAnalysisTimer] = useState(300); // 5 minutes = 300 seconds
+
+  // Active Sprint Live Timers (task_id -> remaining seconds)
+  const [taskTimers, setTaskTimers] = useState<Record<number, number>>({});
 
   // Persistent Checklist checked state (task_id -> array of checked indices)
   const [checkedItems, setCheckedItems] = useState<Record<number, number[]>>({});
@@ -135,6 +144,39 @@ export default function InternTasksPage() {
     fetchTasks();
   }, [fetchTasks]);
 
+  // Real-time 25-minute sprint countdown timer for in_progress tasks
+  useEffect(() => {
+    const updateTimers = () => {
+      const newTimers: Record<number, number> = {};
+      tasks.forEach((t) => {
+        if (t.status === "in_progress") {
+          const startTime = t.started_at ? new Date(t.started_at).getTime() : (t.start_date ? new Date(t.start_date).getTime() : null);
+          if (startTime) {
+            const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+            const remaining = Math.max(0, 25 * 60 - elapsedSeconds);
+            newTimers[t.id] = remaining;
+          } else {
+            newTimers[t.id] = 25 * 60;
+          }
+        }
+      });
+      setTaskTimers(newTimers);
+    };
+
+    updateTimers();
+    const interval = setInterval(updateTimers, 1000);
+    return () => clearInterval(interval);
+  }, [tasks]);
+
+  // 5-minute self-analysis countdown timer
+  useEffect(() => {
+    if (!isSelfAnalysisModalOpen) return;
+    const interval = setInterval(() => {
+      setAnalysisTimer((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isSelfAnalysisModalOpen]);
+
   const handleStartTask = async (task: TaskItem) => {
     try {
       const res = await TaskService.startTask(task.id);
@@ -148,7 +190,7 @@ export default function InternTasksPage() {
             >
               <div className="flex items-center gap-2.5 text-xs font-bold">
                 <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
-                <span>🚀 Task started! Status changed to In Progress.</span>
+                <span>🚀 25-Minute Task Sprint Started! Finish within time to avoid progress penalty.</span>
               </div>
               <button
                 onClick={() => toast.dismiss(t.id)}
@@ -248,8 +290,12 @@ export default function InternTasksPage() {
 
       const res = await TaskService.submitTask(selectedTask.id, formData);
       if (res.success) {
-        toast.success("Deliverable submitted for admin review!");
+        toast.success("Task delivered! Now complete your mandatory 5-Minute Self-Analysis.");
         setIsSubmitModalOpen(false);
+        // Automatically open the 5-Minute Self Analysis modal
+        setAnalysisTimer(300);
+        setSelfAnalysisText("");
+        setIsSelfAnalysisModalOpen(true);
         fetchTasks();
       }
     } catch (err: any) {
@@ -257,6 +303,38 @@ export default function InternTasksPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleSaveSelfAnalysis = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedTask) return;
+
+    if (selfAnalysisText.trim().length < 10) {
+      toast.error("Please write a constructive self-analysis of at least 10 characters.");
+      return;
+    }
+
+    try {
+      setSelfAnalysisLoading(true);
+      const res = await TaskService.submitSelfAnalysis(selectedTask.id, {
+        self_analysis: selfAnalysisText.trim(),
+      });
+      if (res.success) {
+        toast.success("Self-analysis saved! Task sprint completed and sent to admin for evaluation.");
+        setIsSelfAnalysisModalOpen(false);
+        fetchTasks();
+      }
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to save self-analysis.");
+    } finally {
+      setSelfAnalysisLoading(false);
+    }
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
   const getPriorityBadge = (priority: string) => {
@@ -788,14 +866,25 @@ export default function InternTasksPage() {
                           </div>
                         </td>
 
-                        {/* Due Date */}
+                        {/* Due Date & 25-Min Sprint Timer */}
                         <td className="px-5 py-4 font-semibold text-slate-600 whitespace-nowrap">
-                          {task.due_date ? (
-                            <span className={task.is_overdue ? "text-rose-600 font-bold" : ""}>
+                          {task.status === "in_progress" ? (
+                            <div className="flex flex-col">
+                              <span className={`inline-flex items-center gap-1 font-mono text-xs font-black ${
+                                (taskTimers[task.id] ?? 1500) <= 300 ? "text-rose-600 animate-pulse" : "text-indigo-600"
+                              }`}>
+                                <Clock size={12} />
+                                {formatTime(taskTimers[task.id] ?? 1500)} left
+                              </span>
+                              <span className="text-[10px] text-slate-400">25m Sprint Limit</span>
+                            </div>
+                          ) : task.due_date ? (
+                            <span className={task.is_overdue || task.is_delayed ? "text-rose-600 font-bold" : ""}>
                               {new Date(task.due_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                              {task.is_delayed && <span className="block text-[9px] text-rose-500 font-bold">Late / Progress Down</span>}
                             </span>
                           ) : (
-                            <span className="text-slate-400 italic text-[11px]">No deadline</span>
+                            <span className="text-slate-400 italic text-[11px]">25m on Start</span>
                           )}
                         </td>
 
@@ -1318,6 +1407,81 @@ export default function InternTasksPage() {
                   Close Record
                 </button>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Mandatory 5-Minute Self Analysis Modal */}
+      <AnimatePresence>
+        {isSelfAnalysisModalOpen && selectedTask && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-3xl max-w-xl w-full shadow-2xl flex flex-col overflow-hidden border border-slate-200"
+            >
+              <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-emerald-800 to-teal-800 text-white">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-emerald-300">
+                    <Sparkles size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-black">5-Minute Self-Analysis</h3>
+                    <p className="text-[11px] text-emerald-200 truncate max-w-sm">Reflect before moving to next task</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 bg-black/20 px-3 py-1.5 rounded-full border border-white/20">
+                  <Clock size={13} className="text-emerald-300" />
+                  <span className="font-mono text-xs font-black text-emerald-300">
+                    {formatTime(analysisTimer)}
+                  </span>
+                </div>
+              </div>
+
+              <form onSubmit={handleSaveSelfAnalysis} className="p-6 space-y-4 text-xs">
+                <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 text-emerald-900 space-y-1">
+                  <span className="font-bold block text-emerald-950">Self-Reflection Guidelines:</span>
+                  <p className="text-emerald-800 text-[11px] leading-relaxed">
+                    1. What core problem did you solve in this 25-minute sprint?<br />
+                    2. What challenges or bugs did you encounter and how did you resolve them?<br />
+                    3. How will you optimize your code or workflow for the next task?
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                    Your Self Analysis Notes *
+                  </label>
+                  <textarea
+                    rows={5}
+                    required
+                    value={selfAnalysisText}
+                    onChange={(e) => setSelfAnalysisText(e.target.value)}
+                    placeholder="Write your honest self-reflection here..."
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-medium text-slate-800 focus:outline-none focus:border-emerald-600 focus:bg-white resize-none shadow-inner"
+                  />
+                  <span className="text-[10px] text-slate-400 font-medium">Minimum 10 characters required</span>
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[11px] text-slate-500 font-medium italic">
+                    Task progress evaluation submitted to Admin
+                  </span>
+                  <button
+                    type="submit"
+                    disabled={selfAnalysisLoading || selfAnalysisText.trim().length < 10}
+                    className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shadow-md ${
+                      selfAnalysisText.trim().length >= 10
+                        ? "bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
+                        : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                    }`}
+                  >
+                    <CheckCircle2 size={14} /> {selfAnalysisLoading ? "Saving..." : "Save Analysis & Proceed"}
+                  </button>
+                </div>
+              </form>
             </motion.div>
           </div>
         )}

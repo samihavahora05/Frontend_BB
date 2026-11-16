@@ -4,7 +4,8 @@ import Head from "next/head";
 import { AdminDashboardLayout } from "../../../src/layout/AdminDashboardLayout";
 import { 
   CheckSquare, Search, Filter, Trophy, CheckCircle2, 
-  XCircle, Clock, Eye, AlertCircle, RefreshCw, X 
+  XCircle, Clock, Eye, AlertCircle, RefreshCw, X, Video, ExternalLink,
+  Download, FileCheck, Check, Send
 } from "lucide-react";
 import { AssessmentService, AttemptItem } from "../../../src/lib/api/AssessmentService";
 import toast from "react-hot-toast";
@@ -21,6 +22,7 @@ export default function AdminAssessmentsPage() {
   const [search, setSearch] = useState("");
   const [selectedAttempt, setSelectedAttempt] = useState<any>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     loadResults();
@@ -60,6 +62,42 @@ export default function AdminAssessmentsPage() {
       toast.error("Failed to load attempt details.");
     } finally {
       setDetailLoading(false);
+    }
+  };
+
+  const handleDownloadAppointment = async (attemptId: number) => {
+    try {
+      setActionLoading(true);
+      await AssessmentService.downloadSignedAppointmentLetter(attemptId);
+      toast.success("Appointment Letter downloaded successfully!");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.response?.data?.message || "Failed to download Appointment Letter PDF.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleApproveInternship = async (attemptId: number) => {
+    if (!confirm("Are you sure you want to approve this candidate's internship and send the official Offer Letter via email?")) {
+      return;
+    }
+    try {
+      setActionLoading(true);
+      const res = await AssessmentService.approveInternship(attemptId);
+      if (res.success) {
+        toast.success(res.message || "Internship approved & Offer Letter mailed!");
+        // Refresh detail
+        handleViewDetail(attemptId);
+        loadResults();
+      } else {
+        toast.error(res.message || "Approval failed.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.response?.data?.message || "Approval failed.");
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -189,6 +227,7 @@ export default function AdminAssessmentsPage() {
                     <th className="px-6 py-3 font-bold">Score</th>
                     <th className="px-6 py-3 font-bold">Result (30+ Pass)</th>
                     <th className="px-6 py-3 font-bold">Status</th>
+                    <th className="px-6 py-3 font-bold">Google Meet Link</th>
                     <th className="px-6 py-3 font-bold">Submitted Date</th>
                     <th className="px-6 py-3 font-bold text-right">Actions</th>
                   </tr>
@@ -230,6 +269,22 @@ export default function AdminAssessmentsPage() {
                           }`}>
                             {att.status === 'completed' ? 'Completed' : 'In Progress'}
                           </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          {att.meet_link ? (
+                            <a
+                              href={att.meet_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-bold transition-colors"
+                            >
+                              <Video size={12} /> Join Meet <ExternalLink size={10} />
+                            </a>
+                          ) : isPassed ? (
+                            <span className="text-[11px] text-slate-400 font-medium">Link Generated</span>
+                          ) : (
+                            <span className="text-slate-300">-</span>
+                          )}
                         </td>
                         <td className="px-6 py-4 text-xs text-slate-500 font-medium">
                           {att.submitted_at 
@@ -273,6 +328,70 @@ export default function AdminAssessmentsPage() {
               >
                 <X size={20} />
               </button>
+            </div>
+
+            {/* Internship Approval & E-Sign Pipeline Banner */}
+            <div className="mb-6 p-4 rounded-2xl border border-slate-200 bg-slate-50/70">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <FileCheck size={18} className="text-[#1B2A6B]" />
+                    <span className="text-xs font-black uppercase tracking-wider text-[#0d1635]">Internship Approval & Appointment Status</span>
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    {selectedAttempt.is_signed ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">
+                        <Check size={12} /> Appointment Letter E-Signed
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">
+                        <AlertCircle size={12} /> Candidate Has Not E-Signed Yet
+                      </span>
+                    )}
+
+                    {selectedAttempt.is_approved ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold">
+                        <CheckCircle2 size={12} /> Internship Approved & Offer Letter Sent
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-200 text-slate-700 rounded-full text-xs font-bold">
+                        Pending Approval
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  {selectedAttempt.is_signed && (
+                    <button
+                      onClick={() => handleDownloadAppointment(selectedAttempt.attempt?.id)}
+                      disabled={actionLoading}
+                      className="px-3.5 py-2 bg-white hover:bg-slate-100 text-[#1B2A6B] border border-[#1B2A6B]/30 rounded-xl text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-sm"
+                    >
+                      <Download size={14} /> Download Signed PDF
+                    </button>
+                  )}
+
+                  {!selectedAttempt.is_approved ? (
+                    <button
+                      onClick={() => handleApproveInternship(selectedAttempt.attempt?.id)}
+                      disabled={actionLoading || !selectedAttempt.is_signed}
+                      title={!selectedAttempt.is_signed ? "Candidate must E-sign appointment letter before approval" : ""}
+                      className={`px-4 py-2 rounded-xl text-xs font-black transition-all inline-flex items-center gap-1.5 shadow-md ${
+                        selectedAttempt.is_signed 
+                          ? "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white cursor-pointer"
+                          : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                      }`}
+                    >
+                      <Send size={14} /> Approve Internship & Mail Offer Letter
+                    </button>
+                  ) : (
+                    <div className="px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold">
+                      ✓ Approved & Active
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Metrics */}

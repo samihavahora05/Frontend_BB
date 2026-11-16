@@ -6,7 +6,7 @@ import { InternDashboardLayout } from "../../../../../src/layout/InternDashboard
 import { 
   Trophy, CheckCircle2, XCircle, AlertCircle, 
   ArrowLeft, RotateCcw, CheckSquare, Sparkles, 
-  ChevronDown, ChevronUp, Clock, HelpCircle, Layers
+  ChevronDown, ChevronUp, Clock, HelpCircle, Layers, Video, Calendar
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { AssessmentService, AnswerReviewItem, AttemptItem } from "../../../../../src/lib/api/AssessmentService";
@@ -124,6 +124,37 @@ export default function AssessmentResultPage() {
             </div>
           </div>
         </div>
+
+        {/* Google Meet Interview Card for Qualified Candidates (Step 2 Automation) */}
+        {isPassed && (attempt.meet_link || attempt.interview_scheduled_at) && (
+          <div className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white rounded-3xl p-6 lg:p-8 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-xs font-bold">
+                <Video size={14} /> Round 2: Technical Interview Scheduled
+              </div>
+              <h3 className="text-2xl font-black">Google Meet Link Generated Automatically</h3>
+              <p className="text-sm text-emerald-100 max-w-xl">
+                Congratulations! Since you scored 30+ marks, your technical interview has been scheduled. Details have been dispatched to your email and WhatsApp (+ admin alert).
+              </p>
+              {attempt.interview_scheduled_at && (
+                <div className="flex items-center gap-2 text-xs font-bold text-emerald-100 pt-1">
+                  <Calendar size={14} />
+                  <span>Scheduled for: {new Date(attempt.interview_scheduled_at).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</span>
+                </div>
+              )}
+            </div>
+            {attempt.meet_link && (
+              <a
+                href={attempt.meet_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-4 bg-white text-emerald-800 hover:bg-emerald-50 text-sm font-black rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 shrink-0"
+              >
+                <Video size={18} className="text-emerald-700" /> Join Google Meet Interview
+              </a>
+            )}
+          </div>
+        )}
 
         {/* Metrics Overview Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

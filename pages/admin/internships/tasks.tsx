@@ -917,6 +917,37 @@ export default function AdminTasksPage() {
                             </div>
                           </div>
 
+                          {/* 25-Min Sprint & 5-Min Self Analysis Review */}
+                          {(currentSubmission.self_analysis || selectedTask.self_analysis || currentSubmission.time_taken_seconds || selectedTask.is_delayed) && (
+                            <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3.5 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
+                                  <Sparkles size={13} className="text-emerald-600" /> 5-Minute Self-Analysis & Sprint Metrics
+                                </span>
+                                {(selectedTask.is_delayed || currentSubmission.is_delayed) ? (
+                                  <span className="px-2 py-0.5 rounded-md text-[10px] font-black bg-rose-100 text-rose-800 border border-rose-200">
+                                    ⚠️ Exceeded 25 Min Sprint (Slow / Progress Down)
+                                  </span>
+                                ) : (
+                                  <span className="px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                    ✓ On-Time (&lt; 25 Minutes)
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="bg-white p-3 rounded-lg border border-emerald-100 text-xs font-medium text-slate-800 whitespace-pre-line">
+                                <span className="font-bold text-emerald-900 block text-[10px] mb-1">Intern's Self-Reflection:</span>
+                                {currentSubmission.self_analysis || selectedTask.self_analysis || 'Self-analysis completed.'}
+                              </div>
+
+                              {currentSubmission.time_taken_seconds && (
+                                <p className="text-[10px] text-slate-500 font-semibold">
+                                  Sprint Time Recorded: {Math.floor(currentSubmission.time_taken_seconds / 60)}m {currentSubmission.time_taken_seconds % 60}s / 25m limit
+                                </p>
+                              )}
+                            </div>
+                          )}
+
                           {/* Attached Proof Files */}
                           <div>
                             <label className="block text-[10px] font-black uppercase tracking-wider text-purple-900 mb-1.5">

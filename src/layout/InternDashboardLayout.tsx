@@ -13,6 +13,7 @@ const SIDEBAR_LINKS = [
   { name: "My Tasks", href: "/intern/tasks", icon: ListTodo },
   { name: "My Applications", href: "/intern/applications", icon: Briefcase },
   { name: "Assessments", href: "/intern/assessments", icon: CheckSquare },
+  { name: "Appointment Letter & E-Sign", href: "/intern/appointment-letter", icon: FileText },
   { name: "Scholarships", href: "/intern/scholarships", icon: Trophy },
   { name: "1:1 Experts", href: "/experts", icon: Users },
   { name: "Expert Sessions", href: "/intern/mentor-sessions", icon: Users },

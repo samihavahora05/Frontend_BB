@@ -229,4 +229,24 @@ export const AssessmentService = {
     const res = await api.post(`/admin/assessments/${assessmentId}/questions/import`, payload);
     return res.data;
   },
+
+  async approveInternship(attemptId: number | string, payload?: any): Promise<any> {
+    const res = await api.post(`/admin/assessments/results/${attemptId}/approve-internship`, payload || {});
+    return res.data;
+  },
+
+  async downloadSignedAppointmentLetter(attemptId: number | string): Promise<void> {
+    const res = await api.get(`/admin/assessments/results/${attemptId}/download-appointment-letter`, {
+      responseType: 'blob'
+    });
+    const blob = new Blob([res.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `appointment_letter_attempt_${attemptId}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  },
 };

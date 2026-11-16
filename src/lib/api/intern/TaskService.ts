@@ -13,6 +13,13 @@ export interface TaskItem {
   priority: 'low' | 'medium' | 'high' | 'urgent';
   start_date?: string;
   due_date?: string;
+  duration_minutes?: number;
+  analysis_duration_minutes?: number;
+  started_at?: string;
+  time_taken_seconds?: number;
+  is_delayed?: boolean;
+  self_analysis?: string;
+  self_analysis_submitted_at?: string;
   status: 'assigned' | 'in_progress' | 'submitted' | 'under_review' | 'completed' | 'approved' | 'changes_required' | 'resubmit';
   marks?: number;
   feedback?: string;
@@ -157,6 +164,14 @@ export const TaskService = {
         'Content-Type': 'multipart/form-data',
       },
     });
+    return res.data;
+  },
+
+  submitSelfAnalysis: async (
+    id: number | string,
+    payload: { self_analysis: string }
+  ): Promise<{ success: boolean; message: string; data: TaskItem }> => {
+    const res = await api.post(`/intern/tasks/${id}/self-analysis`, payload);
     return res.data;
   },
 };
