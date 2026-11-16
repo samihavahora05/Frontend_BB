@@ -141,6 +141,15 @@ export default function AdminAssessmentsPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            <a
+              href="https://backend.blueboxx.in/api/auth/google/connect"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5"
+              title="Authorize info.blueboxx@gmail.com to auto-generate Google Meet rooms"
+            >
+              <Video size={14} /> Connect Google Meet Account
+            </a>
             <Link
               href="/admin/assessments/questions"
               className="px-4 py-2 bg-[#1B2A6B] hover:bg-[#0d1635] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5"
