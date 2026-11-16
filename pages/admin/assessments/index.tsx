@@ -78,28 +78,6 @@ export default function AdminAssessmentsPage() {
     }
   };
 
-  const handleResendInterview = async (attemptId: number) => {
-    const customLink = prompt("Enter specific Google Meet link (leave blank to auto-generate):");
-    if (customLink === null) return;
-
-    try {
-      setActionLoading(true);
-      const res = await AssessmentService.resendInterview(attemptId, { meet_link: customLink.trim() || undefined });
-      if (res.success) {
-        toast.success(res.message || "Interview link updated and resent via Email & WhatsApp!");
-        handleViewDetail(attemptId);
-        loadResults();
-      } else {
-        toast.error(res.message || "Failed to update interview.");
-      }
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err?.response?.data?.message || "Failed to resend interview.");
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
   const handleApproveInternship = async (attemptId: number) => {
     if (!confirm("Are you sure you want to approve this candidate's internship and send the official Offer Letter via email?")) {
       return;
