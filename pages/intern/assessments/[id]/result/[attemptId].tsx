@@ -70,7 +70,7 @@ export default function AssessmentResultPage() {
     );
   }
 
-  const isPassed = attempt.percentage >= 50;
+  const isPassed = attempt.score >= 30;
   const filteredAnswers = answers.filter((a) => {
     const matchCat = categoryFilter === "All" || a.category === categoryFilter;
     let matchStatus = true;
@@ -119,7 +119,7 @@ export default function AssessmentResultPage() {
                 {attempt.score} <span className="text-xl font-bold text-blue-200">/ {attempt.assessment?.total_marks || 50}</span>
               </div>
               <div className="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-black mt-2">
-                {attempt.percentage}% • {isPassed ? "PASSED" : "NEEDS IMPROVEMENT"}
+                {isPassed ? "PASSED (QUALIFIED FOR INTERVIEW)" : "NEEDS IMPROVEMENT (< 30 MARKS)"}
               </div>
             </div>
           </div>

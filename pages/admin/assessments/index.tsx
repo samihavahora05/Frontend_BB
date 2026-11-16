@@ -11,6 +11,12 @@ import toast from "react-hot-toast";
 
 export default function AdminAssessmentsPage() {
   const [attempts, setAttempts] = useState<any[]>([]);
+  const [stats, setStats] = useState<{ total_completed: number; qualified_30_plus: number; not_qualified: number }>({
+    total_completed: 0,
+    qualified_30_plus: 0,
+    not_qualified: 0,
+  });
+  const [filterTab, setFilterTab] = useState<"all" | "qualified" | "not_qualified">("all");
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedAttempt, setSelectedAttempt] = useState<any>(null);
@@ -18,14 +24,21 @@ export default function AdminAssessmentsPage() {
 
   useEffect(() => {
     loadResults();
-  }, [search]);
+  }, [search, filterTab]);
 
   const loadResults = async () => {
     try {
       setIsLoading(true);
-      const res = await AssessmentService.getAdminResults({ search });
+      const params: any = { search };
+      if (filterTab !== "all") {
+        params.filter = filterTab;
+      }
+      const res = await AssessmentService.getAdminResults(params);
       if (res.success) {
         setAttempts(res.data.data || []);
+        if (res.stats) {
+          setStats(res.stats);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -90,10 +103,69 @@ export default function AdminAssessmentsPage() {
           </div>
         </div>
 
+        {/* Stats & Filter Tabs */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <button
+            onClick={() => setFilterTab("all")}
+            className={`p-4 rounded-2xl border text-left transition-all ${
+              filterTab === "all"
+                ? "bg-white border-[#1B2A6B] shadow-md ring-2 ring-[#1B2A6B]/20"
+                : "bg-white/60 hover:bg-white border-slate-200"
+            }`}
+          >
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Completed</span>
+            <div className="flex items-center justify-between mt-1">
+              <span className="text-2xl font-black text-[#0d1635]">{stats.total_completed}</span>
+              <span className="text-xs font-bold text-slate-500">All Attempts</span>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setFilterTab("qualified")}
+            className={`p-4 rounded-2xl border text-left transition-all ${
+              filterTab === "qualified"
+                ? "bg-emerald-50/70 border-emerald-500 shadow-md ring-2 ring-emerald-500/20"
+                : "bg-white hover:bg-emerald-50/30 border-slate-200"
+            }`}
+          >
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Qualified for Interview (30+ Marks)</span>
+            </div>
+            <div className="flex items-center justify-between mt-1">
+              <span className="text-2xl font-black text-emerald-700">{stats.qualified_30_plus}</span>
+              <span className="text-xs font-bold px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full">Pass (≥ 30)</span>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setFilterTab("not_qualified")}
+            className={`p-4 rounded-2xl border text-left transition-all ${
+              filterTab === "not_qualified"
+                ? "bg-amber-50/70 border-amber-500 shadow-md ring-2 ring-amber-500/20"
+                : "bg-white hover:bg-amber-50/30 border-slate-200"
+            }`}
+          >
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-amber-500" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700">Under 30 Marks</span>
+            </div>
+            <div className="flex items-center justify-between mt-1">
+              <span className="text-2xl font-black text-amber-700">{stats.not_qualified}</span>
+              <span className="text-xs font-bold px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">Fail (&lt; 30)</span>
+            </div>
+          </button>
+        </div>
+
         {/* Results Table */}
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-            <h2 className="text-sm font-bold text-[#0d1635]">Candidate Attempt Submissions</h2>
+            <div>
+              <h2 className="text-sm font-bold text-[#0d1635]">
+                {filterTab === "qualified" ? "Qualified Interns (30+ Marks) - Ready for Interview" : filterTab === "not_qualified" ? "Candidate Attempts (< 30 Marks)" : "Candidate Attempt Submissions"}
+              </h2>
+              <p className="text-[11px] text-slate-400 font-medium">Interns with 30+ marks qualify for automatic interview scheduling</p>
+            </div>
             <span className="text-xs font-bold text-slate-400">{attempts.length} Records</span>
           </div>
 
@@ -115,7 +187,7 @@ export default function AdminAssessmentsPage() {
                     <th className="px-6 py-3 font-bold">Intern</th>
                     <th className="px-6 py-3 font-bold">Assessment</th>
                     <th className="px-6 py-3 font-bold">Score</th>
-                    <th className="px-6 py-3 font-bold">Percentage</th>
+                    <th className="px-6 py-3 font-bold">Result (30+ Pass)</th>
                     <th className="px-6 py-3 font-bold">Status</th>
                     <th className="px-6 py-3 font-bold">Submitted Date</th>
                     <th className="px-6 py-3 font-bold text-right">Actions</th>
@@ -125,11 +197,13 @@ export default function AdminAssessmentsPage() {
                   {attempts.map((att) => {
                     const u = att.user || {};
                     const fullName = u.name || `${u.first_name || ''} ${u.last_name || ''}`.trim() || 'Intern User';
+                    const isPassed = att.score >= 30;
                     return (
                       <tr key={att.id} className="hover:bg-slate-50 transition-colors">
                         <td className="px-6 py-4">
                           <p className="font-bold text-[#0d1635] text-sm">{fullName}</p>
                           <p className="text-xs text-slate-400">{u.email}</p>
+                          {u.phone && <p className="text-[11px] text-slate-400 font-mono">{u.phone}</p>}
                         </td>
                         <td className="px-6 py-4 font-semibold text-slate-700">50 MCQ Assessment</td>
                         <td className="px-6 py-4 font-black text-[#0d1635]">
@@ -137,9 +211,15 @@ export default function AdminAssessmentsPage() {
                         </td>
                         <td className="px-6 py-4 font-black">
                           {att.status === 'completed' ? (
-                            <span className={att.percentage >= 50 ? "text-emerald-600" : "text-amber-600"}>
-                              {att.percentage}%
-                            </span>
+                            isPassed ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold rounded-full">
+                                <CheckCircle2 size={13} /> Passed (Interview Ready)
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold rounded-full">
+                                <XCircle size={13} /> Not Qualified (&lt; 30)
+                              </span>
+                            )
                           ) : '-'}
                         </td>
                         <td className="px-6 py-4">
