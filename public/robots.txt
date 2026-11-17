@@ -46,7 +46,9 @@ Disallow: /auth
 Disallow: /api/
 
 # Host
-Host: https://blueboxx.in
+Host: https://www.blueboxx.in
 
 # Sitemaps
-Sitemap: https://blueboxx.in/sitemap.xml
+Sitemap: https://www.blueboxx.in/sitemap.xml
+Sitemap: https://www.blueboxx.in/page-sitemap.xml
+Sitemap: https://www.blueboxx.in/blog-sitemap.xml
