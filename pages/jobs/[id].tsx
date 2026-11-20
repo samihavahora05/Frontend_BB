@@ -80,18 +80,29 @@ export default function JobDetailPage() {
   if (!job) {
     return (
       <MainLayout>
-        <div className="min-h-screen flex items-center justify-center pt-20">
-          <h2 className="text-xl font-bold text-slate-800">Job not found.</h2>
+        <SEO title="Job Not Found | Blueboxx" description="The job you are looking for is no longer available." />
+        <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 text-center">
+          <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mb-4 text-amber-600 shadow-sm border border-amber-100">
+            <Briefcase className="w-8 h-8" />
+          </div>
+          <h1 className="text-2xl font-bold text-slate-800 mb-2">Job Opportunity Expired or Not Found</h1>
+          <p className="text-slate-600 max-w-md mb-6 text-sm">
+            This job posting (ID: {id}) might have expired, closed, or been removed. Explore other active openings on our careers portal.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link href="/jobs">
+              <Button className="bg-[#1B2A6B] hover:bg-[#142054] text-white">
+                Browse All Open Jobs
+              </Button>
+            </Link>
+            <Link href="/">
+              <Button variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50">
+                Back to Home
+              </Button>
+            </Link>
+          </div>
         </div>
-        {/* Auth Required Modal */}
-      <AuthRequiredModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        actionType="job"
-        itemTitle={job?.title}
-        returnUrl={`/apply/job/${job?.id}`}
-      />
-    </MainLayout>
+      </MainLayout>
     );
   }
 

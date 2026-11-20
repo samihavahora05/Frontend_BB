@@ -54,6 +54,25 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: '/job-details/:id',
+        destination: '/jobs/:id',
+        permanent: true,
+      },
+      {
+        source: '/job-details',
+        destination: '/jobs',
+        permanent: true,
+      },
+      {
+        source: '/page-sitemap.xml',
+        destination: '/sitemap.xml',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
