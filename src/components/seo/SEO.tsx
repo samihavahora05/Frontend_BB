@@ -165,7 +165,11 @@ export function SEO({
   robots
 }: SEOProps) {
   const router = useRouter();
-  const canonicalUrl = `https://blueboxx.in${router.asPath}`;
+  const rawPath = router.asPath || "/";
+  // Clean canonical: strip query parameters and hashes, remove trailing slashes (except root)
+  const pathWithoutQuery = rawPath.split("?")[0].split("#")[0].trim();
+  const cleanPath = pathWithoutQuery === "/" ? "" : pathWithoutQuery.replace(/\/+$/, "");
+  const canonicalUrl = `https://www.blueboxx.in${cleanPath || "/"}`;
   const currentPath = normalizePath(router.asPath);
 
   // Lookup Path Specific Default SEO

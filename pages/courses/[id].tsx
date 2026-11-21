@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
 import { MainLayout } from "../../src/layout/MainLayout";
 import { Button } from "../../src/components/ui/Button";
 import { Card, CardContent } from "../../src/components/ui/Card";
@@ -660,3 +661,51 @@ export default function CourseDetailPage() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const rawId = params?.id;
+  if (!rawId) {
+    return { notFound: true };
+  }
+
+  const cleanId = String(rawId).replace(/\/$/, '').trim();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://backend.blueboxx.in/api';
+
+  try {
+    const res = await fetch(`${apiUrl}/public/courses/${cleanId}`, {
+      headers: { 'Accept': 'application/json' },
+    });
+
+    if (res.status === 404) {
+      // Check if course matches anything in general course list
+      const listRes = await fetch(`${apiUrl}/public/courses?per_page=100`, {
+        headers: { 'Accept': 'application/json' },
+      }).catch(() => null);
+
+      if (listRes && listRes.ok) {
+        const listData = await listRes.json();
+        const items = listData?.data || [];
+        const exists = Array.isArray(items) && items.some((c: any) => 
+          String(c.id) === cleanId || 
+          String(c.slug || '').toLowerCase() === cleanId.toLowerCase()
+        );
+        if (!exists) {
+          // Genuinely not found in published courses
+          return { notFound: true };
+        }
+      } else {
+        // Confirmed 404
+        return { notFound: true };
+      }
+    }
+
+    return {
+      props: {},
+    };
+  } catch (error) {
+    // Backend temporary error, do not send 404
+    return {
+      props: {},
+    };
+  }
+};

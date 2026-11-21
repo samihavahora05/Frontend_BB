@@ -72,13 +72,8 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/courses-details/:slug*',
-        destination: '/courses',
-        permanent: true,
-      },
-      {
         source: '/become-instructor',
-        destination: '/careers',
+        destination: '/signup/expert',
         permanent: true,
       },
       {

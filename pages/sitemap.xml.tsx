@@ -11,6 +11,14 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     <lastmod>${now}</lastmod>
   </sitemap>
   <sitemap>
+    <loc>${baseUrl}/jobs-sitemap.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/courses-sitemap.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+  <sitemap>
     <loc>${baseUrl}/blog-sitemap.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>

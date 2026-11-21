@@ -1,6 +1,7 @@
 import { getImageUrl } from "../../src/lib/imageUtils";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
 import { MainLayout } from "../../src/layout/MainLayout";
 import { Button } from "../../src/components/ui/Button";
 import { Card, CardContent } from "../../src/components/ui/Card";
@@ -20,31 +21,41 @@ import { getOpportunityPermission } from "../../src/lib/opportunityPermissions";
 import { RoleChangeModal } from "../../src/components/common/RoleChangeModal";
 import { AuthRequiredModal } from "../../src/components/common/AuthRequiredModal";
 
-export default function JobDetailPage() {
+interface JobDetailPageProps {
+  initialJob?: any;
+  backendError?: boolean;
+}
+
+export default function JobDetailPage({ initialJob, backendError = false }: JobDetailPageProps) {
   const router = useRouter();
   const { id } = router.query;
-  const [job, setJob] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [job, setJob] = useState<any>(initialJob || null);
+  const [loading, setLoading] = useState(!initialJob && !backendError);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || initialJob) return;
     const fetchJob = async () => {
       try {
         const res = await api.get(`/public/jobs/${id}`);
         if (res.data.success) {
           setJob(res.data.data);
         }
-      } catch (err) {
-        toast.error("Failed to load job details.");
+      } catch (err: any) {
+        // If 404, job truly doesn't exist
+        if (err?.response?.status === 404) {
+          setJob(null);
+        } else {
+          toast.error("Failed to load job details.");
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchJob();
-  }, [id]);
+  }, [id, initialJob]);
 
   const handleBookmark = async () => {
     try {
@@ -380,3 +391,50 @@ export default function JobDetailPage() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const rawId = params?.id;
+  if (!rawId) {
+    return { notFound: true };
+  }
+
+  const id = String(rawId).trim();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://backend.blueboxx.in/api';
+
+  try {
+    const res = await fetch(`${apiUrl}/public/jobs/${id}`, {
+      headers: { 'Accept': 'application/json' },
+    });
+
+    if (res.status === 404) {
+      // Confirmed genuine 404: job does not exist in DB
+      return { notFound: true };
+    }
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.success && data?.data) {
+        return {
+          props: {
+            initialJob: data.data,
+            backendError: false,
+          },
+        };
+      }
+    }
+
+    // Temporary backend or network issue (e.g., 500, 502, 503) -> Do NOT return 404
+    return {
+      props: {
+        backendError: true,
+      },
+    };
+  } catch (error) {
+    // Backend temporarily unreachable -> Render page gracefully, do NOT flag as 404
+    return {
+      props: {
+        backendError: true,
+      },
+    };
+  }
+};

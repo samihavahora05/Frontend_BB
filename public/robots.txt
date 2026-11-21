@@ -51,4 +51,6 @@ Host: https://www.blueboxx.in
 # Sitemaps
 Sitemap: https://www.blueboxx.in/sitemap.xml
 Sitemap: https://www.blueboxx.in/page-sitemap.xml
+Sitemap: https://www.blueboxx.in/jobs-sitemap.xml
+Sitemap: https://www.blueboxx.in/courses-sitemap.xml
 Sitemap: https://www.blueboxx.in/blog-sitemap.xml
