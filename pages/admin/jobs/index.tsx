@@ -263,17 +263,17 @@ export default function JobsManager() {
                     onChange={toggleSelectAll}
                   />
                 </th>
-                {['Job Role', 'Company & Details', 'Performance', 'Status', 'Actions'].map(h => (
+                {['ID', 'Job Role', 'Company & Details', 'Performance', 'Status', 'Actions'].map(h => (
                   <th key={h} className="px-6 py-3.5 text-[11px] font-black text-gray-400 uppercase tracking-widest">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {isLoading ? (
-                <LoadingRows cols={6}/>
+                <LoadingRows cols={7}/>
               ) : !jobs || jobs.length === 0 ? (
                 <tr>
-                  <td colSpan={6}>
+                  <td colSpan={7}>
                     <div className="flex flex-col items-center justify-center py-20">
                       <Briefcase size={48} className="text-gray-200 mb-4"/>
                       <p className="text-gray-500 font-semibold text-sm">
@@ -301,6 +301,11 @@ export default function JobsManager() {
                       checked={selectedIds.includes(job.id)}
                       onChange={() => toggleSelectJob(job.id)}
                     />
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-bold bg-slate-100 text-slate-800 border border-slate-200">
+                      #{job.id}
+                    </span>
                   </td>
                   <td className="px-6 py-4">
                     <p className="font-bold text-[#1B2A6B]">{job.title}</p>
