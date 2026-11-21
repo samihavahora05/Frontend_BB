@@ -67,6 +67,21 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/job-listings',
+        destination: '/jobs',
+        permanent: true,
+      },
+      {
+        source: '/courses-details/:slug*',
+        destination: '/courses',
+        permanent: true,
+      },
+      {
+        source: '/become-instructor',
+        destination: '/careers',
+        permanent: true,
+      },
+      {
         source: '/page-sitemap.xml',
         destination: '/sitemap.xml',
         permanent: true,
