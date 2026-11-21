@@ -42,12 +42,22 @@ export default function JobsManager() {
   const router = useRouter();
 
   const [search, setSearch]       = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [status, setStatus]       = useState('');
   const [page, setPage]           = useState(1);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
+  // Debounce search input by 350ms to prevent request collisions and ensure responsive filtering
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const { data: jobs, meta, isLoading, mutate } = JobService.useJobs({
-    search: search || undefined,
+    search: debouncedSearch ? debouncedSearch.trim() : undefined,
     status: status || undefined,
     page,
     per_page: 15,
@@ -235,9 +245,17 @@ export default function JobsManager() {
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-4 px-4 py-3 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[200px]">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"/>
-          <input type="text" placeholder="Search jobs or company…" value={search}
-            onChange={e => { setSearch(e.target.value); setPage(1); }}
-            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B2A6B] outline-none"/>
+          <input type="text" placeholder="Search by ID (e.g. 2393), Title, or Company…" value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full pl-9 pr-8 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B2A6B] outline-none"/>
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5"
+            >
+              <X size={14} />
+            </button>
+          )}
         </div>
         <select value={status} onChange={e => { setStatus(e.target.value); setPage(1); }}
           className="py-2 px-3 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B2A6B] outline-none text-gray-700 font-semibold bg-white">
